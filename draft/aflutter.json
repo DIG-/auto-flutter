@@ -1,0 +1,88 @@
+{
+    "name": "Sample project",
+    "platforms": [
+        "android",
+        "ios",
+        "web"
+    ],
+    "flavors": [
+        "a",
+        "b"
+    ],
+    "build-config": {
+        "_default": {
+            "build-param": "--dart-define=flavor=${arg:flavor}",
+            "run-berfore": {
+                "build": [
+                    "generate-forced",
+                    "task-id"
+                ]
+            },
+            "flavored": {
+                "a": {},
+                "b": {}
+            }
+        },
+        "android": {
+            "build-param": "--no-android-gradle-daemon",
+            "outputs": {
+                "apk": "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build}.apk",
+                "aab": "build/app/outputs/bundle/${arg:flavor}${arg:build|capitalize}/app-${arg:flavor}-${arg:build}.aab"
+            },
+            "flavored": {
+                "a": {
+                    "google-id": "1:xxx:android:yyyyy"
+                },
+                "b": {
+                    "google-id": "1:aaa:android:bbbbb"
+                }
+            }
+        },
+        "ios": {
+            "output": "${arg:flavor}.ipa",
+            "flavored": {
+                "a": {
+                    "google-id": "1:xxx:ios:yyyyy"
+                },
+                "b": {
+                    "google-id": "1:aaa:ios:bbbbb"
+                }
+            }
+        }
+    },
+    "tasks": [{
+            "id": "task-id",
+            "name": "Task name",
+            "type": "shell",
+            "content": {
+                "path": "relative/to/project/root/script.sh",
+                "args": [
+                    "${arg:flavor}"
+                ]
+            }
+        },
+        {
+            "id": "task-id2",
+            "name": "Another task",
+            "type": "shell",
+            "require": [
+                "task-id"
+            ],
+            "content": {
+                "script": "echo \"${arg:flavor}\""
+            }
+        },
+        {
+            "id": "another-custom",
+            "name": "More custom task",
+            "type": "chain",
+            "content": {
+                "task": "exec",
+                "args": [
+                    "pub",
+                    "get"
+                ]
+            }
+        }
+    ]
+}

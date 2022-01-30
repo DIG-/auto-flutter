@@ -1,0 +1,5 @@
+{
+    "flutter": "/d/flutter/bin/flutter",
+    "firebase-cli": "/d/firebase/firebase-tools-instant-win",
+    "firebase-standalone": true
+}
