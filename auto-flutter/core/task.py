@@ -1,13 +1,23 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractclassmethod
-from typing import List, Optional
-from arguments import Args
+from operator import itemgetter
+from typing import Any, Callable, List, Optional, Tuple
+from core.arguments import Args
+
+
+class TaskIdentity(Tuple[str, str, Callable[[], Any]]):
+    def __new__(
+        cls: type[TaskIdentity], id: str, name: str, creator: Callable[[], Task]
+    ) -> TaskIdentity:
+        return super().__new__(TaskIdentity, (id, name, creator))
+
+    id: str = property(itemgetter(0))
+    name: str = property(itemgetter(1))
+    creator: Callable[[], Task] = property(itemgetter(2))
 
 
 class Task(metaclass=ABCMeta):
-    def __init__(self, id: str, name: str):
-        self.id = id
-        self.name = name
+    identity: TaskIdentity = None
 
     def require(self) -> List[Task]:
         return []
