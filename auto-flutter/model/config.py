@@ -1,17 +1,19 @@
 from __future__ import annotations
 from json import load as json_load, dump as json_dump
 from pathlib import Path, PurePath, PurePosixPath
+from typing import Optional
 from appdirs import user_config_dir
 from core.os import OS
 
 
 class Config:
-    _instance: Config = None
+    _instance: Optional[Config] = None
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
+    @staticmethod
+    def instance() -> Config:
+        if Config._instance is None:
+            Config._instance = Config()
+        return Config._instance
 
     def __init__(self):
         self.flutter: PurePosixPath = PurePosixPath("flutter")
