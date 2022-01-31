@@ -1,4 +1,4 @@
-from typing import Callable, Generic, Iterable, Optional, TypeVar
+from typing import Callable, Generic, Iterable, List, Optional, TypeVar
 
 
 class _Iterable:
@@ -19,3 +19,6 @@ class _Iterable:
             if condition(it):
                 return it
         return fallback()
+
+    def flatten(iterable: Iterable[Iterable[T]]) -> List[T]:
+        return [item for sublist in iterable for item in sublist]
