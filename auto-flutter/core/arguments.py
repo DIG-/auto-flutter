@@ -1,22 +1,28 @@
 from __future__ import annotations
-from ast import arguments, operator
-from json import load
 from operator import itemgetter
-from re import S
 from typing import Any, Dict, Optional, Tuple
 
 
-class Args(Tuple[str, str, Optional[str]]):
-    def __new__(cls: type[Args], argument: str, value: Optional[str]) -> Args:
+class Arg(Tuple[str, Optional[str]]):
+    def __new__(cls: type[Arg], argument: str, value: Optional[str]) -> Arg:
         argument = argument.strip()
-        key = argument.lstrip("-").lower()
-        if not argument.startswith("-"):
-            key = "-#-" + key
-        return super().__new__(Args, (key, argument, value))
+        if not value is None:
+            value = value.strip()
+        return super().__new__(Arg, (argument, value))
 
-    key: str = property(itemgetter(0))
-    argument: str = property(itemgetter(1))
-    value: Optional[str] = property(itemgetter(2))
+    argument: str = property(itemgetter(0))
+    value: Optional[str] = property(itemgetter(1))
+
+
+class Args(Dict[str, Arg]):
+    def add(self, arg: Arg):
+        key = arg.argument.lstrip("-").lower()
+        if not arg.argument.startswith("-"):
+            key = "-#-" + key
+        self[key] = arg
+
+    def add(self, argument: str, value: Optional[str]):
+        self.add(Arg(argument, value))
 
 
 class Option(Tuple[Optional[str], Optional[str], str, bool]):
