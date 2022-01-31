@@ -1,7 +1,9 @@
-from typing import Callable, Iterable, T, Optional
+from typing import Callable, Generic, Iterable, Optional, TypeVar
 
 
 class _Iterable:
+    T = TypeVar("T")
+
     def first_or_none(
         iterable: Iterable[T], condition: Callable[[T], bool]
     ) -> Optional[T]:
