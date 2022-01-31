@@ -51,7 +51,10 @@ class Config:
         if "firebase" in parsed and len(parsed["firebase"]) != 0:
             self.firebase = OS.machine_to_posix_path(PurePath(parsed["firebase"]))
 
-        if "firebase-standalone" in parsed and parsed["firebase-standalone"] is bool:
+        if (
+            "firebase-standalone" in parsed
+            and type(parsed["firebase-standalone"]) is bool
+        ):
             self.firebase_standalone = bool(parsed["firebase-standalone"])
         return True
 
