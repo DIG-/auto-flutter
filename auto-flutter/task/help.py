@@ -1,6 +1,6 @@
 from ..core.arguments import Option, Args
 from ..core.task import Task, TaskIdentity
-from ..task._list import task_list
+from ..task._list import *
 from typing import Dict, List, Optional
 
 
