@@ -48,6 +48,9 @@ class ParseOptions(Task):
                 # Using short argument
                 args.add(Arg(opt, value if found.has_value else None))
             else:
-                args.add(Arg(found.long, value if found.has_value else None))
+                args.add(Arg("--" + found.long, value if found.has_value else None))
+
+        for value in positional:
+            args.add(Arg(value, None))
 
         return args
