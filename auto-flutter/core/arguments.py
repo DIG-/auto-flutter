@@ -1,6 +1,6 @@
 from __future__ import annotations
 from operator import itemgetter
-from typing import Any, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 
 class Arg(Tuple[str, Optional[str]]):

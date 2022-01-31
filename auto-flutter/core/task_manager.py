@@ -20,7 +20,9 @@ class TaskManager:
         self._task_stack.append(ParseOptions(self._task_stack))
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
-            print(current.describe(args))
+            describe = current.describe(args)
+            if (not describe is None) and len(describe) != 0:
+                print(describe)
             output = current.execute(args)
             if output is None:
                 print("Task failed")
