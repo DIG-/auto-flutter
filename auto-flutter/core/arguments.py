@@ -21,9 +21,6 @@ class Args(Dict[str, Arg]):
             key = "-#-" + key
         self[key] = arg
 
-    def add(self, argument: str, value: Optional[str]):
-        self.add(Arg(argument, value))
-
 
 class Option(Tuple[Optional[str], Optional[str], str, bool]):
     def __new__(

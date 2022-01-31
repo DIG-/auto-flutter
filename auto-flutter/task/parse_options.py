@@ -2,7 +2,7 @@ from getopt import GetoptError, getopt
 from typing import List, Optional
 from sys import argv as sys_argv
 from ..core.task import Task, TaskIdentity
-from ..core.arguments import Args, Option
+from ..core.arguments import Arg, Args, Option
 from ..core.utils import _Iterable
 
 
@@ -43,11 +43,11 @@ class ParseOptions(Task):
 
             if found is None:
                 # Argument is not parameter
-                args.add(opt, None)
+                args.add(Arg(opt, None))
             elif found.long is None:
                 # Using short argument
-                args.add(opt, value if found.has_value else None)
+                args.add(Arg(opt, value if found.has_value else None))
             else:
-                args.add(found.long, value if found.has_value else None)
+                args.add(Arg(found.long, value if found.has_value else None))
 
         return args
