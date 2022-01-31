@@ -30,6 +30,9 @@ class Task(metaclass=ABCMeta):
     def require(self) -> List[Task]:
         return []
 
+    def describe(self, args: Args) -> str:
+        return self.identity.name
+
     @abstractclassmethod
     def execute(self, args: Args) -> Optional[Args]:
         # Return None when fail
