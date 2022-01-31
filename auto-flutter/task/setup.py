@@ -88,8 +88,8 @@ class Setup(Task):
         lambda: Setup(),
     )
 
-    def require(self) -> List[Task]:
-        return [SetupEdit()]
+    def require(self) -> List[str]:
+        return [SetupEdit.identity.id]
 
     def describe(self, args: Args) -> str:
         if "show" in args:

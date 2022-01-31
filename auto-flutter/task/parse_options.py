@@ -7,7 +7,9 @@ from ..core.utils import _Iterable
 
 
 class ParseOptions(Task):
-    identity = TaskIdentity("", "Parsing arguments", [], lambda: ParseOptions())
+    identity = TaskIdentity(
+        "-parse-options", "Parsing arguments", [], lambda: ParseOptions()
+    )
 
     def __init__(self, tasks: List[Task]) -> None:
         super().__init__()

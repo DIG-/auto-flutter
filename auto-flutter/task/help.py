@@ -24,13 +24,14 @@ class Help(Task):
     def execute(self, args: Args) -> Optional[Args]:
         self.show_header()
         if "task" in args:
-            task_name = args["task"].value
-            if not task_name is None:
-                if task_name in self._default:
-                    self.show_task_options(self._default[task_name])
+            task_id = args["task"].value
+            if (not task_id is None) and len(task_id) > 0:
+                identity = TaskResolver.find_task(task_id)
+                if not identity is None:
+                    self.show_task_options(identity)
                     exit(0)
                 else:
-                    print('Task "{}" not found\n'.format(task_name))
+                    print('Task "{}" not found\n'.format(task_id))
         print("Default tasks:")
         for task in Help.reduce_indexed_task_into_list(self._default):
             self.show_task_name(task)

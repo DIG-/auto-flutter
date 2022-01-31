@@ -1,6 +1,7 @@
 from collections import deque
 from queue import Queue
 from typing import Deque, Optional
+from xml.dom import NotFoundErr
 from ..core.task import Task, TaskIdentity
 
 
@@ -13,11 +14,14 @@ class TaskResolver:
             current: Task = temp.get()
             output.append(current)
             for required in reversed(current.require()):
-                temp.put(required)
+                found = TaskResolver.find_task(required)
+                if found is None:
+                    raise LookupError('Task not found "{}"'.format(required))
+                temp.put(found.creator())
         return output
 
     def find_task(id: str) -> Optional[TaskIdentity]:
-        from ..core.task import task_list, user_task
+        from ._list import task_list, user_task
 
         if id in task_list:
             return task_list[id]

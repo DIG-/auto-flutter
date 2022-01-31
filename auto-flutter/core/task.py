@@ -27,7 +27,7 @@ class TaskIdentity(Tuple[str, str, List[Option], Callable[[], Any]]):
 class Task(metaclass=ABCMeta):
     identity: TaskIdentity = None
 
-    def require(self) -> List[Task]:
+    def require(self) -> List[str]:
         return []
 
     def describe(self, args: Args) -> str:
