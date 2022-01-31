@@ -1,3 +1,4 @@
+from pprint import pprint
 from ..core.arguments import Option, Args
 from ..core.task import Task, TaskIdentity
 from sys import argv as sys_argv
@@ -38,7 +39,23 @@ class Help(Task):
         print("Usage:\t{} TASK [options]\n".format(sys_argv[0]))
 
     def show_task_options(self, task: TaskIdentity):
-        pass
+        print("Task:\t{}".format(task.id))
+        pprint(task.name)
+        if len(task.options) == 0:
+            print("\nThis task does not have options")
+        else:
+            print("\nOptions:")
+            for option in task.options:
+                has_value = " <value>" if option.has_value else ""
+                separator = (
+                    ", "
+                    if (not option.short is None) and (not option.long is None)
+                    else ""
+                )
+                has_short = "-" + option.short if not option.short is None else ""
+                has_long = "--" + option.long if not option.long is None else ""
+                final = has_short + separator + has_long + has_value
+                print("{:12s}\t{}".format(final, option.description))
 
     def show_task_name(self, task: TaskIdentity):
         print("  {}\t{}".format(task.id, task.name))
