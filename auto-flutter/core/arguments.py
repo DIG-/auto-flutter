@@ -51,4 +51,4 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
             return None
         if self.has_value:
             return self.long + "="
-        return self.short
+        return self.long
