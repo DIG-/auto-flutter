@@ -1,6 +1,6 @@
 from ..core.arguments import Option, Args
 from ..core.task import Task, TaskIdentity
-from ..task._list import *
+from sys import argv as sys_argv
 from typing import Dict, List, Optional
 
 
@@ -9,8 +9,12 @@ class Help(Task):
         "help",
         "Show help",
         [Option("t", "task", "Show help details about given task", True)],
-        lambda: Help(),
+        lambda: Help(None),
     )
+
+    def __init__(self, default: Dict[str, TaskIdentity]) -> None:
+        super().__init__()
+        self._default = default
 
     def describe(self, args: Args) -> str:
         return "Showing help page"
@@ -20,32 +24,28 @@ class Help(Task):
         if "task" in args:
             task_name = args["task"].value
             if not task_name is None:
-                if task_name in task_list:
-                    self.show_task_options(task_list[task_name])
+                if task_name in self._default:
+                    self.show_task_options(self._default[task_name])
                     exit(0)
                 else:
                     print('Task "{}" not found\n'.format(task_name))
         print("Default tasks:")
-        for task in Help.get_default_task_list():
+        for task in Help.reduce_indexed_task_into_list(self._default):
             self.show_task_name(task)
         exit(0)
 
     def show_header(self):
-        print("Usage:\t{} TASK [options]\n")
+        print("Usage:\t{} TASK [options]\n".format(sys_argv[0]))
 
-    def show_task_options(task: TaskIdentity):
+    def show_task_options(self, task: TaskIdentity):
         pass
 
-    def show_task_name(task: TaskIdentity):
+    def show_task_name(self, task: TaskIdentity):
         print("  {}\t{}".format(task.id, task.name))
-        pass
-
-    def get_default_task_list() -> List[TaskIdentity]:
-        return Help.reduce_indexed_task_into_list(task_list)
 
     def reduce_indexed_task_into_list(
         tasks: Dict[str, TaskIdentity]
     ) -> List[TaskIdentity]:
-        filtered = filter(lambda it: not it[0].startswith("-"), task_list.items())
+        filtered = filter(lambda it: not it[0].startswith("-"), tasks.items())
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)
