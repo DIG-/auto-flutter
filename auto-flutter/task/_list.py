@@ -10,3 +10,5 @@ task_list: Dict[str, TaskIdentity] = dict(
         Setup.identity.to_map(),
     ]
 )
+
+user_task: Dict[str, TaskIdentity] = dict()
