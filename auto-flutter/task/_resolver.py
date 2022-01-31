@@ -1,7 +1,7 @@
 from collections import deque
 from queue import Queue
 from typing import Deque, Optional
-from xml.dom import NotFoundErr
+from ..model.task_id import TaskId
 from ..core.task import Task, TaskIdentity
 
 
@@ -20,7 +20,7 @@ class TaskResolver:
                 temp.put(found.creator())
         return output
 
-    def find_task(id: str) -> Optional[TaskIdentity]:
+    def find_task(id: TaskId) -> Optional[TaskIdentity]:
         from ._list import task_list, user_task
 
         if id in task_list:

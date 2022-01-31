@@ -5,6 +5,7 @@ from ..core.arguments import Args, Option
 from ..core.os import OS
 from ..core.task import Task, TaskIdentity
 from ..model.config import Config
+from ..model.task_id import TaskId
 from ..core.logger import log
 
 
@@ -88,7 +89,7 @@ class Setup(Task):
         lambda: Setup(),
     )
 
-    def require(self) -> List[str]:
+    def require(self) -> List[TaskId]:
         return [SetupEdit.identity.id]
 
     def describe(self, args: Args) -> str:
