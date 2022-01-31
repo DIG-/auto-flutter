@@ -1,7 +1,7 @@
 from collections import deque
 from queue import Queue
-from typing import Deque
-from ..core.task import Task
+from typing import Deque, Optional
+from ..core.task import Task, TaskIdentity
 
 
 class TaskResolver:
@@ -15,3 +15,12 @@ class TaskResolver:
             for required in reversed(current.require()):
                 temp.put(required)
         return output
+
+    def find_task(id: str) -> Optional[TaskIdentity]:
+        from ..core.task import task_list, user_task
+
+        if id in task_list:
+            return task_list[id]
+        if id in user_task:
+            return user_task[id]
+        return None
