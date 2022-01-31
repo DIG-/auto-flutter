@@ -1,13 +1,12 @@
-from ast import List, arg
 from json import dumps as json_dumps
 from pathlib import Path, PurePath
 from pprint import pprint
-from typing import Optional
-from core.arguments import Args, Option
-from core.os import OS
-from core.task import Task, TaskIdentity
-from model.config import Config
-from core.logger import log
+from typing import Optional, Type, List
+from ..core.arguments import Args, Option
+from ..core.os import OS
+from ..core.task import Task, TaskIdentity
+from ..model.config import Config
+from ..core.logger import log
 
 
 class SetupEdit(Task):

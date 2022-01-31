@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractclassmethod
 from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
-from core.arguments import Args, Option
+from ..core.arguments import Args, Option
 
 
 class TaskIdentity(Tuple[str, str, List[Option], Callable[[], Any]]):

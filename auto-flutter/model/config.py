@@ -3,7 +3,7 @@ from json import load as json_load, dump as json_dump
 from pathlib import Path, PurePath, PurePosixPath
 from typing import Optional
 from appdirs import user_config_dir
-from core.os import OS
+from ..core.os import OS
 
 
 class Config:
