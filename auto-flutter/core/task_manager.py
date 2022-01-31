@@ -1,24 +1,19 @@
-from collections import deque
 from typing import Deque
 from ..core.task import Task
 from ..core.arguments import Args
 from ..task._list import task_list
+from ..task._resolver import TaskResolver
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 
 
 class TaskManager:
-    _task_stack: Deque[Task] = deque()
+    _task_stack: Deque[Task]
 
-    def add(self, task: Task, depth: int = 0):
-        if depth >= 1000:
-            raise RecursionError("Task require too much tasks")
+    def add(self, task: Task):
         if type(task) is Help:
             task = Help(task_list)
-
-        self._task_stack.append(task)
-        for subtask in reversed(task.require()):
-            self.add(subtask, depth + 1)
+        self._task_stack = TaskResolver.resolve(task)
 
     def execute(self) -> bool:
         args = Args()
