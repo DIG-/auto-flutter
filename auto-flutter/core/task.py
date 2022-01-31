@@ -20,6 +20,9 @@ class TaskIdentity(Tuple[str, str, List[Option], Callable[[], Any]]):
     options: List[Option] = property(itemgetter(2))
     creator: Callable[[], Task] = property(itemgetter(3))
 
+    def to_map(self) -> Tuple[str, TaskIdentity]:
+        return (self.id, self)
+
 
 class Task(metaclass=ABCMeta):
     identity: TaskIdentity = None
