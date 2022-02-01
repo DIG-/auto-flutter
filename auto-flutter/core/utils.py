@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABCMeta
 from enum import Enum
 from typing import (
@@ -8,6 +9,7 @@ from typing import (
     List,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
 )
@@ -81,6 +83,48 @@ class _JsonUtil(metaclass=ABCMeta):
 
     def list_to_json(input: List[Input]) -> List[Serializable.Json]:
         return list(map(lambda it: _JsonUtil.value_to_json(it), input))
+
+    T = TypeVar("T", bound=Union[str, Serializable, Enum])
+
+    def json_to_item_optional(
+        input: Optional[Serializable.Json], cls: Type[T]
+    ) -> Optional[T]:
+        if input is None:
+            return None
+        if cls is str:
+            return str(input)
+        if issubclass(cls, Serializable):
+            return cls.from_json(input)
+        if issubclass(cls, Enum):
+            return _Iterable.first_or_none(cls.__iter__(), lambda x: x.value == input)
+        return None
+
+    def json_to_item(input: Serializable.Json, cls: Type[T]) -> T:
+        output = _JsonUtil.json_to_item_optional(input, cls)
+        if output is None:
+            raise ValueError('Failed to parse "{}" as `{}`'.format(input, cls.__name__))
+        return output
+
+    def json_to_list(input: List[Serializable.Json], cls: Type[T]) -> List[T]:
+        return list(map(lambda it: _JsonUtil.json_to_item(it, cls), input))
+
+    K = Union[str, Enum]
+
+    def json_to_dict(
+        input: Dict[Serializable.Json, Serializable.Json], kcls: Type[K], tcls: Type[T]
+    ) -> Dict[K, T]:
+        return dict(
+            map(
+                lambda x: (
+                    _JsonUtil._json_to_dict_key(x[0], kcls),
+                    _JsonUtil.json_to_item(x[1], tcls),
+                ),
+                input.items(),
+            )
+        )
+
+    def _json_to_dict_key(key: Serializable.Json, kcls: Type[K]) -> K:
+        return _JsonUtil.json_to_item(key, kcls)
 
     CN = TypeVar("CN", Dict, List)
 
