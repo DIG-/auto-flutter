@@ -10,6 +10,18 @@ class BuildRunBefore(Enum):
     BUILD = "build"
 
 
+class TaskIdList(list[str], Serializable["TaskIdList"]):
+    def to_json(self) -> Serializable.Json:
+        return _JsonUtil.list_to_json(self)
+
+    def from_json(json: Serializable.Json) -> Optional["TaskIdList"]:
+        if json is None:
+            return None
+        if not isinstance(json, List):
+            return None
+        return _JsonUtil.json_to_list(json, str)
+
+
 class BuildConfig(Serializable["BuildConfig"]):
     RunBefore = BuildRunBefore
     Type = BuildType
@@ -17,14 +29,14 @@ class BuildConfig(Serializable["BuildConfig"]):
     def __init__(
         self,
         build_param: Optional[str] = None,
-        run_before: Optional[Dict[BuildRunBefore, List[str]]] = None,
+        run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = None,
         output: Optional[str] = None,
         outputs: Optional[Dict[BuildType, str]] = None,
         extras: Optional[Dict[str, str]] = None,
     ) -> None:
         super().__init__()
         self.build_param: Optional[str] = build_param
-        self.run_before: Optional[Dict[BuildRunBefore, List[str]]] = run_before
+        self.run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = run_before
         self.output: Optional[str] = output
         self.outputs: Optional[Dict[BuildType, str]] = outputs
         self.extras: Optional[Dict[str, str]] = extras
@@ -55,7 +67,31 @@ class BuildConfig(Serializable["BuildConfig"]):
         return {**output, **extras}
 
     def from_json(json: Serializable.Json) -> Optional["BuildConfig"]:
-        return None
+        if not isinstance(json, Dict):
+            return None
+        output = BuildConfig()
+        for key, value in json.items():
+            if not isinstance(key, str):
+                continue
+            if key == "build-param" and isinstance(value, str):
+                output.build_param = value
+            elif key == "run-before" and isinstance(value, Dict):
+                output.run_before = _JsonUtil.json_to_dict(
+                    value, BuildRunBefore, TaskIdList
+                )
+                pass
+            elif key == "output" and isinstance(value, str):
+                output.output = value
+            elif key == "outputs" and isinstance(value, Dict):
+                output.outputs = _JsonUtil.json_to_dict(value, BuildType, str)
+                pass
+            elif isinstance(value, str):
+                if output.extras is None:
+                    output.extras = {key: value}
+                else:
+                    output.extras[key] = value
+            pass
+        return output
 
 
 class BuildConfigFlavored(BuildConfig):
