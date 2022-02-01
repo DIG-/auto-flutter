@@ -94,8 +94,18 @@ class BuildConfig(Serializable["BuildConfig"]):
         return output
 
 
-class BuildConfigFlavored(BuildConfig):
-    flavored: Optional[Dict[Flavor, BuildConfig]]
+class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
+    def __init__(
+        self,
+        build_param: Optional[str] = None,
+        run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = None,
+        output: Optional[str] = None,
+        outputs: Optional[Dict[BuildType, str]] = None,
+        extras: Optional[Dict[str, str]] = None,
+        flavored: Optional[Dict[Flavor, BuildConfig]] = None,
+    ) -> None:
+        super().__init__(build_param, run_before, output, outputs, extras)
+        self.flavored: Optional[Dict[Flavor, BuildConfig]] = flavored
 
     def get_build_param(self, flavor: Optional[Flavor]) -> str:
         output = ""
@@ -140,3 +150,26 @@ class BuildConfigFlavored(BuildConfig):
             if not from_flavor is None:
                 return from_flavor
         return self.get_extra(key)
+
+    def to_json(self) -> Serializable.Json:
+        parent = super().to_json()
+        if not self.flavored is None:
+            flavored = {"flavored": _JsonUtil.map_to_json(self.flavored)}
+            return {**parent, **flavored}
+        return parent
+
+    def from_json(json: Serializable.Json) -> Optional["BuildConfigFlavored"]:
+        output = BuildConfigFlavored()
+        other = BuildConfig.from_json(json)
+        if not other is None:
+            output.build_param = other.build_param
+            output.run_before = other.run_before
+            output.output = other.output
+            output.outputs = other.outputs
+            output.extras = other.extras
+        if isinstance(json, Dict):
+            if "flavored" in json:
+                output.flavored = _JsonUtil.json_to_dict(
+                    json["flavored"], Flavor, BuildConfig
+                )
+        return output
