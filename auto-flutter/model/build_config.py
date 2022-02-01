@@ -13,12 +13,20 @@ class BuildConfig:
     run_before: Optional[Dict[BuildRunBefore, List[str]]]
     output: Optional[str]
     outputs: Optional[Dict[BuildType, str]]
+    extras: Optional[Dict[str, str]]
 
     def get_output(self, type: BuildType) -> Optional[str]:
         if not self._outputs is None:
             if type in self._outputs:
                 return self._outputs[type]
         return self._output
+
+    def get_extra(self, key: str) -> Optional[str]:
+        if self.extras is None:
+            return None
+        if key in self.extras:
+            return self.extras[key]
+        return None
 
 
 class BuildConfigFlavored(BuildConfig):
@@ -60,3 +68,10 @@ class BuildConfigFlavored(BuildConfig):
             if not from_flavor is None:
                 return from_flavor
         return self.get_output(type)
+
+    def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
+        if not flavor is None and flavor in self.flavored:
+            from_flavor = self.flavored[flavor].get_extra(key)
+            if not from_flavor is None:
+                return from_flavor
+        return self.get_extra(key)
