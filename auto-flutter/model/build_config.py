@@ -1,19 +1,33 @@
 from enum import Enum
 from typing import Dict, List, Optional
 from ..model.build_type import BuildType
+from ..model._serializable import Serializable
 from ..model.flavor import Flavor
+from ..core.utils import _JsonUtil
 
 
 class BuildRunBefore(Enum):
     BUILD = "build"
 
 
-class BuildConfig:
-    build_param: Optional[str]
-    run_before: Optional[Dict[BuildRunBefore, List[str]]]
-    output: Optional[str]
-    outputs: Optional[Dict[BuildType, str]]
-    extras: Optional[Dict[str, str]]
+class BuildConfig(Serializable["BuildConfig"]):
+    RunBefore = BuildRunBefore
+    Type = BuildType
+
+    def __init__(
+        self,
+        build_param: Optional[str] = None,
+        run_before: Optional[Dict[BuildRunBefore, List[str]]] = None,
+        output: Optional[str] = None,
+        outputs: Optional[Dict[BuildType, str]] = None,
+        extras: Optional[Dict[str, str]] = None,
+    ) -> None:
+        super().__init__()
+        self.build_param: Optional[str] = build_param
+        self.run_before: Optional[Dict[BuildRunBefore, List[str]]] = run_before
+        self.output: Optional[str] = output
+        self.outputs: Optional[Dict[BuildType, str]] = outputs
+        self.extras: Optional[Dict[str, str]] = extras
 
     def get_output(self, type: BuildType) -> Optional[str]:
         if not self._outputs is None:
@@ -26,6 +40,17 @@ class BuildConfig:
             return None
         if key in self.extras:
             return self.extras[key]
+        return None
+
+    def to_json(self) -> Serializable.Json:
+        return {
+            "build-param": self.build_param,
+            "run-before": _JsonUtil.optional_to_json(self.run_before),
+            "output": _JsonUtil.optional_to_json(self.output),
+            "outputs": _JsonUtil.optional_to_json(self.outputs),
+        }
+
+    def from_json(json: Serializable.Json) -> Optional["BuildConfig"]:
         return None
 
 
