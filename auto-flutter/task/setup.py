@@ -1,9 +1,10 @@
+from math import fabs
 from pathlib import Path, PurePath
 from pprint import pprint
 from typing import Optional, List
 from ..core.arguments import Args, Option
 from ..core.os import OS
-from ..core.task import Task, TaskIdentity
+from ..core.task import Task, TaskIdentity, TaskResult
 from ..model.config import Config
 from ..model.task_id import TaskId
 from ..core.logger import log
@@ -45,32 +46,44 @@ class SetupEdit(Task):
         lambda: SetupEdit(),
     )
 
-    def execute(self, args: Args) -> Optional[Args]:
+    def execute(self, args: Args) -> TaskResult:
         if "show" in args:
-            return args  # Nothing to edit in show mode
+            return TaskResult(args)  # Nothing to edit in show mode
 
         if "flutter" in args:
             flutter = args["flutter"].value
             if flutter is None or len(flutter) == 0:
-                log.error("Require a valid path")
-                return None
+                return TaskResult(
+                    args, ValueError("Require valid path for flutter"), False
+                )
             path = PurePath(flutter)
             if path.is_absolute():
                 if not Path(path).exists():
-                    log.error('Can not find flutter in "{}"' % flutter)
-                    return None
+                    return TaskResult(
+                        args,
+                        FileNotFoundError(
+                            'Can not find flutter in "{}"'.format(flutter)
+                        ),
+                        False,
+                    )
                 Config.instance().flutter = OS.machine_to_posix_path(path)
 
         if "firebase-cli" in args:
             firebase = args["firebase-cli"].value
             if firebase is None or len(firebase) == 0:
-                log.error("Require a valid path")
-                return None
+                return TaskResult(
+                    args, ValueError("Require valid path for firebase-cli"), False
+                )
             path = PurePath(firebase)
             if path.is_absolute():
                 if not Path(path).exists():
-                    log.error('Can not find firebase-cli in "{}"' % firebase)
-                    return None
+                    return TaskResult(
+                        args,
+                        FileNotFoundError(
+                            'Can not find firebase-cli in "{}"'.format(firebase)
+                        ),
+                        False,
+                    )
                 Config.instance().firebase = OS.machine_to_posix_path(path)
 
         if "firebase-standalone" in args:
@@ -78,7 +91,7 @@ class SetupEdit(Task):
         elif "no-firebase-standalone" in args:
             Config.instance().firebase_standalone = False
 
-        return args
+        return TaskResult(args)
 
 
 class Setup(Task):
@@ -97,14 +110,13 @@ class Setup(Task):
             return "Showing current config"
         return "Saving config to file"
 
-    def execute(self, args: Args) -> Optional[Args]:
+    def execute(self, args: Args) -> TaskResult:
         if "show" in args:
             pprint(Config.instance())
-            return args
+            return TaskResult(args)
 
         try:
             Config.instance().save()
-        except:
-            log.error("Failed to save config")
-            return None
-        return args
+        except BaseException as error:
+            return TaskResult(args, error, False)
+        return TaskResult(args)

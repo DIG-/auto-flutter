@@ -1,4 +1,5 @@
 from typing import Deque
+from ..core.logger import log
 from ..core.task import Task
 from ..core.arguments import Args
 from ..task._list import task_list
@@ -24,9 +25,11 @@ class TaskManager:
             if (not describe is None) and len(describe) != 0:
                 print(describe)
             output = current.execute(args)
-            if output is None:
+            if not output.error is None:
+                log.error(str(output.error))
+            if not output.success:
                 print("Task failed")
                 return False
-            args = output
+            args = output.args
         print("Finish successfully")
         return True

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractclassmethod
+from lib2to3.pytree import Base
 from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
 from ..core.arguments import Args, Option
@@ -25,6 +26,19 @@ class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], Any]]):
         return (self.id, self)
 
 
+class TaskResult:
+    args: Args
+    error: Optional[BaseException]
+    success: bool
+
+    def __init__(
+        self, args: Args, error: Optional[BaseException] = None, success: bool = True
+    ) -> None:
+        self.args = args
+        self.error = error
+        self.success = success
+
+
 class Task(metaclass=ABCMeta):
     identity: TaskIdentity = None
 
@@ -35,7 +49,7 @@ class Task(metaclass=ABCMeta):
         return self.identity.name
 
     @abstractclassmethod
-    def execute(self, args: Args) -> Optional[Args]:
+    def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args
         raise NotImplementedError

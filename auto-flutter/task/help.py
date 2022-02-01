@@ -1,5 +1,5 @@
 from ..core.arguments import Option, Args
-from ..core.task import Task, TaskIdentity
+from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
 from ..task._resolver import TaskResolver
 from sys import argv as sys_argv
@@ -21,7 +21,7 @@ class Help(Task):
     def describe(self, args: Args) -> str:
         return "Showing help page"
 
-    def execute(self, args: Args) -> Optional[Args]:
+    def execute(self, args: Args) -> TaskResult:
         self.show_header()
         if "task" in args:
             task_id = args["task"].value
@@ -29,13 +29,13 @@ class Help(Task):
                 identity = TaskResolver.find_task(task_id)
                 if not identity is None:
                     self.show_task_options(identity)
-                    exit(0)
+                    return TaskResult(args)
                 else:
                     print('Task "{}" not found\n'.format(task_id))
         print("Default tasks:")
         for task in Help.reduce_indexed_task_into_list(self._default):
             self.show_task_name(task)
-        exit(0)
+        return TaskResult(args)
 
     def show_header(self):
         print("Usage:\t{} TASK [options]\n".format(sys_argv[0]))

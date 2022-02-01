@@ -1,7 +1,7 @@
 from getopt import GetoptError, getopt
 from typing import List, Optional
 from sys import argv as sys_argv
-from ..core.task import Task, TaskIdentity
+from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.arguments import Arg, Args, Option
 from ..core.utils import _Iterable
 
@@ -17,7 +17,7 @@ class ParseOptions(Task):
         for task in tasks:
             self._options.extend(task.identity.options)
 
-    def execute(self, args: Args) -> Optional[Args]:
+    def execute(self, args: Args) -> TaskResult:
         short = ""
         long: List[str] = []
         for option in self._options:
@@ -28,8 +28,7 @@ class ParseOptions(Task):
         try:
             opts, positional = getopt(sys_argv[2:], short, long)
         except GetoptError as error:
-            print(error)
-            exit(3)
+            return TaskResult(args, error, False)
 
         for opt, value in opts:
             opt_strip = opt.lstrip("-")
@@ -55,4 +54,4 @@ class ParseOptions(Task):
         for value in positional:
             args.add(Arg(value, None))
 
-        return args
+        return TaskResult(args)
