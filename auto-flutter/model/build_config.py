@@ -43,12 +43,16 @@ class BuildConfig(Serializable["BuildConfig"]):
         return None
 
     def to_json(self) -> Serializable.Json:
-        return {
+        extras = self.extras
+        output = {
             "build-param": self.build_param,
             "run-before": _JsonUtil.optional_to_json(self.run_before),
             "output": _JsonUtil.optional_to_json(self.output),
             "outputs": _JsonUtil.optional_to_json(self.outputs),
         }
+        if extras is None:
+            return output
+        return {**output, **extras}
 
     def from_json(json: Serializable.Json) -> Optional["BuildConfig"]:
         return None
