@@ -4,6 +4,7 @@ from ..model.task_id import TaskId
 from ..model.custom_task_type import CustomTaskType
 from ..model.custom_task_content import CustomTaskContent
 from ..core.json import _JsonDecode, _JsonEncode
+from ..core.utils import _Ensure
 
 
 class CustomTask(Serializable["CustomTask"]):
@@ -20,9 +21,9 @@ class CustomTask(Serializable["CustomTask"]):
         content: Optional[CustomTaskContent] = None,
     ) -> None:
         super().__init__()
-        self.id: TaskId = id
-        self.name: str = name
-        self.type: CustomTaskType = type
+        self.id: TaskId = _Ensure.not_none(id, "id")
+        self.name: str = _Ensure.not_none(name, "name")
+        self.type: CustomTaskType = _Ensure.not_none(type, "type")
         self.require: Optional[List[str]] = require
         self.content: Optional[CustomTaskContent] = content
 

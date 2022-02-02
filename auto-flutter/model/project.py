@@ -5,6 +5,7 @@ from ..model.flavor import Flavor as mFlavor
 from ..model._serializable import Serializable
 from ..model.custom_task import CustomTask
 from ..core.json import _JsonEncode, _JsonDecode
+from ..core.utils import _Ensure
 
 
 class Project(Serializable["Project"]):
@@ -21,10 +22,12 @@ class Project(Serializable["Project"]):
         tasks: Optional[List[CustomTask]] = None,
     ) -> None:
         super().__init__()
-        self.name: str = name
-        self.platforms: List[mPlatform] = platforms
+        self.name: str = _Ensure.not_none(name, "name")
+        self.platforms: List[mPlatform] = _Ensure.not_none(platforms, "platforms")
         self.flavors: Optional[List[mFlavor]] = flavors
-        self.build_config: Dict[mPlatform, BuildConfigFlavored] = build_config
+        self.build_config: Dict[mPlatform, BuildConfigFlavored] = _Ensure.not_none(
+            build_config, "build-config"
+        )
         self.tasks: Optional[List[CustomTask]] = tasks
 
     def to_json(self) -> Serializable.Json:
