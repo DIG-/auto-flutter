@@ -26,7 +26,10 @@ class TaskManager:
                 print(describe)
             output = current.execute(args)
             if not output.error is None:
-                log.error(str(output.error))
+                if output.success:
+                    log.warning(str(output.error))
+                else:
+                    log.error(str(output.error))
             if not output.success:
                 print("Task failed")
                 return False
