@@ -1,3 +1,4 @@
+from __future__ import annotations
 from operator import itemgetter
 from queue import Queue
 from threading import Thread, Lock
@@ -9,11 +10,11 @@ from ..core.task import Task
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
     def __new__(
-        cls: type["TaskPrinterOperation"],
+        cls: type[TaskPrinterOperation],
         message: Optional[str] = None,
         result: Optional[Task.Result] = None,
         description: Optional[str] = None,
-    ) -> "TaskPrinterOperation":
+    ) -> TaskPrinterOperation:
         return super().__new__(TaskPrinterOperation, (message, result, description))
 
     message: Optional[str] = property(itemgetter(0))
