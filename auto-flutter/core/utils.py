@@ -7,10 +7,9 @@ from typing import (
     Optional,
     TypeVar,
 )
-from ..model._serializable import Serializable
 
 
-class _Iterable:
+class _Iterable(metaclass=ABCMeta):
     T = TypeVar("T")
 
     def first_or_none(
