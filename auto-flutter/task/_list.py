@@ -5,6 +5,7 @@ from ..core.task import TaskIdentity
 from ..task.setup import Setup, SetupEdit
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
+from ..task.project_read import ProjectRead
 
 
 task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
@@ -14,6 +15,8 @@ task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
             SetupEdit.identity.to_map(),
             Setup.identity.to_map(),
             ParseOptions.identity.to_map(),
+            ProjectRead.identity.to_map(),
+            ProjectRead.identity_skip.to_map(),
         ]
     )
 )
