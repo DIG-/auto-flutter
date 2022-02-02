@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractclassmethod
-from lib2to3.pytree import Base
 from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
 from ..core.arguments import Args, Option
@@ -55,6 +54,11 @@ class Task(metaclass=ABCMeta):
 
     def describe(self, args: Task.Args) -> str:
         return self.identity.name
+
+    def print(self, message: str):
+        from ..core.task_manager import TaskManager
+
+        TaskManager.instance().print(message)
 
     @abstractclassmethod
     def execute(self, args: Task.Args) -> Task.Result:

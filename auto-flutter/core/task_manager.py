@@ -1,8 +1,8 @@
 from typing import Deque
 from termcolor import colored
-from ..core.logger import log
 from ..core.task import Task
 from ..core.arguments import Args
+from ..core.task_printer import TaskPrinter
 from ..task._list import task_list
 from ..task._resolver import TaskResolver
 from ..task.help import Help
@@ -17,7 +17,9 @@ class TaskManager:
             TaskManager.__instance = TaskManager()
         return TaskManager.__instance
 
-    _task_stack: Deque[Task]
+    def __init__(self) -> None:
+        self._task_stack: Deque[Task] = Deque()
+        self._printer = TaskPrinter()
 
     def add(self, task: Task):
         if type(task) is Help:
@@ -30,23 +32,23 @@ class TaskManager:
             raise LookupError("Task " + colored(task_id, "magenta") + " not found")
         self.add(identity.creator())
 
+    def print(self, message: str):
+        self._printer.write(message)
+
     def execute(self) -> bool:
         args = Args()
+        self._printer.start()
         self._task_stack.append(ParseOptions(self._task_stack))
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
             describe = current.describe(args)
             if (not describe is None) and len(describe) != 0:
-                print(describe)
+                self._printer.set_task_description(describe)
             output = current.execute(args)
-            if not output.error is None:
-                if output.success:
-                    print(colored(str(output.error), "yellow"))
-                else:
-                    print(colored(str(output.error), "red"))
+            self._printer.set_result(output)
             if not output.success:
-                print("Task failed")
+                self._printer.stop()
                 return False
             args = output.args
-        print("Finish successfully")
+        self._printer.stop()
         return True

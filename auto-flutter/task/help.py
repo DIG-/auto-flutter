@@ -35,26 +35,26 @@ class Help(Task):
                     self.show_task_options(identity)
                     return TaskResult(args)
                 else:
-                    print('Task "{}" not found\n'.format(task_id))
-        print("Default tasks:")
+                    self.print('Task "{}" not found\n'.format(task_id))
+        self.print("Default tasks:")
         for task in Help.reduce_indexed_task_into_list(self._default):
             self.show_task_name(task)
         return TaskResult(args)
 
     def show_header(self):
-        print("Usage:\t{} TASK [options]\n".format(sys_argv[0]))
+        self.print("Usage:\t{} TASK [options]\n".format(sys_argv[0]))
 
     def show_task_options(self, task: TaskIdentity):
-        print("Task:\t{}".format(task.id))
-        print(task.name)
+        self.print("Task:\t{}".format(task.id))
+        self.print(task.name)
         options_mapped = map(
             lambda task: task.identity.options, TaskResolver.resolve(task.creator())
         )
         options = _Iterable.flatten(options_mapped)
         if len(options) == 0:
-            print("\nThis task does not have options")
+            self.print("\nThis task does not have options")
         else:
-            print("\nOptions:")
+            self.print("\nOptions:")
             for option in options:
                 has_value = " <value>" if option.has_value else ""
                 separator = (
@@ -65,10 +65,10 @@ class Help(Task):
                 has_short = "-" + option.short if not option.short is None else ""
                 has_long = "--" + option.long if not option.long is None else ""
                 final = has_short + separator + has_long + has_value
-                print("{:20s}\t{}".format(final, option.description))
+                self.print("{:20s}\t{}".format(final, option.description))
 
     def show_task_name(self, task: TaskIdentity):
-        print("  {}\t{}".format(task.id, task.name))
+        self.print("  {}\t{}".format(task.id, task.name))
 
     def reduce_indexed_task_into_list(
         tasks: Dict[str, TaskIdentity]
