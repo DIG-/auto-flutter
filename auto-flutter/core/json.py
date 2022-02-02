@@ -30,6 +30,11 @@ class _JsonEncode(metaclass=ABCMeta):
         if isinstance(input, Dict):
             return _JsonEncode.encode_dict(input)
 
+    def encode_optional(input: Optional[Input]) -> Optional[Json]:
+        if input is None:
+            return None
+        return _JsonEncode.encode(input)
+
     def encode_list(input: List[Input]) -> List[Json]:
         return list(map(lambda x: _JsonEncode.encode(x), input))
 
