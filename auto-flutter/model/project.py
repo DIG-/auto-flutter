@@ -1,3 +1,4 @@
+from pickle import GLOBAL
 from typing import Any, Dict, List, Optional
 from ..model.platform import Platform as mPlatform
 from ..model.build_config import BuildConfigFlavored
@@ -12,6 +13,9 @@ class Project(Serializable["Project"]):
     BuildConfig = BuildConfigFlavored
     Platform = mPlatform
     Flavor = mFlavor
+
+    # Will be filled in `ProjectRead` task
+    current: "Project" = None
 
     def __init__(
         self,
