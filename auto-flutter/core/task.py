@@ -40,16 +40,23 @@ class TaskResult:
 
 
 class Task(metaclass=ABCMeta):
-    identity: TaskIdentity = None
+    ## Start - Alias to reduce import
+    ID = TaskId
+    Args = Args
+    Result = TaskResult
+    Identity = TaskIdentity
+    ## End - alias
 
-    def require(self) -> List[TaskId]:
+    identity: Identity = None
+
+    def require(self) -> List[Task.ID]:
         return []
 
-    def describe(self, args: Args) -> str:
+    def describe(self, args: Task.Args) -> str:
         return self.identity.name
 
     @abstractclassmethod
-    def execute(self, args: Args) -> TaskResult:
+    def execute(self, args: Task.Args) -> Task.Result:
         # Return None when fail
         # Otherwise return given Args with extra args
         raise NotImplementedError
