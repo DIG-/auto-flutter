@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from ..model.build_type import BuildType
 from ..model._serializable import Serializable
 from ..model.flavor import Flavor
-from ..core.utils import _JsonUtil
+from ..core.json import _JsonEncode, _JsonDecode
 
 
 class BuildRunBefore(Enum):
@@ -12,14 +12,14 @@ class BuildRunBefore(Enum):
 
 class TaskIdList(list[str], Serializable["TaskIdList"]):
     def to_json(self) -> Serializable.Json:
-        return _JsonUtil.list_to_json(self)
+        return _JsonEncode.encode_list(self)
 
     def from_json(json: Serializable.Json) -> Optional["TaskIdList"]:
         if json is None:
             return None
         if not isinstance(json, List):
             return None
-        return _JsonUtil.json_to_list(json, str)
+        return _JsonDecode.decode_list(json, str)
 
 
 class BuildConfig(Serializable["BuildConfig"]):
@@ -58,9 +58,9 @@ class BuildConfig(Serializable["BuildConfig"]):
         extras = self.extras
         output = {
             "build-param": self.build_param,
-            "run-before": _JsonUtil.optional_to_json(self.run_before),
-            "output": _JsonUtil.optional_to_json(self.output),
-            "outputs": _JsonUtil.optional_to_json(self.outputs),
+            "run-before": _JsonEncode.encode_optional(self.run_before),
+            "output": _JsonEncode.encode_optional(self.output),
+            "outputs": _JsonEncode.encode_optional(self.outputs),
         }
         if extras is None:
             return output
@@ -76,14 +76,14 @@ class BuildConfig(Serializable["BuildConfig"]):
             if key == "build-param" and isinstance(value, str):
                 output.build_param = value
             elif key == "run-before" and isinstance(value, Dict):
-                output.run_before = _JsonUtil.json_to_dict(
+                output.run_before = _JsonDecode.decode_optional_dict(
                     value, BuildRunBefore, TaskIdList
                 )
                 pass
             elif key == "output" and isinstance(value, str):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
-                output.outputs = _JsonUtil.json_to_dict(value, BuildType, str)
+                output.outputs = _JsonDecode.decode_optional_dict(value, BuildType, str)
                 pass
             elif isinstance(value, str):
                 if output.extras is None:
@@ -154,7 +154,7 @@ class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
     def to_json(self) -> Serializable.Json:
         parent = super().to_json()
         if not self.flavored is None:
-            flavored = {"flavored": _JsonUtil.map_to_json(self.flavored)}
+            flavored = {"flavored": _JsonEncode.encode(self.flavored)}
             return {**parent, **flavored}
         return parent
 
@@ -169,7 +169,7 @@ class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
             output.extras = other.extras
         if isinstance(json, Dict):
             if "flavored" in json:
-                output.flavored = _JsonUtil.json_to_dict(
+                output.flavored = _JsonDecode.decode_optional_dict(
                     json["flavored"], Flavor, BuildConfig
                 )
         return output
