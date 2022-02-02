@@ -5,7 +5,6 @@ from .core.logger import log
 from .model.config import Config
 from .task._list import task_list
 from .core.task_manager import TaskManager
-from .task.help import Help
 
 # Enable color support on windows
 if platform_system() == "Windows":
@@ -13,20 +12,23 @@ if platform_system() == "Windows":
 
     init()
 
+manager = TaskManager.instance()
+
 if len(sys.argv) <= 1:
-    log.error("Auto-Flutter requires at least one task")
+    print(colored("Auto-Flutter requires at least one task\n", "red"))
+    manager.add_id("help")
+    manager.execute()
     exit(1)
 
 log.debug("Loading config")
 if not Config.instance().load():
-    log.error("Failed to read config file")
-    exit(2)
+    print(colored("Failed to read config. Assume default", "yellow"))
+    print("Use task " + colored("setup", "magenta") + " to configure you environment\n")
 
 taskname = sys.argv[1]
-manager = TaskManager.instance()
 if taskname.startswith("-"):
-    log.error('Unknown task "{}"'.format(taskname))
-    manager.add(Help())
+    print(colored("Unknown task ", "red") + colored(taskname, "magenta") + "\n")
+    manager.add_id("help")
     manager.execute()
     exit(3)
 

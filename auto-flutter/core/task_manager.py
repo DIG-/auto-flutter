@@ -1,4 +1,5 @@
 from typing import Deque
+from termcolor import colored
 from ..core.logger import log
 from ..core.task import Task
 from ..core.arguments import Args
@@ -23,6 +24,12 @@ class TaskManager:
             task = Help(task_list)
         self._task_stack = TaskResolver.resolve(task)
 
+    def add_id(self, task_id: Task.ID):
+        identity = TaskResolver.find_task(task_id)
+        if identity is None:
+            raise LookupError("Task " + colored(task_id, "magenta") + " not found")
+        self.add(identity.creator())
+
     def execute(self) -> bool:
         args = Args()
         self._task_stack.append(ParseOptions(self._task_stack))
@@ -34,9 +41,9 @@ class TaskManager:
             output = current.execute(args)
             if not output.error is None:
                 if output.success:
-                    log.warning(str(output.error))
+                    print(colored(str(output.error), "yellow"))
                 else:
-                    log.error(str(output.error))
+                    print(colored(str(output.error), "red"))
             if not output.success:
                 print("Task failed")
                 return False
