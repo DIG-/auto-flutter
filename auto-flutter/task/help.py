@@ -3,7 +3,8 @@ from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
 from ..task._resolver import TaskResolver
 from sys import argv as sys_argv
-from typing import Dict, List, Optional
+from typing import Dict, List
+from ..task.project_read import ProjectRead
 
 
 class Help(Task):
@@ -20,6 +21,9 @@ class Help(Task):
 
     def describe(self, args: Args) -> str:
         return "Showing help page"
+
+    def require(self) -> List[Task.ID]:
+        return [ProjectRead.identity_skip.id]
 
     def execute(self, args: Args) -> TaskResult:
         self.show_header()
