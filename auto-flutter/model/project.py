@@ -35,4 +35,24 @@ class Project(Serializable["Project"]):
         }
 
     def from_json(json: Serializable.Json) -> Optional["Project"]:
-        return None
+        if not isinstance(json, Dict):
+            return None
+        name: Optional[str] = None
+        platforms: Optional[List[mPlatform]] = None
+        flavors: Optional[List[mFlavor]] = None
+        build_config: Optional[Dict[mPlatform, BuildConfigFlavored]]
+        for key, value in json.items():
+            if not isinstance(key, str):
+                continue
+            if key == "name":
+                name = _JsonDecode.decode(value, str)
+            elif key == "platforms":
+                platforms = _JsonDecode.decode_list(value, mPlatform)
+            elif key == "flavors":
+                flavors = _JsonDecode.decode_list(value, mFlavor)
+            elif key == "build-config":
+                build_config = _JsonDecode.decode_dict(
+                    value, mPlatform, BuildConfigFlavored
+                )
+
+        return Project(name, platforms, flavors, build_config)
