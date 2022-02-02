@@ -45,7 +45,18 @@ class _JsonEncode(metaclass=ABCMeta):
             return output
         raise ValueError('Can not accept "{}" as dictionary key'.format(output))
 
-    pass
+    C = TypeVar("C", Dict, List)
+
+    def clear_nones(input: C) -> C:
+        if isinstance(input, List):
+            return [_JsonEncode.clear_nones(x) for x in input if x is not None]
+        elif isinstance(input, Dict):
+            return {
+                key: _JsonEncode.clear_nones(val)
+                for key, val in input.items()
+                if val is not None
+            }
+        return input
 
 
 class _JsonDecode(metaclass=ABCMeta):
