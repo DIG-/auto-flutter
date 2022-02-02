@@ -23,7 +23,7 @@ if not Config.instance().load():
     exit(2)
 
 taskname = sys.argv[1]
-manager = TaskManager()
+manager = TaskManager.instance()
 if taskname.startswith("-"):
     log.error('Unknown task "{}"'.format(taskname))
     manager.add(Help())

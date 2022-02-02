@@ -9,6 +9,13 @@ from ..task.parse_options import ParseOptions
 
 
 class TaskManager:
+    __instance: "TaskManager" = None
+
+    def instance() -> "TaskManager":
+        if TaskManager.__instance is None:
+            TaskManager.__instance = TaskManager()
+        return TaskManager.__instance
+
     _task_stack: Deque[Task]
 
     def add(self, task: Task):
