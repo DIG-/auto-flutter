@@ -1,10 +1,17 @@
-from pprint import pprint
 import sys
+from platform import system as platform_system
+from termcolor import colored
 from .core.logger import log
 from .model.config import Config
 from .task._list import task_list
 from .core.task_manager import TaskManager
 from .task.help import Help
+
+# Enable color support on windows
+if platform_system() == "Windows":
+    from colorama import init
+
+    init()
 
 if len(sys.argv) <= 1:
     log.error("Auto-Flutter requires at least one task")
