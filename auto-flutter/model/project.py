@@ -3,6 +3,7 @@ from ..model.platform import Platform as mPlatform
 from ..model.build_config import BuildConfigFlavored
 from ..model.flavor import Flavor as mFlavor
 from ..model._serializable import Serializable
+from ..model.custom_task import CustomTask
 from ..core.json import _JsonEncode, _JsonDecode
 
 
@@ -17,13 +18,14 @@ class Project(Serializable["Project"]):
         platforms: List[mPlatform],
         flavors: Optional[List[mFlavor]],
         build_config: Dict[mPlatform, BuildConfigFlavored],
+        tasks: Optional[List[CustomTask]] = None,
     ) -> None:
         super().__init__()
         self.name: str = name
         self.platforms: List[mPlatform] = platforms
         self.flavors: Optional[List[mFlavor]] = flavors
         self.build_config: Dict[mPlatform, BuildConfigFlavored] = build_config
-        self.tasks: Optional[List[Any]] = None
+        self.tasks: Optional[List[CustomTask]] = tasks
 
     def to_json(self) -> Serializable.Json:
         return {
@@ -41,6 +43,7 @@ class Project(Serializable["Project"]):
         platforms: Optional[List[mPlatform]] = None
         flavors: Optional[List[mFlavor]] = None
         build_config: Optional[Dict[mPlatform, BuildConfigFlavored]]
+        tasks: Optional[List[CustomTask]] = None
         for key, value in json.items():
             if not isinstance(key, str):
                 continue
@@ -54,5 +57,7 @@ class Project(Serializable["Project"]):
                 build_config = _JsonDecode.decode_dict(
                     value, mPlatform, BuildConfigFlavored
                 )
+            elif key == "tasks":
+                tasks = _JsonDecode.decode_list(value, CustomTask)
 
-        return Project(name, platforms, flavors, build_config)
+        return Project(name, platforms, flavors, build_config, tasks)
