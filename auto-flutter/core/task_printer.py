@@ -52,7 +52,6 @@ class TaskPrinter:
 
     def __run(self):
         current_task: str = ""
-        print("")
         while True:
             self.__stop_mutex.acquire()
             if self.__stop:
