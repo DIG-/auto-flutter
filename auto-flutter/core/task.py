@@ -26,17 +26,18 @@ class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], Any]]):
         return (self.id, self)
 
 
-class TaskResult:
-    args: Args
-    error: Optional[BaseException]
-    success: bool
+class TaskResult(Tuple[Args, Optional[BaseException], bool]):
+    def __new__(
+        cls: type[TaskResult],
+        args: Args,
+        error: Optional[BaseException] = None,
+        success: bool = True,
+    ) -> TaskResult:
+        return super().__new__(TaskResult, (args, error, success))
 
-    def __init__(
-        self, args: Args, error: Optional[BaseException] = None, success: bool = True
-    ) -> None:
-        self.args = args
-        self.error = error
-        self.success = success
+    args: Args = property(itemgetter(0))
+    error: Optional[BaseException] = property(itemgetter(1))
+    success: bool = property(itemgetter(2))
 
 
 class Task(metaclass=ABCMeta):
