@@ -6,6 +6,7 @@ from ..task.setup import Setup, SetupEdit
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from ..task.project_read import ProjectRead
+from ..task.flutter import Flutter, FlutterDoctor
 
 
 task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
@@ -17,6 +18,8 @@ task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
             ParseOptions.identity.to_map(),
             ProjectRead.identity.to_map(),
             ProjectRead.identity_skip.to_map(),
+            Flutter.identity.to_map(),
+            FlutterDoctor.to_map(),
         ]
     )
 )
