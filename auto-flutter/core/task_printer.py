@@ -81,6 +81,8 @@ class TaskPrinter:
                             print("")
                         else:
                             print("\n" + colored(str(message.result.error), "red"))
+                    if not message.result.message is None:
+                        print(message.result.message)
 
                 elif not message.description is None:
                     current_task = message.description
