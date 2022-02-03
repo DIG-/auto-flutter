@@ -69,12 +69,10 @@ class TaskPrinter:
                             TaskPrinter.__print_description(current_task, success=True)
                             current_task = ""
                             print("")
-                            continue
                         else:
                             TaskPrinter.__print_description(current_task, warning=True)
                             current_task = ""
                             print("\n" + colored(str(message.result.error), "yellow"))
-                            continue
                     else:
                         TaskPrinter.__print_description(current_task, failure=True)
                         if message.result.error is None:
@@ -87,13 +85,11 @@ class TaskPrinter:
                 elif not message.description is None:
                     current_task = message.description
                     TaskPrinter.__print_description(current_task)
-                    continue
 
                 elif not message.message is None:
                     TaskPrinter.__clear_line(current_task)
                     print(message.message)
                     TaskPrinter.__print_description(current_task)
-                    continue
 
             TaskPrinter.__print_description(current_task)
             sleep(0.1)
