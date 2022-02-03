@@ -52,9 +52,9 @@ class Help(Task):
         ).append(" [options]\n", SB.Color.MAGENTA)
 
     def show_task_options(self, task: TaskIdentity, builder: SB):
-        builder.append("Task:\t").append(task.id, SB.Color.CYAN, True, end="\n").append(
-            task.name
-        )
+        builder.append("\nTask:\t").append(
+            task.id, SB.Color.CYAN, True, end="\n"
+        ).append(task.name, end="\n")
         options_mapped = map(
             lambda task: task.identity.options, TaskResolver.resolve(task.creator())
         )
@@ -80,7 +80,7 @@ class Help(Task):
 
                 if length < 20:
                     builder.append(" " * (20 - length))
-                builder.append("\t").append(option.description,end="\n")
+                builder.append("\t").append(option.description, end="\n")
 
     def show_task_name(self, task: TaskIdentity, builder: SB):
         builder.append("  ").append(task.id, SB.Color.CYAN, True)
