@@ -37,7 +37,11 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
         _Ensure.type(long, str, "long")
         _Ensure.type(description, str, "description")
         _Ensure.type(value, bool, "value")
-        if (short is None or len(short) == 0) and (long is None or len(long) == 0):
+        if (
+            cls is Option
+            and (short is None or len(short) == 0)
+            and (long is None or len(long) == 0)
+        ):
             raise ValueError("Require at least short or long option")
         return super().__new__(Option, (short, long, description, value))
 
@@ -59,3 +63,16 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
         if self.has_value:
             return self.long + "="
         return self.long
+
+
+class OptionAll(Option):
+    def __new__(cls: type[OptionAll], description: Optional[str] = None) -> OptionAll:
+        return super().__new__(
+            cls,
+            None,
+            None,
+            "This task does not parse options, it bypass directly to command"
+            if description is None
+            else description,
+            False,
+        )
