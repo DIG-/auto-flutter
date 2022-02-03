@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, List, Optional, Tuple
 from .process import Process
 from subprocess import Popen, PIPE, STDOUT
@@ -11,6 +12,11 @@ class _SubProcess(Process):
     __DEFAULT_DECODER: Optional[IncrementalDecoder] = None
 
     def run(self):
+        if self._executable.is_absolute():
+            if not Path(self._executable).exists():
+                raise FileNotFoundError(
+                    0, "Executable `{}` not found".format(self._executable)
+                )
         output = SB()
         with Popen(
             [self._executable] + self._arguments,
