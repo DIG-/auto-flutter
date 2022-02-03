@@ -65,35 +65,40 @@ class TaskPrinter:
                 while not self.messages.empty():
                     message = self.messages.get()
                     if not message.result is None:
-                        if message.result.success:
-                            if message.result.error is None:
-                                TaskPrinter.__print_description(
-                                    current_task, success=True
-                                )
-                                current_task = ""
-                                print("")
+                        if current_task != "":
+                            if message.result.success:
+                                if message.result.error is None:
+                                    TaskPrinter.__print_description(
+                                        current_task, success=True
+                                    )
+                                    current_task = ""
+                                    print("")
+                                else:
+                                    TaskPrinter.__print_description(
+                                        current_task, warning=True
+                                    )
+                                    current_task = ""
+                                    print(
+                                        SB()
+                                        .append("\n")
+                                        .append(
+                                            str(message.result.error), SB.Color.YELLOW
+                                        )
+                                        .str()
+                                    )
                             else:
                                 TaskPrinter.__print_description(
-                                    current_task, warning=True
+                                    current_task, failure=True
                                 )
-                                current_task = ""
-                                print(
-                                    SB()
-                                    .append("\n")
-                                    .append(str(message.result.error), SB.Color.YELLOW)
-                                    .str()
-                                )
-                        else:
-                            TaskPrinter.__print_description(current_task, failure=True)
-                            if message.result.error is None:
-                                print("")
-                            else:
-                                print(
-                                    SB()
-                                    .append("\n")
-                                    .append(str(message.result.error), SB.Color.RED)
-                                    .str()
-                                )
+                                if message.result.error is None:
+                                    print("")
+                                else:
+                                    print(
+                                        SB()
+                                        .append("\n")
+                                        .append(str(message.result.error), SB.Color.RED)
+                                        .str()
+                                    )
                         if not message.result.message is None:
                             print(message.result.message, end="")
 
