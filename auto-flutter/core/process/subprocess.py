@@ -36,6 +36,10 @@ class _SubProcess(Process):
                     break
             self._write_output("\n")
             self.output = output.str()
+            if self.exit_code == 127:
+                raise FileNotFoundError(
+                    0, "Command `{}` not found".format(self._executable)
+                )
 
     def __get_default_decoder() -> IncrementalDecoder:
         if _SubProcess.__DEFAULT_DECODER is None:
