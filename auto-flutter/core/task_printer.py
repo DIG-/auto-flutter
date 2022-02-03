@@ -61,38 +61,45 @@ class TaskPrinter:
             else:
                 self.__stop_mutex.release()
 
-            while not self.messages.empty():
-                message = self.messages.get()
-                if not message.result is None:
-                    if message.result.success:
-                        if message.result.error is None:
-                            TaskPrinter.__print_description(current_task, success=True)
-                            current_task = ""
-                            print("")
+            if not self.messages.empty():
+                while not self.messages.empty():
+                    message = self.messages.get()
+                    if not message.result is None:
+                        if message.result.success:
+                            if message.result.error is None:
+                                TaskPrinter.__print_description(
+                                    current_task, success=True
+                                )
+                                current_task = ""
+                                print("")
+                            else:
+                                TaskPrinter.__print_description(
+                                    current_task, warning=True
+                                )
+                                current_task = ""
+                                print(
+                                    "\n" + colored(str(message.result.error), "yellow")
+                                )
                         else:
-                            TaskPrinter.__print_description(current_task, warning=True)
-                            current_task = ""
-                            print("\n" + colored(str(message.result.error), "yellow"))
-                    else:
-                        TaskPrinter.__print_description(current_task, failure=True)
-                        if message.result.error is None:
-                            print("")
-                        else:
-                            print("\n" + colored(str(message.result.error), "red"))
-                    if not message.result.message is None:
-                        print(message.result.message)
+                            TaskPrinter.__print_description(current_task, failure=True)
+                            if message.result.error is None:
+                                print("")
+                            else:
+                                print("\n" + colored(str(message.result.error), "red"))
+                        if not message.result.message is None:
+                            print(message.result.message, end="")
 
-                elif not message.description is None:
-                    current_task = message.description
-                    TaskPrinter.__print_description(current_task)
+                    elif not message.description is None:
+                        current_task = message.description
+                        TaskPrinter.__print_description(current_task)
 
-                elif not message.message is None:
-                    TaskPrinter.__clear_line(current_task)
-                    print(message.message)
-                    TaskPrinter.__print_description(current_task)
-
-            TaskPrinter.__print_description(current_task)
-            sleep(0.1)
+                    elif not message.message is None:
+                        TaskPrinter.__clear_line(current_task)
+                        print(message.message)
+                        TaskPrinter.__print_description(current_task)
+            else:
+                TaskPrinter.__print_description(current_task)
+                sleep(0.1)
 
     def __clear_line(description: str):
         print("\r" + (" " * (len(description) + 8)), end="\r")

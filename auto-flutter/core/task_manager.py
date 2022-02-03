@@ -1,8 +1,10 @@
 from typing import Deque
 from termcolor import colored
-from ..core.task import Task
+from traceback import TracebackException
+from ..core.task import Task, TaskResult
 from ..core.arguments import Args
 from ..core.task_printer import TaskPrinter
+from ..core.string_builder import SB
 from ..task._list import task_list
 from ..task._resolver import TaskResolver
 from ..task.help import Help
@@ -44,7 +46,14 @@ class TaskManager:
             describe = current.describe(args)
             if (not describe is None) and len(describe) != 0:
                 self._printer.set_task_description(describe)
-            output = current.execute(args)
+            try:
+                output = current.execute(args)
+            except BaseException as error:
+                message = SB().append(
+                    "".join(TracebackException.from_exception(error).format()),
+                    SB.Color.RED,
+                ).str()
+                output = TaskResult(args, error, message, success=False)
             self._printer.set_result(output)
             if not output.success:
                 self._printer.stop()
