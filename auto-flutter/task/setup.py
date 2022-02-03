@@ -1,3 +1,4 @@
+from email import message
 from math import fabs
 from pathlib import Path, PurePath
 from pprint import pprint
@@ -112,11 +113,10 @@ class Setup(Task):
 
     def execute(self, args: Args) -> TaskResult:
         if "show" in args:
-            pprint(Config.instance())
-            return TaskResult(args)
+            return TaskResult(args, message=str(Config.instance()))
 
         try:
             Config.instance().save()
         except BaseException as error:
-            return TaskResult(args, error, False)
+            return TaskResult(args, error, success=False)
         return TaskResult(args)
