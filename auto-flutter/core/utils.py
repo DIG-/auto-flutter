@@ -5,6 +5,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Type,
     TypeVar,
 )
 
@@ -42,3 +43,15 @@ class _Ensure(metaclass=ABCMeta):
             else:
                 raise AssertionError("Field `{}` require valid value".format(name))
         return input
+
+    def type(input: Optional[T], cls: Type[T], name: Optional[str] = None):
+        if input is None:
+            return
+        if isinstance(input, cls):
+            return
+        if name is None:
+            raise AssertionError("Field must be instance of `{}`".format(cls.__name__))
+        else:
+            raise AssertionError(
+                "Field `{}` must be instance of `{}`".format(name, cls.__name__)
+            )
