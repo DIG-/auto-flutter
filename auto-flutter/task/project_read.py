@@ -40,4 +40,4 @@ class ProjectRead(Task):
         return Task.Result(args)
 
     def __return_error(self, args: Task.Args, error: BaseException) -> Task.Result:
-        return Task.Result(args, error, self.warn_if_fail)
+        return Task.Result(args, error, success=self.warn_if_fail)
