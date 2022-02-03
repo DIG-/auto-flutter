@@ -36,12 +36,17 @@ class TaskResult(Tuple[Args, Optional[BaseException], Optional[str], bool]):
         args: Args,
         error: Optional[BaseException] = None,
         message: Optional[str] = None,
-        success: bool = True,
+        success: Optional[bool] = None,
     ) -> TaskResult:
         _Ensure.type(args, Args, "args")
         _Ensure.type(error, BaseException, "error")
         _Ensure.type(message, str, "message")
         _Ensure.type(success, bool, "success")
+        if success is None:
+            if error is None:
+                success = True
+            else:
+                success = False
         return super().__new__(TaskResult, (args, error, message, success))
 
     args: Args = property(itemgetter(0))
