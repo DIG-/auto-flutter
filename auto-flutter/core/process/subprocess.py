@@ -1,6 +1,6 @@
-from typing import List, Optional
 from .process import Process
-from subprocess import run, Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT
+from encodings import utf_8
 from ..string_builder import SB
 
 
@@ -13,14 +13,15 @@ class _SubProcess(Process):
             text=True,
             stdout=PIPE,
             stderr=STDOUT,
+            encoding=utf_8.getregentry().name,
         ) as p:
             while True:
-                buffer = p.stdout.read(1024)
+                buffer = p.stdout.read(1)
                 output.append(buffer)
-                self.__write_output(buffer)
+                self._write_output(buffer)
                 code = p.poll()
                 if not code is None:
                     self.exit_code = code
                     break
-            self.__write_output("\n")
+            self._write_output("\n")
             self.output = output.str()
