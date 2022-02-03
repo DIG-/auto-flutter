@@ -4,8 +4,8 @@ from queue import Queue
 from threading import Thread, Lock
 from time import sleep, time
 from typing import Optional, Tuple
-from termcolor import colored
 from ..core.task import Task
+from ..core.string_builder import SB
 
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
@@ -78,14 +78,22 @@ class TaskPrinter:
                                 )
                                 current_task = ""
                                 print(
-                                    "\n" + colored(str(message.result.error), "yellow")
+                                    SB()
+                                    .append("\n")
+                                    .append(str(message.result.error), SB.Color.YELLOW)
+                                    .str()
                                 )
                         else:
                             TaskPrinter.__print_description(current_task, failure=True)
                             if message.result.error is None:
                                 print("")
                             else:
-                                print("\n" + colored(str(message.result.error), "red"))
+                                print(
+                                    SB()
+                                    .append("\n")
+                                    .append(str(message.result.error), SB.Color.RED)
+                                    .str()
+                                )
                         if not message.result.message is None:
                             print(message.result.message, end="")
 
@@ -112,13 +120,16 @@ class TaskPrinter:
     ):
         if description is None or len(description) == 0:
             return
-        icon: str
+        builder = SB()
+        builder.append("\r")
         if success:
-            icon = "✔️"
+            builder.append("[√] ", SB.Color.GREEN, True)
         elif failure:
-            icon = "❌"
+            builder.append("[X] ", SB.Color.RED, True)
         elif warning:
-            icon = "⚠️"
+            builder.append("[!] ", SB.Color.YELLOW, True)
         else:
             icon = TaskPrinter.__COUNTER[int(time() * 10) % TaskPrinter.__COUNTER_LEN]
-        print("\r[" + icon + "] " + description, end="")
+            builder.append("[" + icon + "] ", SB.Color.DEFAULT, True)
+
+        print(builder.append(description).str(), end="")
