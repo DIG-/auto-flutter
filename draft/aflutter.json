@@ -12,7 +12,7 @@
     "build-config": {
         "_default": {
             "build-param": "--dart-define=flavor=${arg:flavor}",
-            "run-berfore": {
+            "run-before": {
                 "build": [
                     "generate-forced",
                     "task-id"
