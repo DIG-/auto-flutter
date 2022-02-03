@@ -100,10 +100,10 @@ class _IncrementalDecoderMultiple(IncrementalDecoder):
         for decoder in self._decoders:
             decoder.reset()
 
-    def getstate(self) -> tuple[bytes, int]:
+    def getstate(self) -> Tuple[bytes, int]:
         return self._decoders[0].getstate()  # Why not?.......
 
-    def setstate(self, state: tuple[bytes, int]) -> None:
+    def setstate(self, state: Tuple[bytes, int]) -> None:
         for decoder in self._decoders:
             decoder.setstate(state)
 
@@ -135,8 +135,8 @@ class _IncrementalDecoderStopOnFailure(IncrementalDecoder):
         self._out_buffer = ""
         self._decoder.reset()
 
-    def getstate(self) -> tuple[bytes, int]:
+    def getstate(self) -> Tuple[bytes, int]:
         return self._decoder.getstate()
 
-    def setstate(self, state: tuple[bytes, int]) -> None:
+    def setstate(self, state: Tuple[bytes, int]) -> None:
         return self._decoder.setstate(state)
