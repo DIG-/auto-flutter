@@ -8,6 +8,9 @@ from ..model.task_id import TaskId
 
 
 class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], Any]]):
+    ## Start - Alias to reduce import
+    Option = Option
+    ## End - Alias
     def __new__(
         cls: type[TaskIdentity],
         id: TaskId,
