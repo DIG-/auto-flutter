@@ -1,7 +1,6 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from typing import Callable, List, Optional
-from .subprocess import _SubProcess
 from ..os import OS
 from ..utils import _Ensure
 
@@ -12,6 +11,8 @@ class Process(metaclass=ABCMeta):
         arguments: Optional[List[str]] = None,
         writer: Optional[Callable[[str], None]] = None,
     ) -> Process:
+        from .subprocess import _SubProcess
+
         return _SubProcess(executable, arguments, writer)
 
     def __init__(
