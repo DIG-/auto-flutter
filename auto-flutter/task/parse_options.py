@@ -2,7 +2,7 @@ from getopt import GetoptError, getopt
 from typing import List, Optional
 from sys import argv as sys_argv
 from ..core.task import Task, TaskIdentity, TaskResult
-from ..core.arguments import Arg, Args, Option
+from ..core.arguments import Arg, Args, Option, OptionAll
 from ..core.utils import _Iterable
 
 
@@ -16,8 +16,19 @@ class ParseOptions(Task):
         self._options: List[Option] = []
         for task in tasks:
             self._options.extend(task.identity.options)
+        self._skip: bool = (
+            not _Iterable.first_or_none(
+                self._options, lambda x: isinstance(x, OptionAll)
+            )
+            is None
+        )
 
     def execute(self, args: Args) -> TaskResult:
+        if self._skip:
+            for arg in sys_argv[2:]:
+                args.add(Arg(arg, None))
+            return Task.Result(args)
+
         short = ""
         long: List[str] = []
         for option in self._options:
@@ -55,3 +66,6 @@ class ParseOptions(Task):
             args.add(Arg(value, None))
 
         return TaskResult(args)
+
+    def _bypass_parse(self, args: Args) -> TaskResult:
+        pass
