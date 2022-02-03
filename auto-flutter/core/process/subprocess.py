@@ -51,18 +51,17 @@ class _SubProcess(Process):
             return getincrementaldecoder("utf-8")()
         multiple = _IncrementalDecoderMultiple()
         multiple.add(getincrementaldecoder("utf-8")())
-        from winreg import QueryValue, OpenKey, CloseKey, HKEY_LOCAL_MACHINE, REG_SZ
+        from winreg import QueryValueEx, OpenKey, CloseKey, HKEY_LOCAL_MACHINE, REG_SZ
 
         try:  # Get windows default charset for console
             key = OpenKey(
                 HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage"
             )
-            read: Tuple[Any, int] = QueryValue(key, "OEMCP")
+            read: Tuple[Any, int] = QueryValueEx(key, "OEMCP")
             CloseKey(key)
             if read[1] == REG_SZ and isinstance(read[0], str):
                 multiple.add(getincrementaldecoder("cp" + read[0])())
         except:
-            log.error("asdasdasdas")
             try:
                 multiple.add(getincrementaldecoder("cp850")())
             except:
