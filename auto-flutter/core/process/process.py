@@ -44,6 +44,13 @@ class Process(metaclass=ABCMeta):
             else:
                 self.__writer_buffer = self.__writer_buffer[index + 1]
 
+    def try_run(self) -> Union[bool, BaseException]:
+        try:
+            self.run()
+        except BaseException as error:
+            return error
+        return self.exit_code == 0
+
     @abstractmethod
     def run(self):
         raise NotImplementedError("This method must be implemented")
