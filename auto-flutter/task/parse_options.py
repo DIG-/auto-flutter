@@ -28,7 +28,7 @@ class ParseOptions(Task):
         try:
             opts, positional = getopt(sys_argv[2:], short, long)
         except GetoptError as error:
-            return TaskResult(args, error, False)
+            return TaskResult(args, error, success=False)
 
         for opt, value in opts:
             opt_strip = opt.lstrip("-")
