@@ -8,9 +8,23 @@ from .core.string_builder import SB
 
 # Enable color support on windows
 if platform_system() == "Windows":
-    from colorama import init
+    is_cp1252 = sys.stdout.encoding == "cp1252"
+    # Bash from GIT does not use UTF-8 as default and colorama has conflit with them
+    if is_cp1252:
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+            sys.stderr.reconfigure(encoding="utf-8")
+            sys.stdin.reconfigure(encoding="utf-8")
+        except AttributeError:
+            from codecs import getwriter, getreader
 
-    init()
+            sys.stdout = getwriter("utf-8")(sys.stdout.detach())
+            sys.stderr = getwriter("utf-8")(sys.stderr.detach())
+            sys.stdin = getreader("utf-8")(sys.stdin.detach())
+    else:
+        from colorama import init
+
+        init()
 
 manager = TaskManager.instance()
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from operator import itemgetter
 from queue import Queue
+import sys
 from threading import Thread, Lock
 from time import sleep, time
 from typing import Optional, Tuple
@@ -138,3 +139,4 @@ class TaskPrinter:
             builder.append("[" + icon + "] ", SB.Color.DEFAULT, True)
 
         print(builder.append(description).str(), end="")
+        sys.stdout.flush()
