@@ -43,7 +43,10 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
             and (long is None or len(long) == 0)
         ):
             raise ValueError("Require at least short or long option")
-        return super().__new__(Option, (short, long, description, value))
+        return super().__new__(
+            cls if issubclass(cls, Option) else Option,
+            (short, long, description, value),
+        )
 
     short: Optional[str] = property(itemgetter(0))
     long: Optional[str] = property(itemgetter(1))
@@ -68,7 +71,7 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
 class OptionAll(Option):
     def __new__(cls: type[OptionAll], description: Optional[str] = None) -> OptionAll:
         return super().__new__(
-            cls,
+            OptionAll,
             None,
             None,
             "This task does not parse options, it bypass directly to command"
