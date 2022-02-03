@@ -1,10 +1,9 @@
-from email import message
 from ..core.arguments import Option, Args
 from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
 from ..task._resolver import TaskResolver
 from sys import argv as sys_argv
-from typing import Dict, List
+from typing import Dict, List, Optional
 from ..task.project_read import ProjectRead
 from ..core.string_builder import SB
 
@@ -14,12 +13,11 @@ class Help(Task):
         "help",
         "Show help",
         [Option("t", "task", "Show help details about given task", True)],
-        lambda: Help(None),
+        lambda: Help(),
     )
 
-    def __init__(self, default: Dict[str, TaskIdentity]) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self._default = default
 
     def describe(self, args: Args) -> str:
         return "Showing help page"
@@ -31,27 +29,40 @@ class Help(Task):
         builder = SB()
         self.show_header(builder)
         if "task" in args:
-            task_id = args["task"].value
-            if (not task_id is None) and len(task_id) > 0:
-                identity = TaskResolver.find_task(task_id)
-                if not identity is None:
-                    self.show_task_options(identity, builder)
-                    return TaskResult(args, message=builder.str())
-                else:
-                    builder.append("Task ").append(task_id, SB.Color.CYAN, True).append(
-                        " not found\n"
-                    )
-        builder.append("Default tasks:\n")
-        for task in Help.reduce_indexed_task_into_list(self._default):
+            if self._show_help_for_task_id(builder, args["task"].value):
+                return TaskResult(args, message=builder.str())
+
+        builder.append("\nDefault tasks:\n")
+        from ..task._list import task_list, user_task
+        for task in Help.reduce_indexed_task_into_list(task_list):
             self.show_task_name(task, builder)
-        return TaskResult(args, message=builder.str())
+        
+        user_reduced = Help.reduce_indexed_task_into_list(user_task)
+        if len(user_reduced) <= 0:
+            return TaskResult(args, message=builder.str())
+        
+        builder.append("\nUser tasks:\n")
+        for task in user_reduced:
+            self.show_task_name(task, builder)
 
     def show_header(self, builder: SB):
         builder.append("Usage:\t").append(sys_argv[0]).append(
             " TASK", SB.Color.CYAN, True
         ).append(" [options]\n", SB.Color.MAGENTA)
 
-    def show_task_options(self, task: TaskIdentity, builder: SB):
+    def _show_help_for_task_id(self, builder: SB, id: Optional[str]) -> bool:
+        if id is None or len(id) <= 0:
+            return False
+        identity = TaskResolver.find_task(id)
+        if identity is None:
+            builder.append("Task ").append(id, SB.Color.CYAN, True).append(" not found\n")
+            return False
+        
+        self._show_task_options(identity, builder)
+        return True
+        
+
+    def _show_task_options(self, task: TaskIdentity, builder: SB):
         builder.append("\nTask:\t").append(
             task.id, SB.Color.CYAN, True, end="\n"
         ).append(task.name, end="\n")

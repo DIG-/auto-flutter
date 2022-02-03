@@ -1,13 +1,10 @@
 from typing import Deque
-from termcolor import colored
 from traceback import TracebackException
 from ..core.task import Task, TaskResult
 from ..core.arguments import Args
 from ..core.task_printer import TaskPrinter
 from ..core.string_builder import SB
-from ..task._list import task_list
 from ..task._resolver import TaskResolver
-from ..task.help import Help
 from ..task.parse_options import ParseOptions
 
 
@@ -24,14 +21,18 @@ class TaskManager:
         self._printer = TaskPrinter()
 
     def add(self, task: Task):
-        if type(task) is Help:
-            task = Help(task_list)
         self._task_stack = TaskResolver.resolve(task)
 
     def add_id(self, task_id: Task.ID):
         identity = TaskResolver.find_task(task_id)
         if identity is None:
-            raise LookupError("Task " + colored(task_id, "magenta") + " not found")
+            raise LookupError(
+                SB()
+                .append("Task ")
+                .append(task_id, SB.Color.CYAN, True)
+                .append(" not found")
+                .str()
+            )
         self.add(identity.creator())
 
     def print(self, message: str):
@@ -49,10 +50,14 @@ class TaskManager:
             try:
                 output = current.execute(args)
             except BaseException as error:
-                message = SB().append(
-                    "".join(TracebackException.from_exception(error).format()),
-                    SB.Color.RED,
-                ).str()
+                message = (
+                    SB()
+                    .append(
+                        "".join(TracebackException.from_exception(error).format()),
+                        SB.Color.RED,
+                    )
+                    .str()
+                )
                 output = TaskResult(args, error, message, success=False)
             self._printer.set_result(output)
             if not output.success:
