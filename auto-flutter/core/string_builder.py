@@ -28,9 +28,7 @@ class StringBuilder:
     ) -> StringBuilder:
         if color == StringBuilder.Color.DEFAULT and not bold:
             self.__content.append(string)
-            if end is None:
-                self.__content.append("\n")
-            else:
+            if not end is None:
                 self.__content.append(end)
         else:
             end = "" if end is None else end
