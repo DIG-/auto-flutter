@@ -2,10 +2,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Auto-Flutter",
+            "name": "aflutter",
             "type": "python",
             "request": "launch",
             "module": "auto-flutter"
+        },
+        {
+            "name": "aflutter doctor",
+            "type": "python",
+            "request": "launch",
+            "module": "auto-flutter",
+            "args": ["doctor"]
+        },
+        {
+            "name": "aflutter help",
+            "type": "python",
+            "request": "launch",
+            "module": "auto-flutter",
+            "args": ["help"]
+        },
+        {
+            "name": "temp",
+            "type": "python",
+            "request": "launch",
+            "module": "auto-flutter",
+            "args": ["doctor","-v"]
         }
     ]
 }
