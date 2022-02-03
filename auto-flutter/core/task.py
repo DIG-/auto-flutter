@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractclassmethod
 from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
 from ..core.arguments import Args, Option
+from ..core.utils import _Ensure
 from ..model.task_id import TaskId
 
 
@@ -14,6 +15,10 @@ class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], Any]]):
         options: List[Option],
         creator: Callable[[], Task],
     ) -> TaskIdentity:
+        _Ensure.type(id, TaskId, "id")
+        _Ensure.type(name, str, "name")
+        _Ensure.type(options, List, "options")
+        _Ensure.type(creator, Callable, "creator")
         return super().__new__(TaskIdentity, (id, name, options, creator))
 
     id: TaskId = property(itemgetter(0))
@@ -33,6 +38,10 @@ class TaskResult(Tuple[Args, Optional[BaseException], Optional[str], bool]):
         message: Optional[str] = None,
         success: bool = True,
     ) -> TaskResult:
+        _Ensure.type(args, Args, "args")
+        _Ensure.type(error, BaseException, "error")
+        _Ensure.type(message, str, "message")
+        _Ensure.type(success, bool, "success")
         return super().__new__(TaskResult, (args, error, message, success))
 
     args: Args = property(itemgetter(0))
