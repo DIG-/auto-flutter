@@ -62,7 +62,7 @@ class Help(Task):
         if len(options) == 0:
             builder.append("\nThis task does not have options")
         else:
-            builder.append("\nOptions:")
+            builder.append("\nOptions:\n")
             for option in options:
                 length = 0
                 if not option.short is None:
@@ -80,7 +80,7 @@ class Help(Task):
 
                 if length < 20:
                     builder.append(" " * (20 - length))
-                builder.append("\t").append(option.description)
+                builder.append("\t").append(option.description,end="\n")
 
     def show_task_name(self, task: TaskIdentity, builder: SB):
         builder.append("  ").append(task.id, SB.Color.CYAN, True)
