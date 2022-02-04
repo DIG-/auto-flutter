@@ -34,13 +34,14 @@ class Help(Task):
 
         builder.append("\nDefault tasks:\n")
         from ..task._list import task_list, user_task
+
         for task in Help.reduce_indexed_task_into_list(task_list):
             self.show_task_name(task, builder)
-        
+
         user_reduced = Help.reduce_indexed_task_into_list(user_task)
         if len(user_reduced) <= 0:
             return TaskResult(args, message=builder.str())
-        
+
         builder.append("\nUser tasks:\n")
         for task in user_reduced:
             self.show_task_name(task, builder)
@@ -53,14 +54,18 @@ class Help(Task):
     def _show_help_for_task_id(self, builder: SB, id: Optional[str]) -> bool:
         if id is None or len(id) <= 0:
             return False
-        identity = TaskResolver.find_task(id)
+        if id.startswith("-"):
+            identity = None
+        else:
+            identity = TaskResolver.find_task(id)
         if identity is None:
-            builder.append("Task ").append(id, SB.Color.CYAN, True).append(" not found\n")
+            builder.append("Task ").append(id, SB.Color.CYAN, True).append(
+                " not found\n"
+            )
             return False
-        
+
         self._show_task_options(identity, builder)
         return True
-        
 
     def _show_task_options(self, task: TaskIdentity, builder: SB):
         builder.append("\nTask:\t").append(
