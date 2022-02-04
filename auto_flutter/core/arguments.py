@@ -1,6 +1,7 @@
 from __future__ import annotations
+from itertools import chain
 from operator import itemgetter
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from ..core.utils import _Ensure
 
 
@@ -23,6 +24,10 @@ class Args(Dict[str, Arg]):
         if not arg.argument.startswith("-"):
             key = "-#-" + key
         self[key] = arg
+
+    def to_command_arg(self) -> List[str]:
+        mapped = map(lambda x: x[1], self.items())
+        return list(filter(None.__ne__, chain(*mapped)))
 
 
 class Option(Tuple[Optional[str], Optional[str], str, bool]):
