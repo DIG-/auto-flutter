@@ -1,13 +1,7 @@
 from __future__ import annotations
+
 from abc import ABCMeta
-from typing import (
-    Callable,
-    Iterable,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-)
+from typing import Callable, Dict, Iterable, List, Optional, Type, TypeVar
 
 
 class _Iterable(metaclass=ABCMeta):
@@ -31,6 +25,17 @@ class _Iterable(metaclass=ABCMeta):
 
     def flatten(iterable: Iterable[Iterable[T]]) -> List[T]:
         return [item for sublist in iterable for item in sublist]
+
+
+class _Dict(metaclass=ABCMeta):
+    K = TypeVar("K")
+    V = TypeVar("V")
+
+    def get_or_none(input: Dict[K, V], key: K) -> Optional[V]:
+        return None if not key in input else input[key]
+
+    def get_or_default(input: Dict[K, V], key: K, fallback: Callable[[], V]) -> V:
+        return fallback() if not key in input else input[key]
 
 
 class _Ensure(metaclass=ABCMeta):
