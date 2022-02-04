@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta
+import re
 from typing import Callable, Dict, Iterable, List, Optional, Type, TypeVar
 
 
@@ -36,6 +37,27 @@ class _Dict(metaclass=ABCMeta):
 
     def get_or_default(input: Dict[K, V], key: K, fallback: Callable[[], V]) -> V:
         return fallback() if not key in input else input[key]
+
+    def merge(a: Dict[K, V], b: Optional[Dict[K, V]]) -> Dict[K, V]:
+        if b is None:
+            return a
+        c = a.copy()
+        for k, v in b.items():
+            c[k] = v
+        return c
+
+    def merge_append(
+        a: Dict[K, List[V]], b: Optional[Dict[K, List[V]]]
+    ) -> Dict[K, List[V]]:
+        if b is None:
+            return a
+        c = a.copy()
+        for k, v in b.items():
+            if k in c:
+                c[k].extend(v)
+            else:
+                c[k] = v
+        return c
 
 
 class _Ensure(metaclass=ABCMeta):
