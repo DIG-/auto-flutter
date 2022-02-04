@@ -23,6 +23,7 @@ class _SubProcess(Process):
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
+            env=self._environment,
         ) as p:
             decoder: IncrementalDecoder = _SubProcess.__get_default_decoder()
             while True:
