@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional
 from ..core.utils import _Iterable
+from ..model.platform import Platform
 
 
 class BuildType(Enum):
@@ -16,6 +17,17 @@ class BuildType(Enum):
         if found is None:
             raise AttributeError("Can not find FlutterBuildType from BuildType")
         return found
+
+    def to_Platform(self) -> Platform:
+        if self == BuildType.AAR:
+            return Platform.ANDROID
+        if self == BuildType.APK:
+            return Platform.ANDROID
+        if self == BuildType.BUNDLE:
+            return Platform.ANDROID
+        if self == BuildType.IPA:
+            return Platform.IOS
+        raise AssertionError("{} es not associated with platform".format(self))
 
 
 class FlutterBuildType(Enum):
@@ -36,3 +48,14 @@ class FlutterBuildType(Enum):
         return _Iterable.first_or_none(
             FlutterBuildType.__iter__, lambda it: it.value == string
         )
+
+    def to_Platform(self) -> Platform:
+        if self == FlutterBuildType.AAR:
+            return Platform.ANDROID
+        if self == FlutterBuildType.APK:
+            return Platform.ANDROID
+        if self == FlutterBuildType.BUNDLE:
+            return Platform.ANDROID
+        if self == FlutterBuildType.IPA:
+            return Platform.IOS
+        raise AssertionError("{} es not associated with platform".format(self))
