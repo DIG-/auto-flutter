@@ -21,7 +21,7 @@ class TaskManager:
         self._printer = TaskPrinter()
 
     def add(self, task: Task):
-        self._task_stack = TaskResolver.resolve(task)
+        self._task_stack.extend(TaskResolver.resolve(task))
 
     def add_id(self, task_id: Task.ID):
         identity = TaskResolver.find_task(task_id)
