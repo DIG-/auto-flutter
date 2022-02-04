@@ -1,13 +1,14 @@
 from collections import OrderedDict
 from typing import Dict
-from ..model.task_id import TaskId
+
 from ..core.task import TaskIdentity
-from ..task.setup import Setup, SetupEdit
+from ..model.task_id import TaskId
+from ..task.build import FlutterBuild
+from ..task.flutter import Flutter, FlutterDoctor
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from ..task.project_read import ProjectRead
-from ..task.flutter import Flutter, FlutterDoctor
-
+from ..task.setup import Setup, SetupEdit
 
 task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
     dict(
@@ -20,6 +21,7 @@ task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
             ProjectRead.identity_skip.to_map(),
             Flutter.identity.to_map(),
             FlutterDoctor.to_map(),
+            FlutterBuild.identity.to_map(),
         ]
     )
 )
