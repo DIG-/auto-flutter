@@ -1,10 +1,11 @@
-from getopt import GetoptError, getopt
-from typing import List, Optional
+from getopt import GetoptError, gnu_getopt
 from sys import argv as sys_argv
-from ..core.task import Task, TaskIdentity, TaskResult
+from typing import List, Optional
+
 from ..core.arguments import Arg, Args, Option, OptionAll
-from ..core.utils import _Iterable
 from ..core.session import Session
+from ..core.task import Task, TaskIdentity, TaskResult
+from ..core.utils import _Iterable
 
 
 class ParseOptions(Task):
@@ -41,14 +42,14 @@ class ParseOptions(Task):
             return Task.Result(args)
 
         short = ""
-        long: List[str] = ["stack-trace"]
+        long: List[str] = ["aflutter-stack-trace"]
         for option in self._options:
             short += option.short_formatted()
             long_fmt = option.long_formatted()
             if not long_fmt is None:
                 long.append(long_fmt)
         try:
-            opts, positional = getopt(sys_argv[2:], short, long)
+            opts, positional = gnu_getopt(sys_argv[2:], short, long)
         except GetoptError as error:
             return TaskResult(args, error, success=False)
 
@@ -83,6 +84,3 @@ class ParseOptions(Task):
             args.pop("aflutter-stack-trace")
 
         return TaskResult(args)
-
-    def _bypass_parse(self, args: Args) -> TaskResult:
-        pass
