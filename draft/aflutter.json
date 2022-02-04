@@ -75,9 +75,8 @@
         {
             "id": "another-custom",
             "name": "More custom task",
-            "type": "chain",
+            "type": "exec",
             "content": {
-                "task": "exec",
                 "args": [
                     "pub",
                     "get"
