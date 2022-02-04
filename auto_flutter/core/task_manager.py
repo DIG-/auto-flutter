@@ -1,5 +1,4 @@
 from typing import Deque
-from traceback import TracebackException
 from ..core.task import Task, TaskResult
 from ..core.arguments import Args
 from ..core.task_printer import TaskPrinter
@@ -50,15 +49,7 @@ class TaskManager:
             try:
                 output = current.execute(args)
             except BaseException as error:
-                message = (
-                    SB()
-                    .append(
-                        "".join(TracebackException.from_exception(error).format()),
-                        SB.Color.RED,
-                    )
-                    .str()
-                )
-                output = TaskResult(args, error, message, success=False)
+                output = TaskResult(args, error, success=False)
             self._printer.set_result(output)
             if not output.success:
                 self._printer.stop()

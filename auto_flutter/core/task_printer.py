@@ -4,9 +4,11 @@ from queue import Queue
 import sys
 from threading import Thread, Lock
 from time import sleep, time
+from traceback import TracebackException
 from typing import Optional, Tuple
 from ..core.task import Task
 from ..core.string_builder import SB
+from ..core.session import Session
 
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
@@ -83,7 +85,8 @@ class TaskPrinter:
                                         SB()
                                         .append("\n")
                                         .append(
-                                            str(message.result.error), SB.Color.YELLOW
+                                            self.__format_error(message.result.error),
+                                            SB.Color.YELLOW,
                                         )
                                         .str()
                                     )
@@ -97,7 +100,10 @@ class TaskPrinter:
                                     print(
                                         SB()
                                         .append("\n")
-                                        .append(str(message.result.error), SB.Color.RED)
+                                        .append(
+                                            self.__format_error(message.result.error),
+                                            SB.Color.RED,
+                                        )
                                         .str()
                                     )
                         if not message.result.message is None:
@@ -140,3 +146,8 @@ class TaskPrinter:
 
         print(builder.append(description).str(), end="")
         sys.stdout.flush()
+
+    def __format_error(self, error: BaseException) -> str:
+        if not Session.show_stacktrace:
+            return str(error)
+        return "".join(TracebackException.from_exception(error).format())
