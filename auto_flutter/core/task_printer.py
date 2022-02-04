@@ -1,14 +1,16 @@
 from __future__ import annotations
+
+import sys
 from operator import itemgetter
 from queue import Queue
-import sys
-from threading import Thread, Lock
+from threading import Lock, Thread
 from time import sleep, time
 from traceback import TracebackException
 from typing import Optional, Tuple
-from ..core.task import Task
-from ..core.string_builder import SB
+
 from ..core.session import Session
+from ..core.string_builder import SB
+from ..core.task import Task
 
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
@@ -119,7 +121,7 @@ class TaskPrinter:
                         TaskPrinter.__print_description(current_task)
             else:
                 TaskPrinter.__print_description(current_task)
-                sleep(0.1)
+                sleep(0.008)
 
     def __clear_line(description: str):
         print("\r" + (" " * (len(description) + 8)), end="\r")
