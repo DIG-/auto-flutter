@@ -11,7 +11,11 @@ class ParseOptions(Task):
     identity = TaskIdentity(
         "-parse-options",
         "Parsing arguments",
-        [Task.Identity.Option(None, "stack-trace", "Show stacktrace of task output")],
+        [
+            Task.Identity.Option(
+                None, "afluter-stack-trace", "Show stacktrace of task output"
+            )
+        ],
         lambda: ParseOptions(),
     )
 
@@ -30,8 +34,9 @@ class ParseOptions(Task):
     def execute(self, args: Args) -> TaskResult:
         if self._skip:
             for arg in sys_argv[2:]:
-                if arg == "--stack-trace":
+                if arg == "--afluter-stack-trace":
                     Session.show_stacktrace = True
+                    continue
                 args.add(Arg(arg, None))
             return Task.Result(args)
 
@@ -73,8 +78,9 @@ class ParseOptions(Task):
             args["-" + str(i)] = Arg(value, None)
             i += 1
 
-        if "stack-trace" in args:
+        if "afluter-stack-trace" in args:
             Session.show_stacktrace = True
+            args.pop("afluter-stack-trace")
 
         return TaskResult(args)
 
