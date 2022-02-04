@@ -4,11 +4,15 @@ from sys import argv as sys_argv
 from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.arguments import Arg, Args, Option, OptionAll
 from ..core.utils import _Iterable
+from ..core.session import Session
 
 
 class ParseOptions(Task):
     identity = TaskIdentity(
-        "-parse-options", "Parsing arguments", [], lambda: ParseOptions()
+        "-parse-options",
+        "Parsing arguments",
+        [Task.Identity.Option(None, "stack-trace", "Show stacktrace of task output")],
+        lambda: ParseOptions(),
     )
 
     def __init__(self, tasks: List[Task]) -> None:
@@ -26,11 +30,13 @@ class ParseOptions(Task):
     def execute(self, args: Args) -> TaskResult:
         if self._skip:
             for arg in sys_argv[2:]:
+                if arg == "--stack-trace":
+                    Session.show_stacktrace = True
                 args.add(Arg(arg, None))
             return Task.Result(args)
 
         short = ""
-        long: List[str] = []
+        long: List[str] = ["stack-trace"]
         for option in self._options:
             short += option.short_formatted()
             long_fmt = option.long_formatted()
@@ -66,6 +72,9 @@ class ParseOptions(Task):
         for value in positional:
             args["-" + str(i)] = Arg(value, None)
             i += 1
+
+        if "stack-trace" in args:
+            Session.show_stacktrace = True
 
         return TaskResult(args)
 
