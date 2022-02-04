@@ -62,8 +62,10 @@ class ParseOptions(Task):
             else:
                 args.add(Arg("--" + found.long, value if found.has_value else None))
 
+        i = 0
         for value in positional:
-            args.add(Arg(value, None))
+            args["-" + str(i)] = Arg(value, None)
+            i += 1
 
         return TaskResult(args)
 
