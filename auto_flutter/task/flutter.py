@@ -36,8 +36,10 @@ class Flutter(Task):
         flutter = Config.instance().flutter
         if not self._command is None and len(self._command) > 0:
             if self._command_args:
-                self._command.extend(map(lambda x: x.argument, args.values()))
-            p = Process.create(flutter, self._command, lambda x: self.print(x))
+                self._command.extend(args.to_command_arg())
+            p = Process.create(
+                flutter, arguments=self._command, writer=lambda x: self.print(x)
+            )
             p.run()
             if self._output:
                 return Task.Result(
@@ -50,8 +52,17 @@ class Flutter(Task):
                     args,
                     success=p.exit_code == 0,
                 )
-
-        return Task.Result(error=NotImplementedError("Not yet"))
+        p = Process.create(
+            flutter, arguments=args.to_command_arg(), writer=lambda x: self.print(x)
+        )
+        output = p.try_run()
+        if isinstance(output, BaseException):
+            return Task.Result(args, error=output)
+        return Task.Result(
+            args,
+            error=Flutter.Error(p.exit_code, p.output) if self._output else None,
+            success=output,
+        )
 
 
 FlutterDoctor = Task.Identity(
