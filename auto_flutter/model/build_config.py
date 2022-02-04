@@ -10,7 +10,7 @@ class BuildRunBefore(Enum):
     BUILD = "build"
 
 
-class TaskIdList(list[str], Serializable["TaskIdList"]):
+class TaskIdList(List[str], Serializable["TaskIdList"]):
     def to_json(self) -> Serializable.Json:
         return _JsonEncode.encode_list(self)
 
