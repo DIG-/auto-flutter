@@ -85,7 +85,3 @@ def main():
     )
     manager.add_id("help")
     manager.execute()
-
-
-if __name__ == "__main__":
-    main()
