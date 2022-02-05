@@ -1,14 +1,15 @@
 from ...core.json import _JsonDecode
 from ...core.string_builder import SB
+from ...core.task.manager import TaskManager
 from ...core.utils import _Dict
 from ...model.build_type import FlutterBuildType
 from ...model.platform import MergePlatformConfigFlavored, Platform
 from ...model.project import Project
 from ...model.task import Task
-from .exec import Flutter
+from .build import FlutterBuild
 
 
-class FlutterBuildConfig(Flutter):
+class FlutterBuildConfig(Task):
     identity = Task.Identity(
         "build",
         "Build flutter app",
@@ -22,18 +23,8 @@ class FlutterBuildConfig(Flutter):
     class Error(RuntimeError):
         ...
 
-    def __init__(self) -> None:
-        super().__init__(
-            project=True,
-            command=None,
-            command_append_args=None,
-            output_running=True,
-            output_end=False,
-            output_arg=True,
-        )
-
     def describe(self, args: Task.Args) -> str:
-        return "Building flutter app"
+        return "Preparing flutter build"
 
     def execute(self, args: Task.Args) -> Task.Result:
         if not "-0" in args or len(args["-0"].argument) <= 0:
@@ -64,7 +55,9 @@ class FlutterBuildConfig(Flutter):
                     )
                     flavor = project.flavors[0]
             if flavor is None:
-                raise FlutterBuildConfig.Error("Build require flavor, nothing was passed.")
+                raise FlutterBuildConfig.Error(
+                    "Build require flavor, nothing was passed."
+                )
             if not flavor in project.flavors:
                 raise FlutterBuildConfig.Error(
                     "Flavor {} was not found in project.".format(flavor)
@@ -85,30 +78,7 @@ class FlutterBuildConfig(Flutter):
                 .str()
             )
 
-        ## TODO: Consume run before
-
-        # Configure super to build
-        self._command = ["build", build_type.value]
-        if not flavor is None:
-            self._command.append("--flavor")
-            self._command.append(flavor)
-
-        if "debug" in args:
-            self._command.append("--debug")
-        else:
-            self._command.append("--release")
-
-        self._command.append(config.get_build_param(flavor))
-
-        process = super().execute(args)
-        if not process.success:
-            return process
-
-        process.args.pop("output")
-
-        output = config.get_output(flavor, build_type)
-        if not output is None:
-            ## TODO: Format output and check if exists
-            pass
-
-        return process
+        TaskManager.instance().add(
+            FlutterBuild(project, platform, build_type, flavor, config, "debug" in args)
+        )
+        return Task.Result(args)
