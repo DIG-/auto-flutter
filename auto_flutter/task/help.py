@@ -2,36 +2,35 @@ from sys import argv as sys_argv
 from typing import Dict, List, Optional
 
 from ..core.string_builder import SB
-from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
-from ..model.argument import Args, Option
+from ..model.task import Task
 from ..task._resolver import TaskResolver
 from ..task.project_read import ProjectRead
 
 
 class Help(Task):
-    identity = TaskIdentity(
+    identity = Task.Identity(
         "help",
         "Show help",
-        [Option("t", "task", "Show help details about given task", True)],
+        [Task.Identity.Option("t", "task", "Show help details about given task", True)],
         lambda: Help(),
     )
 
     def __init__(self) -> None:
         super().__init__()
 
-    def describe(self, args: Args) -> str:
+    def describe(self, args: Task.Args) -> str:
         return "Showing help page"
 
     def require(self) -> List[Task.ID]:
         return [ProjectRead.identity_skip.id]
 
-    def execute(self, args: Args) -> TaskResult:
+    def execute(self, args: Task.Args) -> Task.Result:
         builder = SB()
         self.show_header(builder)
         if "task" in args:
             if self._show_help_for_task_id(builder, args["task"].value):
-                return TaskResult(args, message=builder.str())
+                return Task.Result(args, message=builder.str())
 
         builder.append("\nDefault tasks:\n")
         from ..task._list import task_list, user_task
@@ -41,7 +40,7 @@ class Help(Task):
 
         user_reduced = Help.reduce_indexed_task_into_list(user_task)
         if len(user_reduced) <= 0:
-            return TaskResult(args, message=builder.str())
+            return Task.Result(args, message=builder.str())
 
         builder.append("\nUser tasks:\n")
         for task in user_reduced:
@@ -68,7 +67,7 @@ class Help(Task):
         self._show_task_options(identity, builder)
         return True
 
-    def _show_task_options(self, task: TaskIdentity, builder: SB):
+    def _show_task_options(self, task: Task.Identity, builder: SB):
         builder.append("\nTask:\t").append(
             task.id, SB.Color.CYAN, True, end="\n"
         ).append(task.name, end="\n")
@@ -99,15 +98,15 @@ class Help(Task):
                     builder.append(" " * (20 - length))
                 builder.append("\t").append(option.description, end="\n")
 
-    def show_task_name(self, task: TaskIdentity, builder: SB):
+    def show_task_name(self, task: Task.Identity, builder: SB):
         builder.append("  ").append(task.id, SB.Color.CYAN, True)
         if len(task.id) < 8:
             builder.append(" " * (8 - len(task.id)))
         builder.append("\t").append(task.name, end="\n")
 
     def reduce_indexed_task_into_list(
-        tasks: Dict[str, TaskIdentity]
-    ) -> List[TaskIdentity]:
+        tasks: Dict[str, Task.Identity]
+    ) -> List[Task.Identity]:
         filtered = filter(lambda it: not it[0].startswith("-"), tasks.items())
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)

@@ -1,8 +1,7 @@
 from collections import OrderedDict
 from typing import Dict
 
-from ..core.task import TaskIdentity
-from ..model.task import TaskId
+from ..model.task import TaskId, TaskIdentity
 from ..task.build import FlutterBuild
 from ..task.flutter import Flutter, FlutterDoctor
 from ..task.help import Help

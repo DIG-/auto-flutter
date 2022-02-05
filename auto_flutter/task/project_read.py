@@ -1,6 +1,7 @@
 from json import load as json_load
-from ..core.task import Task
+
 from ..model.project import Project
+from ..model.task import Task
 
 
 class ProjectRead(Task):

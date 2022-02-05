@@ -1,10 +1,10 @@
 from ..core.json import _JsonDecode
 from ..core.string_builder import SB
-from ..core.task import Task
 from ..core.utils import _Dict
 from ..model.build_type import FlutterBuildType
 from ..model.platform import MergePlatformConfigFlavored, Platform
 from ..model.project import Project
+from ..model.task import Task
 from .flutter import Flutter
 
 

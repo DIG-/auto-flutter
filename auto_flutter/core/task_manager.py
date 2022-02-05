@@ -1,9 +1,9 @@
 from typing import Deque
 
 from ..core.string_builder import SB
-from ..core.task import Task, TaskResult
 from ..core.task_printer import TaskPrinter
 from ..model.argument import Args
+from ..model.task import Task, TaskResult
 from ..task._resolver import TaskResolver
 from ..task.parse_options import ParseOptions
 

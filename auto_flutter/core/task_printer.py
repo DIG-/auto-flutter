@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 
 from ..core.session import Session
 from ..core.string_builder import SB
-from ..core.task import Task
+from ..model.task import Task
 
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):

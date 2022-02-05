@@ -4,10 +4,9 @@ from typing import List, Optional
 
 from ..core.os import OS
 from ..core.process.process import Process
-from ..core.task import Task, TaskIdentity, TaskResult
 from ..model.argument import Args, Option
 from ..model.config import Config
-from ..model.task import TaskId
+from ..model.task import Task, TaskId, TaskIdentity, TaskResult
 
 
 class SetupCheck(Task):

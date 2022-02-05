@@ -3,13 +3,13 @@ from sys import argv as sys_argv
 from typing import List, Optional
 
 from ..core.session import Session
-from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
-from ..model.argument import Arg, Args, Option, OptionAll
+from ..model.argument import Arg, OptionAll
+from ..model.task import Task
 
 
 class ParseOptions(Task):
-    identity = TaskIdentity(
+    identity = Task.Identity(
         "-parse-options",
         "Parsing arguments",
         [
@@ -22,7 +22,7 @@ class ParseOptions(Task):
 
     def __init__(self, tasks: List[Task]) -> None:
         super().__init__()
-        self._options: List[Option] = []
+        self._options: List[Task.Identity.Option] = []
         for task in tasks:
             self._options.extend(task.identity.options)
         self._skip: bool = (
@@ -32,7 +32,7 @@ class ParseOptions(Task):
             is None
         )
 
-    def execute(self, args: Args) -> TaskResult:
+    def execute(self, args: Task.Args) -> Task.Result:
         if self._skip:
             for arg in sys_argv[2:]:
                 if arg == "--aflutter-stack-trace":
@@ -51,11 +51,11 @@ class ParseOptions(Task):
         try:
             opts, positional = gnu_getopt(sys_argv[2:], short, long)
         except GetoptError as error:
-            return TaskResult(args, error, success=False)
+            return Task.Result(args, error, success=False)
 
         for opt, value in opts:
             opt_strip = opt.lstrip("-")
-            found: Optional[Option] = None
+            found: Optional[Task.Identity.Option] = None
             if len(opt_strip) <= 2:
                 found = _Iterable.first_or_none(
                     self._options, lambda option: option.short == opt_strip
@@ -83,4 +83,4 @@ class ParseOptions(Task):
             Session.show_stacktrace = True
             args.pop("aflutter-stack-trace")
 
-        return TaskResult(args)
+        return Task.Result(args)

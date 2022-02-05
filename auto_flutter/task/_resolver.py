@@ -1,8 +1,8 @@
 from collections import deque
 from queue import Queue
 from typing import Deque, Optional
-from ..model.task import TaskId
-from ..core.task import Task, TaskIdentity
+
+from ..model.task import Task
 
 
 class TaskResolver:
@@ -20,7 +20,7 @@ class TaskResolver:
                 temp.put(found.creator())
         return output
 
-    def find_task(id: TaskId) -> Optional[TaskIdentity]:
+    def find_task(id: Task.ID) -> Optional[Task.Identity]:
         from ._list import task_list, user_task
 
         if id in task_list:
