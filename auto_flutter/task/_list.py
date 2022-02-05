@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
-from ..task.build import FlutterBuild
+from .flutter.build_config import FlutterBuildConfig
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from ..task.project_read import ProjectRead
@@ -21,7 +21,7 @@ task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
             ProjectRead.identity_skip.to_map(),
             Flutter.identity.to_map(),
             FlutterDoctor.to_map(),
-            FlutterBuild.identity.to_map(),
+            FlutterBuildConfig.identity.to_map(),
         ]
     )
 )

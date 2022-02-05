@@ -1,14 +1,14 @@
-from ..core.json import _JsonDecode
-from ..core.string_builder import SB
-from ..core.utils import _Dict
-from ..model.build_type import FlutterBuildType
-from ..model.platform import MergePlatformConfigFlavored, Platform
-from ..model.project import Project
-from ..model.task import Task
-from .flutter.exec import Flutter
+from ...core.json import _JsonDecode
+from ...core.string_builder import SB
+from ...core.utils import _Dict
+from ...model.build_type import FlutterBuildType
+from ...model.platform import MergePlatformConfigFlavored, Platform
+from ...model.project import Project
+from ...model.task import Task
+from .exec import Flutter
 
 
-class FlutterBuild(Flutter):
+class FlutterBuildConfig(Flutter):
     identity = Task.Identity(
         "build",
         "Build flutter app",
@@ -16,7 +16,7 @@ class FlutterBuild(Flutter):
             Task.Identity.Option("f", "flavor", "Flavor to build", True),
             Task.Identity.Option(None, "debug", "Build a debug version", False),
         ],
-        lambda: FlutterBuild(),
+        lambda: FlutterBuildConfig(),
     )
 
     class Error(RuntimeError):
@@ -37,18 +37,18 @@ class FlutterBuild(Flutter):
 
     def execute(self, args: Task.Args) -> Task.Result:
         if not "-0" in args or len(args["-0"].argument) <= 0:
-            raise FlutterBuild.Error(
+            raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
         build_type = _JsonDecode.decode(args["-0"].argument, FlutterBuildType)
         if build_type is None:
-            raise FlutterBuild.Error(
+            raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
             )
         platform = build_type.to_Platform()
         project = Project.current
         if project is None:
-            raise FlutterBuild.Error("Project was not initialized.")
+            raise FlutterBuildConfig.Error("Project was not initialized.")
 
         flavor = args["flavor"].value if "flavor" in args else None
         if not project.flavors is None:
@@ -64,9 +64,9 @@ class FlutterBuild(Flutter):
                     )
                     flavor = project.flavors[0]
             if flavor is None:
-                raise FlutterBuild.Error("Build require flavor, nothing was passed.")
+                raise FlutterBuildConfig.Error("Build require flavor, nothing was passed.")
             if not flavor in project.flavors:
-                raise FlutterBuild.Error(
+                raise FlutterBuildConfig.Error(
                     "Flavor {} was not found in project.".format(flavor)
                 )
 
