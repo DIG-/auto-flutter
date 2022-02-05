@@ -3,11 +3,12 @@ from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
 from ..task.build import FlutterBuild
-from .flutter.exec import Flutter, FlutterDoctor
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from ..task.project_read import ProjectRead
 from ..task.setup import Setup, SetupEdit
+from .flutter import Flutter
+from .flutter.doctor import FlutterDoctor
 
 task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
     dict(
