@@ -25,7 +25,7 @@ class Task(metaclass=ABCMeta):
         return self.identity.name
 
     def print(self, message: str):
-        from ...core.task_manager import TaskManager
+        from ...core.task.manager import TaskManager
 
         TaskManager.instance().print(message)
 

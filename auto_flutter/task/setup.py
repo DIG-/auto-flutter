@@ -119,7 +119,7 @@ class SetupEdit(Task):
         if "show" in args or "check" in args:
             return TaskResult(args)  # Nothing to edit in show mode
 
-        from ..core.task_manager import TaskManager
+        from ..core.task.manager import TaskManager
 
         if "flutter" in args:
             flutter = args["flutter"].value
@@ -193,7 +193,7 @@ class Setup(Task):
         if "show" in args:
             return TaskResult(args, message=str(Config.instance()))
         elif "check" in args:
-            from ..core.task_manager import TaskManager
+            from ..core.task.manager import TaskManager
 
             TaskManager.instance().add(SetupCheck(flutter=True, skip_on_failure=True))
             TaskManager.instance().add(SetupCheck(firebase=True, skip_on_failure=True))

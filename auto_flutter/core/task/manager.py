@@ -1,17 +1,18 @@
+from __future__ import annotations
+
 from typing import Deque
 
-from ..core.string_builder import SB
-from ..core.task_printer import TaskPrinter
-from ..model.argument import Args
-from ..model.task import Task, TaskResult
-from ..task._resolver import TaskResolver
-from ..task.parse_options import ParseOptions
+from ...model.task import Task
+from ...task._resolver import TaskResolver
+from ...task.parse_options import ParseOptions
+from ..string_builder import SB
+from ..task_printer import TaskPrinter
 
 
 class TaskManager:
-    __instance: "TaskManager" = None
+    __instance: TaskManager = None
 
-    def instance() -> "TaskManager":
+    def instance() -> TaskManager:
         if TaskManager.__instance is None:
             TaskManager.__instance = TaskManager()
         return TaskManager.__instance
@@ -39,22 +40,28 @@ class TaskManager:
         self._printer.write(message)
 
     def execute(self) -> bool:
-        args = Args()
+        args = Task.Args()
         self._printer.start()
         self._task_stack.append(ParseOptions(self._task_stack))
+
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
+
             describe = current.describe(args)
             if (not describe is None) and len(describe) != 0:
                 self._printer.set_task_description(describe)
+
             try:
                 output = current.execute(args)
             except BaseException as error:
-                output = TaskResult(args, error, success=False)
+                output = Task.Result(args, error, success=False)
+
             self._printer.set_result(output)
+
             if not output.success:
                 self._printer.stop()
                 return False
             args = output.args
+
         self._printer.stop()
         return True

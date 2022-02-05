@@ -3,7 +3,7 @@ from platform import system as platform_system
 from .core.logger import log
 from .model.config import Config
 from .task._list import task_list
-from .core.task_manager import TaskManager
+from .core.task import TaskManager
 from .core.string_builder import SB
 
 
