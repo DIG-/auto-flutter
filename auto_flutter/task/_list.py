@@ -8,6 +8,7 @@ from ..task.setup import Setup, SetupEdit
 from .flutter import Flutter
 from .flutter.build_config import FlutterBuildConfig
 from .flutter.doctor import FlutterDoctor
+from .project.init import ProjectInit
 from .project.read import ProjectRead
 from .project.save import ProjectSave
 
@@ -20,6 +21,7 @@ task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
             ParseOptions.identity.to_map(),
             ProjectRead.identity.to_map(),
             ProjectRead.identity_skip.to_map(),
+            ProjectInit.identity.to_map(),
             ProjectSave.identity.to_map(),
             Flutter.identity.to_map(),
             FlutterDoctor.to_map(),
