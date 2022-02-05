@@ -6,7 +6,7 @@ from ..model._serializable import Serializable
 from ..model.custom_task import CustomTask
 from ..model.flavor import Flavor as mFlavor
 from ..model.platform import Platform as mPlatform
-from .platform.config import PlatformConfigFlavored
+from ..model.platform import PlatformConfigFlavored
 
 
 class Project(Serializable["Project"]):

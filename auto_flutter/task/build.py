@@ -6,8 +6,8 @@ from ..core.task import Task
 from ..core.utils import _Dict
 from ..model.build_type import BuildType, FlutterBuildType
 from ..model.flavor import Flavor
-from ..model.platform import Platform
-from ..model.platform.config import BuildRunBefore, PlatformConfigFlavored
+from ..model.platform import Platform, PlatformConfigFlavored
+from ..model.platform.config import BuildRunBefore
 from ..model.project import Project
 from .flutter import Flutter
 
