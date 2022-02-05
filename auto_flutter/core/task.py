@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 from abc import ABCMeta, abstractclassmethod
 from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
-from ..core.arguments import Args, Option
+
 from ..core.utils import _Ensure
+from ..model.argument import Args, Option
 from ..model.task import TaskId
 
 

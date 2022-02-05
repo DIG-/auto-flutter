@@ -1,33 +1,9 @@
 from __future__ import annotations
-from itertools import chain
+
 from operator import itemgetter
-from typing import Dict, List, Optional, Tuple
-from ..core.utils import _Ensure
+from typing import Optional, Tuple
 
-
-class Arg(Tuple[str, Optional[str]]):
-    def __new__(cls: type[Arg], argument: str, value: Optional[str]) -> Arg:
-        _Ensure.type(argument, str, "argument")
-        _Ensure.type(value, str, "value")
-        argument = argument.strip()
-        if not value is None:
-            value = value.strip()
-        return super().__new__(Arg, (argument, value))
-
-    argument: str = property(itemgetter(0))
-    value: Optional[str] = property(itemgetter(1))
-
-
-class Args(Dict[str, Arg]):
-    def add(self, arg: Arg):
-        key = arg.argument.lstrip("-").lower()
-        if not arg.argument.startswith("-"):
-            key = "-#-" + key
-        self[key] = arg
-
-    def to_command_arg(self) -> List[str]:
-        mapped = map(lambda x: x[1], self.items())
-        return list(filter(None.__ne__, chain(*mapped)))
+from ...core.utils import _Ensure
 
 
 class Option(Tuple[Optional[str], Optional[str], str, bool]):
@@ -71,16 +47,3 @@ class Option(Tuple[Optional[str], Optional[str], str, bool]):
         if self.has_value:
             return self.long + "="
         return self.long
-
-
-class OptionAll(Option):
-    def __new__(cls: type[OptionAll], description: Optional[str] = None) -> OptionAll:
-        return super().__new__(
-            OptionAll,
-            None,
-            None,
-            "This task does not parse options, it bypass directly to command"
-            if description is None
-            else description,
-            False,
-        )

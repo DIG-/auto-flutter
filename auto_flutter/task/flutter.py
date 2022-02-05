@@ -1,11 +1,12 @@
 from ast import arguments
 from typing import List, Optional
-from ..core.task import Task
+
 from ..core.process.process import Process
-from ..task.project_read import ProjectRead
-from ..model.config import Config
-from ..core.arguments import Arg, OptionAll
 from ..core.string_builder import SB
+from ..core.task import Task
+from ..model.argument import Arg, OptionAll
+from ..model.config import Config
+from ..task.project_read import ProjectRead
 
 
 class Flutter(Task):

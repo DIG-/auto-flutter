@@ -2,10 +2,10 @@ from getopt import GetoptError, gnu_getopt
 from sys import argv as sys_argv
 from typing import List, Optional
 
-from ..core.arguments import Arg, Args, Option, OptionAll
 from ..core.session import Session
 from ..core.task import Task, TaskIdentity, TaskResult
 from ..core.utils import _Iterable
+from ..model.argument import Arg, Args, Option, OptionAll
 
 
 class ParseOptions(Task):

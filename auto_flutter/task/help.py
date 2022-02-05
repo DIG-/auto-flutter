@@ -1,11 +1,12 @@
-from ..core.arguments import Option, Args
-from ..core.task import Task, TaskIdentity, TaskResult
-from ..core.utils import _Iterable
-from ..task._resolver import TaskResolver
 from sys import argv as sys_argv
 from typing import Dict, List, Optional
-from ..task.project_read import ProjectRead
+
 from ..core.string_builder import SB
+from ..core.task import Task, TaskIdentity, TaskResult
+from ..core.utils import _Iterable
+from ..model.argument import Args, Option
+from ..task._resolver import TaskResolver
+from ..task.project_read import ProjectRead
 
 
 class Help(Task):
