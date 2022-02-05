@@ -5,7 +5,7 @@ from ..model.build_type import FlutterBuildType
 from ..model.platform import MergePlatformConfigFlavored, Platform
 from ..model.project import Project
 from ..model.task import Task
-from .flutter import Flutter
+from .flutter.exec import Flutter
 
 
 class FlutterBuild(Flutter):

@@ -3,7 +3,7 @@ from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
 from ..task.build import FlutterBuild
-from ..task.flutter import Flutter, FlutterDoctor
+from .flutter.exec import Flutter, FlutterDoctor
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from ..task.project_read import ProjectRead
