@@ -109,7 +109,7 @@ class TaskPrinter:
                                         .str()
                                     )
                         if not message.result.message is None:
-                            print(message.result.message, end="")
+                            print(message.result.message)
 
                     elif not message.description is None:
                         current_task = message.description
