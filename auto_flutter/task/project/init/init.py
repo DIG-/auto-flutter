@@ -3,8 +3,10 @@ from pathlib import Path
 from typing import Optional
 
 from ....core.string_builder import SB
+from ....core.task.manager import TaskManager
 from ....model.project import Project
 from ....model.task import Task
+from .find_platform import FindPlatform
 
 
 class ProjectInit(Task):
@@ -57,4 +59,8 @@ class ProjectInit(Task):
             build_config={},
             tasks=None,
         )
+
+        manager = TaskManager.instance()
+        manager.add(FindPlatform())
+
         return Task.Result(args, error=overwrite, success=True)
