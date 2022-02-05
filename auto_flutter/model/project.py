@@ -3,14 +3,14 @@ from typing import Dict, List, Optional
 from ..core.json import _JsonDecode, _JsonEncode
 from ..core.utils import _Ensure
 from ..model._serializable import Serializable
-from ..model.build_config import BuildConfigFlavored
+from ..model.build_config import PlatformConfigFlavored
 from ..model.custom_task import CustomTask
 from ..model.flavor import Flavor as mFlavor
 from ..model.platform import Platform as mPlatform
 
 
 class Project(Serializable["Project"]):
-    BuildConfig = BuildConfigFlavored
+    PlatformConfig = PlatformConfigFlavored
     Platform = mPlatform
     Flavor = mFlavor
 
@@ -22,14 +22,14 @@ class Project(Serializable["Project"]):
         name: str,
         platforms: List[mPlatform],
         flavors: Optional[List[mFlavor]],
-        build_config: Dict[mPlatform, BuildConfigFlavored],
+        build_config: Dict[mPlatform, PlatformConfigFlavored],
         tasks: Optional[List[CustomTask]] = None,
     ) -> None:
         super().__init__()
         self.name: str = _Ensure.not_none(name, "name")
         self.platforms: List[mPlatform] = _Ensure.not_none(platforms, "platforms")
         self.flavors: Optional[List[mFlavor]] = flavors
-        self.build_config: Dict[mPlatform, BuildConfigFlavored] = _Ensure.not_none(
+        self.build_config: Dict[mPlatform, PlatformConfigFlavored] = _Ensure.not_none(
             build_config, "build-config"
         )
         self.tasks: Optional[List[CustomTask]] = tasks
@@ -49,7 +49,7 @@ class Project(Serializable["Project"]):
         name: Optional[str] = None
         platforms: Optional[List[mPlatform]] = None
         flavors: Optional[List[mFlavor]] = None
-        build_config: Optional[Dict[mPlatform, BuildConfigFlavored]]
+        build_config: Optional[Dict[mPlatform, PlatformConfigFlavored]]
         tasks: Optional[List[CustomTask]] = None
         for key, value in json.items():
             if not isinstance(key, str):
@@ -62,7 +62,7 @@ class Project(Serializable["Project"]):
                 flavors = _JsonDecode.decode_list(value, mFlavor)
             elif key == "platform-config":
                 build_config = _JsonDecode.decode_dict(
-                    value, mPlatform, BuildConfigFlavored
+                    value, mPlatform, PlatformConfigFlavored
                 )
             elif key == "tasks":
                 tasks = _JsonDecode.decode_list(value, CustomTask)

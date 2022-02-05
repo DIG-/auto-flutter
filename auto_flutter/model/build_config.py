@@ -22,7 +22,7 @@ class TaskIdList(List[str], Serializable["TaskIdList"]):
         return _JsonDecode.decode_list(json, str)
 
 
-class BuildConfig(Serializable["BuildConfig"]):
+class PlatformConfig(Serializable["PlatformConfig"]):
     RunBefore = BuildRunBefore
     Type = BuildType
 
@@ -66,10 +66,10 @@ class BuildConfig(Serializable["BuildConfig"]):
             return output
         return {**output, **extras}
 
-    def from_json(json: Serializable.Json) -> Optional["BuildConfig"]:
+    def from_json(json: Serializable.Json) -> Optional["PlatformConfig"]:
         if not isinstance(json, Dict):
             return None
-        output = BuildConfig()
+        output = PlatformConfig()
         for key, value in json.items():
             if not isinstance(key, str):
                 continue
@@ -94,7 +94,7 @@ class BuildConfig(Serializable["BuildConfig"]):
         return output
 
 
-class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
+class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavored"]):
     def __init__(
         self,
         build_param: Optional[str] = None,
@@ -102,10 +102,10 @@ class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
         output: Optional[str] = None,
         outputs: Optional[Dict[BuildType, str]] = None,
         extras: Optional[Dict[str, str]] = None,
-        flavored: Optional[Dict[Flavor, BuildConfig]] = None,
+        flavored: Optional[Dict[Flavor, PlatformConfig]] = None,
     ) -> None:
         super().__init__(build_param, run_before, output, outputs, extras)
-        self.flavored: Optional[Dict[Flavor, BuildConfig]] = flavored
+        self.flavored: Optional[Dict[Flavor, PlatformConfig]] = flavored
 
     def get_build_param(self, flavor: Optional[Flavor]) -> str:
         output = ""
@@ -158,9 +158,9 @@ class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
             return {**parent, **flavored}
         return parent
 
-    def from_json(json: Serializable.Json) -> Optional["BuildConfigFlavored"]:
-        output = BuildConfigFlavored()
-        other = BuildConfig.from_json(json)
+    def from_json(json: Serializable.Json) -> Optional["PlatformConfigFlavored"]:
+        output = PlatformConfigFlavored()
+        other = PlatformConfig.from_json(json)
         if not other is None:
             output.build_param = other.build_param
             output.run_before = other.run_before
@@ -170,6 +170,6 @@ class BuildConfigFlavored(BuildConfig, Serializable["BuildConfigFlavored"]):
         if isinstance(json, Dict):
             if "flavored" in json:
                 output.flavored = _JsonDecode.decode_optional_dict(
-                    json["flavored"], Flavor, BuildConfig
+                    json["flavored"], Flavor, PlatformConfig
                 )
         return output

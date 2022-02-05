@@ -4,7 +4,7 @@ from ..core.json import _JsonDecode
 from ..core.string_builder import SB
 from ..core.task import Task
 from ..core.utils import _Dict
-from ..model.build_config import BuildConfigFlavored, BuildRunBefore
+from ..model.build_config import PlatformConfigFlavored, BuildRunBefore
 from ..model.build_type import BuildType, FlutterBuildType
 from ..model.flavor import Flavor
 from ..model.platform import Platform
@@ -76,7 +76,7 @@ class FlutterBuild(Flutter):
 
         config_default = _Dict.get_or_none(project.build_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.build_config, platform)
-        config = _MergeBuildConfigFlavored(config_default, config_platform)
+        config = _MergePlatformConfigFlavored(config_default, config_platform)
         if config_default is None and config_platform is None:
             self.print(
                 SB()
@@ -118,11 +118,11 @@ class FlutterBuild(Flutter):
         return process
 
 
-class _MergeBuildConfigFlavored(BuildConfigFlavored):
+class _MergePlatformConfigFlavored(PlatformConfigFlavored):
     def __init__(
         self,
-        default: Optional[BuildConfigFlavored],
-        platform: Optional[BuildConfigFlavored],
+        default: Optional[PlatformConfigFlavored],
+        platform: Optional[PlatformConfigFlavored],
     ) -> None:
         super().__init__()
         self.default = default
