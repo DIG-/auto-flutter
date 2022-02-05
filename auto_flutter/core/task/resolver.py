@@ -2,7 +2,7 @@ from collections import deque
 from queue import Queue
 from typing import Deque, Optional
 
-from ..model.task import Task
+from ...model.task import Task
 
 
 class TaskResolver:
@@ -21,7 +21,7 @@ class TaskResolver:
         return output
 
     def find_task(id: Task.ID) -> Optional[Task.Identity]:
-        from ._list import task_list, user_task
+        from ...task._list import task_list, user_task
 
         if id in task_list:
             return task_list[id]

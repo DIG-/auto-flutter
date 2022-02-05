@@ -2,9 +2,9 @@ from sys import argv as sys_argv
 from typing import Dict, List, Optional
 
 from ..core.string_builder import SB
+from ..core.task import TaskResolver
 from ..core.utils import _Iterable
 from ..model.task import Task
-from ..task._resolver import TaskResolver
 from ..task.project_read import ProjectRead
 
 

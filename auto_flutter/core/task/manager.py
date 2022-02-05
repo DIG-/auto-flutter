@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Deque
 
 from ...model.task import Task
-from ...task._resolver import TaskResolver
+from .resolver import TaskResolver
 from ...task.parse_options import ParseOptions
 from ..string_builder import SB
 from .printer import TaskPrinter
