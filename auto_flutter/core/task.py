@@ -4,7 +4,7 @@ from operator import itemgetter
 from typing import Any, Callable, List, Optional, Tuple
 from ..core.arguments import Args, Option
 from ..core.utils import _Ensure
-from ..model.task_id import TaskId
+from ..model.task import TaskId
 
 
 class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], Any]]):

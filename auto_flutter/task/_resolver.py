@@ -1,7 +1,7 @@
 from collections import deque
 from queue import Queue
 from typing import Deque, Optional
-from ..model.task_id import TaskId
+from ..model.task import TaskId
 from ..core.task import Task, TaskIdentity
 
 

@@ -5,7 +5,7 @@ from ..core.arguments import Args, Option
 from ..core.os import OS
 from ..core.task import Task, TaskIdentity, TaskResult
 from ..model.config import Config
-from ..model.task_id import TaskId
+from ..model.task import TaskId
 from ..core.process.process import Process
 
 

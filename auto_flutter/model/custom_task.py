@@ -1,6 +1,6 @@
 from typing import List, Optional
 from ..model._serializable import Serializable
-from ..model.task_id import TaskId
+from ..model.task import TaskId
 from ..model.custom_task_type import CustomTaskType
 from ..model.custom_task_content import CustomTaskContent
 from ..core.json import _JsonDecode, _JsonEncode
