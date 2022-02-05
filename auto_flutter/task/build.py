@@ -4,10 +4,10 @@ from ..core.json import _JsonDecode
 from ..core.string_builder import SB
 from ..core.task import Task
 from ..core.utils import _Dict
-from ..model.build_config import PlatformConfigFlavored, BuildRunBefore
 from ..model.build_type import BuildType, FlutterBuildType
 from ..model.flavor import Flavor
 from ..model.platform import Platform
+from ..model.platform.config import BuildRunBefore, PlatformConfigFlavored
 from ..model.project import Project
 from .flutter import Flutter
 

@@ -3,10 +3,10 @@ from typing import Dict, List, Optional
 from ..core.json import _JsonDecode, _JsonEncode
 from ..core.utils import _Ensure
 from ..model._serializable import Serializable
-from ..model.build_config import PlatformConfigFlavored
 from ..model.custom_task import CustomTask
 from ..model.flavor import Flavor as mFlavor
 from ..model.platform import Platform as mPlatform
+from .platform.config import PlatformConfigFlavored
 
 
 class Project(Serializable["Project"]):

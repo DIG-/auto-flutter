@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Dict, List, Optional
-from ..model.build_type import BuildType
-from ..model._serializable import Serializable
-from ..model.flavor import Flavor
-from ..core.json import _JsonEncode, _JsonDecode
+
+from ...core.json import _JsonDecode, _JsonEncode
+from .._serializable import Serializable
+from ..build_type import BuildType
+from ..flavor import Flavor
 
 
 class BuildRunBefore(Enum):
