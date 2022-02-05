@@ -13,6 +13,7 @@ class Task(metaclass=ABCMeta):
     Args = Args
     Result = TaskResult
     Identity = TaskIdentity
+    Option = TaskIdentity.Option
     ## End - alias
 
     identity: Identity = None
