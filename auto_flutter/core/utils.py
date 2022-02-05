@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-import re
 from typing import Callable, Dict, Iterable, List, Optional, Type, TypeVar
 
 
@@ -26,6 +25,20 @@ class _Iterable(metaclass=ABCMeta):
 
     def flatten(iterable: Iterable[Iterable[T]]) -> List[T]:
         return [item for sublist in iterable for item in sublist]
+
+    def count(iterable: Iterable[T]) -> int:
+        out = 0
+        for it in iterable:
+            out += 1
+        return out
+
+    def is_empty(iterable: Iterable[T]) -> bool:
+        try:
+            next(iterable)
+            return False
+        except StopIteration:
+            pass
+        return True
 
 
 class _Dict(metaclass=ABCMeta):
