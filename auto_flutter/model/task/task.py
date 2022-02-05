@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractclassmethod
-from typing import List
+from typing import Final, List
 
 from ..argument import Args
 from . import TaskId, TaskIdentity, TaskResult
@@ -9,11 +9,11 @@ from . import TaskId, TaskIdentity, TaskResult
 
 class Task(metaclass=ABCMeta):
     ## Start - Alias to reduce import
-    ID = TaskId
-    Args = Args
-    Result = TaskResult
-    Identity = TaskIdentity
-    Option = TaskIdentity.Option
+    ID: Final = TaskId
+    Args: Final = Args
+    Result: Final = TaskResult
+    Identity: Final = TaskIdentity
+    Option: Final = TaskIdentity.Option
     ## End - alias
 
     identity: Identity = None
