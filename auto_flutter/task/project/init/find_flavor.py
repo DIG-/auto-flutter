@@ -18,7 +18,7 @@ class FindFlavor(Task):
         if not idea_run.exists():
             self.print("    Idea run config not found")
         else:
-            self.print("    Trying to detect from Ide run config")
+            self.print("    Trying to detect from Idea run config")
             for filename in idea_run.glob("*.run.xml"):
                 try:
                     self._extract_from_idea(project, filename)
@@ -26,13 +26,8 @@ class FindFlavor(Task):
                     self.print_error(
                         'Failed to process "{}": '.format(str(filename)), error
                     )
-        if not project.flavors is None and len(project.flavors) > 0:
-            self.print(
-                SB()
-                .append("    Flavors were found: ", SB.Color.GREEN)
-                .append(" ".join(project.flavors), SB.Color.GREEN, True)
-            )
-            return Task.Result(args)
+            if self._check_flavor_success(project):
+                return Task.Result(args)
 
         return Task.Result(args, success=False)
 
@@ -44,6 +39,16 @@ class FindFlavor(Task):
             .append(str(error), SB.Color.RED)
             .str()
         )
+
+    def _check_flavor_success(self, project: Project) -> bool:
+        if not project.flavors is None and len(project.flavors) > 0:
+            self.print(
+                SB()
+                .append("    Flavors were found: ", SB.Color.GREEN)
+                .append(" ".join(project.flavors), SB.Color.GREEN, True)
+            )
+            return True
+        return False
 
     def _append_flavor(
         self,
