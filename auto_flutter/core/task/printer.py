@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import sys
 from operator import itemgetter
 from queue import Queue
+from sys import stdout as sys_stdout
 from threading import Lock, Thread
 from time import sleep, time
 from traceback import TracebackException
 from typing import Optional, Tuple
 
-from ..core.session import Session
-from ..core.string_builder import SB
-from ..model.task import Task
+from ...model.task import Task
+from ..session import Session
+from ..string_builder import SB
 
 
 class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
@@ -147,7 +147,7 @@ class TaskPrinter:
             builder.append("[" + icon + "] ", SB.Color.DEFAULT, True)
 
         print(builder.append(description).str(), end="")
-        sys.stdout.flush()
+        sys_stdout.flush()
 
     def __format_error(self, error: BaseException) -> str:
         if not Session.show_stacktrace:

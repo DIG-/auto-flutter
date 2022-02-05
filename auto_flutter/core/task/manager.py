@@ -6,7 +6,7 @@ from ...model.task import Task
 from ...task._resolver import TaskResolver
 from ...task.parse_options import ParseOptions
 from ..string_builder import SB
-from ..task_printer import TaskPrinter
+from .printer import TaskPrinter
 
 
 class TaskManager:
