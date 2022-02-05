@@ -5,7 +5,7 @@ from ...core.string_builder import SB
 from ...model.argument import Arg, OptionAll
 from ...model.config import Config
 from ...model.task import Task
-from ..project_read import ProjectRead
+from ..project.read import ProjectRead
 
 
 class Flutter(Task):

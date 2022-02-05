@@ -5,7 +5,7 @@ from ..model.task import TaskId, TaskIdentity
 from .flutter.build_config import FlutterBuildConfig
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
-from ..task.project_read import ProjectRead
+from .project.read import ProjectRead
 from ..task.setup import Setup, SetupEdit
 from .flutter import Flutter
 from .flutter.doctor import FlutterDoctor

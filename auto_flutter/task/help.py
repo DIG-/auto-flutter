@@ -5,7 +5,7 @@ from ..core.string_builder import SB
 from ..core.task import TaskResolver
 from ..core.utils import _Iterable
 from ..model.task import Task
-from ..task.project_read import ProjectRead
+from .project.read import ProjectRead
 
 
 class Help(Task):
