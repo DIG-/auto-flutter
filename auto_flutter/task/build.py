@@ -1,13 +1,9 @@
-from typing import Dict, List, Optional
-
 from ..core.json import _JsonDecode
 from ..core.string_builder import SB
 from ..core.task import Task
 from ..core.utils import _Dict
-from ..model.build_type import BuildType, FlutterBuildType
-from ..model.flavor import Flavor
-from ..model.platform import Platform, PlatformConfigFlavored
-from ..model.platform.config import BuildRunBefore
+from ..model.build_type import FlutterBuildType
+from ..model.platform import MergePlatformConfigFlavored, Platform
 from ..model.project import Project
 from .flutter import Flutter
 
@@ -76,7 +72,7 @@ class FlutterBuild(Flutter):
 
         config_default = _Dict.get_or_none(project.build_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.build_config, platform)
-        config = _MergePlatformConfigFlavored(config_default, config_platform)
+        config = MergePlatformConfigFlavored(config_default, config_platform)
         if config_default is None and config_platform is None:
             self.print(
                 SB()
@@ -116,54 +112,3 @@ class FlutterBuild(Flutter):
             pass
 
         return process
-
-
-class _MergePlatformConfigFlavored(PlatformConfigFlavored):
-    def __init__(
-        self,
-        default: Optional[PlatformConfigFlavored],
-        platform: Optional[PlatformConfigFlavored],
-    ) -> None:
-        super().__init__()
-        self.default = default
-        self.platform = platform
-
-    def get_build_param(self, flavor: Optional[Flavor]) -> str:
-        output = ""
-        if not self.default is None:
-            output += self.default.get_build_param(flavor)
-        output += " "
-        if not self.platform is None:
-            output += self.platform.get_build_param(flavor)
-        return output.strip()
-
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
-        if not self.platform is None:
-            output = self.platform.get_output(flavor, type)
-            if not output is None:
-                return output
-        if not self.default is None:
-            return self.default.get_output(flavor, type)
-        return None
-
-    def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
-        if not self.platform is None:
-            output = self.platform.get_extra(flavor, key)
-            if not output is None:
-                return output
-        if not self.default is None:
-            return self.default.get_extra(flavor, key)
-        return None
-
-    def get_run_before(
-        self, flavor: Optional[Flavor]
-    ) -> Dict[BuildRunBefore, List[str]]:
-        output: Dict[BuildRunBefore, List[str]] = {}
-        if not self.default is None:
-            output = _Dict.merge_append(output, self.default.get_run_before(flavor))
-        if not self.platform is None:
-            output = _Dict.merge_append(output, self.platform.get_run_before(flavor))
-        # Remove duplicated
-        for k, v in output:
-            output[k] = list(dict.fromkeys(v))
-        return output
