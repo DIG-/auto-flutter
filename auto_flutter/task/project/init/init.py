@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Final, Optional
 
+from auto_flutter.task.project.init.find_flavor import FindFlavor
+
 from ....core.string_builder import SB
 from ....core.task.manager import TaskManager
 from ....model.project import Project
@@ -64,6 +66,7 @@ class ProjectInit(Task):
         )
 
         manager = TaskManager.instance()
+        manager.add(FindFlavor())
         manager.add(FindPlatform())
 
         return Task.Result(args, error=overwrite, success=True)
