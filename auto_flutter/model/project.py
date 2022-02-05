@@ -1,12 +1,12 @@
-from pickle import GLOBAL
-from typing import Any, Dict, List, Optional
-from ..model.platform import Platform as mPlatform
-from ..model.build_config import BuildConfigFlavored
-from ..model.flavor import Flavor as mFlavor
-from ..model._serializable import Serializable
-from ..model.custom_task import CustomTask
-from ..core.json import _JsonEncode, _JsonDecode
+from typing import Dict, List, Optional
+
+from ..core.json import _JsonDecode, _JsonEncode
 from ..core.utils import _Ensure
+from ..model._serializable import Serializable
+from ..model.build_config import BuildConfigFlavored
+from ..model.custom_task import CustomTask
+from ..model.flavor import Flavor as mFlavor
+from ..model.platform import Platform as mPlatform
 
 
 class Project(Serializable["Project"]):
@@ -39,7 +39,7 @@ class Project(Serializable["Project"]):
             "name": self.name,
             "platforms": _JsonEncode.encode(self.platforms),
             "flavors": _JsonEncode.encode_optional(self.flavors),
-            "build-config": _JsonEncode.encode(self.build_config),
+            "platform-config": _JsonEncode.encode(self.build_config),
             "tasks": _JsonEncode.encode_optional(self.tasks),
         }
 
@@ -60,7 +60,7 @@ class Project(Serializable["Project"]):
                 platforms = _JsonDecode.decode_list(value, mPlatform)
             elif key == "flavors":
                 flavors = _JsonDecode.decode_list(value, mFlavor)
-            elif key == "build-config":
+            elif key == "platform-config":
                 build_config = _JsonDecode.decode_dict(
                     value, mPlatform, BuildConfigFlavored
                 )

@@ -9,7 +9,7 @@
         "a",
         "b"
     ],
-    "build-config": {
+    "platform-config": {
         "_default": {
             "build-param": "--dart-define=flavor=${arg:flavor}",
             "run-before": {
