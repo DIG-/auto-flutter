@@ -29,14 +29,14 @@ class CommonConfig(Task):
             if len(project.flavors) > 0:
                 self.print("    Applying default output for android flavored build")
                 config.outputs = {
-                    BuildType.APK: "build/app/outputs/flutter-apk/app-${{arg:flavor}}-${{arg:build_type}}.apk",
-                    BuildType.BUNDLE: "build/app/outputs/bundle/${{arg:flavor}}${{arg:build|capitalize}}/app-${{arg:flavor}}-${{arg:build}}.aab",
+                    BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build_type}.apk",
+                    BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build_type|capitalize}/app-${arg:flavor}-${arg:build_type}.aab",
                 }
             else:
                 self.print("    Applying default output for android build")
                 config.outputs = {
-                    BuildType.APK: "build/app/outputs/flutter-apk/app-${{arg:build_type}}.apk",
-                    BuildType.BUNDLE: "build/app/outputs/bundle/${{arg:build}}/app-${{arg:build}}.aab",
+                    BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:build_type}.apk",
+                    BuildType.BUNDLE: "build/app/outputs/bundle/${arg:build_type}/app-${arg:build_type}.aab",
                 }
 
         if Project.Platform.IOS in project.platforms:
