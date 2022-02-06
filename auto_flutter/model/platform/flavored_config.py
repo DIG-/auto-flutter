@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
-from ...model.build_type import BuildType
+from .build_type import BuildType
 from .._serializable import Serializable
 from ..flavor import Flavor
 from . import PlatformConfig

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from ...core.utils import _Dict
-from ...model.build_type import FlutterBuildType
+from ...model.platform.build_type import FlutterBuildType
 from ...model.flavor import Flavor
 from ...model.platform import Platform, PlatformConfigFlavored
 from ...model.platform.config import BuildRunBefore

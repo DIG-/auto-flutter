@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
 from .._serializable import Serializable
-from ..build_type import BuildType
+from .build_type import BuildType
 from ..flavor import Flavor
 
 

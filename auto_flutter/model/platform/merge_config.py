@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 
 from ...core.utils import _Dict
-from ..build_type import BuildType
+from .build_type import BuildType
 from ..flavor import Flavor
 from . import PlatformConfigFlavored
 from .config import BuildRunBefore

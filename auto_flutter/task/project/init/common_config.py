@@ -1,7 +1,7 @@
 from typing import Final
 
 from ....core.string import SB
-from ....model.build_type import BuildType
+from ....model.platform.build_type import BuildType
 from ....model.platform import PlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import Task

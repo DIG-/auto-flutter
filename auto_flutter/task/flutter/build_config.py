@@ -2,7 +2,7 @@ from ...core.json import _JsonDecode
 from ...core.string import SB
 from ...core.task.manager import TaskManager
 from ...core.utils import _Dict
-from ...model.build_type import FlutterBuildType
+from ...model.platform.build_type import FlutterBuildType
 from ...model.platform import MergePlatformConfigFlavored, Platform
 from ...model.project import Project
 from ...model.task import Task
