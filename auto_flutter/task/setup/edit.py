@@ -48,13 +48,15 @@ class SetupEdit(Task):
     )
 
     def execute(self, args: Task.Args) -> Task.Result:
-        if "show" in args or "check" in args:
+        if args.contains(self.option_show) or args.contains(self.option_check):
             return Task.Result(args)  # Nothing to edit in show mode
 
         from ...core.task.manager import TaskManager
 
-        if "flutter" in args:
-            flutter = args["flutter"].value
+        manager: Final = TaskManager.instance()
+
+        if args.contains(self.option_flutter):
+            flutter: Final = args.get_value(self.option_flutter)
             if flutter is None or len(flutter) == 0:
                 return Task.Result(
                     args, ValueError("Require valid path for flutter"), False
@@ -70,12 +72,10 @@ class SetupEdit(Task):
                         False,
                     )
                 Config.instance().flutter = OS.machine_to_posix_path(path)
-                TaskManager.instance().add(
-                    SetupCheck(flutter=True, skip_on_failure=True)
-                )
+                manager.add(SetupCheck(flutter=True, skip_on_failure=True))
 
-        if "firebase-cli" in args:
-            firebase = args["firebase-cli"].value
+        if args.contains(self.option_firebase):
+            firebase: Final = args.get_value(self.option_firebase)
             if firebase is None or len(firebase) == 0:
                 return Task.Result(
                     args, ValueError("Require valid path for firebase-cli"), False
@@ -91,13 +91,11 @@ class SetupEdit(Task):
                         False,
                     )
                 Config.instance().firebase = OS.machine_to_posix_path(path)
-                TaskManager.instance().add(
-                    SetupCheck(firebase=True, skip_on_failure=True)
-                )
+                manager.add(SetupCheck(firebase=True, skip_on_failure=True))
 
-        if "firebase-standalone" in args:
+        if args.contains(self.option_firebase_standalone):
             Config.instance().firebase_standalone = True
-        elif "no-firebase-standalone" in args:
+        elif args.contains(self.option_firebase_non_standalone):
             Config.instance().firebase_standalone = False
 
         return Task.Result(args)
