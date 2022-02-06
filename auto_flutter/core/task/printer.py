@@ -87,7 +87,9 @@ class TaskPrinter:
                                         SB()
                                         .append("\n")
                                         .append(
-                                            self.__format_error(message.result.error),
+                                            Session.format_exception(
+                                                message.result.error
+                                            ),
                                             SB.Color.YELLOW,
                                         )
                                         .str()
@@ -103,7 +105,9 @@ class TaskPrinter:
                                         SB()
                                         .append("\n")
                                         .append(
-                                            self.__format_error(message.result.error),
+                                            Session.format_exception(
+                                                message.result.error
+                                            ),
                                             SB.Color.RED,
                                         )
                                         .str()
@@ -148,8 +152,3 @@ class TaskPrinter:
 
         print(builder.append(description).str(), end="")
         sys_stdout.flush()
-
-    def __format_error(self, error: BaseException) -> str:
-        if not Session.show_stacktrace:
-            return str(error)
-        return "".join(TracebackException.from_exception(error).format())
