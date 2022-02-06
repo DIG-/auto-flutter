@@ -1,15 +1,7 @@
 from abc import ABCMeta
 from enum import Enum
-from typing import (
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union
+
 from ..core.utils import _Iterable
 from ..model._serializable import Serializable
 
@@ -18,6 +10,8 @@ Input = Union[Serializable.Json, Serializable, Enum]
 
 
 class _JsonEncode(metaclass=ABCMeta):
+    Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]]]
+
     def encode(input: Input) -> Json:
         if isinstance(input, str):
             return input
@@ -26,29 +20,57 @@ class _JsonEncode(metaclass=ABCMeta):
         if isinstance(input, Enum):
             return input.value
         if isinstance(input, List):
-            return _JsonEncode.encode_list(input)
+            return _JsonEncode.encode_list(input, lambda x: _JsonEncode.encode(x))
         if isinstance(input, Dict):
-            return _JsonEncode.encode_dict(input)
+            return _JsonEncode.encode_dict(
+                input, lambda x: _JsonEncode.encode(x), lambda x: _JsonEncode.encode(x)
+            )
 
     def encode_optional(input: Optional[Input]) -> Optional[Json]:
         if input is None:
             return None
         return _JsonEncode.encode(input)
 
-    def encode_list(input: List[Input]) -> List[Json]:
-        return list(map(lambda x: _JsonEncode.encode(x), input))
+    def encode(input: Input, encoder: Encoder) -> Json:
+        if isinstance(encoder, Callable):
+            return encoder(input)
+        elif encoder is Serializable:
+            if isinstance(input, encoder):
+                return input.to_json()
+            return encoder(input).to_json()
+        else:
+            raise AssertionError("Invalid encoder `{}`".format(type(encoder)))
 
-    def encode_dict(input: Dict[Input, Input]) -> Dict[str, Json]:
-        return dict(map(_JsonEncode.__encode_dict_tuple, input.items()))
+    def encode_list(input: List[Input], encoder: Encoder) -> List[Json]:
+        return list(map(lambda x: _JsonEncode.encode(x, encoder), input))
 
-    def __encode_dict_tuple(input: Tuple[Input, Input]) -> Tuple[str, Json]:
-        return (_JsonEncode.__encode_dict_key(input[0]), _JsonEncode.encode(input[1]))
+    def encode_dict(
+        intput: Dict[Input, Input],
+        encoder_key: Encoder,
+        enoder_value: Encoder,
+    ):
+        return dict(
+            map(
+                lambda x: _JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
+                input.items(),
+            )
+        )
 
-    def __encode_dict_key(key: Input) -> str:
-        output = _JsonEncode.encode(key)
+    def __encode_dict_tuple(
+        input: Tuple[Input, Input],
+        encoder_key: Encoder,
+        enoder_value: Encoder,
+    ) -> Tuple[str, Json]:
+        return (
+            _JsonEncode.__encode_dict_key(input[0], encoder_key),
+            _JsonEncode.encode(input[1], enoder_value),
+        )
+
+    def __encode_dict_key(key: Input, encoder: Encoder) -> str:
+        output = _JsonEncode.encode(key, encoder)
         if isinstance(output, str):
             return output
-        raise ValueError('Can not accept "{}" as dictionary key'.format(output))
+        raise ValueError('Can not accept "{}" as dictionary key'.format(type(output)))
 
     C = TypeVar("C", Dict, List)
 
