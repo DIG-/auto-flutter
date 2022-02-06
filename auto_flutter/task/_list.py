@@ -1,18 +1,18 @@
 from collections import OrderedDict
-from typing import Dict
+from typing import Dict, Final
 
 from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
-from ..task.setup import Setup, SetupEdit
 from .flutter import Flutter
 from .flutter.build_config import FlutterBuildConfig
 from .flutter.doctor import FlutterDoctor
 from .project.init import ProjectInit
 from .project.read import ProjectRead
 from .project.save import ProjectSave
+from .setup import Setup, SetupEdit
 
-task_list: Dict[TaskId, TaskIdentity] = OrderedDict(
+task_list: Final[Dict[TaskId, TaskIdentity]] = OrderedDict(
     dict(
         [
             Help.identity.to_map(),
