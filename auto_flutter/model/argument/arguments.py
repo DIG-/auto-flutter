@@ -1,7 +1,9 @@
+import re
 from itertools import chain
-from typing import Dict, List
+from typing import Dict, List, Optional, Union
 
 from .argument import Arg
+from .option import Option
 
 
 class Args(Dict[str, Arg]):
@@ -14,3 +16,27 @@ class Args(Dict[str, Arg]):
     def to_command_arg(self) -> List[str]:
         mapped = map(lambda x: x[1], self.items())
         return list(filter(None.__ne__, chain(*mapped)))
+
+    def contains(self, option: Union[str, Option]) -> bool:
+        return Args.__get_key(option) in self
+
+    def get_value(self, option: Union[str, Option]) -> Optional[str]:
+        key = Args.__get_key(option)
+        if key in self:
+            return None
+        if key.startswith("-"):
+            return self[key].argument
+        return self[key].value
+
+    def __get_key(option: Union[str, Option]) -> str:
+        key: str = None
+        if isinstance(option, str):
+            key = option
+        elif isinstance(option, Option):
+            if option.long is None:
+                key = option.short
+            else:
+                key = option.long
+        if key is None:
+            raise KeyError("Can not extract key from `{}`".format(type(option)))
+        return key
