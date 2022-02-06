@@ -4,7 +4,7 @@ from typing import Final
 from ...core.os import OS
 from ...model.config import Config
 from ...model.task import Task
-from .check import SetupCheck
+from ..firebase.check import FirebaseCheck
 from .check_flutter import SetupCheckFlutter
 
 
@@ -92,7 +92,7 @@ class SetupEdit(Task):
                         False,
                     )
                 Config.instance().firebase = OS.machine_to_posix_path(path)
-                manager.add(SetupCheck(firebase=True, skip_on_failure=True))
+                manager.add(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
             Config.instance().firebase_standalone = True
