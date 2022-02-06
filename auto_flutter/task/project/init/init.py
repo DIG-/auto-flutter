@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Final, Optional
 
-from auto_flutter.task.project.init.find_flavor import FindFlavor
-
 from ....core.string_builder import SB
 from ....core.task.manager import TaskManager
 from ....model.project import Project
 from ....model.task import Task
+from ..save import ProjectSave
+from .common_config import CommonConfig
+from .find_flavor import FindFlavor
 from .find_platform import FindPlatform
 
 
@@ -68,7 +69,10 @@ class ProjectInit(Task):
             tasks=None,
         )
 
+        # Remember, TaskManager is stack
         manager = TaskManager.instance()
+        manager.add(ProjectSave())
+        manager.add(CommonConfig())
         manager.add(FindFlavor())
         manager.add(FindPlatform())
 
@@ -76,7 +80,7 @@ class ProjectInit(Task):
 
     def _project_name_from_pubspec(pubspec: Path) -> Optional[str]:
         try:
-            from yaml import safe_load as yaml_load
+            from yaml import safe_load as yaml_load  # type: ignore
         except ImportError as e:
             return None
         try:
