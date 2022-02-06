@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from enum import Enum
 from operator import itemgetter
-from typing import Tuple
+from typing import Optional, Tuple
 
-from ...core.utils import _Ensure
+from ...core.utils import _Ensure, _Iterable
+from ...model._serializable import Serializable
 from .platform import Platform
 
 
@@ -27,3 +28,31 @@ class BuildType(Enum):
     APK = _BuildTypeItem("apk", "apk", Platform.ANDROID)
     BUNDLE = _BuildTypeItem("appbundle", "aab", Platform.ANDROID)
     IPA = _BuildTypeItem("ios", "ipa", Platform.IOS)
+
+
+class _BuildType_SerializeFlutter(Serializable[BuildType]):
+    def __init__(self, value: BuildType) -> None:
+        self.value = value
+
+    def to_json(self) -> Serializable.Json:
+        return _Ensure.instance(self.value, _BuildTypeItem).flutter
+
+    def from_json(json: Serializable.Json) -> Optional[BuildType]:
+        return _Iterable.first_or_none(
+            BuildType.__iter__(),
+            lambda x: _Ensure.instance(x.value, _BuildTypeItem).flutter == json,
+        )
+
+
+class _BuildType_SerializeOutput(Serializable[BuildType]):
+    def __init__(self, value: BuildType) -> None:
+        self.value = value
+
+    def to_json(self) -> Serializable.Json:
+        return _Ensure.instance(self.value, _BuildTypeItem).output
+
+    def from_json(json: Serializable.Json) -> Optional[BuildType]:
+        return _Iterable.first_or_none(
+            BuildType.__iter__(),
+            lambda x: _Ensure.instance(x.value, _BuildTypeItem).output == json,
+        )
