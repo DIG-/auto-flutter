@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, List, Optional, Tuple
 from .process import Process
 from subprocess import Popen, PIPE, STDOUT
-from ..string_builder import SB
+from ..string import SB
 from codecs import IncrementalDecoder, getincrementaldecoder
 from ..logger import log
 from ..os import OS

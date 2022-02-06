@@ -1,5 +1,5 @@
 from ...core.json import _JsonDecode
-from ...core.string_builder import SB
+from ...core.string import SB
 from ...core.task.manager import TaskManager
 from ...core.utils import _Dict
 from ...model.build_type import FlutterBuildType

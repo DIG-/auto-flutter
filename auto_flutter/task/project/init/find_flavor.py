@@ -5,7 +5,7 @@ from xml.etree.ElementTree import parse as xml_parse
 
 from ....core.os import OS
 from ....core.session import Session
-from ....core.string_builder import SB
+from ....core.string import SB
 from ....model.platform import PlatformConfig, PlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import Task

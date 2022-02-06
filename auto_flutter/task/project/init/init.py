@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Final, Optional
 
-from ....core.string_builder import SB
+from ....core.string import SB
 from ....core.task.manager import TaskManager
 from ....model.project import Project
 from ....model.task import Task

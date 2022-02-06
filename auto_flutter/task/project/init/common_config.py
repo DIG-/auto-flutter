@@ -1,6 +1,6 @@
 from typing import Final
 
-from ....core.string_builder import SB
+from ....core.string import SB
 from ....model.build_type import BuildType
 from ....model.platform import PlatformConfigFlavored
 from ....model.project import Project

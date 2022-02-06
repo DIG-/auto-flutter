@@ -5,7 +5,7 @@ from typing import Deque
 from ...model.task import Task
 from .resolver import TaskResolver
 from ...task.parse_options import ParseOptions
-from ..string_builder import SB
+from ..string import SB
 from .printer import TaskPrinter
 
 

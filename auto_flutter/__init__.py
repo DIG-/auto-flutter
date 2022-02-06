@@ -4,7 +4,7 @@ from .core.logger import log
 from .model.config import Config
 from .task._list import task_list
 from .core.task import TaskManager
-from .core.string_builder import SB
+from .core.string import SB
 
 
 def main():

@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from enum import Enum
-from typing import List, Optional
+from typing import Final, List, Optional
+
 from termcolor import colored
 
 
@@ -48,4 +50,4 @@ class StringBuilder:
 
 
 # Simple alias
-SB = StringBuilder
+SB: Final = StringBuilder

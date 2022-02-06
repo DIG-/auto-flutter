@@ -1,7 +1,7 @@
 from pathlib import Path, PurePosixPath
 
 from ....core.os import OS
-from ....core.string_builder import SB
+from ....core.string import SB
 from ....core.utils import _Iterable
 from ....model.project import Project
 from ....model.task import Task
