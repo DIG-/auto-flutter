@@ -22,7 +22,7 @@ class Args(Dict[str, Arg]):
 
     def get_value(self, option: Union[str, Option]) -> Optional[str]:
         key = Args.__get_key(option)
-        if key in self:
+        if not key in self:
             return None
         if key.startswith("-"):
             return self[key].argument
