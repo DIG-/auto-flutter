@@ -16,7 +16,7 @@ class CommonConfig(Task):
         if Project.Platform.ANDROID in project.platforms:
             self.print("    Apply common config for android")
             self.print("    Disabling gradle daemon in build")
-            if project.build_config[Project.Platform.ANDROID] is None:
+            if not Project.Platform.ANDROID in project.build_config:
                 project.build_config[
                     Project.Platform.ANDROID
                 ] = PlatformConfigFlavored()
