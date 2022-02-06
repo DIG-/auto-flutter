@@ -1,65 +1,29 @@
-from enum import Enum
-from typing import Optional
+from __future__ import annotations
 
-from ...core.utils import _Iterable
+from enum import Enum
+from operator import itemgetter
+from typing import Tuple
+
+from ...core.utils import _Ensure
+from .platform import Platform
+
+
+class _BuildTypeItem(Tuple[str, str, Platform]):
+    def __new__(
+        cls: type[_BuildTypeItem], flutter: str, output: str, platform: Platform
+    ) -> _BuildTypeItem:
+        _Ensure.type(flutter, str, "flutter")
+        _Ensure.type(output, str, "output")
+        _Ensure.type(platform, Platform, "platform")
+        return super().__new__(_BuildTypeItem, (flutter, output, platform))
+
+    flutter: str = property(itemgetter(0))
+    output: str = property(itemgetter(1))
+    platform: Platform = property(itemgetter(2))
 
 
 class BuildType(Enum):
-    AAR = "aar"
-    APK = "apk"
-    BUNDLE = "aab"
-    IPA = "ipa"
-
-    def to_FlutterBuildType(self) -> "FlutterBuildType":
-        found = _Iterable.first_or_none(
-            FlutterBuildType.__iter__, lambda other: other.name == self.name
-        )
-        if found is None:
-            raise AttributeError("Can not find FlutterBuildType from BuildType")
-        return found
-
-    def to_Platform(self) -> "Platform":
-        from . import Platform
-
-        if self == BuildType.AAR:
-            return Platform.ANDROID
-        if self == BuildType.APK:
-            return Platform.ANDROID
-        if self == BuildType.BUNDLE:
-            return Platform.ANDROID
-        if self == BuildType.IPA:
-            return Platform.IOS
-        raise AssertionError("{} es not associated with platform".format(self))
-
-
-class FlutterBuildType(Enum):
-    AAR = "aar"
-    APK = "apk"
-    BUNDLE = "appbundle"
-    IPA = "ipa"
-
-    def to_BuildType(self) -> BuildType:
-        found = _Iterable.first_or_none(
-            BuildType.__iter__, lambda other: other.name == self.name
-        )
-        if found is None:
-            raise AttributeError("Can not find BuildType from FlutterBuildType")
-        return found
-
-    def from_str(string: str) -> Optional["FlutterBuildType"]:
-        return _Iterable.first_or_none(
-            FlutterBuildType.__iter__, lambda it: it.value == string
-        )
-
-    def to_Platform(self) -> "Platform":
-        from . import Platform
-
-        if self == FlutterBuildType.AAR:
-            return Platform.ANDROID
-        if self == FlutterBuildType.APK:
-            return Platform.ANDROID
-        if self == FlutterBuildType.BUNDLE:
-            return Platform.ANDROID
-        if self == FlutterBuildType.IPA:
-            return Platform.IOS
-        raise AssertionError("{} es not associated with platform".format(self))
+    AAR = _BuildTypeItem("aar", "aar", Platform.ANDROID)
+    APK = _BuildTypeItem("apk", "apk", Platform.ANDROID)
+    BUNDLE = _BuildTypeItem("appbundle", "aab", Platform.ANDROID)
+    IPA = _BuildTypeItem("ios", "ipa", Platform.IOS)

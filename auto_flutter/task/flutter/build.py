@@ -1,9 +1,8 @@
 from typing import List, Optional
 
 from ...core.utils import _Dict
-from ...model.platform.build_type import FlutterBuildType
 from ...model.flavor import Flavor
-from ...model.platform import Platform, PlatformConfigFlavored
+from ...model.platform import BuildType, Platform, PlatformConfigFlavored
 from ...model.platform.config import BuildRunBefore
 from ...model.project import Project
 from ...model.task import Task
@@ -15,7 +14,7 @@ class FlutterBuild(Flutter):
         self,
         project: Project,
         platform: Platform,
-        type: FlutterBuildType,
+        type: BuildType,
         flavor: Optional[Flavor],
         config: PlatformConfigFlavored,
         debug: bool = False,

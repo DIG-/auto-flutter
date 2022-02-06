@@ -2,8 +2,7 @@ from ...core.json import _JsonDecode
 from ...core.string import SB
 from ...core.task.manager import TaskManager
 from ...core.utils import _Dict
-from ...model.platform.build_type import FlutterBuildType
-from ...model.platform import MergePlatformConfigFlavored, Platform
+from ...model.platform import BuildType, MergePlatformConfigFlavored, Platform
 from ...model.project import Project
 from ...model.task import Task
 from .build import FlutterBuild
@@ -31,7 +30,7 @@ class FlutterBuildConfig(Task):
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type = _JsonDecode.decode(args["-0"].argument, FlutterBuildType)
+        build_type = _JsonDecode.decode(args["-0"].argument, BuildType)
         if build_type is None:
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
