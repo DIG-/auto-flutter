@@ -85,7 +85,12 @@ class FindFlavor(Task):
                     .str()
                 )
 
-        return Task.Result(args, success=False)
+        if project.flavors is None or len(project.flavors) == 0:
+            project.flavors = None
+            self.print(
+                "  No flavors were found. Maybe this project does not have flavor 🙂"
+            )
+        return Task.Result(args, success=True)
 
     def print_error(self, message: str, error: BaseException):
         self.print(
