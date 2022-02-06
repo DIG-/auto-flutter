@@ -1,6 +1,5 @@
 from pathlib import Path, PurePosixPath
-from pprint import pprint
-from traceback import TracebackException
+from re import compile as re_compile
 from typing import Final, Optional
 from xml.etree.ElementTree import parse as xml_parse
 
@@ -27,7 +26,7 @@ class FindFlavor(Task):
     )
     option_skip_ios: Final = Task.Option(
         None,
-        "skip-flavor-android",
+        "skip-flavor-ios",
         "Skip algorithm to detect flavor using ios data",
         False,
     )
@@ -42,7 +41,7 @@ class FindFlavor(Task):
             if not idea_run.exists():
                 self.print("    Idea run config not found")
             else:
-                self.print("    Trying to detect from Idea run config")
+                self.print("    Trying to detect flavor from Idea run config")
                 for filename in idea_run.glob("*.run.xml"):
                     try:
                         self._extract_from_idea(project, filename)
@@ -59,17 +58,32 @@ class FindFlavor(Task):
             )
             if not Project.Platform.ANDROID in project.platforms:
                 self.print(
-                    "    Skip android analysis, since projecto does not support android"
+                    "    Skip android analysis, since project does not support android"
                 )
             elif not gradle.exists():
                 self.print("    Android build.gradle not found")
             else:
+                self.print("    Trying to detect flavor from android project")
                 try:
                     self._extract_from_gradle(project, gradle)
                 except BaseException as error:
                     self.print_error("Failed to extract flavor from android. ", error)
                 if self._check_flavor_success(project):
                     return Task.Result(args)
+
+        if not args.contains(FindFlavor.option_skip_ios):
+            if not Project.Platform.IOS in project.platforms:
+                self.print("    Skip ios analysis, since project does not support ios")
+            else:
+                self.print("    Trying to detect flavor from ios project")
+                self.print(
+                    SB()
+                    .append(
+                        "  ios flavor extraction was not implemented yet",
+                        SB.Color.YELLOW,
+                    )
+                    .str()
+                )
 
         return Task.Result(args, success=False)
 
@@ -169,7 +183,40 @@ class FindFlavor(Task):
         file: Final = open(filename, "r")
         content: Final = "".join(file.readlines())
         file.close()
-
-        self.print(content)
-
-        pass
+        try:
+            start = content.index("productFlavors")
+            start = content.index("{", start)
+        except BaseException as error:
+            self.print_error("Failed to find flavor section in build.gradle. ", error)
+        end = 0
+        count = 0
+        for i in range(start, len(content)):
+            if content[i] == "{":
+                count += 1
+            elif content[i] == "}":
+                count -= 1
+                if count <= 0:
+                    end = i
+                    break
+        if end < start:
+            self.print_error(
+                "Failed to find flavor section in build.gradle. ",
+                IndexError("End of string is before start"),
+            )
+        flavors = content[start + 1 : end]
+        count = 0
+        buffer = ""
+        space = re_compile("\s")
+        for i in flavors:
+            if not space.match(i) is None:
+                continue
+            elif i == "{":
+                count += 1
+                if count == 1:
+                    self._append_flavor(project, Project.Platform.ANDROID, buffer, None)
+                    buffer = ""
+                continue
+            elif i == "}":
+                count -= 1
+            elif count == 0:
+                buffer += i
