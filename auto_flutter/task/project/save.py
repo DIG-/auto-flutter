@@ -1,5 +1,6 @@
 from json import dump as json_dump
 
+from ...core.json import _JsonEncode
 from ...model.project import Project
 from ...model.task import Task
 
@@ -19,9 +20,9 @@ class ProjectSave(Task):
             return Task.Result(args, error=error)
 
         try:
-            json = project.to_json()
+            json = _JsonEncode.clear_nones(project.to_json())
         except BaseException as error:
             raise RuntimeError("Failed to serialize project", error)
 
-        json_dump(json, file)
+        json_dump(json, file, indent=2)
         return Task.Result(args)
