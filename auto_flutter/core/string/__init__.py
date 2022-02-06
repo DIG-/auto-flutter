@@ -1,1 +1,2 @@
-from .builder import StringBuilder, SB
+from .builder import SB, StringBuilder
+from .formatter import SF, StringFormatter
