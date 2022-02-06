@@ -9,25 +9,45 @@ from ....model.task import Task
 
 
 class FindFlavor(Task):
+    option_skip_idea: Final = Task.Option(
+        None,
+        "skip-flavor-idea",
+        "Skip algorithm to detect flavor from Idea Run config",
+        False,
+    )
+    option_skip_android: Final = Task.Option(
+        None,
+        "skip-flavor-android",
+        "Skip algorithm to detect flavor using android data",
+        False,
+    )
+    option_skip_ios: Final = Task.Option(
+        None,
+        "skip-flavor-android",
+        "Skip algorithm to detect flavor using ios data",
+        False,
+    )
+
     def describe(self, args: Task.Args) -> str:
         return "Detecting project flavors"
 
     def execute(self, args: Task.Args) -> Task.Result:
         project: Final = Project.current
-        idea_run: Final = Path(".run")
-        if not idea_run.exists():
-            self.print("    Idea run config not found")
-        else:
-            self.print("    Trying to detect from Idea run config")
-            for filename in idea_run.glob("*.run.xml"):
-                try:
-                    self._extract_from_idea(project, filename)
-                except BaseException as error:
-                    self.print_error(
-                        'Failed to process "{}": '.format(str(filename)), error
-                    )
-            if self._check_flavor_success(project):
-                return Task.Result(args)
+        if not args.contains(FindFlavor.option_skip_idea):
+            idea_run: Final = Path(".run")
+            if not idea_run.exists():
+                self.print("    Idea run config not found")
+            else:
+                self.print("    Trying to detect from Idea run config")
+                for filename in idea_run.glob("*.run.xml"):
+                    try:
+                        self._extract_from_idea(project, filename)
+                    except BaseException as error:
+                        self.print_error(
+                            'Failed to process "{}": '.format(str(filename)), error
+                        )
+                if self._check_flavor_success(project):
+                    return Task.Result(args)
 
         return Task.Result(args, success=False)
 

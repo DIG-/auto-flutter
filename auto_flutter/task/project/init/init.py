@@ -17,6 +17,9 @@ class ProjectInit(Task):
         [
             Task.Option("n", "name", "Project name", True),
             Task.Option(None, "force", "Overwrite existent project", False),
+            FindFlavor.option_skip_idea,
+            FindFlavor.option_skip_android,
+            FindFlavor.option_skip_ios,
         ],
         lambda: ProjectInit(),
     )
