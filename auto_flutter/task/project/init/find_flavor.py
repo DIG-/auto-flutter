@@ -1,7 +1,11 @@
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+from pprint import pprint
+from traceback import TracebackException
 from typing import Final, Optional
 from xml.etree.ElementTree import parse as xml_parse
 
+from ....core.os import OS
+from ....core.session import Session
 from ....core.string_builder import SB
 from ....model.platform import PlatformConfig, PlatformConfigFlavored
 from ....model.project import Project
@@ -49,6 +53,24 @@ class FindFlavor(Task):
                 if self._check_flavor_success(project):
                     return Task.Result(args)
 
+        if not args.contains(FindFlavor.option_skip_android):
+            gradle: Final = Path(
+                OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle"))
+            )
+            if not Project.Platform.ANDROID in project.platforms:
+                self.print(
+                    "    Skip android analysis, since projecto does not support android"
+                )
+            elif not gradle.exists():
+                self.print("    Android build.gradle not found")
+            else:
+                try:
+                    self._extract_from_gradle(project, gradle)
+                except BaseException as error:
+                    self.print_error("Failed to extract flavor from android. ", error)
+                if self._check_flavor_success(project):
+                    return Task.Result(args)
+
         return Task.Result(args, success=False)
 
     def print_error(self, message: str, error: BaseException):
@@ -56,7 +78,7 @@ class FindFlavor(Task):
             SB()
             .append("  ")
             .append(message, SB.Color.RED)
-            .append(str(error), SB.Color.RED)
+            .append(Session.format_exception(error), SB.Color.RED)
             .str()
         )
 
@@ -142,3 +164,12 @@ class FindFlavor(Task):
 
         if not flavor is None:
             self._append_flavor(project, Project.Platform.DEFAULT, flavor, build_param)
+
+    def _extract_from_gradle(self, project: Project, filename: Path):
+        file: Final = open(filename, "r")
+        content: Final = "".join(file.readlines())
+        file.close()
+
+        self.print(content)
+
+        pass
