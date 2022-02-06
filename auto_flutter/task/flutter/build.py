@@ -6,7 +6,7 @@ from ...model.platform import BuildType, Platform, PlatformConfigFlavored
 from ...model.platform.config import BuildRunBefore
 from ...model.project import Project
 from ...model.task import Task
-from .exec import Flutter
+from . import FLUTTER_DISABLE_VERSION_CHECK, Flutter
 
 
 class FlutterBuild(Flutter):
@@ -43,7 +43,7 @@ class FlutterBuild(Flutter):
         return "Building flutter {}".format(self.platform)
 
     def execute(self, args: Task.Args) -> Task.Result:
-        command: List[str] = ["--no-version-check", "build", self.type.value]
+        command: List[str] = [FLUTTER_DISABLE_VERSION_CHECK, "build", self.type.value]
 
         if not self.flavor is None:
             command.append("--flavor")
