@@ -3,7 +3,7 @@ from typing import Dict, Final
 from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
 from ..task.parse_options import ParseOptions
-from .firebase import FirebaseCheck
+from .firebase import FirebaseBuildUpload, FirebaseBuildValidate, FirebaseCheck
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
 from .flutter.build.stub import FlutterBuildStub
@@ -29,6 +29,8 @@ task_list: Final[Dict[TaskId, TaskIdentity]] = dict(
             FlutterBuildConfig.identity.to_map(),
             FlutterBuildStub.identity.to_map(),
             FirebaseCheck.identity.to_map(),
+            FirebaseBuildValidate.identity.to_map(),
+            FirebaseBuildUpload.identity.to_map(),
         ],
         key=lambda x: x[0],
     )
