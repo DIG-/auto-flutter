@@ -1,10 +1,10 @@
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
-from .build_type import BuildType
 from .._serializable import Serializable
 from ..flavor import Flavor
 from . import PlatformConfig
+from .build_type import BuildType
 from .config import BuildRunBefore, TaskIdList
 
 
@@ -25,7 +25,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         output = ""
         if not self.build_param is None:
             output += self.build_param
-        if not flavor is None and flavor in self.flavored:
+        if not flavor is None and not self.flavored is None and flavor in self.flavored:
             flavored_param = self.flavored[flavor].build_param
             if not flavored_param is None:
                 if len(output) > 0:
@@ -41,8 +41,10 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             output = self.run_before
         if (
             (not flavor is None)
+            and (not self.flavored is None)
             and (flavor in self.flavored)
             and (not self.flavored[flavor] is None)
+            and (not self.flavored[flavor].run_before is None)
         ):
             for key, value in self.flavored[flavor].run_before.items():
                 if not key in output:
@@ -52,14 +54,14 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         return output
 
     def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
-        if not flavor is None and flavor in self.flavored:
+        if not flavor is None and not self.flavored is None and flavor in self.flavored:
             from_flavor = self.flavored[flavor].get_output(type)
             if not from_flavor is None:
                 return from_flavor
         return self.get_output(type)
 
     def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
-        if not flavor is None and flavor in self.flavored:
+        if not flavor is None and not self.flavored is None and flavor in self.flavored:
             from_flavor = self.flavored[flavor].get_extra(key)
             if not from_flavor is None:
                 return from_flavor
