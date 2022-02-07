@@ -5,9 +5,9 @@ from queue import Queue
 from sys import stdout as sys_stdout
 from threading import Lock, Thread
 from time import sleep, time
-from traceback import TracebackException
 from typing import Optional, Tuple
 
+from ...model.error import SilentWarning
 from ...model.task import Task
 from ..session import Session
 from ..string import SB
@@ -78,6 +78,14 @@ class TaskPrinter:
                                     )
                                     current_task = ""
                                     print("")
+
+                                elif isinstance(message.result.error, SilentWarning):
+                                    TaskPrinter.__print_description(
+                                        current_task, warning=True
+                                    )
+                                    current_task = ""
+                                    print("")
+
                                 else:
                                     TaskPrinter.__print_description(
                                         current_task, warning=True
