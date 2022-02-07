@@ -1,4 +1,4 @@
-from . import main
+from .main import _main
 
 if __name__ == "__main__":
-    main()
+    _main()
