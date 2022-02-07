@@ -4,7 +4,7 @@ from ...model.argument import Args
 from ...model.config import Config
 from ...model.task import Task
 from ..firebase import FirebaseCheck
-from .check_flutter import SetupCheckFlutter
+from ..flutter import FlutterCheck
 from .edit import SetupEdit
 
 
@@ -35,7 +35,7 @@ class Setup(Task):
 
             manager: Final = TaskManager.instance()
             manager.add(FirebaseCheck(skip_on_failure=True))
-            manager.add(SetupCheckFlutter(skip_on_failure=True))
+            manager.add(FlutterCheck(skip_on_failure=True))
             return Task.Result(args)
 
         try:

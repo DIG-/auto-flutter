@@ -1,10 +1,10 @@
 from ...core.process import Process
 from ...model.config import Config
 from ...model.task import Task
-from ..flutter import FLUTTER_DISABLE_VERSION_CHECK
+from ._const import FLUTTER_DISABLE_VERSION_CHECK
 
 
-class SetupCheckFlutter(Task):
+class FlutterCheck(Task):
     def __init__(
         self,
         skip_on_failure: bool = False,

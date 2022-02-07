@@ -4,8 +4,8 @@ from typing import Final
 from ...core.os import OS
 from ...model.config import Config
 from ...model.task import Task
-from ..firebase.check import FirebaseCheck
-from .check_flutter import SetupCheckFlutter
+from ..firebase import FirebaseCheck
+from ..flutter import FlutterCheck
 
 
 class SetupEdit(Task):
@@ -73,7 +73,7 @@ class SetupEdit(Task):
                         False,
                     )
                 Config.instance().flutter = OS.machine_to_posix_path(path)
-                manager.add(SetupCheckFlutter(skip_on_failure=True))
+                manager.add(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
             firebase: Final = args.get_value(self.option_firebase)

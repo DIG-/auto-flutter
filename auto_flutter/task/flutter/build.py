@@ -6,7 +6,8 @@ from ...model.platform import BuildType, Platform, PlatformConfigFlavored
 from ...model.platform.config import BuildRunBefore
 from ...model.project import Project
 from ...model.task import Task
-from . import FLUTTER_DISABLE_VERSION_CHECK, Flutter
+from . import Flutter
+from ._const import FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterBuild(Flutter):
