@@ -36,12 +36,13 @@ class FlutterBuild(Flutter):
         self.debug = debug
 
     def require(self) -> List[Task.ID]:
-        required = _Dict.get_or_none(self.config.get_run_before(), BuildRunBefore.BUILD)
+        required = _Dict.get_or_none(
+            self.config.get_run_before(self.flavor), BuildRunBefore.BUILD
+        )
         return [] if required is None else required
 
     def describe(self, args: Task.Args) -> str:
-        BaseException()
-        return "Building flutter {}".format(self.platform)
+        return "Building flutter {}".format(self.platform.value)
 
     def execute(self, args: Task.Args) -> Task.Result:
         command: List[str] = [FLUTTER_DISABLE_VERSION_CHECK, "build", self.type.value]
