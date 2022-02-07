@@ -45,7 +45,7 @@ class FlutterBuild(Flutter):
         return "Building flutter {}".format(self.platform.value)
 
     def execute(self, args: Task.Args) -> Task.Result:
-        command: List[str] = [FLUTTER_DISABLE_VERSION_CHECK, "build", self.type.value]
+        command: List[str] = [FLUTTER_DISABLE_VERSION_CHECK, "build", self.type.flutter]
 
         if not self.flavor is None:
             command.append("--flavor")
