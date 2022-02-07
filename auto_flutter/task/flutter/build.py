@@ -1,6 +1,8 @@
 from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
+from auto_flutter.model.error import SilentWarning
+
 from ...core.os import OS
 from ...core.string import SB, SF
 from ...core.utils import _Dict
@@ -143,14 +145,26 @@ class FlutterBuild(Flutter):
                         )
                         .str()
                     )
-                    return Task.Result(args, error=Warning(), success=True)
+                    return Task.Result(
+                        args,
+                        error=SilentWarning(
+                            "Build others flavor, than rebuild current flavor"
+                        ),
+                        success=True,
+                    )
 
         process.args.pop("output")
         if not process.success:
             if (
                 self.android_rebuild_fix_other
             ):  # Other build failed, maybe there is more to build
-                return Task.Result(process.args, error=Warning(), success=True)
+                return Task.Result(
+                    process.args,
+                    error=SilentWarning(
+                        "Build failed. Maybe there is more flavors to build"
+                    ),
+                    success=True,
+                )
             return process
 
         output_file = self.config.get_output(self.flavor, self.type)
