@@ -62,9 +62,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             "output": _JsonEncode.encode_optional(self.output),
             "outputs": None
             if self.outputs is None
-            else _JsonEncode.encode_dict(
-                self.outputs, _BuildType_SerializeOutput, TaskIdList
-            ),
+            else _JsonEncode.encode_dict(self.outputs, _BuildType_SerializeOutput, str),
         }
         if extras is None:
             return output

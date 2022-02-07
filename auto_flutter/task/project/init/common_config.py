@@ -1,8 +1,8 @@
 from typing import Final
 
 from ....core.string import SB
-from ....model.platform.build_type import BuildType
 from ....model.platform import PlatformConfigFlavored
+from ....model.platform.build_type import BuildType
 from ....model.project import Project
 from ....model.task import Task
 
@@ -16,11 +16,11 @@ class CommonConfig(Task):
         if Project.Platform.ANDROID in project.platforms:
             self.print("    Apply common config for android")
             self.print("    Disabling gradle daemon in build")
-            if not Project.Platform.ANDROID in project.build_config:
-                project.build_config[
+            if not Project.Platform.ANDROID in project.platform_config:
+                project.platform_config[
                     Project.Platform.ANDROID
                 ] = PlatformConfigFlavored()
-            config = project.build_config[Project.Platform.ANDROID]
+            config = project.platform_config[Project.Platform.ANDROID]
             if config.build_param is None:
                 config.build_param = ""
             config.build_param += " --no-android-gradle-daemon"

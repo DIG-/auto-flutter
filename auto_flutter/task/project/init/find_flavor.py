@@ -123,8 +123,8 @@ class FindFlavor(Task):
         project.flavors.append(flavor)
 
         if not build_param is None and len(build_param) > 0:
-            if not platform in project.build_config:
-                project.build_config[platform] = PlatformConfigFlavored(
+            if not platform in project.platform_config:
+                project.platform_config[platform] = PlatformConfigFlavored(
                     build_param=None,
                     run_before=None,
                     output=None,
@@ -132,9 +132,9 @@ class FindFlavor(Task):
                     extras=None,
                     flavored={},
                 )
-            if project.build_config[platform].flavored is None:
-                project.build_config[platform].flavored = {}
-            project.build_config[platform].flavored[flavor] = PlatformConfig(
+            if project.platform_config[platform].flavored is None:
+                project.platform_config[platform].flavored = {}
+            project.platform_config[platform].flavored[flavor] = PlatformConfig(
                 build_param=build_param,
                 run_before=None,
                 output=None,

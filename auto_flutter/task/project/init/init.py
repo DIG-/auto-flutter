@@ -65,7 +65,7 @@ class ProjectInit(Task):
             name=name,
             platforms=[],
             flavors=None,
-            build_config={},
+            platform_config={},
             tasks=None,
         )
 

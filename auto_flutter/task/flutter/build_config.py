@@ -71,8 +71,8 @@ class FlutterBuildConfig(Task):
                     "Flavor {} was not found in project.".format(flavor)
                 )
 
-        config_default = _Dict.get_or_none(project.build_config, Platform.DEFAULT)
-        config_platform = _Dict.get_or_none(project.build_config, platform)
+        config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
+        config_platform = _Dict.get_or_none(project.platform_config, platform)
         config = MergePlatformConfigFlavored(config_default, config_platform)
         if config_default is None and config_platform is None:
             self.print(

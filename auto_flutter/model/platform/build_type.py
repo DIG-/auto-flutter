@@ -39,12 +39,11 @@ class _BuildType_SerializeFlutter(Serializable[BuildType]):
         self.value = value
 
     def to_json(self) -> Serializable.Json:
-        return _Ensure.instance(self.value, _BuildTypeItem).flutter
+        return self.value.flutter
 
     def from_json(json: Serializable.Json) -> Optional[BuildType]:
         return _Iterable.first_or_none(
-            BuildType.__iter__(),
-            lambda x: _Ensure.instance(x.value, _BuildTypeItem).flutter == json,
+            BuildType.__iter__(), lambda x: x.flutter == json
         )
 
 
@@ -53,10 +52,7 @@ class _BuildType_SerializeOutput(Serializable[BuildType]):
         self.value = value
 
     def to_json(self) -> Serializable.Json:
-        return _Ensure.instance(self.value, _BuildTypeItem).output
+        return self.value.output
 
     def from_json(json: Serializable.Json) -> Optional[BuildType]:
-        return _Iterable.first_or_none(
-            BuildType.__iter__(),
-            lambda x: _Ensure.instance(x.value, _BuildTypeItem).output == json,
-        )
+        return _Iterable.first_or_none(BuildType.__iter__(), lambda x: x.output == json)
