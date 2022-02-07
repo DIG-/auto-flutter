@@ -58,7 +58,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             from_flavor = self.flavored[flavor].get_output(type)
             if not from_flavor is None:
                 return from_flavor
-        return self.get_output(type)
+        return super().get_output(type)
 
     def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
         if not flavor is None and not self.flavored is None and flavor in self.flavored:

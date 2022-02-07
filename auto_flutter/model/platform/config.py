@@ -42,10 +42,10 @@ class PlatformConfig(Serializable["PlatformConfig"]):
         self.extras: Optional[Dict[str, str]] = extras
 
     def get_output(self, type: BuildType) -> Optional[str]:
-        if not self._outputs is None:
-            if type in self._outputs:
-                return self._outputs[type]
-        return self._output
+        if not self.outputs is None:
+            if type in self.outputs:
+                return self.outputs[type]
+        return self.output
 
     def get_extra(self, key: str) -> Optional[str]:
         if self.extras is None:
