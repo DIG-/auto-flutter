@@ -1,10 +1,14 @@
+from typing import Final, List
+
 from ...core.json import _JsonDecode
 from ...core.string import SB
 from ...core.task.manager import TaskManager
 from ...core.utils import _Dict
 from ...model.platform import BuildType, MergePlatformConfigFlavored, Platform
+from ...model.platform.build_type import _BuildType_SerializeFlutter
 from ...model.project import Project
 from ...model.task import Task
+from ..project.read import ProjectRead
 from .build import FlutterBuild
 
 
@@ -22,6 +26,9 @@ class FlutterBuildConfig(Task):
     class Error(RuntimeError):
         ...
 
+    def require(self) -> List[Task.ID]:
+        return [ProjectRead.identity.id]
+
     def describe(self, args: Task.Args) -> str:
         return "Preparing flutter build"
 
@@ -30,13 +37,15 @@ class FlutterBuildConfig(Task):
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type = _JsonDecode.decode(args["-0"].argument, BuildType)
+        build_type: Final[BuildType] = _JsonDecode.decode(
+            args["-0"].argument, _BuildType_SerializeFlutter
+        )
         if build_type is None:
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
             )
-        platform = build_type.to_Platform()
-        project = Project.current
+        platform: Final[Platform] = build_type.platform
+        project: Final = Project.current
         if project is None:
             raise FlutterBuildConfig.Error("Project was not initialized.")
 

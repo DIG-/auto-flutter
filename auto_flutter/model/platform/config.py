@@ -3,8 +3,7 @@ from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
 from .._serializable import Serializable
-from .build_type import BuildType
-from ..flavor import Flavor
+from .build_type import BuildType, _BuildType_SerializeOutput
 
 
 class BuildRunBefore(Enum):
@@ -61,7 +60,11 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             "build-param": self.build_param,
             "run-before": _JsonEncode.encode_optional(self.run_before),
             "output": _JsonEncode.encode_optional(self.output),
-            "outputs": _JsonEncode.encode_optional(self.outputs),
+            "outputs": None
+            if self.outputs is None
+            else _JsonEncode.encode_dict(
+                self.outputs, _BuildType_SerializeOutput, TaskIdList
+            ),
         }
         if extras is None:
             return output
@@ -84,7 +87,9 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             elif key == "output" and isinstance(value, str):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
-                output.outputs = _JsonDecode.decode_optional_dict(value, BuildType, str)
+                output.outputs = _JsonDecode.decode_optional_dict(
+                    value, _BuildType_SerializeOutput, str
+                )
                 pass
             elif isinstance(value, str):
                 if output.extras is None:
@@ -93,4 +98,3 @@ class PlatformConfig(Serializable["PlatformConfig"]):
                     output.extras[key] = value
             pass
         return output
-

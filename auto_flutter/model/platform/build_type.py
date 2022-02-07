@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from operator import itemgetter
+from operator import attrgetter, itemgetter
 from typing import Optional, Tuple
 
 from ...core.utils import _Ensure, _Iterable
@@ -28,6 +28,10 @@ class BuildType(Enum):
     APK = _BuildTypeItem("apk", "apk", Platform.ANDROID)
     BUNDLE = _BuildTypeItem("appbundle", "aab", Platform.ANDROID)
     IPA = _BuildTypeItem("ios", "ipa", Platform.IOS)
+
+    flutter: str = property(attrgetter("value.flutter"))
+    output: str = property(attrgetter("value.output"))
+    platform: Platform = property(attrgetter("value.platform"))
 
 
 class _BuildType_SerializeFlutter(Serializable[BuildType]):
