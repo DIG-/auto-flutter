@@ -1,15 +1,29 @@
-from pathlib import Path
-from typing import Any, List, Optional, Tuple
-from .process import Process
-from subprocess import Popen, PIPE, STDOUT
-from ..string import SB
 from codecs import IncrementalDecoder, getincrementaldecoder
+from pathlib import Path, PurePath
+from subprocess import PIPE, STDOUT, Popen, run
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
 from ..logger import log
 from ..os import OS
+from ..string import SB
+from .process import Process
 
 
 class _SubProcess(Process):
     __DEFAULT_DECODER: Optional[IncrementalDecoder] = None
+
+    def __init__(
+        self,
+        executable: Union[str, PurePath],
+        arguments: Optional[List[str]] = None,
+        environment: Optional[Dict[str, str]] = None,
+        writer: Optional[Callable[[str], None]] = None,
+        inherit_environment: bool = True,
+    ) -> None:
+        super().__init__(
+            executable, arguments, environment, writer, inherit_environment
+        )
+        self.__process: Optional[Popen] = None
 
     def run(self):
         if self._executable.is_absolute():
@@ -18,13 +32,14 @@ class _SubProcess(Process):
                     0, "Executable `{}` not found".format(self._executable)
                 )
         output = SB()
-        with Popen(
+        self.__process = Popen(
             [self._executable] + self._arguments,
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
             env=self._environment,
-        ) as p:
+        )
+        with self.__process as p:
             decoder: IncrementalDecoder = _SubProcess.__get_default_decoder()
             while True:
                 buffer = decoder.decode(p.stdout.read(1))
@@ -35,12 +50,47 @@ class _SubProcess(Process):
                 if not code is None:
                     self.exit_code = code
                     break
+            self.__process = None
             self._write_output("\n")
             self.output = output.str()
             if self.exit_code == 127:
                 raise FileNotFoundError(
                     0, "Command `{}` not found".format(self._executable)
                 )
+
+    def stop(self):
+        process = self.__process
+        if not process is None:
+            process.terminate()
+
+    def kill(self):
+        process = self.__process
+        if not process is None:
+            process.kill()
+            if OS.current() == OS.WINDOWS:
+                try:
+                    result = run(
+                        ["taskkill", "/F", "/T", "/PID", str(process.pid)],
+                        shell=True,
+                        stdout=PIPE,
+                        stderr=PIPE,
+                    )
+                    if result.returncode != 0:
+                        result = run(
+                            ["taskkill", "/F", "/T", "/IM", self._executable.name],
+                            shell=True,
+                            stdout=PIPE,
+                            stderr=PIPE,
+                        )
+                except BaseException as error:
+                    raise SystemError(
+                        'Failed to kill process "{}"'.format(self._executable.name),
+                        error,
+                    )
+                if result.returncode != 0:
+                    raise SystemError(
+                        'Failed to kill process "{}"'.format(self._executable.name)
+                    )
 
     def __get_default_decoder() -> IncrementalDecoder:
         if _SubProcess.__DEFAULT_DECODER is None:
@@ -52,7 +102,7 @@ class _SubProcess(Process):
             return getincrementaldecoder("utf-8")()
         multiple = _IncrementalDecoderMultiple()
         multiple.add(getincrementaldecoder("utf-8")())
-        from winreg import QueryValueEx, OpenKey, CloseKey, HKEY_LOCAL_MACHINE, REG_SZ
+        from winreg import HKEY_LOCAL_MACHINE, REG_SZ, CloseKey, OpenKey, QueryValueEx
 
         try:  # Get windows default charset for console
             key = OpenKey(

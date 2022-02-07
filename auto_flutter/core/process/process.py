@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 from os import environ
 from pathlib import PurePath
 from typing import Callable, Dict, List, Optional, Union
+
 from ..os import OS
 from ..utils import _Ensure
 
@@ -70,4 +72,12 @@ class Process(metaclass=ABCMeta):
 
     @abstractmethod
     def run(self):
+        raise NotImplementedError("This method must be implemented")
+
+    @abstractmethod
+    def stop(self):
+        raise NotImplementedError("This method must be implemented")
+
+    @abstractmethod
+    def kill(self):
         raise NotImplementedError("This method must be implemented")
