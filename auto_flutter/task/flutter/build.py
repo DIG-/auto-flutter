@@ -1,5 +1,8 @@
+from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
+from ...core.os import OS
+from ...core.string import SB, SF
 from ...core.utils import _Dict
 from ...model.flavor import Flavor
 from ...model.platform import BuildType, Platform, PlatformConfigFlavored
@@ -78,6 +81,26 @@ class FlutterBuild(Flutter):
                 args,
                 error=Warning("Build success, but file output not defined"),
                 success=True,
+            )
+        output_file = SF.format(
+            output_file,
+            args,
+            {
+                "flavor": self.flavor,
+                "build_type": "debug" if self.debug else "release",
+                "platform": self.platform.value,
+            },
+        )
+
+        if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
+            self.print(
+                SB().append("Build output found successfully", SB.Color.GREEN).str()
+            )
+        else:
+            return Task.Result(
+                args,
+                FileNotFoundError('Output "{}" not found'.format(output_file)),
+                success=False,
             )
 
         args["output"] = output_file
