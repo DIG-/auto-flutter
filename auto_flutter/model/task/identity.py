@@ -8,7 +8,7 @@ from ..argument import Option
 from . import TaskId
 
 
-class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], "Task"]]):
+class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], "Task"], bool]):
     ## Start - Alias to reduce import
     Option = Option
     ## End - Alias
@@ -18,18 +18,16 @@ class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], "Task"]]):
         name: str,
         options: List[Option],
         creator: Callable[[], "Task"],
+        allow_more: bool = False,  # Allow more tasks with same id
     ) -> TaskIdentity:
-        _Ensure.type(id, TaskId, "id")
-        _Ensure.type(name, str, "name")
-        _Ensure.type(options, List, "options")
-        _Ensure.type(creator, Callable, "creator")
         return super().__new__(
             TaskIdentity,
             (
-                _Ensure.not_none(id, "id"),
-                _Ensure.not_none(name, "name"),
-                _Ensure.not_none(options, "options"),
-                _Ensure.not_none(creator, "creator"),
+                _Ensure.instance(id, TaskId, "id"),
+                _Ensure.instance(name, str, "name"),
+                _Ensure.instance(options, List, "options"),
+                _Ensure.instance(creator, Callable, "creator"),
+                _Ensure.instance(allow_more, bool, "allow_more"),
             ),
         )
 
@@ -37,6 +35,7 @@ class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], "Task"]]):
     name: str = property(itemgetter(1))
     options: List[Option] = property(itemgetter(2))
     creator: Callable[[], "Task"] = property(itemgetter(3))
+    allow_more: bool = property(itemgetter(4))
 
     def to_map(self) -> Tuple[TaskId, TaskIdentity]:
         return (self.id, self)
