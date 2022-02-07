@@ -1,5 +1,6 @@
-from pprint import pprint
 from typing import Dict, List, Optional
+
+from auto_flutter.core import VERSION
 
 from ..core.json import _JsonDecode, _JsonEncode
 from ..core.utils import _Ensure
@@ -36,9 +37,8 @@ class Project(Serializable["Project"]):
         self.tasks: Optional[List[CustomTask]] = tasks
 
     def to_json(self) -> Serializable.Json:
-        pprint("cu")
-        pprint(self.platform_config)
         return {
+            "_creator": "Auto-Flutter " + VERSION,
             "name": self.name,
             "platforms": _JsonEncode.encode(self.platforms),
             "flavors": _JsonEncode.encode_optional(self.flavors),
