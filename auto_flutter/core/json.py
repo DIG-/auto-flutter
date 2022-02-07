@@ -10,42 +10,56 @@ Input = Union[Serializable.Json, Serializable, Enum]
 
 
 class _JsonEncode(metaclass=ABCMeta):
-    Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]]]
+    Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]], Type[str]]
 
-    def encode(input: Input) -> Json:
-        if isinstance(input, str):
-            return input
-        if isinstance(input, Serializable):
-            return input.to_json()
-        if isinstance(input, Enum):
-            return input.value
-        if isinstance(input, List):
-            return _JsonEncode.encode_list(input, lambda x: _JsonEncode.encode(x))
-        if isinstance(input, Dict):
-            return _JsonEncode.encode_dict(
-                input, lambda x: _JsonEncode.encode(x), lambda x: _JsonEncode.encode(x)
-            )
-
-    def encode_optional(input: Optional[Input]) -> Optional[Json]:
+    def encode_optional(
+        input: Optional[Input], encoder: Optional[Encoder] = None
+    ) -> Optional[Json]:
         if input is None:
             return None
-        return _JsonEncode.encode(input)
+        return _JsonEncode.encode(input, encoder)
 
-    def encode(input: Input, encoder: Encoder) -> Json:
-        if isinstance(encoder, Callable):
+    def encode(input: Input, encoder: Optional[Encoder] = None) -> Json:
+        if encoder is None:
+            if isinstance(input, str):
+                return input
+            if isinstance(input, Serializable):
+                return input.to_json()
+            if isinstance(input, Enum):
+                return input.value
+            if isinstance(input, List):
+                return _JsonEncode.encode_list(input, lambda x: _JsonEncode.encode(x))
+            if isinstance(input, Dict):
+                return _JsonEncode.encode_dict(
+                    input,
+                    lambda x: _JsonEncode.encode(x),
+                    lambda x: _JsonEncode.encode(x),
+                )
+        if isinstance(input, List):
+            return _JsonEncode.encode_list(input, encoder)
+        if isinstance(input, Dict):
+            raise TypeError(
+                "Can not encode Dict with only one encoder. Use encode_dict"
+            )
+
+        if encoder is str:
             return encoder(input)
-        elif encoder is Serializable:
+        if isinstance(encoder, Type) and issubclass(encoder, Serializable):
             if isinstance(input, encoder):
                 return input.to_json()
             return encoder(input).to_json()
+        elif isinstance(encoder, Callable):
+            return encoder(input)
         else:
             raise AssertionError("Invalid encoder `{}`".format(type(encoder)))
 
-    def encode_list(input: List[Input], encoder: Encoder) -> List[Json]:
+    def encode_list(
+        input: List[Input], encoder: Optional[Encoder] = None
+    ) -> List[Json]:
         return list(map(lambda x: _JsonEncode.encode(x, encoder), input))
 
     def encode_dict(
-        intput: Dict[Input, Input],
+        input: Dict[Input, Input],
         encoder_key: Encoder,
         enoder_value: Encoder,
     ):
