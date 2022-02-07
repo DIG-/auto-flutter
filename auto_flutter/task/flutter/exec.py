@@ -6,6 +6,7 @@ from ...model.argument import Arg, OptionAll
 from ...model.config import Config
 from ...model.task import Task
 from ..project.read import ProjectRead
+from ._const import FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):
@@ -54,7 +55,9 @@ class Flutter(Task):
                 self._command.extend(args.to_command_arg())
             p = Process.create(flutter, arguments=self._command, writer=writer)
         else:
-            p = Process.create(flutter, arguments=args.to_command_arg(), writer=writer)
+            arguments = [FLUTTER_DISABLE_VERSION_CHECK]
+            arguments.extend(args.to_command_arg())
+            p = Process.create(flutter, arguments=arguments, writer=writer)
         output = p.try_run()
 
         if self._output_end:
