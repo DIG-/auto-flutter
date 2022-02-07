@@ -6,6 +6,7 @@ from ..task.parse_options import ParseOptions
 from .firebase import FirebaseCheck
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
+from .flutter.build.stub import FlutterBuildStub
 from .flutter.doctor import FlutterDoctor
 from .project.init import ProjectInit
 from .project.read import ProjectRead
@@ -26,6 +27,7 @@ task_list: Final[Dict[TaskId, TaskIdentity]] = dict(
             Flutter.identity.to_map(),
             FlutterDoctor.to_map(),
             FlutterBuildConfig.identity.to_map(),
+            FlutterBuildStub.identity.to_map(),
             FirebaseCheck.identity.to_map(),
         ],
         key=lambda x: x[0],

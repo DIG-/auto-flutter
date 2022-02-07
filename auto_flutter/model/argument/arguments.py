@@ -1,6 +1,6 @@
 import re
 from itertools import chain
-from typing import Dict, List, Optional, Union
+from typing import Dict, Final, List, Optional, Union
 
 from .argument import Arg
 from .option import Option
@@ -12,6 +12,9 @@ class Args(Dict[str, Arg]):
         if not arg.argument.startswith("-"):
             key = "-#-" + key
         self[key] = arg
+
+    def add_arg(self, key: str, value: Optional[str] = None):
+        self.add(Arg("--" + key, value))
 
     def to_command_arg(self) -> List[str]:
         mapped = map(lambda x: x[1], self.items())

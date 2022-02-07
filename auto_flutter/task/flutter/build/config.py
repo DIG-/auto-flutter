@@ -2,26 +2,28 @@ from typing import Final, List
 
 from ....core.json import _JsonDecode
 from ....core.string import SB
-from ....core.task.manager import TaskManager
 from ....core.utils import _Dict
-from ....model.platform import BuildType, MergePlatformConfigFlavored, Platform
+from ....model.platform import BuildType, Platform
 from ....model.platform.build_type import _BuildType_SerializeFlutter
 from ....model.project import Project
 from ....model.task import Task
 from ...project.read import ProjectRead
-from .build import FlutterBuild
 
 
 class FlutterBuildConfig(Task):
     identity = Task.Identity(
-        "build",
-        "Build flutter app",
+        "-build-config",
+        "",
         [
             Task.Identity.Option("f", "flavor", "Flavor to build", True),
             Task.Identity.Option(None, "debug", "Build a debug version", False),
         ],
         lambda: FlutterBuildConfig(),
     )
+
+    ARG_BUILD_TYPE: Final = "build_type"
+    ARG_FLAVOR: Final = "flavor"
+    ARG_DEBUG: Final = "debug"
 
     class Error(RuntimeError):
         ...
@@ -73,7 +75,6 @@ class FlutterBuildConfig(Task):
 
         config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.platform_config, platform)
-        config = MergePlatformConfigFlavored(config_default, config_platform)
         if config_default is None and config_platform is None:
             self.print(
                 SB()
@@ -86,7 +87,11 @@ class FlutterBuildConfig(Task):
                 .str()
             )
 
-        TaskManager.instance().add(
-            FlutterBuild(project, platform, build_type, flavor, config, "debug" in args)
+        args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
+        args.add_arg(
+            FlutterBuildConfig.ARG_BUILD_TYPE,
+            _BuildType_SerializeFlutter(build_type).to_json(),
         )
+        if args.contains("debug"):
+            args.add_arg(FlutterBuildConfig.ARG_DEBUG)
         return Task.Result(args)
