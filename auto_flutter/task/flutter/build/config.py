@@ -1,14 +1,14 @@
 from typing import Final, List
 
-from ...core.json import _JsonDecode
-from ...core.string import SB
-from ...core.task.manager import TaskManager
-from ...core.utils import _Dict
-from ...model.platform import BuildType, MergePlatformConfigFlavored, Platform
-from ...model.platform.build_type import _BuildType_SerializeFlutter
-from ...model.project import Project
-from ...model.task import Task
-from ..project.read import ProjectRead
+from ....core.json import _JsonDecode
+from ....core.string import SB
+from ....core.task.manager import TaskManager
+from ....core.utils import _Dict
+from ....model.platform import BuildType, MergePlatformConfigFlavored, Platform
+from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....model.project import Project
+from ....model.task import Task
+from ...project.read import ProjectRead
 from .build import FlutterBuild
 
 

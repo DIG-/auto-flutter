@@ -5,7 +5,7 @@ from ..task.help import Help
 from ..task.parse_options import ParseOptions
 from .firebase import FirebaseCheck
 from .flutter import Flutter
-from .flutter.build_config import FlutterBuildConfig
+from .flutter.build.config import FlutterBuildConfig
 from .flutter.doctor import FlutterDoctor
 from .project.init import ProjectInit
 from .project.read import ProjectRead

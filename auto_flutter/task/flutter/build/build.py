@@ -3,16 +3,16 @@ from typing import List, Optional
 
 from auto_flutter.model.error import SilentWarning
 
-from ...core.os import OS
-from ...core.string import SB, SF
-from ...core.utils import _Dict
-from ...model.flavor import Flavor
-from ...model.platform import BuildType, Platform, PlatformConfigFlavored
-from ...model.platform.config import BuildRunBefore
-from ...model.project import Project
-from ...model.task import Task
-from . import Flutter
-from ._const import FLUTTER_DISABLE_VERSION_CHECK
+from ....core.os import OS
+from ....core.string import SB, SF
+from ....core.utils import _Dict
+from ....model.flavor import Flavor
+from ....model.platform import BuildType, Platform, PlatformConfigFlavored
+from ....model.platform.config import BuildRunBefore
+from ....model.project import Project
+from ....model.task import Task
+from .. import Flutter
+from .._const import FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterBuild(Flutter):
@@ -107,7 +107,7 @@ class FlutterBuild(Flutter):
                     others_flavors = filter(
                         lambda x: x != self.flavor, self.project.flavors
                     )
-                    from ...core.task import TaskManager
+                    from ....core.task import TaskManager
 
                     manager = TaskManager.instance()
                     ## Add to rebuild self task
