@@ -9,15 +9,16 @@ from ._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
 
 
 class FirebaseCheck(Task):
+    identity = Task.Identity(
+        "-firebase-check", "Checking firebase-cli", [], lambda: FirebaseCheck()
+    )
+
     def __init__(self, skip_on_failure: bool = False) -> None:
         super().__init__()
         self._skip = skip_on_failure
         self.__thread: Final = Thread(target=FirebaseCheck.__run, args=[self])
         self.__process: Optional[Process] = None
         self.__output: Union[None, bool, BaseException] = None
-
-    def describe(self, args: Task.Args) -> str:
-        return "Checking firebase-cli"
 
     def execute(self, args: Task.Args) -> Task.Result:
         self.__process = Process.create(
