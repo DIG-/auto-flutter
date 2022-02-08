@@ -21,9 +21,9 @@ class FlutterBuildConfig(Task):
         lambda: FlutterBuildConfig(),
     )
 
-    ARG_BUILD_TYPE: Final = "build_type"
-    ARG_FLAVOR: Final = "flavor"
-    ARG_DEBUG: Final = "debug"
+    ARG_BUILD_TYPE: Final = "FLUTTER_BUILD_CONFIG_TYPE"
+    ARG_FLAVOR: Final = "FLUTTER_BUILD_CONFIG_FLAVOR"
+    ARG_DEBUG: Final = "FLUTTER_BUILD_CONFIG_DEBUG"
 
     class Error(RuntimeError):
         ...
