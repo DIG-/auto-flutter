@@ -1,0 +1,27 @@
+from __future__ import annotations
+
+from abc import ABC
+from enum import Enum
+from typing import Callable, Type, TypeVar
+
+from ._iterable import _Iterable
+
+
+class _Enum(ABC):
+    E = TypeVar("E", bound=Enum)
+    V = TypeVar("V")
+
+    def parse_value(
+        enum: Type[E], value: V, field: Callable[[E], V] = lambda x: x.value
+    ) -> E:
+        output = _Iterable.first_or_none(enum.__iter__(), lambda x: field(x) == value)
+        if output is None:
+            raise ValueError(
+                "Value `{}` not found in enum `{}`".format(value, enum.__name__)
+            )
+        return output
+
+    def parse(
+        enum: Type[E], field: Callable[[E], V] = lambda x: x.value
+    ) -> Callable[[V], E]:
+        return lambda value: _Enum.parse_value(enum, value, field)
