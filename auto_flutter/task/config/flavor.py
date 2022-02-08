@@ -72,7 +72,6 @@ class ConfigFlavor(Task):
         has_ren = not ren_flavor is None and len(ren_flavor) > 0
         has_to = not to_flavor is None and len(to_flavor) > 0
         if has_ren or has_to:
-            self.print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if has_ren != has_to:
                 if has_ren:
                     return Task.Result(
@@ -82,21 +81,26 @@ class ConfigFlavor(Task):
                 return Task.Result(
                     args, error=ValueError("Trying to rename without origin name")
                 )
+            self.print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if ren_flavor == to_flavor:
                 return Task.Result(
                     args, error=ValueError("Trying to rename flavor to same name")
                 )
             if to_flavor in project.flavors:
                 return Task.Result(
-                    args, error=AssertionError("Destination flavor name already exists")
+                    args, error=AssertionError("Destination flavor name already exist")
+                )
+            if not ren_flavor in project.flavors:
+                return Task.Result(
+                    args, error=AssertionError("Origin flavor name does not exist")
                 )
             project.flavors.remove(ren_flavor)
             project.flavors.append(to_flavor)
             has_change = True
             if not project.platform_config is None:
                 for platform, config in project.platform_config.items():
-                    if not config.flavored is None and rem_flavor in config.flavored:
-                        config.flavored[to_flavor] = config.flavored.pop(rem_flavor)
+                    if (not config.flavored is None) and ren_flavor in config.flavored:
+                        config.flavored[to_flavor] = config.flavored.pop(ren_flavor)
 
         if not has_change:
             return Task.Result(
