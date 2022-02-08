@@ -4,7 +4,7 @@ from enum import Enum
 from operator import attrgetter, itemgetter
 from typing import Optional, Tuple
 
-from ...core.utils import _Ensure, _If, _Iterable, _Raise
+from ...core.utils import _Ensure, _Enum, _Iterable
 from ...model._serializable import Serializable
 from .platform import Platform
 
@@ -36,24 +36,12 @@ class BuildType(Enum):
     @staticmethod
     def from_flutter(value: str) -> BuildType:
         _Ensure.not_none(value, "value")
-        return _If.not_none(
-            _Iterable.first_or_none(BuildType.__iter__(), lambda x: x.flutter == value),
-            lambda x: x,
-            lambda: _Raise(
-                ValueError("BuildType not found for flutter `{}`".format(value))
-            ),
-        )
+        return _Enum.parse_value(BuildType, value, lambda x: x.flutter)
 
     @staticmethod
     def from_output(value: str) -> BuildType:
         _Ensure.not_none(value, "value")
-        return _If.not_none(
-            _Iterable.first_or_none(BuildType.__iter__(), lambda x: x.output == value),
-            lambda x: x,
-            lambda: _Raise(
-                ValueError("BuildType not found for output `{}`".format(value))
-            ),
-        )
+        return _Enum.parse_value(BuildType, value, lambda x: x.output)
 
 
 class _BuildType_SerializeFlutter(Serializable[BuildType]):
