@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Callable, Optional, TypeVar, overload
+from typing import Callable, Optional, TypeVar
 
 from ._ensure import _Ensure
 
@@ -17,14 +17,6 @@ class _If(ABC):
         if input is None:
             return positive()
         return negative(input)
-
-    @overload
-    @staticmethod
-    def none(input: Optional[T], positive: Callable[[], T]) -> T:
-        _Ensure.instance(positive, Callable, "positive")
-        if input is None:
-            return positive()
-        return input
 
     @staticmethod
     def not_none(
