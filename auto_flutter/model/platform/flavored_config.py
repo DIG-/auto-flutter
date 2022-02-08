@@ -65,7 +65,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             from_flavor = self.flavored[flavor].get_extra(key)
             if not from_flavor is None:
                 return from_flavor
-        return self.get_extra(key)
+        return super().get_extra(key)
 
     def to_json(self) -> Serializable.Json:
         parent = super().to_json()
