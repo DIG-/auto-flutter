@@ -61,7 +61,7 @@ class Help(Task):
         from ..task._list import task_list, user_task
 
         for task in Help.reduce_indexed_task_into_list(task_list):
-            self._show_task_name_description(task, builder)
+            self._show_task_name_description(builder, task)
 
         user_reduced = Help.reduce_indexed_task_into_list(user_task)
         if len(user_reduced) <= 0:
@@ -69,7 +69,7 @@ class Help(Task):
 
         builder.append("\nUser tasks:\n")
         for task in user_reduced:
-            self._show_task_name_description(task, builder)
+            self._show_task_name_description(builder, task)
 
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
@@ -95,7 +95,7 @@ class Help(Task):
         builder.append("\nOptions:\n")
         self._show_task_options(builder, options)
 
-    def _show_task_name_description(self, task: Task.Identity, builder: SB):
+    def _show_task_name_description(self, builder: SB, task: Task.Identity):
         builder.append("  ").append(task.id, SB.Color.CYAN, True)
         if len(task.id) < 8:
             builder.append(" " * (8 - len(task.id)))
@@ -143,7 +143,7 @@ class Help(Task):
         pass
 
     def _show_task_actions(self, builder: SB, identity: Task.Identity, task: Task):
-        self._show_task_name_description(identity, builder)
+        self._show_task_name_description(builder, identity)
         options: Final[List[Task.Option]] = _Iterable.flatten(
             map(
                 lambda task: task.identity.options,
