@@ -1,8 +1,8 @@
 from __future__ import annotations
+
 from distutils.errors import UnknownFileError
 from enum import Enum
-from pathlib import Path, PosixPath, PurePath, PurePosixPath, PureWindowsPath
-from pprint import pprint
+from pathlib import PurePath, PurePosixPath, PureWindowsPath
 from sys import platform
 
 
