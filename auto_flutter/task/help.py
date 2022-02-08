@@ -142,7 +142,7 @@ class Help(Task):
         self._show_task_description(builder, identity)
         builder.append("\nActions:\n")
         for action in helper.actions():
-            self._show_task_actions(builder, action)
+            self._show_task_actions(builder, action, action.creator())
             pass
         pass
 
