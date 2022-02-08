@@ -5,6 +5,7 @@ from ...core.string import SB
 from ...model.argument import Arg, OptionAll
 from ...model.config import Config
 from ...model.task import Task
+from ..options import ParseOptions
 from ..project.read import ProjectRead
 from ._const import FLUTTER_DISABLE_VERSION_CHECK
 
@@ -36,8 +37,8 @@ class Flutter(Task):
 
     def require(self) -> List[Task.ID]:
         if self._project:
-            return [ProjectRead.identity.id]
-        return [ProjectRead.identity_skip.id]
+            return [ParseOptions.identity.id, ProjectRead.identity.id]
+        return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
         flutter = Config.instance().flutter

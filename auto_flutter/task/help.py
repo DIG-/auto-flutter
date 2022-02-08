@@ -5,6 +5,7 @@ from ..core.string import SB
 from ..core.task import TaskResolver
 from ..core.utils import _Iterable
 from ..model.task import Task
+from .options import ParseOptions
 from .project.read import ProjectRead
 
 
@@ -23,7 +24,7 @@ class Help(Task):
         return "Showing help page"
 
     def require(self) -> List[Task.ID]:
-        return [ProjectRead.identity_skip.id]
+        return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
         builder = SB()

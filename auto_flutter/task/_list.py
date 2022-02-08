@@ -2,7 +2,7 @@ from typing import Dict, Final
 
 from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
-from ..task.parse_options import ParseOptions
+from .options import ParseOptions
 from .firebase import FirebaseBuildUpload, FirebaseBuildValidate, FirebaseCheck
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig

@@ -4,7 +4,6 @@ from typing import Deque
 
 from ...model.task import Task
 from .resolver import TaskResolver
-from ...task.parse_options import ParseOptions
 from ..string import SB
 from .printer import TaskPrinter
 
@@ -42,7 +41,6 @@ class TaskManager:
     def execute(self) -> bool:
         args = Task.Args()
         self._printer.start()
-        self._task_stack.append(ParseOptions(self._task_stack))
 
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()

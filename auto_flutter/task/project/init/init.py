@@ -1,10 +1,11 @@
 from pathlib import Path
-from typing import Final, Optional
+from typing import Final, List, Optional
 
 from ....core.string import SB
 from ....core.task.manager import TaskManager
 from ....model.project import Project
 from ....model.task import Task
+from ...options import ParseOptions
 from ..save import ProjectSave
 from .common_config import CommonConfig
 from .find_flavor import FindFlavor
@@ -24,6 +25,9 @@ class ProjectInit(Task):
         ],
         lambda: ProjectInit(),
     )
+
+    def require(self) -> List[Task.ID]:
+        return [ParseOptions.identity.id]
 
     def describe(self, args: Task.Args) -> str:
         return "Initializing project"

@@ -1,6 +1,6 @@
 from getopt import GetoptError, gnu_getopt
 from sys import argv as sys_argv
-from typing import List, Optional
+from typing import Final, List, Optional
 
 from ..core.session import Session
 from ..core.utils import _Iterable
@@ -9,31 +9,31 @@ from ..model.task import Task
 
 
 class ParseOptions(Task):
+    option_stack_trace: Final = Task.Option(
+        None, "aflutter-stack-trace", "Show stacktrace of task output"
+    )
+
     identity = Task.Identity(
         "-parse-options",
         "Parsing arguments",
-        [
-            Task.Identity.Option(
-                None, "aflutter-stack-trace", "Show stacktrace of task output"
-            )
-        ],
+        [option_stack_trace],
         lambda: ParseOptions(),
     )
 
-    def __init__(self, tasks: List[Task]) -> None:
-        super().__init__()
-        self._options: List[Task.Identity.Option] = []
-        for task in tasks:
-            self._options.extend(task.identity.options)
-        self._skip: bool = (
-            not _Iterable.first_or_none(
-                self._options, lambda x: isinstance(x, OptionAll)
-            )
+    def execute(self, args: Task.Args) -> Task.Result:
+        # Fill options list with current tasks
+        from ..core.task.manager import TaskManager
+
+        manager: Final = TaskManager.instance()
+        options: Final[List[Task.Identity.Option]] = []
+        for task in manager._task_stack:
+            options.extend(task.identity.options)
+        skip: Final = (
+            not _Iterable.first_or_none(options, lambda x: isinstance(x, OptionAll))
             is None
         )
 
-    def execute(self, args: Task.Args) -> Task.Result:
-        if self._skip:
+        if skip:
             for arg in sys_argv[2:]:
                 if arg == "--aflutter-stack-trace":
                     Session.show_stacktrace = True
@@ -43,7 +43,7 @@ class ParseOptions(Task):
 
         short = ""
         long: List[str] = ["aflutter-stack-trace"]
-        for option in self._options:
+        for option in options:
             short += option.short_formatted()
             long_fmt = option.long_formatted()
             if not long_fmt is None:
@@ -58,11 +58,11 @@ class ParseOptions(Task):
             found: Optional[Task.Identity.Option] = None
             if len(opt_strip) <= 2:
                 found = _Iterable.first_or_none(
-                    self._options, lambda option: option.short == opt_strip
+                    options, lambda option: option.short == opt_strip
                 )
             else:
                 found = _Iterable.first_or_none(
-                    self._options, lambda option: option.long == opt_strip
+                    options, lambda option: option.long == opt_strip
                 )
 
             if found is None:

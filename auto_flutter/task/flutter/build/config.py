@@ -8,6 +8,7 @@ from ....model.platform import BuildType, Platform
 from ....model.platform.build_type import _BuildType_SerializeFlutter
 from ....model.project import Project
 from ....model.task import Task
+from ...options import ParseOptions
 from ...project.read import ProjectRead
 
 
@@ -30,7 +31,7 @@ class FlutterBuildConfig(Task):
         ...
 
     def require(self) -> List[Task.ID]:
-        return [ProjectRead.identity.id]
+        return [ParseOptions.identity.id, ProjectRead.identity.id]
 
     def describe(self, args: Task.Args) -> str:
         return "Preparing flutter build"

@@ -5,6 +5,7 @@ from ...model.config import Config
 from ...model.task import Task
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
+from ..options import ParseOptions
 from .edit import SetupEdit
 
 
@@ -17,7 +18,7 @@ class Setup(Task):
     )
 
     def require(self) -> List[Task.ID]:
-        return [SetupEdit.identity.id]
+        return [ParseOptions.identity.id, SetupEdit.identity.id]
 
     def describe(self, args: Args) -> str:
         if args.contains(SetupEdit.option_show):
