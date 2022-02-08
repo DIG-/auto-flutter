@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from abc import ABCMeta
-from typing import Any, Callable, Dict, Iterable, List, Optional, Type, TypeVar
+from abc import ABC, ABCMeta
+from typing import (Any, Callable, Dict, Iterable, List, NoReturn, Optional,
+                    Type, TypeVar)
 
 
 class _Iterable(metaclass=ABCMeta):
@@ -73,6 +74,36 @@ class _Dict(metaclass=ABCMeta):
         return c
 
 
+class _Raise:
+    def __new__(cls: type[_Raise], error: BaseException) -> NoReturn:
+        raise error
+
+
+class _If(ABC):
+    T = TypeVar("T")
+    V = TypeVar("V")
+
+    @staticmethod
+    def none(
+        input: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]
+    ) -> V:
+        _Ensure.type_not_none(positive, Callable, "positive")
+        _Ensure.type_not_none(negative, Callable, "negative")
+        if input is None:
+            return positive()
+        return negative(input)
+
+    @staticmethod
+    def not_none(
+        input: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]
+    ) -> V:
+        _Ensure.type_not_none(positive, Callable, "positive")
+        _Ensure.type_not_none(negative, Callable, "negative")
+        if input is None:
+            return negative()
+        return positive(input)
+
+
 class _Ensure(metaclass=ABCMeta):
     T = TypeVar("T")
 
@@ -90,6 +121,24 @@ class _Ensure(metaclass=ABCMeta):
         if input is None:
             return None
         if isinstance(input, cls):
+            return input
+        if name is None:
+            raise AssertionError(
+                "Field must be instance of `{}`, but `{}` was used".format(
+                    cls.__name__, type(input)
+                )
+            )
+        else:
+            raise AssertionError(
+                "Field `{}` must be instance of `{}`, but `{}` was used".format(
+                    name, cls.__name__, type(input)
+                )
+            )
+
+    def type_not_none(
+        input: Optional[T], cls: Type[T], name: Optional[str] = None
+    ) -> T:
+        if not input is None and isinstance(input, cls):
             return input
         if name is None:
             raise AssertionError(
