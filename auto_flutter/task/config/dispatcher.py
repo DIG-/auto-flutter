@@ -1,5 +1,7 @@
-from typing import List
+from sys import argv as sys_argv
+from typing import Final, List
 
+from ...core.utils import _Iterable
 from ...model.task import Task
 from ...model.task.help_action import HelpAction
 from .flavor import ConfigFlavor
@@ -10,11 +12,31 @@ class ConfigDispatcher(Task, HelpAction):
         "config", "Configure project", [], lambda: ConfigDispatcher()
     )
 
-    def describe(self, args: Task.Args) -> str:
-        return ""
-
     def actions(self) -> List[Task.Identity]:
         return [ConfigFlavor.identity]
 
     def execute(self, args: Task.Args) -> Task.Result:
-        return Task.Result(args, error=NotImplementedError())
+        from ...core.task import TaskManager
+
+        manager: Final = TaskManager.instance()
+
+        if len(sys_argv) < 3 or len(sys_argv[2]) <= 0 or sys_argv[2].startswith("-"):
+            manager.add_id("help")
+            return Task.Result(
+                args, error=Warning(" Config task require one action"), success=True
+            )
+
+        action: Final = sys_argv[2]
+        identity: Final = _Iterable.first_or_none(
+            self.actions(), lambda x: x.id == action
+        )
+        if identity is None:
+            manager.add_id("help")
+            return Task.Result(
+                args,
+                error=Warning(" Config action `{}` not found".format(action)),
+                success=True,
+            )
+
+        manager.add(identity.creator())
+        return Task.Result(args)
