@@ -34,10 +34,14 @@ class Help(Task):
 
     def execute(self, args: Task.Args) -> Task.Result:
         builder = SB()
-        task = args.get_value(self.option_task)
+        task_name = args.get_value(self.option_task)
         task_not_found = False
-        if (not task is None) and (len(task) > 0) and (not task.startswith("-")):
-            identity: Final = TaskResolver.find_task(task)
+        if (
+            (not task_name is None)
+            and (len(task_name) > 0)
+            and (not task_name.startswith("-"))
+        ):
+            identity = TaskResolver.find_task(task_name)
             task_instance: Final[Optional[Task]] = _If.not_none(
                 identity, lambda x: x.creator(), lambda: None
             )
@@ -54,22 +58,22 @@ class Help(Task):
 
         if task_not_found:
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(
-                task, SB.Color.CYAN, True
+                task_name, SB.Color.CYAN, True
             ).append(" not found\n")
 
         builder.append("\nDefault tasks:\n")
         from ..task._list import task_list, user_task
 
-        for task in Help.reduce_indexed_task_into_list(task_list):
-            self._show_task_name_description(builder, task)
+        for identity in Help.reduce_indexed_task_into_list(task_list):
+            self._show_task_name_description(builder, identity)
 
         user_reduced = Help.reduce_indexed_task_into_list(user_task)
         if len(user_reduced) <= 0:
             return Task.Result(args, message=builder.str())
 
         builder.append("\nUser tasks:\n")
-        for task in user_reduced:
-            self._show_task_name_description(builder, task)
+        for identity in user_reduced:
+            self._show_task_name_description(builder, identity)
 
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
@@ -95,11 +99,11 @@ class Help(Task):
         builder.append("\nOptions:\n")
         self._show_task_options(builder, options)
 
-    def _show_task_name_description(self, builder: SB, task: Task.Identity):
-        builder.append("  ").append(task.id, SB.Color.CYAN, True)
-        if len(task.id) < 8:
-            builder.append(" " * (8 - len(task.id)))
-        builder.append("\t").append(task.name, end="\n")
+    def _show_task_name_description(self, builder: SB, identity: Task.Identity):
+        builder.append("  ").append(identity.id, SB.Color.CYAN, True)
+        if len(identity.id) < 8:
+            builder.append(" " * (8 - len(identity.id)))
+        builder.append("\t").append(identity.name, end="\n")
 
     def _show_task_options(
         self, builder: SB, options: List[Task.Option], is_action: bool = False
