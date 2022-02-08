@@ -42,4 +42,4 @@ class Args(Dict[str, Arg]):
                 key = option.long
         if key is None:
             raise KeyError("Can not extract key from `{}`".format(type(option)))
-        return key
+        return key.lower()
