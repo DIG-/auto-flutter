@@ -1,3 +1,4 @@
+from operator import contains
 from typing import Final, List
 
 from ....core.json import _JsonDecode
@@ -91,6 +92,6 @@ class FlutterBuildConfig(Task):
         args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
         if args.contains("debug"):
             args.add_arg(FlutterBuildConfig.ARG_DEBUG)
-        else:
+        elif args.contains(FlutterBuildConfig.ARG_DEBUG):
             args.pop(FlutterBuildConfig.ARG_DEBUG)
         return Task.Result(args)
