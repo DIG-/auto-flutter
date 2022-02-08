@@ -36,6 +36,13 @@ class Project(Serializable["Project"]):
         ] = _Ensure.not_none(platform_config, "platform-config")
         self.tasks: Optional[List[CustomTask]] = tasks
 
+    def get_platform_config(
+        self, platform: mPlatform
+    ) -> Optional[PlatformConfigFlavored]:
+        if self.platform_config is None or not platform in self.platform_config:
+            return None
+        return self.platform_config[platform]
+
     def to_json(self) -> Serializable.Json:
         return {
             "_creator": "Auto-Flutter " + VERSION,
