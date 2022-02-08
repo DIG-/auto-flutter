@@ -44,7 +44,7 @@ class ConfigFlavor(Task):
                 return Task.Result(
                     args,
                     error=AssertionError(
-                        "Flavor `{}` already exists in project".format(add_flavor)
+                        "Flavor `{}` already exist in project".format(add_flavor)
                     ),
                 )
             project.flavors.append(add_flavor)
@@ -57,10 +57,10 @@ class ConfigFlavor(Task):
                 return Task.Result(
                     args,
                     error=AssertionError(
-                        "Flavor `{}` do not exists in project".format(rem_flavor)
+                        "Flavor `{}` do not exist in project".format(rem_flavor)
                     ),
                 )
-            project.flavors.pop(rem_flavor)
+            project.flavors.remove(rem_flavor)
             has_change = True
             if not project.platform_config is None:
                 for platform, config in project.platform_config.items():
@@ -90,7 +90,7 @@ class ConfigFlavor(Task):
                 return Task.Result(
                     args, error=AssertionError("Destination flavor name already exists")
                 )
-            project.flavors.pop(ren_flavor)
+            project.flavors.remove(ren_flavor)
             project.flavors.append(to_flavor)
             has_change = True
             if not project.platform_config is None:
