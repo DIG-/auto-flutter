@@ -1,9 +1,10 @@
+from pathlib import Path
 from sys import argv as sys_argv
 from typing import Dict, List, Optional
 
 from ..core.string import SB
 from ..core.task import TaskResolver
-from ..core.utils import _Iterable
+from ..core.utils import _If, _Iterable
 from ..model.task import Task
 from .options import ParseOptions
 from .project.read import ProjectRead
@@ -47,9 +48,12 @@ class Help(Task):
         for task in user_reduced:
             self.show_task_name(task, builder)
 
-    def show_header(self, builder: SB):
-        builder.append("Usage:\t").append(sys_argv[0]).append(
-            " TASK", SB.Color.CYAN, True
+    def show_header(self, builder: SB, task: Optional[str] = None):
+        program = Path(sys_argv[0]).name
+        if program == "__main__.py":
+            program = "python -m auto_flutter"
+        builder.append("Usage:\t").append(program, end=" ").append(
+            _If.none(task, lambda: "TASK", lambda x: x), SB.Color.CYAN, True
         ).append(" [options]\n", SB.Color.MAGENTA)
 
     def _show_help_for_task_id(self, builder: SB, id: Optional[str]) -> bool:
