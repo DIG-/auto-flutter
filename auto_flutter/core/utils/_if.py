@@ -12,8 +12,8 @@ class _If(ABC):
     def none(
         input: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]
     ) -> V:
-        _Ensure.type_not_none(positive, Callable, "positive")
-        _Ensure.type_not_none(negative, Callable, "negative")
+        _Ensure.instance(positive, Callable, "positive")
+        _Ensure.instance(negative, Callable, "negative")
         if input is None:
             return positive()
         return negative(input)
@@ -21,7 +21,7 @@ class _If(ABC):
     @overload
     @staticmethod
     def none(input: Optional[T], positive: Callable[[], T]) -> T:
-        _Ensure.type_not_none(positive, Callable, "positive")
+        _Ensure.instance(positive, Callable, "positive")
         if input is None:
             return positive()
         return input
@@ -30,8 +30,8 @@ class _If(ABC):
     def not_none(
         input: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]
     ) -> V:
-        _Ensure.type_not_none(positive, Callable, "positive")
-        _Ensure.type_not_none(negative, Callable, "negative")
+        _Ensure.instance(positive, Callable, "positive")
+        _Ensure.instance(negative, Callable, "negative")
         if input is None:
             return negative()
         return positive(input)
