@@ -1,8 +1,18 @@
 from __future__ import annotations
 
 from abc import ABC, ABCMeta
-from typing import (Any, Callable, Dict, Iterable, List, NoReturn, Optional,
-                    Type, TypeVar)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NoReturn,
+    Optional,
+    Type,
+    TypeVar,
+    overload,
+)
 
 
 class _Iterable(metaclass=ABCMeta):
@@ -92,6 +102,14 @@ class _If(ABC):
         if input is None:
             return positive()
         return negative(input)
+
+    @overload
+    @staticmethod
+    def none(input: Optional[T], positive: Callable[[], T]) -> T:
+        _Ensure.type_not_none(positive, Callable, "positive")
+        if input is None:
+            return positive()
+        return input
 
     @staticmethod
     def not_none(
