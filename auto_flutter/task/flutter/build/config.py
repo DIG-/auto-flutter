@@ -88,10 +88,9 @@ class FlutterBuildConfig(Task):
             )
 
         args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
-        args.add_arg(
-            FlutterBuildConfig.ARG_BUILD_TYPE,
-            _BuildType_SerializeFlutter(build_type).to_json(),
-        )
+        args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
         if args.contains("debug"):
             args.add_arg(FlutterBuildConfig.ARG_DEBUG)
+        else:
+            args.pop(FlutterBuildConfig.ARG_DEBUG)
         return Task.Result(args)

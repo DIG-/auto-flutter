@@ -1,3 +1,4 @@
+from ast import arg
 from typing import Final, List
 
 from auto_flutter.model import platform
@@ -26,9 +27,8 @@ class FlutterBuildStub(Task):
 
     def execute(self, args: Task.Args) -> Task.Result:
         flavor: Final = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
-        build_type: Final[BuildType] = _JsonDecode.decode(
-            args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE),
-            _BuildType_SerializeFlutter,
+        build_type: Final = BuildType.from_flutter(
+            args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE)
         )
         debug: Final = args.contains(FlutterBuildConfig.ARG_DEBUG)
         project: Final = Project.current
