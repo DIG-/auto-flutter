@@ -11,7 +11,7 @@ from .config import BuildRunBefore, TaskIdList
 class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavored"]):
     def __init__(
         self,
-        build_param: Optional[str] = None,
+        build_param: Optional[List[str]] = None,
         run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = None,
         output: Optional[str] = None,
         outputs: Optional[Dict[BuildType, str]] = None,
@@ -21,16 +21,13 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         super().__init__(build_param, run_before, output, outputs, extras)
         self.flavored: Optional[Dict[Flavor, PlatformConfig]] = flavored
 
-    def get_build_param(self, flavor: Optional[Flavor]) -> str:
-        output = ""
+    def get_build_param(self, flavor: Optional[Flavor]) -> List[str]:
+        output = []
         if not self.build_param is None:
-            output += self.build_param
-        if not flavor is None and not self.flavored is None and flavor in self.flavored:
-            flavored_param = self.flavored[flavor].build_param
-            if not flavored_param is None:
-                if len(output) > 0:
-                    output += " "
-                output += flavored_param
+            output.extend(self.build_param)
+        flavored = self.__get_config_by_flavor(flavor)
+        if (not flavored is None) and (not flavored.build_param is None):
+            output.extend(flavored.build_param)
         return output
 
     def get_run_before(
@@ -89,3 +86,14 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
                     json["flavored"], Flavor, PlatformConfig
                 )
         return output
+
+    def __get_config_by_flavor(
+        self, flavor: Optional[Flavor]
+    ) -> Optional[PlatformConfig]:
+        if flavor is None:
+            return None
+        if self.flavored is None:
+            return None
+        if not flavor in self.flavored:
+            return None
+        return self.flavored[flavor]

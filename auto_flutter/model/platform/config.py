@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
+from ...core.utils import _Ensure
 from .._serializable import Serializable
 from .build_type import BuildType, _BuildType_SerializeOutput
 
@@ -28,18 +29,23 @@ class PlatformConfig(Serializable["PlatformConfig"]):
 
     def __init__(
         self,
-        build_param: Optional[str] = None,
+        build_param: Optional[List[str]] = None,
         run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = None,
         output: Optional[str] = None,
         outputs: Optional[Dict[BuildType, str]] = None,
         extras: Optional[Dict[str, str]] = None,
     ) -> None:
         super().__init__()
-        self.build_param: Optional[str] = build_param
+        self.build_param: Optional[List[str]] = build_param
         self.run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = run_before
         self.output: Optional[str] = output
         self.outputs: Optional[Dict[BuildType, str]] = outputs
         self.extras: Optional[Dict[str, str]] = extras
+
+    def append_build_param(self, param: str):
+        if self.build_param is None:
+            self.build_param = []
+        self.build_param.append(_Ensure.instance(param, str, "build-param"))
 
     def get_output(self, type: BuildType) -> Optional[str]:
         if not self.outputs is None:
@@ -57,7 +63,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
     def to_json(self) -> Serializable.Json:
         extras = self.extras
         output = {
-            "build-param": self.build_param,
+            "build-param": _JsonEncode.encode_optional(self.build_param),
             "run-before": _JsonEncode.encode_optional(self.run_before),
             "output": _JsonEncode.encode_optional(self.output),
             "outputs": None
@@ -75,8 +81,8 @@ class PlatformConfig(Serializable["PlatformConfig"]):
         for key, value in json.items():
             if not isinstance(key, str):
                 continue
-            if key == "build-param" and isinstance(value, str):
-                output.build_param = value
+            if key == "build-param" and isinstance(value, List):
+                output.build_param = _JsonDecode.decode_list(value, str)
             elif key == "run-before" and isinstance(value, Dict):
                 output.run_before = _JsonDecode.decode_optional_dict(
                     value, BuildRunBefore, TaskIdList

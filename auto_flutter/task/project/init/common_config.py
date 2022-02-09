@@ -21,10 +21,7 @@ class CommonConfig(Task):
                     Project.Platform.ANDROID
                 ] = PlatformConfigFlavored()
             config = project.platform_config[Project.Platform.ANDROID]
-            if config.build_param is None:
-                config.build_param = ""
-            config.build_param += " --no-android-gradle-daemon"
-            config.build_param = config.build_param.strip()
+            config.append_build_param("--no-android-gradle-daemon")
 
             if len(project.flavors) > 0:
                 self.print("    Applying default output for android flavored build")

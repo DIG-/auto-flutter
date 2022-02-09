@@ -1,6 +1,6 @@
 from pathlib import Path, PurePosixPath
 from re import compile as re_compile
-from typing import Final, Optional
+from typing import Final, List, Optional
 from xml.etree.ElementTree import parse as xml_parse
 
 from ....core.os import OS
@@ -116,7 +116,7 @@ class FindFlavor(Task):
         project: Project,
         platform: Project.Platform,
         flavor: str,
-        build_param: Optional[str],
+        build_param: Optional[List[str]],
     ):
         if project.flavors is None:
             project.flavors = []
@@ -170,7 +170,7 @@ class FindFlavor(Task):
             return
 
         flavor: Optional[str] = None
-        build_param: Optional[str] = None
+        build_param: Optional[List[str]] = None
         for option in options:
             if not "name" in option.attrib or not "value" in option.attrib:
                 continue
@@ -179,7 +179,7 @@ class FindFlavor(Task):
             if name == "buildFlavor":
                 flavor = value
             elif name == "additionalArgs":
-                build_param = value
+                build_param = value.split()
 
         if not flavor is None:
             self._append_flavor(project, Project.Platform.DEFAULT, flavor, build_param)

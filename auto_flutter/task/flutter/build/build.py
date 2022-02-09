@@ -80,7 +80,7 @@ class FlutterBuild(Flutter):
         else:
             command.append("--release")
 
-        command.append(self.config.get_build_param(self.flavor))
+        command.extend(self.config.get_build_param(self.flavor))
         self._command = command
 
         process = super().execute(args)

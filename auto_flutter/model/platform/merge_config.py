@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional
 
 from ...core.utils import _Dict
-from .build_type import BuildType
 from ..flavor import Flavor
 from . import PlatformConfigFlavored
+from .build_type import BuildType
 from .config import BuildRunBefore
 
 
@@ -17,14 +17,13 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         self.default = default
         self.platform = platform
 
-    def get_build_param(self, flavor: Optional[Flavor]) -> str:
-        output = ""
+    def get_build_param(self, flavor: Optional[Flavor]) -> List[str]:
+        output: List[str] = []
         if not self.default is None:
-            output += self.default.get_build_param(flavor)
-        output += " "
+            output.extend(self.default.get_build_param(flavor))
         if not self.platform is None:
-            output += self.platform.get_build_param(flavor)
-        return output.strip()
+            output.extend(self.platform.get_build_param(flavor))
+        return output
 
     def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
         if not self.platform is None:
