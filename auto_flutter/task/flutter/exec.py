@@ -65,7 +65,7 @@ class Flutter(Task):
             self.print(p.output)
 
         if self._output_arg:
-            args["output"] = Arg("output", p.output)
+            args.add_arg("output", p.output)
 
         if isinstance(output, BaseException):
             return Task.Result(args, error=output)

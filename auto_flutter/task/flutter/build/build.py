@@ -195,5 +195,5 @@ class FlutterBuild(Flutter):
                 success=False,
             )
 
-        args["output"] = output_file
+        args.add_arg("output", output_file)
         return Task.Result(args, success=True)
