@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Deque
 
+from ...core.utils import _Ensure
 from ...model.task import Task
-from .resolver import TaskResolver
 from ..string import SB
 from .printer import TaskPrinter
+from .resolver import TaskResolver
 
 
 class TaskManager:
@@ -21,9 +22,11 @@ class TaskManager:
         self._printer = TaskPrinter()
 
     def add(self, task: Task):
+        _Ensure.type(task, Task, "task")
         self._task_stack.extend(TaskResolver.resolve(task))
 
     def add_id(self, task_id: Task.ID):
+        _Ensure.type(task_id, str, "task_id")
         identity = TaskResolver.find_task(task_id)
         if identity is None:
             raise LookupError(
@@ -36,6 +39,7 @@ class TaskManager:
         self.add(identity.creator())
 
     def print(self, message: str):
+        _Ensure.type(message, str, "message")
         self._printer.write(message)
 
     def execute(self) -> bool:
