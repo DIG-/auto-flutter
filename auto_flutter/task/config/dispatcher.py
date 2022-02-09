@@ -14,7 +14,7 @@ class ConfigDispatcher(Task, HelpAction):
     )
 
     def actions(self) -> List[Task.Identity]:
-        return [ConfigFlavor.identity, ConfigPlatform.identity]
+        return sorted([ConfigFlavor.identity, ConfigPlatform.identity], key=lambda x: x.id)
 
     def execute(self, args: Task.Args) -> Task.Result:
         from ...core.task import TaskManager
@@ -22,7 +22,7 @@ class ConfigDispatcher(Task, HelpAction):
         manager: Final = TaskManager.instance()
 
         if len(sys_argv) < 3 or len(sys_argv[2]) <= 0 or sys_argv[2].startswith("-"):
-            manager.add_id("help")
+            manager.add(self.__help_task())
             return Task.Result(
                 args, error=Warning(" Config task require one action"), success=True
             )
@@ -32,7 +32,7 @@ class ConfigDispatcher(Task, HelpAction):
             self.actions(), lambda x: x.id == action
         )
         if identity is None:
-            manager.add_id("help")
+            manager.add(self.__help_task())
             return Task.Result(
                 args,
                 error=Warning(" Config action `{}` not found".format(action)),
@@ -41,3 +41,7 @@ class ConfigDispatcher(Task, HelpAction):
 
         manager.add(identity.creator())
         return Task.Result(args)
+
+    def __help_task(self) -> Task:
+        from ..help import Help
+        return Help(self.identity.id)
