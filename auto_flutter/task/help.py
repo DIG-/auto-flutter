@@ -1,6 +1,8 @@
 from pathlib import Path
 from sys import argv as sys_argv
-from typing import Dict, Final, List, Optional
+from typing import Dict, Final, List, Optional, Union
+
+from auto_flutter.model.task.identity import TaskIdentity
 
 from ..core.string import SB
 from ..core.task import TaskResolver
@@ -23,8 +25,16 @@ class Help(Task):
         lambda: Help(),
     )
 
-    def __init__(self) -> None:
+    def __init__(self, task_id: Optional[Union[Task.ID, Task.Identity]] = None) -> None:
         super().__init__()
+        self._show_task: Optional[Task.ID] = None
+        if isinstance(task_id, Task.Identity):
+            self._show_task = task_id.id
+        elif isinstance(task_id, Task.ID):
+            self._show_task = task_id
+        elif not task_id is None:
+            raise TypeError("Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
+                clsa=Task.ID.__name__, clsb=TaskIdentity.__name__, input=type(task_id)))
 
     def describe(self, args: Task.Args) -> str:
         return "Showing help page"
@@ -35,6 +45,8 @@ class Help(Task):
     def execute(self, args: Task.Args) -> Task.Result:
         builder = SB()
         task_name = args.get_value(self.option_task)
+        if not self._show_task is None:
+            task_name = self._show_task
         task_not_found = False
         if (
             (not task_name is None)
@@ -48,7 +60,8 @@ class Help(Task):
             if identity is None:
                 task_not_found = True
             elif isinstance(task_instance, HelpAction):
-                self._show_task_help_with_actions(builder, identity, task_instance)
+                self._show_task_help_with_actions(
+                    builder, identity, task_instance)
                 return Task.Result(args, message=builder.str())
             else:
                 self._show_task_help(builder, identity, task_instance)
@@ -93,7 +106,8 @@ class Help(Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda task: task.identity.options, TaskResolver.resolve(identity.creator())
+            lambda task: task.identity.options, TaskResolver.resolve(
+                identity.creator())
         )
         options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
