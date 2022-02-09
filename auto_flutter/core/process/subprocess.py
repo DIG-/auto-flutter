@@ -42,13 +42,15 @@ class _SubProcess(Process):
         with self.__process as p:
             decoder: IncrementalDecoder = _SubProcess.__get_default_decoder()
             while True:
-                buffer = decoder.decode(p.stdout.read(1))
-                if len(buffer) > 0:
-                    output.append(buffer)
-                    self._write_output(buffer)
+                self.__read_output(decoder, output, p.stdout.read(1))
                 code = p.poll()
                 if not code is None:
                     self.exit_code = code
+                    while True:
+                        remain = p.stdout.read(1)
+                        if remain == b"":
+                            break
+                        self.__read_output(decoder, output, remain)
                     break
             self.__process = None
             self._write_output("\n")
@@ -91,6 +93,12 @@ class _SubProcess(Process):
                     raise SystemError(
                         'Failed to kill process "{}"'.format(self._executable.name)
                     )
+
+    def __read_output(self, decoder: IncrementalDecoder, output: SB, value: bytes):
+        decoded = decoder.decode(value)
+        if len(decoded) > 0:
+            output.append(decoded)
+            self._write_output(decoded)
 
     def __get_default_decoder() -> IncrementalDecoder:
         if _SubProcess.__DEFAULT_DECODER is None:
