@@ -31,6 +31,21 @@ class _Ensure(ABC):
         raise TypeError(message.format(name=name, cls=cls.__name__, input=type(input)))
 
     @staticmethod
+    def type_returned(
+        input: Optional[T], cls: Type[T], name: Optional[str] = None
+    ) -> Optional[T]:
+        if input is None:
+            return None
+        if isinstance(input, cls):
+            return input
+        message: Final = (
+            "Value must be instance of `{cls}`, but `{input}` was returned"
+            if name is None
+            else "`{name}` must be instance of `{cls}`, but `{input}` was returned"
+        )
+        raise TypeError(message.format(name=name, cls=cls.__name__, input=type(input)))
+
+    @staticmethod
     def instance(input: Any, cls: Type[T], name: Optional[str] = None) -> T:
         if not input is None and isinstance(input, cls):
             return input
