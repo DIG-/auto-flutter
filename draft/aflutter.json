@@ -11,7 +11,7 @@
     ],
     "platform-config": {
         "_default": {
-            "build-param": "--dart-define=flavor=${arg:flavor}",
+            "build-param": ["--dart-define=flavor=${arg:flavor}"],
             "run-before": {
                 "build": [
                     "generate-forced",
@@ -24,7 +24,7 @@
             }
         },
         "android": {
-            "build-param": "--no-android-gradle-daemon",
+            "build-param": ["--no-android-gradle-daemon"],
             "outputs": {
                 "apk": "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build}.apk",
                 "aab": "build/app/outputs/bundle/${arg:flavor}${arg:build|capitalize}/app-${arg:flavor}-${arg:build}.aab"
