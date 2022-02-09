@@ -1,6 +1,5 @@
 from abc import ABC
-from email import message
-from typing import Any, Final, Optional, Type, TypeVar
+from typing import Any, Final, Optional, Type, TypeVar, Union
 
 
 class _Ensure(ABC):
@@ -28,7 +27,11 @@ class _Ensure(ABC):
             if name is None
             else "Field `{name}` must be instance of `{cls}`, but `{input}` was used"
         )
-        raise TypeError(message.format(name=name, cls=cls.__name__, input=type(input)))
+        raise TypeError(
+            message.format(
+                name=name, cls=_Ensure.name(cls), input=_Ensure.name(type(input))
+            )
+        )
 
     @staticmethod
     def type_returned(
@@ -43,7 +46,11 @@ class _Ensure(ABC):
             if name is None
             else "`{name}` must be instance of `{cls}`, but `{input}` was returned"
         )
-        raise TypeError(message.format(name=name, cls=cls.__name__, input=type(input)))
+        raise TypeError(
+            message.format(
+                name=name, cls=_Ensure.name(cls), input=_Ensure.name(type(input))
+            )
+        )
 
     @staticmethod
     def instance(input: Any, cls: Type[T], name: Optional[str] = None) -> T:
@@ -54,4 +61,14 @@ class _Ensure(ABC):
             if name is None
             else "Field `{name}` must be instance of `{cls}`, but `{input}` was used"
         )
-        raise TypeError(message.format(name=name, cls=cls.__name__, input=type(input)))
+        raise TypeError(
+            message.format(
+                name=name, cls=_Ensure.name(cls), input=_Ensure.name(type(input))
+            )
+        )
+
+    @staticmethod
+    def name(cls: Union[T, Type[T]]) -> str:
+        if hasattr(cls, "__name__"):
+            return cls.__name__
+        return str(cls)
