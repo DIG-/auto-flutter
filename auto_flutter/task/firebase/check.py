@@ -23,8 +23,8 @@ class FirebaseCheck(Task):
     def execute(self, args: Task.Args) -> Task.Result:
         self.__process = Process.create(
             Config.instance().firebase,
-            arguments=[FIREBASE_DISABLE_INTERACTIVE_MODE, "--version"],
-            environment=FIREBASE_ENV,
+            arguments=[FIREBASE_DISABLE_INTERACTIVE_MODE.value, "--version"],
+            environment=FIREBASE_ENV.value,
         )
         self.__thread.start()
         process_killed: bool = False
