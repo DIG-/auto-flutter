@@ -5,6 +5,7 @@ from ...core.utils import _Iterable
 from ...model.task import Task
 from ...model.task.help_action import HelpAction
 from .flavor import ConfigFlavor
+from .platform import ConfigPlatform
 
 
 class ConfigDispatcher(Task, HelpAction):
@@ -13,7 +14,7 @@ class ConfigDispatcher(Task, HelpAction):
     )
 
     def actions(self) -> List[Task.Identity]:
-        return [ConfigFlavor.identity]
+        return [ConfigFlavor.identity, ConfigPlatform.identity]
 
     def execute(self, args: Task.Args) -> Task.Result:
         from ...core.task import TaskManager
