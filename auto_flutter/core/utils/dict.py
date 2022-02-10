@@ -32,3 +32,6 @@ class _Dict(ABC):
             else:
                 c[k] = v
         return c
+
+    def flatten(input: Dict[K, V]) -> List[V]:
+        return list(map(lambda x: x[1], input.items()))
