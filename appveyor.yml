@@ -2,22 +2,24 @@ version: 1.0.{build}
 image: Ubuntu2004
 clone_depth: 1
 init:
-  - sh: python3 --version
-  - sh: python3.6 --version | echo ""
-  - sh: python3.7 --version | echo ""
-  - sh: python3.8 --version | echo ""
-  - sh: python3.9 --version | echo ""
-  - sh: python3.10 --version | echo ""
+  - sh: echo $PY_VER
+  - sh: source $HOME/venv$PY_VER
+  - sh: python --version
 environment:
   matrix:
     - TOXENV: py36
+      PY_VER: 3.6
     - TOXENV: py37
+      PY_VER: 3.7
     - TOXENV: py38
+      PY_VER: 3.8
     - TOXENV: py39
+      PY_VER: 3.9
     - TOXENV: py310
+      PY_VER: 3.10
 build: false
 install:
-  - python3 -m pip install --upgrade pip
-  - python3 -m pip install tox
+  - python -m pip install --upgrade pip
+  - python -m pip install tox
 test_script:
-  - python3 -m tox
+  - python -m tox
