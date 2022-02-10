@@ -1,11 +1,9 @@
-from typing import List
-
 from ...model.project import Project  # Will be used by children
-from ...model.task import Task
+from ...model.task import *
 from ..options import ParseOptions
 from ..project import ProjectRead, ProjectSave
 
-__all__ = ["Project", "Task", "_BaseConfigTask"]
+__all__ = ["Project", "Task", "_BaseConfigTask", "List"]
 
 
 class _BaseConfigTask(Task):

@@ -6,6 +6,8 @@ from typing import Final, List
 from ..argument import Args
 from . import TaskId, TaskIdentity, TaskResult
 
+__all__ = ["Task", "List"]
+
 
 class Task(metaclass=ABCMeta):
     ## Start - Alias to reduce import
