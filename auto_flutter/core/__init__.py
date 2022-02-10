@@ -1,8 +1,5 @@
-from typing import Final
-
-
 def __get_version() -> str:
-    PACKAGE_NAME: Final = "auto_flutter"
+    PACKAGE_NAME = "auto_flutter"
     try:
         from importlib.metadata import version
 
@@ -18,4 +15,4 @@ def __get_version() -> str:
     return "unknown"
 
 
-VERSION: Final = __get_version()
+VERSION = __get_version()

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractclassmethod
-from typing import Callable, Final, Generic, Optional, TypeVar
+from typing import Callable, Generic, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -20,7 +20,7 @@ class _Gettable(Generic[T]):
 class _NotLazy(_Gettable[T]):
     def __init__(self, item: T) -> None:
         super().__init__()
-        self.__item: Final[T] = item
+        self.__item: T = item
 
     def get(self) -> T:
         return self.__item
@@ -29,7 +29,7 @@ class _NotLazy(_Gettable[T]):
 class _Lazy(_Gettable[T]):
     def __init__(self, creator: Callable[[], T]) -> None:
         super().__init__()
-        self.__creator: Final[Callable[[], T]] = creator
+        self.__creator: Callable[[], T] = creator
         self.__item: Optional[T] = None
 
     def get(self) -> T:
@@ -41,7 +41,7 @@ class _Lazy(_Gettable[T]):
 class _Dynamically(_Gettable[T]):
     def __init__(self, creator: Callable[[], T]) -> None:
         super().__init__()
-        self.__creator: Final[[Callable[[], T]]] = creator
+        self.__creator: Callable[[], T] = creator
 
     def get(self) -> T:
         return self.__creator()

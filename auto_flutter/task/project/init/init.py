@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Final, List, Optional
+from typing import List, Optional
 
 from ....core.string import SB
 from ....core.task.manager import TaskManager
@@ -33,7 +33,7 @@ class ProjectInit(Task):
         return "Initializing project"
 
     def execute(self, args: Task.Args) -> Task.Result:
-        pubspec: Final = Path("pubspec.yaml")
+        pubspec = Path("pubspec.yaml")
         if not pubspec.exists():
             return Task.Result(
                 args,

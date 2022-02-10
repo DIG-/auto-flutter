@@ -1,4 +1,4 @@
-from typing import Dict, Final
+from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
@@ -14,7 +14,7 @@ from .project.read import ProjectRead
 from .project.save import ProjectSave
 from .setup import Setup, SetupEdit
 
-task_list: Final[Dict[TaskId, TaskIdentity]] = dict(
+task_list: Dict[TaskId, TaskIdentity] = dict(
     sorted(
         [
             Help.identity.to_map(),

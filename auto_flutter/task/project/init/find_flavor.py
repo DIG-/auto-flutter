@@ -1,6 +1,6 @@
 from pathlib import Path, PurePosixPath
 from re import compile as re_compile
-from typing import Final, List, Optional
+from typing import List, Optional
 from xml.etree.ElementTree import parse as xml_parse
 
 from ....core.os import OS
@@ -12,19 +12,19 @@ from ....model.task import Task
 
 
 class FindFlavor(Task):
-    option_skip_idea: Final = Task.Option(
+    option_skip_idea = Task.Option(
         None,
         "skip-flavor-idea",
         "Skip algorithm to detect flavor from Idea Run config",
         False,
     )
-    option_skip_android: Final = Task.Option(
+    option_skip_android = Task.Option(
         None,
         "skip-flavor-android",
         "Skip algorithm to detect flavor using android data",
         False,
     )
-    option_skip_ios: Final = Task.Option(
+    option_skip_ios = Task.Option(
         None,
         "skip-flavor-ios",
         "Skip algorithm to detect flavor using ios data",
@@ -35,9 +35,9 @@ class FindFlavor(Task):
         return "Detecting project flavors"
 
     def execute(self, args: Task.Args) -> Task.Result:
-        project: Final = Project.current
+        project = Project.current
         if not args.contains(FindFlavor.option_skip_idea):
-            idea_run: Final = Path(".run")
+            idea_run = Path(".run")
             if not idea_run.exists():
                 self.print("    Idea run config not found")
             else:
@@ -53,7 +53,7 @@ class FindFlavor(Task):
                     return Task.Result(args)
 
         if not args.contains(FindFlavor.option_skip_android):
-            gradle: Final = Path(
+            gradle = Path(
                 OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle"))
             )
             if not Project.Platform.ANDROID in project.platforms:
@@ -150,7 +150,7 @@ class FindFlavor(Task):
             file.close()
             raise error
         file.close()
-        root: Final = content.getroot()
+        root = content.getroot()
         if (
             root.tag != "component"
             or not "name" in root.attrib
@@ -158,14 +158,14 @@ class FindFlavor(Task):
         ):
             return
 
-        configuration: Final = root.find("configuration")
+        configuration = root.find("configuration")
         if (
             configuration is None
             or not "type" in configuration.attrib
             or configuration.attrib["type"] != "FlutterRunConfigurationType"
         ):
             return
-        options: Final = configuration.findall("option")
+        options = configuration.findall("option")
         if options is None:
             return
 
@@ -185,8 +185,8 @@ class FindFlavor(Task):
             self._append_flavor(project, Project.Platform.DEFAULT, flavor, build_param)
 
     def _extract_from_gradle(self, project: Project, filename: Path):
-        file: Final = open(filename, "r")
-        content: Final = "".join(file.readlines())
+        file = open(filename, "r")
+        content = "".join(file.readlines())
         file.close()
         try:
             start = content.index("productFlavors")

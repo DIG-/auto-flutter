@@ -1,15 +1,15 @@
 from os import environ
 from re import Match as re_Match
 from re import compile as re_compile
-from typing import Dict, Final, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from ...model.argument import Args
 from ..utils import _Dict
 
 
 class StringFormatter:
-    REGEX: Final = re_compile("\$\{(\w+):(\w+)(\|\w+)?}")
-    EXTRAS: Final = Dict[str, str]
+    REGEX = re_compile("\$\{(\w+):(\w+)(\|\w+)?}")
+    EXTRAS = Dict[str, str]
 
     def format(
         self, input: str, args: Args, args_extra: Optional[EXTRAS] = None
@@ -33,9 +33,9 @@ class StringFormatter:
         self, match: re_Match, args: Args, args_extras: EXTRAS
     ) -> Tuple[str, str]:
         parsed: Optional[str] = None
-        source: Final[str] = match.group(1)
-        option: Final[str] = match.group(2)
-        operation: Final[Optional[str]] = match.group(3)
+        source: str = match.group(1)
+        option: str = match.group(2)
+        operation: Optional[str] = match.group(3)
 
         if source in ("arg", "ARG", "Arg"):
             arg: str = option
@@ -66,4 +66,4 @@ class StringFormatter:
         return (match.group(0), parsed)
 
 
-SF: Final = StringFormatter()
+SF = StringFormatter()

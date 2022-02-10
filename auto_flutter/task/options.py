@@ -1,6 +1,6 @@
 from getopt import GetoptError, gnu_getopt
 from sys import argv as sys_argv
-from typing import Final, List, Optional
+from typing import List, Optional
 
 from ..core.session import Session
 from ..core.utils import _Iterable
@@ -9,7 +9,7 @@ from ..model.task import Task
 
 
 class ParseOptions(Task):
-    option_stack_trace: Final = Task.Option(
+    option_stack_trace = Task.Option(
         None, "aflutter-stack-trace", "Show stacktrace of task output"
     )
 
@@ -24,11 +24,11 @@ class ParseOptions(Task):
         # Fill options list with current tasks
         from ..core.task.manager import TaskManager
 
-        manager: Final = TaskManager.instance()
-        options: Final[List[Task.Identity.Option]] = []
+        manager = TaskManager.instance()
+        options: List[Task.Identity.Option] = []
         for task in manager._task_stack:
             options.extend(task.identity.options)
-        skip: Final = (
+        skip = (
             not _Iterable.first_or_none(options, lambda x: isinstance(x, OptionAll))
             is None
         )

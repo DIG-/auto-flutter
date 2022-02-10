@@ -1,5 +1,3 @@
-from typing import Final
-
 from ....core.string import SB
 from ....model.platform import PlatformConfigFlavored
 from ....model.platform.build_type import BuildType
@@ -12,7 +10,7 @@ class CommonConfig(Task):
         return "Applying common config"
 
     def execute(self, args: Task.Args) -> Task.Result:
-        project: Final = Project.current
+        project = Project.current
         if Project.Platform.ANDROID in project.platforms:
             self.print("    Apply common config for android")
             self.print("    Disabling gradle daemon in build")

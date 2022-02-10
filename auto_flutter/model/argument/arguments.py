@@ -1,6 +1,6 @@
 import re
 from itertools import chain
-from typing import Dict, Final, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from .argument import Arg
 from .option import Option

@@ -1,19 +1,13 @@
-from typing import Final
-
 from ._base import *
 
 
 class ConfigFlavor(_BaseConfigTask):
-    option_add: Final = Task.Option(None, "add", "Add flavor to project", True)
-    option_remove: Final = Task.Option(
-        None, "remove", "Remove flavor from project", True
-    )
-    option_rename: Final = Task.Option(
+    option_add = Task.Option(None, "add", "Add flavor to project", True)
+    option_remove = Task.Option(None, "remove", "Remove flavor from project", True)
+    option_rename = Task.Option(
         None, "rename", "Rename flavor from project. Use with --to-name", True
     )
-    option_toname: Final = Task.Option(
-        None, "to-name", "New flavor name from --rename", True
-    )
+    option_toname = Task.Option(None, "to-name", "New flavor name from --rename", True)
     identity = Task.Identity(
         "flavor",
         "Handle project flavors in general",
@@ -25,13 +19,13 @@ class ConfigFlavor(_BaseConfigTask):
         return "Updating project flavor"
 
     def execute(self, args: Task.Args) -> Task.Result:
-        project: Final = Project.current
+        project = Project.current
         if project.flavors is None:
             project.flavors = []
 
         has_change: bool = False
 
-        add_flavor: Final = args.get_value(self.option_add)
+        add_flavor = args.get_value(self.option_add)
         if not add_flavor is None and len(add_flavor) > 0:
             self.print("    Adding flavor " + add_flavor)
             if add_flavor in project.flavors:
@@ -44,7 +38,7 @@ class ConfigFlavor(_BaseConfigTask):
             project.flavors.append(add_flavor)
             has_change = True
 
-        rem_flavor: Final = args.get_value(self.option_remove)
+        rem_flavor = args.get_value(self.option_remove)
         if not rem_flavor is None and len(rem_flavor) > 0:
             self.print("    Removing flavor " + rem_flavor)
             if not rem_flavor in project.flavors:
@@ -61,8 +55,8 @@ class ConfigFlavor(_BaseConfigTask):
                     if not config.flavored is None and rem_flavor in config.flavored:
                         config.flavored.pop(rem_flavor)
 
-        ren_flavor: Final = args.get_value(self.option_rename)
-        to_flavor: Final = args.get_value(self.option_toname)
+        ren_flavor = args.get_value(self.option_rename)
+        to_flavor = args.get_value(self.option_toname)
         has_ren = not ren_flavor is None and len(ren_flavor) > 0
         has_to = not to_flavor is None and len(to_flavor) > 0
         if has_ren or has_to:
