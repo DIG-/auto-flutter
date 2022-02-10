@@ -1,29 +1,27 @@
-from platform import platform
-from typing import Final, List, Optional
+from typing import Final, Optional
 
 from ...core.json import _JsonDecode
 from ...core.utils import _Ensure
 from ...model.platform import PlatformConfigFlavored
-from ...model.task import Task
-from ..options import ParseOptions
-from ..project import Project, ProjectRead, ProjectSave
+from ._base import *
 
 
-class ConfigPlatform(Task):
+class ConfigPlatform(_BaseConfigTask):
     option_add: Final = Task.Option(
-        None, "add", "Add platform support to project", True)
+        None, "add", "Add platform support to project", True
+    )
     option_rem: Final = Task.Option(
-        None, "remove", "Remove platform support from project", True)
-    identity = Task.Identity("platform", "Manage platform support for project", [
-        option_add, option_rem
-    ],
-        lambda: ConfigPlatform())
+        None, "remove", "Remove platform support from project", True
+    )
+    identity = Task.Identity(
+        "platform",
+        "Manage platform support for project",
+        [option_add, option_rem],
+        lambda: ConfigPlatform(),
+    )
 
     def describe(self, args: Task.Args) -> str:
         return "Updating project platform support"
-
-    def require(self) -> List[Task.ID]:
-        return [ParseOptions.identity.id, ProjectRead.identity.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
         project: Final = Project.current
@@ -61,9 +59,7 @@ class ConfigPlatform(Task):
                 args, error=AssertionError("No change was made"), success=True
             )
 
-        from ...core.task import TaskManager
-
-        TaskManager.instance().add(ProjectSave())
+        self._add_save_project()
         return Task.Result(args)
 
     def __parse_platform(platform: str) -> Optional[Project.Platform]:

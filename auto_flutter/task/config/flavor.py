@@ -1,12 +1,9 @@
-from typing import Final, List
+from typing import Final
 
-from ...model.task import Task
-from ..options import ParseOptions
-from ..project.read import Project, ProjectRead
-from ..project.save import ProjectSave
+from ._base import *
 
 
-class ConfigFlavor(Task):
+class ConfigFlavor(_BaseConfigTask):
     option_add: Final = Task.Option(None, "add", "Add flavor to project", True)
     option_remove: Final = Task.Option(
         None, "remove", "Remove flavor from project", True
@@ -26,9 +23,6 @@ class ConfigFlavor(Task):
 
     def describe(self, args: Task.Args) -> str:
         return "Updating project flavor"
-
-    def require(self) -> List[Task.ID]:
-        return [ProjectRead.identity.id, ParseOptions.identity.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
         project: Final = Project.current
@@ -109,7 +103,5 @@ class ConfigFlavor(Task):
         if len(project.flavors) <= 0:
             project.flavors = None
 
-        from ...core.task import TaskManager
-
-        TaskManager.instance().add(ProjectSave())
+        self._add_save_project()
         return Task.Result(args)
