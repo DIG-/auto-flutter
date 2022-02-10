@@ -1,5 +1,6 @@
 from json import load as json_load
 
+from ...core.string import SB
 from ...model.project import Project
 from ...model.task import Task
 
@@ -37,6 +38,11 @@ class ProjectRead(Task):
             Project.current = Project.from_json(json)
         except BaseException as error:
             return self.__return_error(args, error)
+
+        if not Project.current.tasks is None:
+            self.print(
+                SB().append("Custom task not implemented yet", SB.Color.YELLOW).str()
+            )
 
         return Task.Result(args)
 
