@@ -4,7 +4,7 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, Type, TypeVar
 
-from ._iterable import _Iterable
+from .iterable import _Iterable
 
 
 class _Enum(ABC):
