@@ -49,7 +49,7 @@ class ConfigPlatform(_BaseConfigTask):
                 return Task.Result(args, error=ValueError("Unrecognized platform `{}`".format(platform_rem)))
             if not parsed_rem in project.platforms:
                 return Task.Result(args, error=Warning("Project do not have platform `{}`".format(platform_rem)), success=True)
-            project.platforms.pop(parsed_rem)
+            project.platforms.remove(parsed_rem)
             had_change = True
             if not project.platform_config is None and parsed_rem in project.platform_config:
                 project.platform_config.pop(parsed_rem)
