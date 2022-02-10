@@ -63,7 +63,7 @@ class OS(Enum):
 
     @staticmethod
     def machine_to_posix_path(path: PurePath) -> PurePosixPath:
-        if path is PurePosixPath:
+        if isinstance(path, PurePosixPath):
             return path
 
         if not path.is_absolute():
