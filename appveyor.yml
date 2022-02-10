@@ -1,8 +1,8 @@
 version: 1.0.{build}
-image: Ubuntu
+image: Ubuntu2004
 clone_depth: 1
 init:
-  - sh: lsb_release -a
+  - sh: python --version
 environment:
   matrix:
     - TOXENV: py36
@@ -12,7 +12,7 @@ environment:
     - TOXENV: py310
 build: false
 install:
-  - python3 -m pip install --upgrade pip
-  - python3 -m pip install tox
+  - python -m pip install --upgrade pip
+  - python -m pip install tox
 test_script:
-  - python3 -m tox
+  - python -m tox
