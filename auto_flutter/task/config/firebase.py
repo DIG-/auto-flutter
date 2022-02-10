@@ -1,8 +1,7 @@
-from collections import namedtuple
-from pprint import pprint
-from typing import Final
+from typing import Final, Optional
 
 from ...core.utils import _Dict, _Enum, _If
+from ..firebase._const import FIREBASE_PROJECT_APP_ID_KEY
 from ._base import *
 
 
@@ -49,5 +48,35 @@ class ConfigFirebase(_BaseConfigTask):
         remove_app_id: Final = args.contains(self.__options["remove"])
         if not add_app_id is None and remove_app_id:
             raise ValueError("Can not set and remove app id at same time")
+        if add_app_id is None and not remove_app_id:
+            raise ValueError("At least one operation is required")
 
-        raise NotImplementedError()
+        has_warning: Optional[BaseException] = None
+
+        ## Remove app id section
+        if remove_app_id:
+            platform_config: Final = project.get_platform_config(platform)
+            if platform_config is None:
+                raise KeyError(
+                    "Project does not have config for platform {}".format(str(platform))
+                )
+            config: Final = platform_config.get_config_by_flavor(flavor)
+            if config is None:
+                raise KeyError(
+                    "Project does not have config for platform {} and flavor {}".format(
+                        str(platform), flavor
+                    )
+                )
+            if not config.remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
+                has_warning = Warning(
+                    "Selected platform and flavor does not have app id"
+                )
+
+        ## Set app id section
+        if not add_app_id is None:
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(
+                flavor
+            ).add_extra(FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id)
+
+        self._add_save_project()
+        return Task.Result(args, error=has_warning, success=True)
