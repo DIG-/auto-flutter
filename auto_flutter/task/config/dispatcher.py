@@ -4,6 +4,7 @@ from typing import Final, List
 from ...core.utils import _Iterable
 from ...model.task import Task
 from ...model.task.help_action import HelpAction
+from .firebase import ConfigFirebase
 from .flavor import ConfigFlavor
 from .platform import ConfigPlatform
 from .refresh import ConfigRefresh
@@ -20,6 +21,7 @@ class ConfigDispatcher(Task, HelpAction):
                 ConfigFlavor.identity,
                 ConfigPlatform.identity,
                 ConfigRefresh.identity,
+                ConfigFirebase.identity,
             ],
             key=lambda x: x.id,
         )
