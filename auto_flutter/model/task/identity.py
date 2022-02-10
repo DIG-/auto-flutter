@@ -5,7 +5,7 @@ from typing import Callable, List, Tuple
 
 from ...core.utils import _Ensure
 from ..argument import Option
-from . import TaskId
+from .id import TaskId
 
 
 class TaskIdentity(Tuple[TaskId, str, List[Option], Callable[[], "Task"], bool]):

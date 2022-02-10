@@ -4,7 +4,9 @@ from abc import ABCMeta, abstractclassmethod
 from typing import Final, List
 
 from ..argument import Args
-from . import TaskId, TaskIdentity, TaskResult
+from .id import TaskId
+from .identity import TaskIdentity
+from .result import TaskResult
 
 __all__ = ["Task", "List"]
 
