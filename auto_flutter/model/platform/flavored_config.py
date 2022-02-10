@@ -25,9 +25,10 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         output = []
         if not self.build_param is None:
             output.extend(self.build_param)
-        flavored = self.get_config_by_flavor(flavor)
-        if (not flavored is None) and (not flavored.build_param is None):
-            output.extend(flavored.build_param)
+        if not flavor is None:
+            flavored = self.get_config_by_flavor(flavor)
+            if (not flavored is None) and (not flavored.build_param is None):
+                output.extend(flavored.build_param)
         return output
 
     def get_run_before(
@@ -91,7 +92,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         self, flavor: Optional[Flavor]
     ) -> Optional[PlatformConfig]:
         if flavor is None:
-            return None
+            return self
         if self.flavored is None:
             return None
         if not flavor in self.flavored:
