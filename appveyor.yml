@@ -2,7 +2,6 @@ version: 1.0.{build}
 image: Ubuntu2004
 clone_depth: 1
 init:
-  - sh: echo $PY_VER
   - sh: source $HOME/venv$PY_VER/bin/activate
   - sh: python --version
 environment:
@@ -19,7 +18,7 @@ environment:
       PY_VER: 3.10
 build: false
 install:
-  - python -m pip install --upgrade pip
-  - python -m pip install tox
+  - python -m pip install --upgrade pip wheel || echo ""
+  - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
