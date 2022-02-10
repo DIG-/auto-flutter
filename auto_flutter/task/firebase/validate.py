@@ -5,6 +5,7 @@ from ...model.project import Project
 from ...model.task import Task
 from ..flutter.build.config import FlutterBuildConfig
 from ..project.read import ProjectRead
+from ._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
@@ -30,11 +31,11 @@ class FirebaseBuildValidate(Task):
             project.get_platform_config(Project.Platform.DEFAULT),
             project.get_platform_config(build_type.platform),
         )
-        id = config.get_extra(flavor, "google-id")
+        id = config.get_extra(flavor, FIREBASE_PROJECT_APP_ID_KEY.value)
         if id is None or len(id) <= 0:
             return Task.Result(
                 args,
-                error=ValueError("google-id not found in aflutter.json"),
+                error=ValueError("App id not found in aflutter.json"),
                 success=False,
             )
 
