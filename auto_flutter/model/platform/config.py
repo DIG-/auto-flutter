@@ -1,4 +1,5 @@
 from enum import Enum
+from re import I
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
@@ -59,6 +60,21 @@ class PlatformConfig(Serializable["PlatformConfig"]):
         if key in self.extras:
             return self.extras[key]
         return None
+
+    def add_extra(self, key: str, value: str):
+        if self.extras is None:
+            self.extras = {}
+        self.extras[key] = value
+
+    def remove_extra(self, key: str) -> bool:
+        if self.extras is None:
+            return False
+        if not key in self.extras:
+            return False
+        self.extras.pop(key)
+        if len(self.extras) <= 0:
+            self.extras = None
+        return True
 
     def to_json(self) -> Serializable.Json:
         extras = self.extras
