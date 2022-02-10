@@ -2,7 +2,7 @@ version: 1.0.{build}
 image: Ubuntu
 clone_depth: 1
 init:
-  - sh: python --version
+  - sh: python3 --version
 environment:
   matrix:
     - TOXENV: py36
