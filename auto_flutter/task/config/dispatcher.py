@@ -6,6 +6,7 @@ from ...model.task import Task
 from ...model.task.help_action import HelpAction
 from .flavor import ConfigFlavor
 from .platform import ConfigPlatform
+from .refresh import ConfigRefresh
 
 
 class ConfigDispatcher(Task, HelpAction):
@@ -14,7 +15,14 @@ class ConfigDispatcher(Task, HelpAction):
     )
 
     def actions(self) -> List[Task.Identity]:
-        return sorted([ConfigFlavor.identity, ConfigPlatform.identity], key=lambda x: x.id)
+        return sorted(
+            [
+                ConfigFlavor.identity,
+                ConfigPlatform.identity,
+                ConfigRefresh.identity,
+            ],
+            key=lambda x: x.id,
+        )
 
     def execute(self, args: Task.Args) -> Task.Result:
         from ...core.task import TaskManager
@@ -44,4 +52,5 @@ class ConfigDispatcher(Task, HelpAction):
 
     def __help_task(self) -> Task:
         from ..help import Help
+
         return Help(self.identity.id)
