@@ -10,7 +10,7 @@ environment:
     - TOXENV: py310
 build: false
 install:
-  - py -m pip install --upgrade pip
-  - py -m pip install tox
+  - python -m pip install --upgrade pip
+  - python -m pip install tox
 test_script:
-  - py -m tox
+  - python -m tox
