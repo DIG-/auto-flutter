@@ -2,13 +2,12 @@ from abc import ABCMeta
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
-from ...model._serializable import Serializable
+from .serializable import Serializable
 from .type import Json
-
-Input = Union[Serializable.Json, Serializable, Enum]
 
 
 class _JsonEncode(metaclass=ABCMeta):
+    Input = Union[Json, Serializable, Enum]
     Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]], Type[str]]
 
     def encode_optional(

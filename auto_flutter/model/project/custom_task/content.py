@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Union
 
-from ..._serializable import Serializable
+from ....core.json import Serializable
 
 
 class CustomTaskContent(Dict[str, Union[str, List]], Serializable["CustomTaskContent"]):

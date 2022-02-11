@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from ...core.json import Serializable
 from ...core.utils import _Ensure
-from .._serializable import Serializable
 from .type import BuildType
 
 

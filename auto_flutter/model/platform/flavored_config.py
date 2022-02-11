@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ...core.json import _JsonDecode, _JsonEncode
+from ...core.json import *
 from ...core.utils import _If
-from .._serializable import Serializable
 from ..project import Flavor
 from .config import PlatformConfig, TaskIdList
 

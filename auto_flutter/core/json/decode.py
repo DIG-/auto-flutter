@@ -2,8 +2,8 @@ from abc import ABC
 from enum import Enum
 from typing import Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union
 
-from ...model._serializable import Serializable
 from ..utils import _Iterable
+from .serializable import Serializable
 from .type import Json
 
 
@@ -19,6 +19,7 @@ class _JsonDecode(ABC):
             return cls.from_json(json)
         elif issubclass(cls, Enum):
             return _Iterable.first_or_none(cls.__iter__(), lambda x: x.value == json)
+        raise ValueError("Unknown type to handle `{}`".format(type(json)))
 
     def decode_optional(json: Optional[Json], cls: Type[T]) -> Optional[T]:
         if json is None:

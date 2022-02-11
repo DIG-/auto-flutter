@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractclassmethod
-from typing import Dict, Generic, List, Optional, TypeVar, Union
+from abc import ABCMeta, abstractmethod
+from typing import Generic, Optional, TypeVar
+
+from .type import Json
 
 T = TypeVar("T")
 
 
 class Serializable(Generic[T], metaclass=ABCMeta):
-    Json = Union[Dict, List, str, int, None]
+    Json = Json
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def to_json(self) -> Serializable.Json:
         raise NotImplementedError("to_json is not implemented")
 
-    @abstractclassmethod
+    @staticmethod
+    @abstractmethod
     def from_json(json: Serializable.Json) -> Optional[T]:
         raise NotImplementedError("from_json is not implemented")

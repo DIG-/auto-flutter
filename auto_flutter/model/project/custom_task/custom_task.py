@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 from typing import List, Optional
 
-from ....core.json import _JsonDecode, _JsonEncode
+from ....core.json import *
 from ....core.utils import _Ensure
-from ..._serializable import Serializable
 from ...task import TaskId
 from .content import CustomTaskContent
 from .type import CustomTaskType
@@ -26,7 +26,7 @@ class CustomTask(Serializable["CustomTask"]):
     ) -> None:
         super().__init__()
         self.id: TaskId = _Ensure.instance(id, TaskId, "id")
-        self.name: str = _Ensure.instance(name,str, "name")
+        self.name: str = _Ensure.instance(name, str, "name")
         self.type: CustomTask.Type = _Ensure.instance(type, CustomTask.Type, "type")
         self.require: Optional[List[str]] = require
         self.content: Optional[CustomTask.Content] = content
