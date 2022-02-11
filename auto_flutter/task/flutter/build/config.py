@@ -1,4 +1,3 @@
-from operator import contains
 from typing import List
 
 from ....core.json import _JsonDecode
@@ -6,6 +5,8 @@ from ....core.string import SB
 from ....core.utils import _Dict
 from ....model.platform import BuildType, Platform
 from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....model.platform.config import BuildRunBefore
+from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import Task
 from ...options import ParseOptions
@@ -88,6 +89,13 @@ class FlutterBuildConfig(Task):
                 )
                 .str()
             )
+        else:
+            merge = MergePlatformConfigFlavored(config_default, config_platform)
+            before_build = merge.get_run_before(BuildRunBefore.BUILD, flavor)
+            if len(before_build) > 0:
+                from ....core.task import TaskManager
+
+                TaskManager.instance().add_id(before_build)
 
         args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
         args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
