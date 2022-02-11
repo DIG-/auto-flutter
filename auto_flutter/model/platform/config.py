@@ -1,11 +1,11 @@
 from enum import Enum
-from re import I
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
 from ...core.utils import _Ensure
 from .._serializable import Serializable
-from ..build.type import BuildType, _BuildType_SerializeOutput
+from ..build import BuildType
+from ..build.serializer import _BuildType_SerializeOutput
 
 
 class BuildRunBefore(Enum):

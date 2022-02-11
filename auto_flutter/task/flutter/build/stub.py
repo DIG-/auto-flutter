@@ -1,12 +1,8 @@
-from ast import arg
 from typing import List
 
-from auto_flutter.model import platform
-
-from ....core.json import _JsonDecode
 from ....core.task.manager import TaskManager
 from ....core.utils import _Dict
-from ....model.build.type import BuildType, _BuildType_SerializeFlutter
+from ....model.build import BuildType
 from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
 from ....model.task import Task

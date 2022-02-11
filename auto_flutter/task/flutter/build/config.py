@@ -1,9 +1,8 @@
 from typing import List
 
-from ....core.json import _JsonDecode
 from ....core.string import SB
 from ....core.utils import _Dict
-from ....model.build.type import BuildType, _BuildType_SerializeFlutter
+from ....model.build import BuildType
 from ....model.platform import Platform
 from ....model.platform.config import BuildRunBefore
 from ....model.platform.merge_config import MergePlatformConfigFlavored
@@ -42,9 +41,7 @@ class FlutterBuildConfig(Task):
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type: BuildType = _JsonDecode.decode(
-            args["-0"].argument, _BuildType_SerializeFlutter
-        )
+        build_type: BuildType = BuildType.from_flutter(args["-0"].argument)
         if build_type is None:
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from enum import Enum
 from operator import attrgetter, itemgetter
-from typing import Optional, Tuple
+from typing import Tuple
 
 from ...core.utils import _Ensure, _Enum
-from .._serializable import Serializable
 from ..platform.platform import Platform
 
 
@@ -42,25 +41,3 @@ class BuildType(Enum):
     def from_output(value: str) -> BuildType:
         _Ensure.not_none(value, "value")
         return _Enum.parse_value(BuildType, value, lambda x: x.output)
-
-
-class _BuildType_SerializeFlutter(Serializable[BuildType]):
-    def __init__(self, value: BuildType) -> None:
-        self.value = value
-
-    def to_json(self) -> Serializable.Json:
-        return self.value.flutter
-
-    def from_json(json: Serializable.Json) -> Optional[BuildType]:
-        return BuildType.from_flutter(_Ensure.instance(json, str, "json"))
-
-
-class _BuildType_SerializeOutput(Serializable[BuildType]):
-    def __init__(self, value: BuildType) -> None:
-        self.value = value
-
-    def to_json(self) -> Serializable.Json:
-        return self.value.output
-
-    def from_json(json: Serializable.Json) -> Optional[BuildType]:
-        return BuildType.from_output(_Ensure.instance(json, str, "json"))
