@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 0.1.0
 image: Ubuntu2004
 clone_depth: 1
 init:
@@ -6,8 +6,6 @@ init:
   - sh: python --version
 environment:
   matrix:
-    - TOXENV: py36
-      PY_VER: 3.6
     - TOXENV: py37
       PY_VER: 3.7
     - TOXENV: py38
