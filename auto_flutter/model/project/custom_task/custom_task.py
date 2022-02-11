@@ -1,31 +1,35 @@
+from __future__ import annotations
 from typing import List, Optional
-from ..model._serializable import Serializable
-from ..model.task import TaskId
-from ..model.custom_task_type import CustomTaskType
-from ..model.custom_task_content import CustomTaskContent
-from ..core.json import _JsonDecode, _JsonEncode
-from ..core.utils import _Ensure
+
+from ....core.json import _JsonDecode, _JsonEncode
+from ....core.utils import _Ensure
+from ..._serializable import Serializable
+from ...task import TaskId
+from .content import CustomTaskContent
+from .type import CustomTaskType
 
 
 class CustomTask(Serializable["CustomTask"]):
+    ## Start - Alias to reduce import
     ID = TaskId
     Type = CustomTaskType
     Content = CustomTaskContent
+    ## End - Alias to reduce import
 
     def __init__(
         self,
-        id: TaskId,
+        id: ID,
         name: str,
-        type: CustomTaskType,
+        type: Type,
         require: Optional[List[str]] = None,
-        content: Optional[CustomTaskContent] = None,
+        content: Optional[Content] = None,
     ) -> None:
         super().__init__()
-        self.id: TaskId = _Ensure.not_none(id, "id")
-        self.name: str = _Ensure.not_none(name, "name")
-        self.type: CustomTaskType = _Ensure.not_none(type, "type")
+        self.id: TaskId = _Ensure.instance(id, TaskId, "id")
+        self.name: str = _Ensure.instance(name,str, "name")
+        self.type: CustomTask.Type = _Ensure.instance(type, CustomTask.Type, "type")
         self.require: Optional[List[str]] = require
-        self.content: Optional[CustomTaskContent] = content
+        self.content: Optional[CustomTask.Content] = content
 
     def to_json(self) -> Serializable.Json:
         return {
@@ -36,7 +40,7 @@ class CustomTask(Serializable["CustomTask"]):
             "content": _JsonEncode.encode_optional(self.content),
         }
 
-    def from_json(json: Serializable.Json) -> Optional["CustomTask"]:
+    def from_json(json: Serializable.Json) -> Optional[CustomTask]:
         if not isinstance(json, dict):
             return None
 

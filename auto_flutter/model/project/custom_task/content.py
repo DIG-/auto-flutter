@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import List, Optional, Union, Dict
-from ..model._serializable import Serializable
+
+from typing import Dict, List, Optional, Union
+
+from ..._serializable import Serializable
 
 
 class CustomTaskContent(Dict[str, Union[str, List]], Serializable["CustomTaskContent"]):
