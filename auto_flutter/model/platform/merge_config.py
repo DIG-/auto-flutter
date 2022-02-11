@@ -44,14 +44,11 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         return None
 
     def get_run_before(
-        self, flavor: Optional[Flavor]
-    ) -> Dict[BuildRunBefore, List[str]]:
-        output: Dict[BuildRunBefore, List[str]] = {}
+        self, type: BuildRunBefore, flavor: Optional[Flavor]
+    ) -> List[str]:
+        output: List[str] = []
         if not self.default is None:
-            output = _Dict.merge_append(output, self.default.get_run_before(flavor))
+            output.extend(self.default.get_run_before(type, flavor))
         if not self.platform is None:
-            output = _Dict.merge_append(output, self.platform.get_run_before(flavor))
-        # Remove duplicated
-        for k, v in output:
-            output[k] = list(dict.fromkeys(v))
+            output.extend(self.platform.get_run_before(type, flavor))
         return output

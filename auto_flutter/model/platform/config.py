@@ -76,6 +76,12 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self.extras = None
         return True
 
+    def get_run_before(self, type: BuildRunBefore) -> Optional[List[str]]:
+        _Ensure.type(type, BuildRunBefore, "type")
+        if self.run_before is None or type not in self.run_before:
+            return None
+        return self.run_before[type]
+
     def to_json(self) -> Serializable.Json:
         extras = self.extras
         output = {

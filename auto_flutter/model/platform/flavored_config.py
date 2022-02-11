@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
+from ...core.utils import _If
 from .._serializable import Serializable
 from ..flavor import Flavor
 from . import PlatformConfig
@@ -32,23 +33,22 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         return output
 
     def get_run_before(
-        self, flavor: Optional[Flavor]
-    ) -> Dict[BuildRunBefore, List[str]]:
-        output: Dict[BuildRunBefore, List[str]] = dict()
-        if not self.run_before is None:
-            output = self.run_before
-        if (
-            (not flavor is None)
-            and (not self.flavored is None)
-            and (flavor in self.flavored)
-            and (not self.flavored[flavor] is None)
-            and (not self.flavored[flavor].run_before is None)
-        ):
-            for key, value in self.flavored[flavor].run_before.items():
-                if not key in output:
-                    output[key] = value
-                else:
-                    output[key] = [*output[key], *value]
+        self, type: BuildRunBefore, flavor: Optional[Flavor]
+    ) -> List[str]:
+        output: List[str] = list()
+        _If.not_none(
+            super().get_run_before(type),
+            lambda x: output.extend(x),
+            lambda: None,
+        )
+        if not flavor is None:
+            flavored = self.get_config_by_flavor(flavor)
+            if not flavored is None:
+                _If.not_none(
+                    flavored.get_run_before(type),
+                    lambda x: output.extend(x),
+                    lambda: None,
+                )
         return output
 
     def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
