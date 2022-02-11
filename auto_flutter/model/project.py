@@ -1,4 +1,4 @@
-from typing import Dict, Final, List, Optional
+from typing import Dict, List, Optional
 
 from auto_flutter.core import VERSION
 
@@ -58,7 +58,7 @@ class Project(Serializable["Project"]):
     def remove_task_id(self, id: CustomTask.ID) -> bool:
         if self.tasks is None:
             return False
-        found: Final = _Iterable.first_or_none(self.tasks, lambda x: x.id == id)
+        found = _Iterable.first_or_none(self.tasks, lambda x: x.id == id)
         if found is None:
             return False
         self.tasks.remove(found)

@@ -1,5 +1,5 @@
 from operator import contains
-from typing import Final, List
+from typing import List
 
 from ....core.json import _JsonDecode
 from ....core.string import SB
@@ -23,9 +23,9 @@ class FlutterBuildConfig(Task):
         lambda: FlutterBuildConfig(),
     )
 
-    ARG_BUILD_TYPE: Final = "FLUTTER_BUILD_CONFIG_TYPE"
-    ARG_FLAVOR: Final = "FLUTTER_BUILD_CONFIG_FLAVOR"
-    ARG_DEBUG: Final = "FLUTTER_BUILD_CONFIG_DEBUG"
+    ARG_BUILD_TYPE = "FLUTTER_BUILD_CONFIG_TYPE"
+    ARG_FLAVOR = "FLUTTER_BUILD_CONFIG_FLAVOR"
+    ARG_DEBUG = "FLUTTER_BUILD_CONFIG_DEBUG"
 
     class Error(RuntimeError):
         ...
@@ -41,15 +41,15 @@ class FlutterBuildConfig(Task):
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type: Final[BuildType] = _JsonDecode.decode(
+        build_type: BuildType = _JsonDecode.decode(
             args["-0"].argument, _BuildType_SerializeFlutter
         )
         if build_type is None:
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
             )
-        platform: Final[Platform] = build_type.platform
-        project: Final = Project.current
+        platform: Platform = build_type.platform
+        project = Project.current
         if project is None:
             raise FlutterBuildConfig.Error("Project was not initialized.")
 

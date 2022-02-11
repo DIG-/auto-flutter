@@ -1,5 +1,5 @@
 from pathlib import Path, PurePosixPath
-from typing import Final, List
+from typing import List
 
 from ...core.os import OS
 from ...core.process import Process
@@ -27,7 +27,7 @@ class FirebaseBuildUpload(Task):
         ]
 
     def execute(self, args: Task.Args) -> Task.Result:
-        filename: Final = args.get_value("output")
+        filename = args.get_value("output")
         if filename is None or len(filename) <= 0:
             return Task.Result(
                 args, AssertionError("Previous task does not have output")

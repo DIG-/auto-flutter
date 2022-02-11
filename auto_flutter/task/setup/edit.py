@@ -5,7 +5,7 @@ from os import access as os_access
 from os import environ as os_environ
 from pathlib import Path
 from pprint import pprint
-from typing import Final, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from ...core.os import OS
 from ...core.string import SB
@@ -16,30 +16,30 @@ from ..flutter import FlutterCheck
 
 
 class SetupEdit(Task):
-    option_flutter: Final = Task.Option(
+    option_flutter = Task.Option(
         None,
         "flutter",
         "Flutter command, can be absolute path if it is not in PATH",
         True,
     )
-    option_firebase: Final = Task.Option(
+    option_firebase = Task.Option(
         None,
         "firebase-cli",
         "Firebase cli command, can be absolute path if it is not in PATH",
         True,
     )
-    option_firebase_standalone: Final = Task.Option(
+    option_firebase_standalone = Task.Option(
         None,
         "firebase-standalone",
         "When firebase cli is standalone version",
     )
-    option_firebase_non_standalone: Final = Task.Option(
+    option_firebase_non_standalone = Task.Option(
         None,
         "no-firebase-standalone",
         "When firebase cli is not standalone version",
     )
-    option_show: Final = Task.Option(None, "show", "Show current config")
-    option_check: Final = Task.Option(None, "check", "Check current config")
+    option_show = Task.Option(None, "show", "Show current config")
+    option_check = Task.Option(None, "check", "Check current config")
 
     identity = Task.Identity(
         "-setup-edit",
@@ -66,10 +66,10 @@ class SetupEdit(Task):
 
         from ...core.task.manager import TaskManager
 
-        manager: Final = TaskManager.instance()
+        manager = TaskManager.instance()
 
         if args.contains(self.option_flutter):
-            flutter: Final = args.get_value(self.option_flutter)
+            flutter = args.get_value(self.option_flutter)
             if flutter is None or len(flutter) == 0:
                 return Task.Result(
                     args, ValueError("Require valid path for flutter"), False
@@ -106,7 +106,7 @@ class SetupEdit(Task):
             manager.add(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
-            firebase: Final = args.get_value(self.option_firebase)
+            firebase = args.get_value(self.option_firebase)
             if firebase is None or len(firebase) == 0:
                 return Task.Result(
                     args, ValueError("Require valid path for firebase-cli"), False
@@ -154,7 +154,7 @@ class SetupEdit(Task):
         NOT_FOUND = auto()
         NOT_EXECUTABLE = auto()
 
-    __FindResult: Final = Tuple[__PathResult, Optional[Path]]
+    __FindResult = Tuple[__PathResult, Optional[Path]]
 
     def __parse_path(initial: str) -> __FindResult:
         path: Path = Path(initial)

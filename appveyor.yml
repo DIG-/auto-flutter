@@ -1,4 +1,9 @@
-version: 1.0.{build}
+version: "0.1.0-{build}"
+branches:
+  only:
+    - main
+    - rc/([\d\w\-\.]+)
+skip_tags: true
 image: Ubuntu2004
 clone_depth: 1
 init:
@@ -6,8 +11,6 @@ init:
   - sh: python --version
 environment:
   matrix:
-    - TOXENV: py36
-      PY_VER: 3.6
     - TOXENV: py37
       PY_VER: 3.7
     - TOXENV: py38
@@ -18,7 +21,7 @@ environment:
       PY_VER: 3.10
 build: false
 install:
-  - python -m pip install --upgrade pip wheel || echo ""
+  - python -m pip install --upgrade pip wheel || python -c "print('')"
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox

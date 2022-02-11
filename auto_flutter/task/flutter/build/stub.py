@@ -1,5 +1,5 @@
 from ast import arg
-from typing import Final, List
+from typing import List
 
 from auto_flutter.model import platform
 
@@ -26,13 +26,13 @@ class FlutterBuildStub(Task):
         return ""
 
     def execute(self, args: Task.Args) -> Task.Result:
-        flavor: Final = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
-        build_type: Final = BuildType.from_flutter(
+        flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
+        build_type = BuildType.from_flutter(
             args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE)
         )
-        debug: Final = args.contains(FlutterBuildConfig.ARG_DEBUG)
-        project: Final = Project.current
-        platform: Final = build_type.platform
+        debug = args.contains(FlutterBuildConfig.ARG_DEBUG)
+        project = Project.current
+        platform = build_type.platform
 
         config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.platform_config, platform)

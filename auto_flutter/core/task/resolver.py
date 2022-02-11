@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Deque, Final, List, Optional
+from typing import Deque, List, Optional
 
 from ...model.task import Task
 
@@ -34,8 +34,8 @@ class TaskResolver:
         temp: List[Task.Identity] = [Task.Identity("-#-#-", "", [], lambda: task, True)]
         i = 0
         while i < len(temp):
-            current: Final = temp[i]
-            _task: Final = current.creator()
+            current = temp[i]
+            _task = current.creator()
             for id in _task.require():
                 identity = TaskResolver.find_task(id)
                 if identity is None:
@@ -48,10 +48,10 @@ class TaskResolver:
     def __clear_repeatable(items: List[Task.Identity]) -> List[Task.Identity]:
         i = 0
         while i < len(items):
-            current: Final = items[i]
+            current = items[i]
             j = i + 1
             while j < len(items):
-                it: Final = items[j]
+                it = items[j]
                 if it.allow_more:
                     pass
                 elif it.id == current.id:

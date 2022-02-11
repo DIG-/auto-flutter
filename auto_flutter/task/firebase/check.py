@@ -1,5 +1,5 @@
 from threading import Thread
-from typing import Final, Optional, Union
+from typing import Optional, Union
 
 from ...core.process import Process
 from ...core.string import SB
@@ -16,7 +16,7 @@ class FirebaseCheck(Task):
     def __init__(self, skip_on_failure: bool = False) -> None:
         super().__init__()
         self._skip = skip_on_failure
-        self.__thread: Final = Thread(target=FirebaseCheck.__run, args=[self])
+        self.__thread = Thread(target=FirebaseCheck.__run, args=[self])
         self.__process: Optional[Process] = None
         self.__output: Union[None, bool, BaseException] = None
 

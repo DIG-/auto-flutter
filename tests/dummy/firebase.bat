@@ -1,0 +1,1 @@
+@echo firebclas-cli %*

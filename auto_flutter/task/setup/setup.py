@@ -1,4 +1,4 @@
-from typing import Final, List
+from typing import List
 
 from ...model.argument import Args
 from ...model.config import Config
@@ -34,7 +34,7 @@ class Setup(Task):
         elif args.contains(SetupEdit.option_check):
             from ...core.task.manager import TaskManager
 
-            manager: Final = TaskManager.instance()
+            manager = TaskManager.instance()
             manager.add(FirebaseCheck(skip_on_failure=True))
             manager.add(FlutterCheck(skip_on_failure=True))
             return Task.Result(args)

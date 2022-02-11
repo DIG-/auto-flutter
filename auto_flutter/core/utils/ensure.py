@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Final, Optional, Type, TypeVar, Union
+from typing import Any, Optional, Type, TypeVar, Union
 
 
 class _Ensure(ABC):
@@ -22,7 +22,7 @@ class _Ensure(ABC):
             return None
         if isinstance(input, cls):
             return input
-        message: Final = (
+        message = (
             "Field must be instance of `{cls}`, but `{input}` was used"
             if name is None
             else "Field `{name}` must be instance of `{cls}`, but `{input}` was used"
@@ -41,7 +41,7 @@ class _Ensure(ABC):
             return None
         if isinstance(input, cls):
             return input
-        message: Final = (
+        message = (
             "Value must be instance of `{cls}`, but `{input}` was returned"
             if name is None
             else "`{name}` must be instance of `{cls}`, but `{input}` was returned"
@@ -56,7 +56,7 @@ class _Ensure(ABC):
     def instance(input: Any, cls: Type[T], name: Optional[str] = None) -> T:
         if not input is None and isinstance(input, cls):
             return input
-        message: Final = (
+        message = (
             "Field must be instance of `{cls}`, but `{input}` was used"
             if name is None
             else "Field `{name}` must be instance of `{cls}`, but `{input}` was used"

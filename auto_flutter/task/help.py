@@ -1,6 +1,6 @@
 from pathlib import Path
 from sys import argv as sys_argv
-from typing import Dict, Final, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from auto_flutter.model.task.identity import TaskIdentity
 
@@ -14,9 +14,7 @@ from .project.read import ProjectRead
 
 
 class Help(Task):
-    option_task: Final = Task.Option(
-        "t", "task", "Show help details about given task", True
-    )
+    option_task = Task.Option("t", "task", "Show help details about given task", True)
 
     identity = Task.Identity(
         "help",
@@ -33,8 +31,13 @@ class Help(Task):
         elif isinstance(task_id, Task.ID):
             self._show_task = task_id
         elif not task_id is None:
-            raise TypeError("Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
-                clsa=Task.ID.__name__, clsb=TaskIdentity.__name__, input=type(task_id)))
+            raise TypeError(
+                "Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
+                    clsa=Task.ID.__name__,
+                    clsb=TaskIdentity.__name__,
+                    input=type(task_id),
+                )
+            )
 
     def describe(self, args: Task.Args) -> str:
         return "Showing help page"
@@ -54,14 +57,13 @@ class Help(Task):
             and (not task_name.startswith("-"))
         ):
             identity = TaskResolver.find_task(task_name)
-            task_instance: Final[Optional[Task]] = _If.not_none(
+            task_instance: Optional[Task] = _If.not_none(
                 identity, lambda x: x.creator(), lambda: None
             )
             if identity is None:
                 task_not_found = True
             elif isinstance(task_instance, HelpAction):
-                self._show_task_help_with_actions(
-                    builder, identity, task_instance)
+                self._show_task_help_with_actions(builder, identity, task_instance)
                 return Task.Result(args, message=builder.str())
             else:
                 self._show_task_help(builder, identity, task_instance)
@@ -106,8 +108,7 @@ class Help(Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda task: task.identity.options, TaskResolver.resolve(
-                identity.creator())
+            lambda task: task.identity.options, TaskResolver.resolve(identity.creator())
         )
         options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
@@ -151,7 +152,7 @@ class Help(Task):
     def _show_task_help_with_actions(
         self, builder: SB, identity: Task.Identity, task: Task
     ):
-        helper: Final = _Ensure.type(task, HelpAction, "task")
+        helper = _Ensure.type(task, HelpAction, "task")
         self._show_header(builder, True)
         self._show_task_description(builder, identity)
         builder.append("\nActions:\n")
@@ -162,7 +163,7 @@ class Help(Task):
 
     def _show_task_actions(self, builder: SB, identity: Task.Identity, task: Task):
         self._show_task_name_description(builder, identity)
-        options: Final[List[Task.Option]] = _Iterable.flatten(
+        options: List[Task.Option] = _Iterable.flatten(
             map(
                 lambda task: task.identity.options,
                 TaskResolver.resolve(task),

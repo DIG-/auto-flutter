@@ -1,3 +1,1 @@
-from typing import Final
-
-FLUTTER_DISABLE_VERSION_CHECK: Final = "--no-version-check"
+FLUTTER_DISABLE_VERSION_CHECK = "--no-version-check"

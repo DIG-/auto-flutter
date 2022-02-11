@@ -1,4 +1,4 @@
-from typing import Final, Optional
+from typing import Optional
 
 from ...core.utils import _Dict, _Enum, _If
 from ..firebase._const import FIREBASE_PROJECT_APP_ID_KEY
@@ -6,7 +6,7 @@ from ._base import *
 
 
 class ConfigFirebase(_BaseConfigTask):
-    __options: Final = {
+    __options = {
         "add": Task.Option(
             None, "set-app-id", "Set app id for platform and/or flavor", True
         ),
@@ -27,9 +27,9 @@ class ConfigFirebase(_BaseConfigTask):
     )
 
     def execute(self, args: Task.Args) -> Task.Result:
-        project: Final = Project.current
+        project = Project.current
 
-        platform: Final[Project.Platform] = _If.none(
+        platform: Project.Platform = _If.none(
             args.get_value(self.__options["platform"]),
             lambda: Project.Platform.DEFAULT,
             _Enum.parse(Project.Platform),
@@ -39,13 +39,13 @@ class ConfigFirebase(_BaseConfigTask):
                 "Project does not support platform {}".format(str(platform))
             )
 
-        flavor: Final = args.get_value(self.__options["flavor"])
+        flavor = args.get_value(self.__options["flavor"])
         if not flavor is None:
             if project.flavors is None or not flavor in project.flavors:
                 raise ValueError("Project does not contains flavor {}".format(flavor))
 
-        add_app_id: Final = args.get_value(self.__options["add"])
-        remove_app_id: Final = args.contains(self.__options["remove"])
+        add_app_id = args.get_value(self.__options["add"])
+        remove_app_id = args.contains(self.__options["remove"])
         if not add_app_id is None and remove_app_id:
             raise ValueError("Can not set and remove app id at same time")
         if add_app_id is None and not remove_app_id:
@@ -55,12 +55,12 @@ class ConfigFirebase(_BaseConfigTask):
 
         ## Remove app id section
         if remove_app_id:
-            platform_config: Final = project.get_platform_config(platform)
+            platform_config = project.get_platform_config(platform)
             if platform_config is None:
                 raise KeyError(
                     "Project does not have config for platform {}".format(str(platform))
                 )
-            config: Final = platform_config.get_config_by_flavor(flavor)
+            config = platform_config.get_config_by_flavor(flavor)
             if config is None:
                 raise KeyError(
                     "Project does not have config for platform {} and flavor {}".format(
