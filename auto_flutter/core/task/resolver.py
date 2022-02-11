@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from collections import deque
-from typing import Deque, List, Optional
+from typing import Deque, Iterable, List, Optional, Union
+
+from auto_flutter.model.task.identity import TaskIdentity
 
 from ...model.task import Task
 
@@ -21,8 +25,29 @@ class TaskResolver:
         return output
     """
 
-    def resolve(task: Task) -> Deque[Task]:
-        temp = TaskResolver.__resolve_dependencies(task)
+    def resolve(
+        task: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
+    ) -> Deque[Task]:
+        temp: List[Task.Identity] = []
+        if isinstance(task, Task):
+            temp = [TaskResolver.__TaskIdentityWrapper(task)]
+        elif isinstance(task, TaskIdentity):
+            temp = [task]
+        elif isinstance(task, Iterable):
+            for it in task:
+                if isinstance(it, Task):
+                    temp.append(TaskResolver.__TaskIdentityWrapper(it))
+                elif isinstance(it, Task.Identity):
+                    temp.append(it)
+                else:
+                    raise TypeError(
+                        "Trying to resolve task, but received {}".format(type(task))
+                    )
+        else:
+            raise TypeError(
+                "Trying to resolve task, but received {}".format(type(task))
+            )
+        temp = TaskResolver.__resolve_dependencies(temp)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp)
         output: Deque[Task] = deque()
@@ -30,20 +55,21 @@ class TaskResolver:
             output.appendleft(identity.creator())
         return output
 
-    def __resolve_dependencies(task: Task) -> List[Task.Identity]:
-        temp: List[Task.Identity] = [Task.Identity("-#-#-", "", [], lambda: task, True)]
+    def __resolve_dependencies(items: List[Task.Identity]) -> List[Task.Identity]:
+        if len(items) <= 0:
+            raise IndexError("Require at least one Task.Identity")
         i = 0
-        while i < len(temp):
-            current = temp[i]
-            _task = current.creator()
+        while i < len(items):
+            current = items[i]
+            _task: Task = current.creator()
             for id in _task.require():
                 identity = TaskResolver.find_task(id)
                 if identity is None:
                     raise LookupError('Task not found "{}"'.format(id))
                 j = i + 1
-                temp[j:j] = [identity]
+                items[j:j] = [identity]
             i += 1
-        return temp
+        return items
 
     def __clear_repeatable(items: List[Task.Identity]) -> List[Task.Identity]:
         i = 0
@@ -69,3 +95,9 @@ class TaskResolver:
         if id in user_task:
             return user_task[id]
         return None
+
+    class __TaskIdentityWrapper:
+        def __new__(
+            cls: type[TaskResolver.__TaskIdentityWrapper], task: Task
+        ) -> Task.Identity:
+            return Task.Identity("-#-#-", "", [], lambda: task, True)
