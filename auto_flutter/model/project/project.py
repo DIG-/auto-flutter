@@ -5,9 +5,9 @@ from ...core.json import _JsonDecode, _JsonEncode
 from ...core.utils import _Ensure, _Iterable
 from ...model._serializable import Serializable
 from ...model.custom_task import CustomTask
-from ...model.flavor import Flavor as mFlavor
 from ...model.platform import Platform as mPlatform
 from ...model.platform import PlatformConfigFlavored
+from .flavor import Flavor as mFlavor
 
 
 class Project(Serializable["Project"]):

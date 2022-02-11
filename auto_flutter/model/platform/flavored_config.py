@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from ...core.json import _JsonDecode, _JsonEncode
 from ...core.utils import _If
 from .._serializable import Serializable
-from ..flavor import Flavor
+from ..project import Flavor
 from . import PlatformConfig
 from .build_type import BuildType
 from .config import BuildRunBefore, TaskIdList

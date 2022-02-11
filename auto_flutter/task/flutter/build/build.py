@@ -6,10 +6,9 @@ from auto_flutter.model.error import SilentWarning
 from ....core.os import OS
 from ....core.string import SB, SF
 from ....core.utils import _Dict
-from ....model.flavor import Flavor
 from ....model.platform import BuildType, Platform, PlatformConfigFlavored
 from ....model.platform.config import BuildRunBefore
-from ....model.project import Project
+from ....model.project import Flavor, Project
 from ....model.task import Task
 from .. import Flutter
 from .._const import FLUTTER_DISABLE_VERSION_CHECK
