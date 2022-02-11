@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Deque
+from typing import Deque, Iterable, Union
 
 from ...core.utils import _Ensure
 from ...model.task import Task
@@ -21,22 +21,46 @@ class TaskManager:
         self._task_stack: Deque[Task] = Deque()
         self._printer = TaskPrinter()
 
-    def add(self, task: Task):
-        _Ensure.type(task, Task, "task")
-        self._task_stack.extend(TaskResolver.resolve(task))
+    def add(
+        self, tasks: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
+    ):
+        if (
+            not isinstance(tasks, Task)
+            and not isinstance(tasks, Task.Identity)
+            and not isinstance(tasks, Iterable)
+        ):
+            raise TypeError(
+                "Field `tasks` must be instance of `Task` or `Task.Identity` or `Iterable` of both, but `{}` was received".format(
+                    type(tasks)
+                )
+            )
 
-    def add_id(self, task_id: Task.ID):
-        _Ensure.type(task_id, str, "task_id")
-        identity = TaskResolver.find_task(task_id)
+        self._task_stack.extend(TaskResolver.resolve(tasks))
+
+    def add_id(self, ids: Union[Task.ID, Iterable[Task.ID]]):
+        if isinstance(ids, Task.ID):
+            self.add(self.__find_task(ids))
+        elif isinstance(ids, Iterable):
+            self.add(map(lambda id: self.__find_task(id), ids))
+        else:
+            raise TypeError(
+                "Field `ids` must be instance of `Task.ID` or `Iterable[Task.ID]`, but `{}` was received".format(
+                    type(ids)
+                )
+            )
+
+    def __find_task(self, id: Task.ID) -> Task.Identity:
+        _Ensure.type(id, Task.ID, "id")
+        identity = TaskResolver.find_task(id)
         if identity is None:
             raise LookupError(
                 SB()
                 .append("Task ")
-                .append(task_id, SB.Color.CYAN, True)
+                .append(id, SB.Color.CYAN, True)
                 .append(" not found")
                 .str()
             )
-        self.add(identity.creator())
+        return identity
 
     def print(self, message: str):
         _Ensure.type(message, str, "message")
