@@ -3,8 +3,9 @@ from subprocess import run
 
 
 def command(*args):
-    pprint(*args)
-    exit(run(*args,shell=True).returncode)
+    arg = " ".join(*args)
+    print(arg)
+    run(arg, shell=True, check=True)
 
 
 __all__ = ["command"]
