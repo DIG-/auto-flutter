@@ -5,7 +5,7 @@ from ...core.utils import _If
 from .._serializable import Serializable
 from ..project import Flavor
 from . import PlatformConfig
-from .build_type import BuildType
+from ..build import BuildType
 from .config import BuildRunBefore, TaskIdList
 
 

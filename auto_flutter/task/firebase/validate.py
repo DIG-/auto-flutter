@@ -1,6 +1,7 @@
 from typing import List
 
-from ...model.platform import BuildType, MergePlatformConfigFlavored
+from ...model.build import BuildType
+from ...model.platform import MergePlatformConfigFlavored
 from ...model.project import Project
 from ...model.task import Task
 from ..flutter.build.config import FlutterBuildConfig

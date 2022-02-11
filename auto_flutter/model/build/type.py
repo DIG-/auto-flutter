@@ -4,9 +4,9 @@ from enum import Enum
 from operator import attrgetter, itemgetter
 from typing import Optional, Tuple
 
-from ...core.utils import _Ensure, _Enum, _Iterable
-from ...model._serializable import Serializable
-from .platform import Platform
+from ...core.utils import _Ensure, _Enum
+from .._serializable import Serializable
+from ..platform.platform import Platform
 
 
 class _BuildTypeItem(Tuple[str, str, Platform]):
@@ -52,9 +52,7 @@ class _BuildType_SerializeFlutter(Serializable[BuildType]):
         return self.value.flutter
 
     def from_json(json: Serializable.Json) -> Optional[BuildType]:
-        return _Iterable.first_or_none(
-            BuildType.__iter__(), lambda x: x.flutter == json
-        )
+        return BuildType.from_flutter(_Ensure.instance(json, str, "json"))
 
 
 class _BuildType_SerializeOutput(Serializable[BuildType]):
@@ -65,4 +63,4 @@ class _BuildType_SerializeOutput(Serializable[BuildType]):
         return self.value.output
 
     def from_json(json: Serializable.Json) -> Optional[BuildType]:
-        return _Iterable.first_or_none(BuildType.__iter__(), lambda x: x.output == json)
+        return BuildType.from_output(_Ensure.instance(json, str, "json"))

@@ -3,8 +3,8 @@ from typing import List
 from ....core.json import _JsonDecode
 from ....core.string import SB
 from ....core.utils import _Dict
-from ....model.platform import BuildType, Platform
-from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....model.build.type import BuildType, _BuildType_SerializeFlutter
+from ....model.platform import Platform
 from ....model.platform.config import BuildRunBefore
 from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project

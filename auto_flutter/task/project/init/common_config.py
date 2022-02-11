@@ -1,6 +1,6 @@
 from ....core.string import SB
+from ....model.build import BuildType
 from ....model.platform import PlatformConfigFlavored
-from ....model.platform.build_type import BuildType
 from ....model.project import Project
 from ....model.task import Task
 

@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from ...core.json import _JsonDecode, _JsonEncode
 from ...core.utils import _Ensure
 from .._serializable import Serializable
-from .build_type import BuildType, _BuildType_SerializeOutput
+from ..build.type import BuildType, _BuildType_SerializeOutput
 
 
 class BuildRunBefore(Enum):

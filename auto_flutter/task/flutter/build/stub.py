@@ -6,8 +6,8 @@ from auto_flutter.model import platform
 from ....core.json import _JsonDecode
 from ....core.task.manager import TaskManager
 from ....core.utils import _Dict
-from ....model.platform import BuildType, MergePlatformConfigFlavored, Platform
-from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....model.build.type import BuildType, _BuildType_SerializeFlutter
+from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
 from ....model.task import Task
 from .build import FlutterBuild
