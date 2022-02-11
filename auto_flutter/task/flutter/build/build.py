@@ -8,7 +8,6 @@ from ....core.string import SB, SF
 from ....core.utils import _Dict
 from ....model.build import BuildType
 from ....model.platform import Platform, PlatformConfigFlavored
-from ....model.platform.config import BuildRunBefore
 from ....model.project import Flavor, Project
 from ....model.task import Task
 from .. import Flutter
@@ -52,7 +51,7 @@ class FlutterBuild(Flutter):
 
     def require(self) -> List[Task.ID]:
         required = _Dict.get_or_none(
-            self.config.get_run_before(self.flavor), BuildRunBefore.BUILD
+            self.config.get_run_before(self.flavor), RunType.BUILD
         )
         return [] if required is None else required
 

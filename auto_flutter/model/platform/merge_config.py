@@ -1,10 +1,7 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from ...core.utils import _Dict
 from ..project import Flavor
-from . import PlatformConfigFlavored
-from ..build import BuildType
-from .config import BuildRunBefore
+from .flavored_config import PlatformConfig, PlatformConfigFlavored
 
 
 class MergePlatformConfigFlavored(PlatformConfigFlavored):
@@ -25,7 +22,9 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
             output.extend(self.platform.get_build_param(flavor))
         return output
 
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
+    def get_output(
+        self, flavor: Optional[Flavor], type: PlatformConfig.BuildType
+    ) -> Optional[str]:
         if not self.platform is None:
             output = self.platform.get_output(flavor, type)
             if not output is None:
@@ -44,7 +43,7 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         return None
 
     def get_run_before(
-        self, type: BuildRunBefore, flavor: Optional[Flavor]
+        self, type: PlatformConfig.RunType, flavor: Optional[Flavor]
     ) -> List[str]:
         output: List[str] = []
         if not self.default is None:

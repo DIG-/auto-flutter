@@ -1,21 +1,21 @@
+from __future__ import annotations
+
 from typing import Dict, List, Optional
 
 from ...core.json import _JsonDecode, _JsonEncode
 from ...core.utils import _If
 from .._serializable import Serializable
 from ..project import Flavor
-from . import PlatformConfig
-from ..build import BuildType
-from .config import BuildRunBefore, TaskIdList
+from .config import PlatformConfig, TaskIdList
 
 
 class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavored"]):
     def __init__(
         self,
         build_param: Optional[List[str]] = None,
-        run_before: Optional[Dict[BuildRunBefore, TaskIdList]] = None,
+        run_before: Optional[Dict[PlatformConfig.RunType, TaskIdList]] = None,
         output: Optional[str] = None,
-        outputs: Optional[Dict[BuildType, str]] = None,
+        outputs: Optional[Dict[PlatformConfig.BuildType, str]] = None,
         extras: Optional[Dict[str, str]] = None,
         flavored: Optional[Dict[Flavor, PlatformConfig]] = None,
     ) -> None:
@@ -33,7 +33,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         return output
 
     def get_run_before(
-        self, type: BuildRunBefore, flavor: Optional[Flavor]
+        self, type: PlatformConfig.RunType, flavor: Optional[Flavor]
     ) -> List[str]:
         output: List[str] = list()
         _If.not_none(
@@ -51,7 +51,9 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
                 )
         return output
 
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
+    def get_output(
+        self, flavor: Optional[Flavor], type: PlatformConfig.BuildType
+    ) -> Optional[str]:
         if not flavor is None and not self.flavored is None and flavor in self.flavored:
             from_flavor = self.flavored[flavor].get_output(type)
             if not from_flavor is None:
@@ -72,7 +74,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             return {**parent, **flavored}
         return parent
 
-    def from_json(json: Serializable.Json) -> Optional["PlatformConfigFlavored"]:
+    def from_json(json: Serializable.Json) -> Optional[PlatformConfigFlavored]:
         output = PlatformConfigFlavored()
         other = PlatformConfig.from_json(json)
         if not other is None:

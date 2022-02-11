@@ -4,7 +4,6 @@ from ....core.string import SB
 from ....core.utils import _Dict
 from ....model.build import BuildType
 from ....model.platform import Platform
-from ....model.platform.config import BuildRunBefore
 from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import Task
@@ -88,7 +87,7 @@ class FlutterBuildConfig(Task):
             )
         else:
             merge = MergePlatformConfigFlavored(config_default, config_platform)
-            before_build = merge.get_run_before(BuildRunBefore.BUILD, flavor)
+            before_build = merge.get_run_before(merge.RunType.BUILD, flavor)
             if len(before_build) > 0:
                 from ....core.task import TaskManager
 
