@@ -1,9 +1,8 @@
 version: "0.1.0-{build}"
 branches:
   only:
-  - main
-  - rc/([\d\w\-\.]+)
-  - feature/custom-final-typing
+    - main
+    - rc/([\d\w\-\.]+)
 skip_tags: true
 image: Ubuntu2004
 clone_depth: 1
@@ -22,7 +21,7 @@ environment:
       PY_VER: 3.10
 build: false
 install:
-  - python -m pip install --upgrade pip wheel || echo ""
+  - python -m pip install --upgrade pip wheel || python -c "print('')"
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
