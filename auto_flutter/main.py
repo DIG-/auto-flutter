@@ -56,15 +56,18 @@ def _main():
 
     taskname = sys.argv[1]
     if taskname.startswith("-"):
-        print(
-            SB()
-            .append("Unknown task ", SB.Color.RED)
-            .append(taskname, SB.Color.CYAN, True, "\n")
-            .str()
-        )
+        is_error = False
+        if taskname != "-h" and taskname != "--help":
+            is_error = True
+            print(
+                SB()
+                .append("Unknown task ", SB.Color.RED)
+                .append(taskname, SB.Color.CYAN, True, "\n")
+                .str()
+            )
         manager.add_id("help")
         manager.execute()
-        exit(3)
+        exit(3 if is_error else 0)
 
     if taskname in task_list:
         manager.add(task_list[taskname].creator())
