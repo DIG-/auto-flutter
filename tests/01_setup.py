@@ -5,9 +5,9 @@ _command.command(
         "aflutter",
         "setup",
         "--flutter",
-        "dummy/flutter",
+        "tests/dummy/flutter",
         "--firebase-cli",
-        "dummy/firebase",
+        "tests/dummy/firebase",
         "--aflutter-stack-trace",
     ]
 )
