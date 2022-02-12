@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
+from auto_flutter.model.task.task import Task
+
 from ...core.json import *
 from ...core.utils import _If
 from ..project import Flavor
@@ -33,8 +35,8 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
 
     def get_run_before(
         self, type: PlatformConfig.RunType, flavor: Optional[Flavor]
-    ) -> List[str]:
-        output: List[str] = list()
+    ) -> List[Task.ID]:
+        output: List[Task.ID] = list()
         _If.not_none(
             super().get_run_before(type),
             lambda x: output.extend(x),

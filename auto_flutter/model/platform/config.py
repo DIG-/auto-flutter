@@ -4,12 +4,13 @@ from typing import Dict, List, Optional
 
 from ...core.json import *
 from ...core.utils import _Ensure
+from ..task.id import TaskId
 from ..build import BuildType
 from ..build.serializer import _BuildType_SerializeOutput
 from .run_type import RunType
 
 
-class TaskIdList(List[str], Serializable["TaskIdList"]):
+class TaskIdList(List[TaskId], Serializable["TaskIdList"]):
     def to_json(self) -> Serializable.Json:
         return _JsonEncode.encode_list(self)
 
@@ -18,7 +19,7 @@ class TaskIdList(List[str], Serializable["TaskIdList"]):
             return None
         if not isinstance(json, List):
             return None
-        return _JsonDecode.decode_list(json, str)
+        return _JsonDecode.decode_list(json, TaskId)
 
 
 class PlatformConfig(Serializable["PlatformConfig"]):
@@ -75,7 +76,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self.extras = None
         return True
 
-    def get_run_before(self, type: RunType) -> Optional[List[str]]:
+    def get_run_before(self, type: RunType) -> Optional[List[TaskId]]:
         _Ensure.type(type, RunType, "type")
         if self.run_before is None or type not in self.run_before:
             return None

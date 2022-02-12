@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from ..project import Flavor
-from .flavored_config import PlatformConfig, PlatformConfigFlavored
+from .flavored_config import PlatformConfig, PlatformConfigFlavored, Task
 
 
 class MergePlatformConfigFlavored(PlatformConfigFlavored):
@@ -14,8 +14,8 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         self.default = default
         self.platform = platform
 
-    def get_build_param(self, flavor: Optional[Flavor]) -> List[str]:
-        output: List[str] = []
+    def get_build_param(self, flavor: Optional[Flavor]) -> List[Task.ID]:
+        output: List[Task.ID] = []
         if not self.default is None:
             output.extend(self.default.get_build_param(flavor))
         if not self.platform is None:

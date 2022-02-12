@@ -2,10 +2,10 @@ from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
 from auto_flutter.model.error import SilentWarning
+from auto_flutter.model.platform.run_type import RunType
 
 from ....core.os import OS
 from ....core.string import SB, SF
-from ....core.utils import _Dict
 from ....model.build import BuildType
 from ....model.platform import Platform, PlatformConfigFlavored
 from ....model.project import Flavor, Project
@@ -50,10 +50,7 @@ class FlutterBuild(Flutter):
             )
 
     def require(self) -> List[Task.ID]:
-        required = _Dict.get_or_none(
-            self.config.get_run_before(self.flavor), RunType.BUILD
-        )
-        return [] if required is None else required
+        return self.config.get_run_before(RunType.BUILD, self.flavor)
 
     def describe(self, args: Task.Args) -> str:
         if self.android_rebuild_fix_desired:
