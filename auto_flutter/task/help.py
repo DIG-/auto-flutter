@@ -76,6 +76,9 @@ class Help(Task):
                 task_name, SB.Color.CYAN, True
             ).append(" not found\n")
 
+        builder.append("\nCommon options:\n")
+        self._show_task_options(builder, ParseOptions.identity.options, False)
+
         builder.append("\nDefault tasks:\n")
         from ..task._list import task_list, user_task
 
