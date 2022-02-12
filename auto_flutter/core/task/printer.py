@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from distutils.log import error
 from operator import itemgetter
 from queue import Queue
 from sys import stdout as sys_stdout
@@ -34,9 +35,10 @@ class TaskPrinter:
 
     def __init__(self) -> None:
         self.__thread = Thread(target=TaskPrinter.__run, args=[self])
-        self.messages: Queue[TaskPrinter._Operation] = Queue()
+        self._operations: Queue[TaskPrinter._Operation] = Queue()
         self.__stop_mutex = Lock()
         self.__stop = False
+        self._current_task: str = ""
 
     def start(self):
         self.__thread.start()
@@ -48,93 +50,87 @@ class TaskPrinter:
         self.__thread.join()
 
     def set_result(self, result: Task.Result):
-        self.messages.put(TaskPrinter._Operation(result=result))
+        self._operations.put(TaskPrinter._Operation(result=result))
 
     def set_task_description(self, description: str):
-        self.messages.put(TaskPrinter._Operation(description=description))
+        self._operations.put(TaskPrinter._Operation(description=description))
 
     def write(self, message: str):
-        self.messages.put(TaskPrinter._Operation(message=message))
+        self._operations.put(TaskPrinter._Operation(message=message))
 
     def __run(self):
-        current_task: str = ""
         while True:
             self.__stop_mutex.acquire()
             if self.__stop:
                 self.__stop_mutex.release()
-                if self.messages.empty():
+                if self._operations.empty():
                     break
             else:
                 self.__stop_mutex.release()
 
-            if not self.messages.empty():
-                while not self.messages.empty():
-                    message = self.messages.get()
-                    if not message.result is None:
-                        if current_task != "":
-                            if message.result.success:
-                                if message.result.error is None:
-                                    TaskPrinter.__print_description(
-                                        current_task, success=True
-                                    )
-                                    current_task = ""
-                                    print("")
+            if not self._operations.empty():
+                while not self._operations.empty():
+                    self.__handle_operation(self._operations.get())
 
-                                elif isinstance(message.result.error, SilentWarning):
-                                    TaskPrinter.__print_description(
-                                        current_task, warning=True
-                                    )
-                                    current_task = ""
-                                    print("")
-
-                                else:
-                                    TaskPrinter.__print_description(
-                                        current_task, warning=True
-                                    )
-                                    current_task = ""
-                                    print(
-                                        SB()
-                                        .append("\n")
-                                        .append(
-                                            Session.format_exception(
-                                                message.result.error
-                                            ),
-                                            SB.Color.YELLOW,
-                                        )
-                                        .str()
-                                    )
-                            else:
-                                TaskPrinter.__print_description(
-                                    current_task, failure=True
-                                )
-                                if message.result.error is None:
-                                    print("")
-                                else:
-                                    print(
-                                        SB()
-                                        .append("\n")
-                                        .append(
-                                            Session.format_exception(
-                                                message.result.error
-                                            ),
-                                            SB.Color.RED,
-                                        )
-                                        .str()
-                                    )
-                        if not message.result.message is None:
-                            print(message.result.message)
-
-                    elif not message.description is None:
-                        current_task = message.description
-                        TaskPrinter.__print_description(current_task)
-
-                    elif not message.message is None:
-                        TaskPrinter.__clear_line(current_task)
-                        print(message.message)
-                        TaskPrinter.__print_description(current_task)
             else:
-                TaskPrinter.__print_description(current_task)
+                TaskPrinter.__print_description(self._current_task)
                 sleep(0.008)
+
+    def __handle_operation(self, operation: _Operation):
+        if not operation.result is None:
+            self.__handle_operation_result(operation.result)
+        elif not operation.description is None:
+            self.__handle_operation_description(operation.description)
+        elif not operation.message is None:
+            self.__handle_operation_message(operation.message)
+
+    def __handle_operation_result(self, result: Task.Result):
+        has_task_name = len(self._current_task) > 0
+        if not result.success:
+            if has_task_name:
+                TaskPrinter.__print_description(self._current_task, failure=True)
+            if not result.error is None:
+                print(
+                    SB()
+                    .append("\n")
+                    .append(
+                        Session.format_exception(result.error),
+                        SB.Color.RED,
+                    )
+                    .str()
+                )
+            elif has_task_name:
+                print("")
+        else:
+            has_warning = not result.error is None
+            if has_task_name:
+                TaskPrinter.__print_description(
+                    self._current_task, success=not has_warning, warning=has_warning
+                )
+            if not has_warning or isinstance(result.error, SilentWarning):
+                print("")
+            else:
+                print(
+                    SB()
+                    .append("\n")
+                    .append(
+                        Session.format_exception(result.error),
+                        SB.Color.YELLOW,
+                    )
+                    .str()
+                )
+        self._current_task = ""
+        if not result.message is None:
+            print(result.message)
+
+    def __handle_operation_description(self, description: str):
+        self._current_task = description
+        TaskPrinter.__print_description(self._current_task)
+
+    def __handle_operation_message(self, message: str):
+        TaskPrinter.__clear_line(self._current_task)
+        print(message)
+        TaskPrinter.__print_description(self._current_task)
 
     def __clear_line(description: str):
         print("\r" + (" " * (len(description) + 8)), end="\r")
