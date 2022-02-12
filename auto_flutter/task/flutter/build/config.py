@@ -54,7 +54,7 @@ class FlutterBuildConfig(Task):
         if not project.flavors is None:
             if len(project.flavors) == 1:
                 if flavor is None or len(flavor) == 0:
-                    self.print(
+                    self._print(
                         SB()
                         .append(
                             "Flavor not informed, but project has only one. Assuming it.",
@@ -75,7 +75,7 @@ class FlutterBuildConfig(Task):
         config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.platform_config, platform)
         if config_default is None and config_platform is None:
-            self.print(
+            self._print(
                 SB()
                 .append(
                     "Project does nos have platform config default and not for {}".format(

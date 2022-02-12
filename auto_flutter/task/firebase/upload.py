@@ -54,7 +54,7 @@ class FirebaseBuildUpload(Task):
                 google_id,
             ],
             environment=FIREBASE_ENV.value,
-            writer=self.print,
+            writer=self._print,
         )
         output = p.try_run()
         if isinstance(output, BaseException):

@@ -39,9 +39,9 @@ class FindFlavor(Task):
         if not args.contains(FindFlavor.option_skip_idea):
             idea_run = Path(".run")
             if not idea_run.exists():
-                self.print("    Idea run config not found")
+                self._print("    Idea run config not found")
             else:
-                self.print("    Trying to detect flavor from Idea run config")
+                self._print("    Trying to detect flavor from Idea run config")
                 for filename in idea_run.glob("*.run.xml"):
                     try:
                         self._extract_from_idea(project, filename)
@@ -57,13 +57,13 @@ class FindFlavor(Task):
                 OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle"))
             )
             if not Project.Platform.ANDROID in project.platforms:
-                self.print(
+                self._print(
                     "    Skip android analysis, since project does not support android"
                 )
             elif not gradle.exists():
-                self.print("    Android build.gradle not found")
+                self._print("    Android build.gradle not found")
             else:
-                self.print("    Trying to detect flavor from android project")
+                self._print("    Trying to detect flavor from android project")
                 try:
                     self._extract_from_gradle(project, gradle)
                 except BaseException as error:
@@ -73,10 +73,10 @@ class FindFlavor(Task):
 
         if not args.contains(FindFlavor.option_skip_ios):
             if not Project.Platform.IOS in project.platforms:
-                self.print("    Skip ios analysis, since project does not support ios")
+                self._print("    Skip ios analysis, since project does not support ios")
             else:
-                self.print("    Trying to detect flavor from ios project")
-                self.print(
+                self._print("    Trying to detect flavor from ios project")
+                self._print(
                     SB()
                     .append(
                         "  ios flavor extraction was not implemented yet",
@@ -87,13 +87,13 @@ class FindFlavor(Task):
 
         if project.flavors is None or len(project.flavors) == 0:
             project.flavors = None
-            self.print(
+            self._print(
                 "  No flavors were found. Maybe this project does not have flavor 🙂"
             )
         return Task.Result(args, success=True)
 
     def print_error(self, message: str, error: BaseException):
-        self.print(
+        self._print(
             SB()
             .append("  ")
             .append(message, SB.Color.RED)
@@ -103,7 +103,7 @@ class FindFlavor(Task):
 
     def _check_flavor_success(self, project: Project) -> bool:
         if not project.flavors is None and len(project.flavors) > 0:
-            self.print(
+            self._print(
                 SB()
                 .append("    Flavors were found: ", SB.Color.GREEN)
                 .append(" ".join(project.flavors), SB.Color.GREEN, True)

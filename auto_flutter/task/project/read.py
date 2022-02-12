@@ -40,7 +40,7 @@ class ProjectRead(Task):
             return self.__return_error(args, error)
 
         if not Project.current.tasks is None:
-            self.print(
+            self._print(
                 SB().append("Custom task not implemented yet", SB.Color.YELLOW).str()
             )
 

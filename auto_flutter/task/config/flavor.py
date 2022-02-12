@@ -27,7 +27,7 @@ class ConfigFlavor(_BaseConfigTask):
 
         add_flavor = args.get_value(self.option_add)
         if not add_flavor is None and len(add_flavor) > 0:
-            self.print("    Adding flavor " + add_flavor)
+            self._print("    Adding flavor " + add_flavor)
             if add_flavor in project.flavors:
                 return Task.Result(
                     args,
@@ -40,7 +40,7 @@ class ConfigFlavor(_BaseConfigTask):
 
         rem_flavor = args.get_value(self.option_remove)
         if not rem_flavor is None and len(rem_flavor) > 0:
-            self.print("    Removing flavor " + rem_flavor)
+            self._print("    Removing flavor " + rem_flavor)
             if not rem_flavor in project.flavors:
                 return Task.Result(
                     args,
@@ -69,7 +69,7 @@ class ConfigFlavor(_BaseConfigTask):
                 return Task.Result(
                     args, error=ValueError("Trying to rename without origin name")
                 )
-            self.print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
+            self._print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if ren_flavor == to_flavor:
                 return Task.Result(
                     args, error=ValueError("Trying to rename flavor to same name")

@@ -42,10 +42,10 @@ class Flutter(Task):
 
     def execute(self, args: Task.Args) -> Task.Result:
         flutter = Config.instance().flutter
-        writer = None if not self._output_running else lambda x: self.print(x)
+        writer = None if not self._output_running else lambda x: self._print(x)
 
         if self._output_end and self._output_running:
-            self.print(
+            self._print(
                 SB()
                 .append("[!] Running command will show output twice", SB.Color.YELLOW)
                 .str()
@@ -62,7 +62,7 @@ class Flutter(Task):
         output = p.try_run()
 
         if self._output_end:
-            self.print(p.output)
+            self._print(p.output)
 
         if self._output_arg:
             args.add_arg("output", p.output)

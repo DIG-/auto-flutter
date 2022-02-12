@@ -12,8 +12,8 @@ class CommonConfig(Task):
     def execute(self, args: Task.Args) -> Task.Result:
         project = Project.current
         if Project.Platform.ANDROID in project.platforms:
-            self.print("    Apply common config for android")
-            self.print("    Disabling gradle daemon in build")
+            self._print("    Apply common config for android")
+            self._print("    Disabling gradle daemon in build")
             if not Project.Platform.ANDROID in project.platform_config:
                 project.platform_config[
                     Project.Platform.ANDROID
@@ -22,21 +22,21 @@ class CommonConfig(Task):
             config.append_build_param("--no-android-gradle-daemon")
 
             if len(project.flavors) > 0:
-                self.print("    Applying default output for android flavored build")
+                self._print("    Applying default output for android flavored build")
                 config.outputs = {
                     BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build_type}.apk",
                     BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build_type|capitalize}/app-${arg:flavor}-${arg:build_type}.aab",
                 }
             else:
-                self.print("    Applying default output for android build")
+                self._print("    Applying default output for android build")
                 config.outputs = {
                     BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:build_type}.apk",
                     BuildType.BUNDLE: "build/app/outputs/bundle/${arg:build_type}/app-${arg:build_type}.aab",
                 }
 
         if Project.Platform.IOS in project.platforms:
-            self.print("    Apply common config for ios")
-            self.print(
+            self._print("    Apply common config for ios")
+            self._print(
                 SB()
                 .append(
                     "  Sorry. I don't known how to configure this little thing",
@@ -46,8 +46,8 @@ class CommonConfig(Task):
             )
 
         if Project.Platform.IOS in project.platforms:
-            self.print("    Apply common config for web")
-            self.print(
+            self._print("    Apply common config for web")
+            self._print(
                 SB()
                 .append(
                     "  Sorry. I don't known how to configure this little thing",

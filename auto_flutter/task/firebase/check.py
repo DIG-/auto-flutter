@@ -31,15 +31,15 @@ class FirebaseCheck(Task):
         if self.__thread.is_alive():
             self.__thread.join(5)
         if self.__thread.is_alive():
-            self.print("  Still waiting...")
+            self._print("  Still waiting...")
             self.__thread.join(10)
         if self.__thread.is_alive():
-            self.print(
+            self._print(
                 SB().append("  It is taking some time...", SB.Color.YELLOW).str()
             )
             self.__thread.join(15)
         if self.__thread.is_alive():
-            self.print(
+            self._print(
                 SB()
                 .append("  Looks like it stuck...\n", SB.Color.RED)
                 .append(

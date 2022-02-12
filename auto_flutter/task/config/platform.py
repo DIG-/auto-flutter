@@ -27,7 +27,7 @@ class ConfigPlatform(_BaseConfigTask):
 
         platform_add = args.get_value(self.option_add)
         if not platform_add is None and len(platform_add) > 0:
-            self.print("    Adding platform {}".format(platform_add))
+            self._print("    Adding platform {}".format(platform_add))
             parsed_add = ConfigPlatform.__parse_platform(platform_add)
             if parsed_add is None:
                 return Task.Result(
@@ -50,7 +50,7 @@ class ConfigPlatform(_BaseConfigTask):
 
         platform_rem = args.get_value(self.option_rem)
         if not platform_rem is None and len(platform_rem) > 0:
-            self.print("    Removing platform {}".format(platform_rem))
+            self._print("    Removing platform {}".format(platform_rem))
             parsed_rem = ConfigPlatform.__parse_platform(platform_rem)
             if parsed_rem is None:
                 return Task.Result(

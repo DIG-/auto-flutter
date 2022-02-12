@@ -135,7 +135,7 @@ class FlutterBuild(Flutter):
                                 android_rebuild_fix_desired=False,
                             )
                         )
-                    self.print(
+                    self._print(
                         SB()
                         .append(
                             "Flutter issue #58247 detected, building others flavors to fix",
@@ -184,7 +184,7 @@ class FlutterBuild(Flutter):
         )
 
         if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
-            self.print(
+            self._print(
                 SB().append("Build output found successfully", SB.Color.GREEN).str()
             )
         else:

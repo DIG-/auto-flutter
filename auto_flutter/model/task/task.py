@@ -28,7 +28,7 @@ class Task(metaclass=ABCMeta):
     def describe(self, args: Task.Args) -> str:
         return self.identity.name
 
-    def print(self, message: str):
+    def _print(self, message: str):
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
