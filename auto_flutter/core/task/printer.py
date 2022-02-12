@@ -18,20 +18,16 @@ class TaskPrinter:
     __COUNTER = "⡀⡄⡆⡇⡏⡟⡿⣿⢿⢻⢹⢸⢰⢠⢀"
     __COUNTER_LEN = len(__COUNTER)
 
-    class _Operation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
-        def __new__(
-            cls: type[TaskPrinter._Operation],
+    class _Operation:
+        def __init__(
+            self,
             message: Optional[str] = None,
             result: Optional[Task.Result] = None,
             description: Optional[str] = None,
-        ) -> TaskPrinter._Operation:
-            return super().__new__(
-                TaskPrinter._Operation, (message, result, description)
-            )
-
-        message: Optional[str] = property(itemgetter(0))
-        result: Optional[Task.Result] = property(itemgetter(1))
-        description: Optional[str] = property(itemgetter(2))
+        ) -> None:
+            self.message: Optional[str] = message
+            self.result: Optional[Task.Result] = result
+            self.description: Optional[str] = description
 
     def __init__(self) -> None:
         self.__thread = Thread(target=TaskPrinter.__run, args=[self])
@@ -102,14 +98,16 @@ class TaskPrinter:
             elif has_task_name:
                 print("")
         else:
-            has_warning = not result.error is None
+            has_warning = not result.error is None or isinstance(
+                result.error, SilentWarning
+            )
             if has_task_name:
                 TaskPrinter.__print_description(
                     self._current_task, success=not has_warning, warning=has_warning
                 )
-            if not has_warning or isinstance(result.error, SilentWarning):
-                print("")
-            else:
+                if not has_warning:
+                    print("")
+            if has_warning:
                 print(
                     SB()
                     .append("\n")
