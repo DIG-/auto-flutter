@@ -13,27 +13,28 @@ from ..session import Session
 from ..string import SB
 
 
-class TaskPrinterOperation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
-    def __new__(
-        cls: type[TaskPrinterOperation],
-        message: Optional[str] = None,
-        result: Optional[Task.Result] = None,
-        description: Optional[str] = None,
-    ) -> TaskPrinterOperation:
-        return super().__new__(TaskPrinterOperation, (message, result, description))
-
-    message: Optional[str] = property(itemgetter(0))
-    result: Optional[Task.Result] = property(itemgetter(1))
-    description: Optional[str] = property(itemgetter(2))
-
-
 class TaskPrinter:
     __COUNTER = "⡀⡄⡆⡇⡏⡟⡿⣿⢿⢻⢹⢸⢰⢠⢀"
     __COUNTER_LEN = len(__COUNTER)
 
+    class _Operation(Tuple[Optional[str], Optional[Task.Result], Optional[str]]):
+        def __new__(
+            cls: type[TaskPrinter._Operation],
+            message: Optional[str] = None,
+            result: Optional[Task.Result] = None,
+            description: Optional[str] = None,
+        ) -> TaskPrinter._Operation:
+            return super().__new__(
+                TaskPrinter._Operation, (message, result, description)
+            )
+
+        message: Optional[str] = property(itemgetter(0))
+        result: Optional[Task.Result] = property(itemgetter(1))
+        description: Optional[str] = property(itemgetter(2))
+
     def __init__(self) -> None:
         self.__thread = Thread(target=TaskPrinter.__run, args=[self])
-        self.messages: Queue[TaskPrinterOperation] = Queue()
+        self.messages: Queue[TaskPrinter._Operation] = Queue()
         self.__stop_mutex = Lock()
         self.__stop = False
 
@@ -47,13 +48,13 @@ class TaskPrinter:
         self.__thread.join()
 
     def set_result(self, result: Task.Result):
-        self.messages.put(TaskPrinterOperation(result=result))
+        self.messages.put(TaskPrinter._Operation(result=result))
 
     def set_task_description(self, description: str):
-        self.messages.put(TaskPrinterOperation(description=description))
+        self.messages.put(TaskPrinter._Operation(description=description))
 
     def write(self, message: str):
-        self.messages.put(TaskPrinterOperation(message=message))
+        self.messages.put(TaskPrinter._Operation(message=message))
 
     def __run(self):
         current_task: str = ""
