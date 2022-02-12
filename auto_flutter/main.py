@@ -64,7 +64,9 @@ def _main():
 
     taskname = sys.argv[1]
     has_error = False
+    was_handled = False
     if taskname.startswith("-"):
+        was_handled = True
         if not taskname in ("-h", "--help"):
             has_error = True
             manager.add(HelpStub(taskname))
@@ -72,7 +74,7 @@ def _main():
             manager.add(HelpStub())
 
     try:
-        if not has_error:
+        if not was_handled:
             manager.add_id(taskname)
     except TaskNotFound as error:
         manager.add(HelpStub(error.task_id))
