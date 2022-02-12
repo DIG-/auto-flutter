@@ -21,9 +21,14 @@ class Help(Task):
         lambda: Help(),
     )
 
-    def __init__(self, task_id: Optional[Union[Task.ID, Task.Identity]] = None) -> None:
+    def __init__(
+        self,
+        task_id: Optional[Union[Task.ID, Task.Identity]] = None,
+        message: Optional[str] = None,
+    ) -> None:
         super().__init__()
         self._show_task: Optional[Task.ID] = None
+        self._message: Optional[str] = message
         if isinstance(task_id, Task.Identity):
             self._show_task = task_id.id
         elif isinstance(task_id, Task.ID):
@@ -68,6 +73,9 @@ class Help(Task):
             else:
                 self._show_task_help(builder, identity, task_instance)
                 return Task.Result(args, message=builder.str())
+
+        if not self._message is None:
+            builder.append(self._message, end="\n")
 
         self._show_header(builder)
 
