@@ -3,8 +3,7 @@ from __future__ import annotations
 from collections import deque
 from typing import Deque, Iterable, List, Optional, Union
 
-from auto_flutter.model.task.identity import TaskIdentity
-
+from ...model.error import TaskNotFound
 from ...model.task import Task
 
 
@@ -31,7 +30,7 @@ class TaskResolver:
         temp: List[Task.Identity] = []
         if isinstance(task, Task):
             temp = [TaskResolver.__TaskIdentityWrapper(task)]
-        elif isinstance(task, TaskIdentity):
+        elif isinstance(task, Task.Identity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
@@ -65,7 +64,7 @@ class TaskResolver:
             for id in _task.require():
                 identity = TaskResolver.find_task(id)
                 if identity is None:
-                    raise LookupError('Task not found "{}"'.format(id))
+                    raise TaskNotFound(id)
                 j = i + 1
                 items[j:j] = [identity]
             i += 1

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Deque, Iterable, Union
 
 from ...core.utils import _Ensure
+from ...model.error import TaskNotFound
 from ...model.task import Task
 from ..string import SB
 from .printer import TaskPrinter
@@ -48,13 +49,7 @@ class __TaskManager:
         _Ensure.type(id, Task.ID, "id")
         identity = TaskResolver.find_task(id)
         if identity is None:
-            raise LookupError(
-                SB()
-                .append("Task ")
-                .append(id, SB.Color.CYAN, True)
-                .append(" not found")
-                .str()
-            )
+            raise TaskNotFound(id)
         return identity
 
     def print(self, message: str):
