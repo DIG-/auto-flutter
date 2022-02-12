@@ -28,7 +28,7 @@ def _main():
 
             init()
 
-    manager = TaskManager.instance()
+    manager = TaskManager
 
     if len(sys.argv) <= 1:
         print(

@@ -66,7 +66,7 @@ class SetupEdit(Task):
 
         from ...core.task.manager import TaskManager
 
-        manager = TaskManager.instance()
+        manager = TaskManager
 
         if args.contains(self.option_flutter):
             flutter = args.get_value(self.option_flutter)

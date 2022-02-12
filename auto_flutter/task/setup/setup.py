@@ -34,7 +34,7 @@ class Setup(Task):
         elif args.contains(SetupEdit.option_check):
             from ...core.task.manager import TaskManager
 
-            manager = TaskManager.instance()
+            manager = TaskManager
             manager.add(FirebaseCheck(skip_on_failure=True))
             manager.add(FlutterCheck(skip_on_failure=True))
             return Task.Result(args)

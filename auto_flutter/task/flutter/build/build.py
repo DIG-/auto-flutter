@@ -108,7 +108,7 @@ class FlutterBuild(Flutter):
                     )
                     from ....core.task import TaskManager
 
-                    manager = TaskManager.instance()
+                    manager = TaskManager
                     ## Add to rebuild self task
                     manager.add(
                         FlutterBuild(

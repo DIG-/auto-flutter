@@ -14,4 +14,4 @@ class _BaseConfigTask(Task):
     def _add_save_project(self):
         from ...core.task import TaskManager
 
-        TaskManager.instance().add(ProjectSave())
+        TaskManager.add(ProjectSave())

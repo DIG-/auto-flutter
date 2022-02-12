@@ -24,7 +24,7 @@ class ParseOptions(Task):
         # Fill options list with current tasks
         from ..core.task.manager import TaskManager
 
-        manager = TaskManager.instance()
+        manager = TaskManager
         options: List[Task.Identity.Option] = []
         for task in manager._task_stack:
             options.extend(task.identity.options)

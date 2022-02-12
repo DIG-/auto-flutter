@@ -34,7 +34,7 @@ class FlutterBuildStub(Task):
         config_platform = _Dict.get_or_none(project.platform_config, platform)
         config = MergePlatformConfigFlavored(config_default, config_platform)
 
-        TaskManager.instance().add(
+        TaskManager.add(
             FlutterBuild(project, platform, build_type, flavor, config, debug)
         )
         return Task.Result(args)

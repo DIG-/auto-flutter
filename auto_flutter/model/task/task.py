@@ -31,7 +31,7 @@ class Task(metaclass=ABCMeta):
     def print(self, message: str):
         from ...core.task.manager import TaskManager
 
-        TaskManager.instance().print(message)
+        TaskManager.print(message)
 
     @abstractclassmethod
     def execute(self, args: Task.Args) -> Task.Result:

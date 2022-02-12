@@ -8,15 +8,10 @@ from ..string import SB
 from .printer import TaskPrinter
 from .resolver import TaskResolver
 
+__all__ = ["TaskManager"]
 
-class TaskManager:
-    __instance: TaskManager = None
 
-    def instance() -> TaskManager:
-        if TaskManager.__instance is None:
-            TaskManager.__instance = TaskManager()
-        return TaskManager.__instance
-
+class __TaskManager:
     def __init__(self) -> None:
         self._task_stack: Deque[Task] = Deque()
         self._printer = TaskPrinter()
@@ -91,3 +86,6 @@ class TaskManager:
 
         self._printer.stop()
         return True
+
+
+TaskManager = __TaskManager()

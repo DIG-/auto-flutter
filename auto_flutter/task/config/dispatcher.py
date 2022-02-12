@@ -29,7 +29,7 @@ class ConfigDispatcher(Task, HelpAction):
     def execute(self, args: Task.Args) -> Task.Result:
         from ...core.task import TaskManager
 
-        manager = TaskManager.instance()
+        manager = TaskManager
 
         if len(sys_argv) < 3 or len(sys_argv[2]) <= 0 or sys_argv[2].startswith("-"):
             manager.add(self.__help_task())

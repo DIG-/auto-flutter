@@ -74,7 +74,7 @@ class ProjectInit(Task):
         )
 
         # Remember, TaskManager is stack
-        manager = TaskManager.instance()
+        manager = TaskManager
         manager.add(ProjectSave())
         manager.add(CommonConfig())
         manager.add(FindFlavor())

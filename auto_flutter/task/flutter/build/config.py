@@ -91,7 +91,7 @@ class FlutterBuildConfig(Task):
             if len(before_build) > 0:
                 from ....core.task import TaskManager
 
-                TaskManager.instance().add_id(before_build)
+                TaskManager.add_id(before_build)
 
         args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
         args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
