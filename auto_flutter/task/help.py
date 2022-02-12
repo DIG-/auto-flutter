@@ -2,8 +2,6 @@ from pathlib import Path
 from sys import argv as sys_argv
 from typing import Dict, List, Optional, Union
 
-from auto_flutter.model.task.identity import TaskIdentity
-
 from ..core.string import SB
 from ..core.task import TaskResolver
 from ..core.utils import _Ensure, _If, _Iterable
@@ -34,7 +32,7 @@ class Help(Task):
             raise TypeError(
                 "Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
                     clsa=Task.ID.__name__,
-                    clsb=TaskIdentity.__name__,
+                    clsb=Task.Identity.__name__,
                     input=type(task_id),
                 )
             )
@@ -43,7 +41,9 @@ class Help(Task):
         return "Showing help page"
 
     def require(self) -> List[Task.ID]:
-        return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
+        if self._show_task is None:
+            return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
+        return [ProjectRead.identity_skip.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
         builder = SB()
