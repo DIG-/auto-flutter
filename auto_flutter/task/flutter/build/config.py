@@ -12,13 +12,14 @@ from ...project.read import ProjectRead
 
 
 class FlutterBuildConfig(Task):
+    __options = {
+        "flavor": Task.Option("f", "flavor", "Flavor to build", True),
+        "debug": Task.Option(None, "debug", "Build a debug version", False),
+    }
     identity = Task.Identity(
         "-build-config",
         "",
-        [
-            Task.Identity.Option("f", "flavor", "Flavor to build", True),
-            Task.Identity.Option(None, "debug", "Build a debug version", False),
-        ],
+        _Dict.flatten(__options),
         lambda: FlutterBuildConfig(),
     )
 
@@ -50,7 +51,7 @@ class FlutterBuildConfig(Task):
         if project is None:
             raise FlutterBuildConfig.Error("Project was not initialized.")
 
-        flavor = args["flavor"].value if "flavor" in args else None
+        flavor = args.get_value(self.__options["flavor"])
         if not project.flavors is None:
             if len(project.flavors) == 1:
                 if flavor is None or len(flavor) == 0:
@@ -85,17 +86,10 @@ class FlutterBuildConfig(Task):
                 )
                 .str()
             )
-        else:
-            merge = MergePlatformConfigFlavored(config_default, config_platform)
-            before_build = merge.get_run_before(merge.RunType.BUILD, flavor)
-            if len(before_build) > 0:
-                from ....core.task import TaskManager
-
-                TaskManager.add_id(before_build)
 
         args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
         args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
-        if args.contains("debug"):
+        if args.contains(self.__options["debug"]):
             args.add_arg(FlutterBuildConfig.ARG_DEBUG)
         elif args.contains(FlutterBuildConfig.ARG_DEBUG):
             args.pop(FlutterBuildConfig.ARG_DEBUG)
