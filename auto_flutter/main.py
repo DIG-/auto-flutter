@@ -1,3 +1,10 @@
+from traceback import TracebackException
+
+from auto_flutter.core.session import Session
+from auto_flutter.core.task import manager
+from auto_flutter.model.error import TaskNotFound
+
+
 def _main():
     import sys
     from platform import system as platform_system
@@ -7,6 +14,7 @@ def _main():
     from .core.task import TaskManager
     from .model.config import Config
     from .task._list import task_list
+    from .task.help_stub import HelpStub
 
     # Enable color support on windows
     if platform_system() == "Windows":
@@ -31,10 +39,10 @@ def _main():
     manager = TaskManager
 
     if len(sys.argv) <= 1:
-        print(
-            SB().append("Auto-Flutter requires at least one task\n", SB.Color.RED).str()
+        message = (
+            SB().append("Auto-Flutter requires at least one task", SB.Color.RED).str()
         )
-        manager.add_id("help")
+        manager.add(HelpStub(message=message))
         manager.execute()
         exit(1)
 
@@ -55,36 +63,41 @@ def _main():
         )
 
     taskname = sys.argv[1]
+    has_error = False
     if taskname.startswith("-"):
-        is_error = False
-        if taskname != "-h" and taskname != "--help":
-            is_error = True
-            print(
-                SB()
-                .append("Unknown task ", SB.Color.RED)
-                .append(taskname, SB.Color.CYAN, True, "\n")
-                .str()
-            )
-        manager.add_id("help")
-        manager.execute()
-        exit(3 if is_error else 0)
-
-    if taskname in task_list:
-        manager.add(task_list[taskname].creator())
-        if manager.execute():
-            exit(0)
+        if not taskname in ("-h", "--help"):
+            has_error = True
+            manager.add(HelpStub(taskname))
         else:
-            exit(1)
+            manager.add(HelpStub())
 
-    # TODO: Call read project task
-    # TODO: Check if project constains that task
-    # TODO: Call task
+    try:
+        if not has_error:
+            manager.add_id(taskname)
+    except TaskNotFound as error:
+        manager.add(HelpStub(error.task_id))
+    except BaseException as error:
+        print(
+            SB()
+            .append("Error while creating task tree\n\n", SB.Color.RED)
+            .append(
+                "".join(TracebackException.from_exception(error).format()),
+                SB.Color.RED,
+                True,
+            )
+            .str()
+        )
+        exit(5)
 
-    print(
-        SB()
-        .append("No task found with name ", SB.Color.RED)
-        .append(taskname, SB.Color.CYAN, True, "\n")
-        .str()
-    )
-    manager.add_id("help")
-    manager.execute()
+    try:
+        has_error = manager.execute() or has_error
+    except BaseException as error:
+        print(
+            SB()
+            .append("Unhandled error caught\n\n", SB.Color.RED)
+            .append(Session.format_exception(error), SB.Color.RED, True)
+            .str()
+        )
+        exit(6)
+
+    exit(0 if not has_error else 3)
