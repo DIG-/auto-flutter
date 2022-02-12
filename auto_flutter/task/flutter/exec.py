@@ -41,7 +41,7 @@ class Flutter(Task):
         return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
 
     def execute(self, args: Task.Args) -> Task.Result:
-        flutter = Config.instance().flutter
+        flutter = Config.flutter
         writer = None if not self._output_running else lambda x: self._print(x)
 
         if self._output_end and self._output_running:

@@ -45,7 +45,7 @@ class FirebaseBuildUpload(Task):
             return Task.Result(args, AssertionError("Google app id not found"))
 
         p = Process.create(
-            Config.instance().firebase,
+            Config.firebase,
             arguments=[
                 FIREBASE_DISABLE_INTERACTIVE_MODE.value,
                 "appdistribution:distribute",

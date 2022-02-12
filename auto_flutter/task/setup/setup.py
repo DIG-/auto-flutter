@@ -29,7 +29,7 @@ class Setup(Task):
 
     def execute(self, args: Args) -> Task.Result:
         if args.contains(SetupEdit.option_show):
-            return Task.Result(args, message=str(Config.instance()))
+            return Task.Result(args, message=str(Config))
 
         elif args.contains(SetupEdit.option_check):
             from ...core.task.manager import TaskManager
@@ -40,7 +40,7 @@ class Setup(Task):
             return Task.Result(args)
 
         try:
-            Config.instance().save()
+            Config.save()
         except BaseException as error:
             return Task.Result(args, error, success=False)
         return Task.Result(args)

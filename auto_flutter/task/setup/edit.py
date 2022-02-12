@@ -102,7 +102,7 @@ class SetupEdit(Task):
                 return Task.Result(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.instance().flutter = OS.machine_to_posix_path(found[1])
+            Config.flutter = OS.machine_to_posix_path(found[1])
             manager.add(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
@@ -139,13 +139,13 @@ class SetupEdit(Task):
                 return Task.Result(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.instance().firebase = OS.machine_to_posix_path(found[1])
+            Config.firebase = OS.machine_to_posix_path(found[1])
             manager.add(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
-            Config.instance().firebase_standalone = True
+            Config.firebase_standalone = True
         elif args.contains(self.option_firebase_non_standalone):
-            Config.instance().firebase_standalone = False
+            Config.firebase_standalone = False
 
         return Task.Result(args)
 

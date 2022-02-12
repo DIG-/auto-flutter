@@ -39,7 +39,7 @@ def _main():
         exit(1)
 
     log.debug("Loading config")
-    if not Config.instance().load():
+    if not Config.load():
         print(
             SB()
             .append("Failed to read config. ", SB.Color.RED)

@@ -17,7 +17,7 @@ class FlutterCheck(Task):
 
     def execute(self, args: Task.Args) -> Task.Result:
         process = Process.create(
-            Config.instance().flutter, [FLUTTER_DISABLE_VERSION_CHECK, "--version"]
+            Config.flutter, [FLUTTER_DISABLE_VERSION_CHECK, "--version"]
         )
         output = process.try_run()
         if isinstance(output, BaseException):
