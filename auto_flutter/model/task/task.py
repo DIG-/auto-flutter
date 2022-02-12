@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractclassmethod
-from typing import List
+from typing import Iterable, List, Union
 
 from ..argument import Args
 from .id import TaskId
@@ -32,6 +32,18 @@ class Task(metaclass=ABCMeta):
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
+
+    def _append_task(
+        self, tasks: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
+    ):
+        from ...core.task.manager import TaskManager
+
+        TaskManager.add(tasks)
+
+    def _append_task_id(self, ids: Union[Task.ID, Iterable[Task.ID]]):
+        from ...core.task.manager import TaskManager
+
+        TaskManager.add_id(ids)
 
     @abstractclassmethod
     def execute(self, args: Task.Args) -> Task.Result:
