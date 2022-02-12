@@ -1,19 +1,13 @@
 from __future__ import annotations
 
-from operator import itemgetter
-from typing import Optional, Tuple
+from typing import Optional
 
 from ...core.utils import _Ensure
 
 
-class Arg(Tuple[str, Optional[str]]):
-    def __new__(cls: type[Arg], argument: str, value: Optional[str]) -> Arg:
-        _Ensure.type(argument, str, "argument")
-        _Ensure.type(value, str, "value")
-        argument = argument.strip()
-        if not value is None:
-            value = value.strip()
-        return super().__new__(Arg, (argument, value))
-
-    argument: str = property(itemgetter(0))
-    value: Optional[str] = property(itemgetter(1))
+class Arg:
+    def __init__(self, argument: str, value: Optional[str]) -> None:
+        self.argument: str = _Ensure.instance(argument, str, "argument").strip()
+        self.value: Optional[str] = _Ensure.type(value, str, "value")
+        if not self.value is None:
+            self.value = self.value.strip()
