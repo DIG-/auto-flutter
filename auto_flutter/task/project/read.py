@@ -3,6 +3,7 @@ from json import load as json_load
 from ...core.string import SB
 from ...model.project import Project
 from ...model.task import Task
+from .inport import ProjectTaskImport
 
 
 class ProjectRead(Task):
@@ -40,9 +41,7 @@ class ProjectRead(Task):
             return self.__return_error(args, error)
 
         if not Project.current.tasks is None:
-            self._print(
-                SB().append("Custom task not implemented yet", SB.Color.YELLOW).str()
-            )
+            self._append_task(ProjectTaskImport())
 
         return Task.Result(args)
 
