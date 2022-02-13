@@ -1,9 +1,5 @@
 from traceback import TracebackException
 
-from auto_flutter.core.session import Session
-from auto_flutter.core.task import manager
-from auto_flutter.model.error import TaskNotFound
-
 
 def _main():
     import sys
@@ -13,7 +9,6 @@ def _main():
     from .core.string import SB
     from .core.task import TaskManager
     from .model.config import Config
-    from .task._list import task_list
     from .task.help_stub import HelpStub
 
     # Enable color support on windows
@@ -37,6 +32,7 @@ def _main():
             init()
 
     manager = TaskManager
+    TaskManager.start_printer()
 
     if len(sys.argv) <= 1:
         message = (
@@ -44,6 +40,7 @@ def _main():
         )
         manager.add(HelpStub(message=message))
         manager.execute()
+        TaskManager.stop_printer()
         exit(1)
 
     log.debug("Loading config")
@@ -73,13 +70,35 @@ def _main():
         else:
             manager.add(HelpStub())
 
+    if not was_handled:
+        has_error = __add_task(taskname, False)
+
+    has_error = __exec_task(has_error)
+    TaskManager.stop_printer()
+    exit(0 if not has_error else 3)
+
+
+## Return true with error
+def __add_task(taskname: str, already_not_found: bool = False) -> bool:
+    from .core.string import SB
+    from .core.task import TaskManager
+    from .model.error import TaskNotFound
+    from .task.help_stub import HelpStub
+
     try:
-        if not was_handled:
-            manager.add_id(taskname)
+        TaskManager.add_id(taskname)
     except TaskNotFound as error:
-        manager.add(HelpStub(error.task_id))
+        if already_not_found:
+            TaskManager.add(HelpStub(error.task_id))
+        else:
+            TaskManager.add_id("-project-read")
+            has_error = __exec_task(False)
+            if has_error:
+                return True
+            else:
+                return __add_task(taskname, True)
     except BaseException as error:
-        print(
+        TaskManager.print(
             SB()
             .append("Error while creating task tree\n\n", SB.Color.RED)
             .append(
@@ -89,17 +108,25 @@ def _main():
             )
             .str()
         )
+        TaskManager.stop_printer()
         exit(5)
+    return False
+
+
+def __exec_task(has_error: bool) -> bool:
+    from .core.session import Session
+    from .core.string import SB
+    from .core.task import TaskManager
 
     try:
-        has_error = manager.execute() or has_error
+        has_error = (not TaskManager.execute()) or has_error
     except BaseException as error:
-        print(
+        TaskManager.print(
             SB()
             .append("Unhandled error caught\n\n", SB.Color.RED)
             .append(Session.format_exception(error), SB.Color.RED, True)
             .str()
         )
+        TaskManager.stop_printer()
         exit(6)
-
-    exit(0 if not has_error else 3)
+    return has_error

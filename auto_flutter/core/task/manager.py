@@ -45,6 +45,12 @@ class __TaskManager:
                 )
             )
 
+    def start_printer(self):
+        self._printer.start()
+
+    def stop_printer(self):
+        self._printer.stop()
+
     def __find_task(self, id: Task.ID) -> Task.Identity:
         _Ensure.type(id, Task.ID, "id")
         identity = TaskResolver.find_task(id)
@@ -58,7 +64,6 @@ class __TaskManager:
 
     def execute(self) -> bool:
         args = Task.Args()
-        self._printer.start()
 
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
@@ -83,11 +88,9 @@ class __TaskManager:
             self._printer.set_result(output)
 
             if not output.success:
-                self._printer.stop()
                 return False
             args = output.args
 
-        self._printer.stop()
         return True
 
 
