@@ -71,6 +71,14 @@ class __TaskManager:
                 output = current.execute(args)
             except BaseException as error:
                 output = Task.Result(args, error, success=False)
+            if not isinstance(output, Task.Result):
+                output = Task.Result(
+                    args,
+                    AssertionError(
+                        "Task {} returned without result".format(type(current).__name__)
+                    ),
+                    success=False,
+                )
 
             self._printer.set_result(output)
 
