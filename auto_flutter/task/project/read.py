@@ -19,7 +19,14 @@ class ProjectRead(Task):
         super().__init__()
         self.warn_if_fail: bool = warn_if_fail
 
+    def describe(self, args: Task.Args) -> str:
+        if not Project.current is None:
+            return ""
+        return super().describe(args)
+
     def execute(self, args: Task.Args) -> Task.Result:
+        if not Project.current is None:
+            return Task.Result(args)
         try:
             file = open("aflutter.json", "r")
         except BaseException as error:
