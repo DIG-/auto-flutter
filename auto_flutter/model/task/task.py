@@ -5,7 +5,7 @@ from typing import Iterable, List, Union
 
 from ..argument import Args
 from .id import TaskId
-from .identity import TaskIdentity
+from .identity import Option, TaskIdentity
 from .result import TaskResult
 
 __all__ = ["Task", "List"]
@@ -17,36 +17,36 @@ class Task(metaclass=ABCMeta):
     Args = Args
     Result = TaskResult
     Identity = TaskIdentity
-    Option = TaskIdentity.Option
+    Option = Option
     ## End - alias
 
-    identity: Identity = None
+    identity: TaskIdentity
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return []
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return self.identity.name
 
-    def _print(self, message: str):
+    def _print(self, message: str) -> None:
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
 
     def _append_task(
-        self, tasks: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
-    ):
+        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
+    ) -> None:
         from ...core.task.manager import TaskManager
 
         TaskManager.add(tasks)
 
-    def _append_task_id(self, ids: Union[Task.ID, Iterable[Task.ID]]):
+    def _append_task_id(self, ids: Union[TaskId, Iterable[TaskId]]) -> None:
         from ...core.task.manager import TaskManager
 
         TaskManager.add_id(ids)
 
     @abstractclassmethod
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args
         raise NotImplementedError

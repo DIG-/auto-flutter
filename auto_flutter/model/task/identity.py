@@ -8,10 +8,6 @@ from .id import TaskId
 
 
 class TaskIdentity:
-    ## Start - Alias to reduce import
-    Option = Option
-    ## End - Alias
-
     def __init__(
         self,
         id: TaskId,
