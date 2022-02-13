@@ -44,6 +44,7 @@ class ParseOptions(Task):
         )
 
         if skip:
+            encoder = OptionAll.ArgsEncode(args)
             for arg in sys_argv[2:]:
                 if arg == "--aflutter-stack-trace":
                     Session.show_stacktrace = True
@@ -51,7 +52,7 @@ class ParseOptions(Task):
                 elif arg in ("-h", "--help"):
                     TaskManager._task_stack.clear()
                     TaskManager.add(HelpStub(sys_argv[1]))
-                args.add(Arg(arg, None))
+                encoder.add(arg)
             return Task.Result(args)
 
         short = ""

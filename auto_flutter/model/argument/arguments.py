@@ -16,10 +16,6 @@ class Args(Dict[str, Arg]):
     def add_arg(self, key: str, value: Optional[str] = None):
         self.add(Arg("--" + key, value))
 
-    def to_command_arg(self) -> List[str]:
-        mapped = map(lambda x: x[1], self.items())
-        return list(filter(None.__ne__, chain(*mapped)))
-
     def contains(self, option: Union[str, Option]) -> bool:
         return Args.__get_key(option) in self
 

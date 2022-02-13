@@ -53,11 +53,11 @@ class Flutter(Task):
 
         if not self._command is None and len(self._command) > 0:
             if self._command_args:
-                self._command.extend(args.to_command_arg())
+                self._command.extend(OptionAll.ArgsDecode(args).all())
             p = Process.create(flutter, arguments=self._command, writer=writer)
         else:
             arguments = [FLUTTER_DISABLE_VERSION_CHECK]
-            arguments.extend(args.to_command_arg())
+            arguments.extend(OptionAll.ArgsDecode(args).all())
             p = Process.create(flutter, arguments=arguments, writer=writer)
         output = p.try_run()
 
