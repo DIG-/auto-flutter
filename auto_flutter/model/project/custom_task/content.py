@@ -7,9 +7,36 @@ from ....core.utils import _Ensure
 
 
 class CustomTaskContent(Serializable["CustomTaskContent"]):
-    def __init__(self, command: str, args: Optional[List[str]]) -> None:
+    @classmethod
+    def __init__(
+        self,
+        command: str,
+        args: Optional[List[str]],
+        output: Optional[bool] = None,  # Default is True
+        skip_failure: Optional[bool] = None,  # Default is False
+    ) -> None:
         self.command: str = _Ensure.instance(command, str, "command")
         self.args: Optional[List[str]] = args
+        self.__output: Optional[bool] = _Ensure.type(output, bool, "output")
+        self.__skip_failure: Optional[bool] = _Ensure.type(
+            skip_failure, bool, "skip_failure"
+        )
+
+    @property
+    def output(self) -> bool:
+        return True if self.__output is None else self.__output
+
+    @output.setter
+    def output(self, value: Optional[bool]):
+        self.__output = _Ensure.type(value, bool, "value")
+
+    @property
+    def skip_failure(self) -> bool:
+        return False if self.__skip_failure is None else self.__skip_failure
+
+    @skip_failure.setter
+    def skip_failure(self, value: Optional[bool]):
+        self.__skip_failure = _Ensure.type(value, bool, "value")
 
     @classmethod
     def to_json(self) -> Serializable.Json:
@@ -18,6 +45,8 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
             "args": None
             if self.args is None
             else _JsonEncode.encode_list(self.args, lambda x: x),
+            "output": _JsonEncode.encode_optional(self.__output),
+            "skip_failure": _JsonEncode.encode_optional(self.__skip_failure),
         }
 
     @staticmethod
@@ -26,6 +55,8 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
             return None
         command: Optional[str] = None
         args: Optional[List[str]] = None
+        output: Optional[bool] = None
+        skip_failure: Optional[bool] = None
         for key, value in json.items():
             if not isinstance(key, str):
                 continue
@@ -33,4 +64,8 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
                 command = _JsonDecode.decode(value, str)
             elif key == "args":
                 args = _JsonDecode.decode_list(value, str)
-        return CustomTaskContent(command, args)
+            elif key == "output":
+                output = _JsonDecode.decode(value, bool)
+            elif key == "skip_failure":
+                skip_failure = _JsonDecode.decode(value, bool)
+        return CustomTaskContent(command, args, output, skip_failure)
