@@ -100,6 +100,7 @@ class Help(Task):
         builder.append("\nUser tasks:\n")
         for identity in user_reduced:
             self._show_task_name_description(builder, identity)
+        return Task.Result(args, message=builder.str())
 
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
