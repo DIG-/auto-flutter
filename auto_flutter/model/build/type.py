@@ -8,18 +8,11 @@ from ...core.utils import _Ensure, _Enum
 from ..platform.platform import Platform
 
 
-class _BuildTypeItem(Tuple[str, str, Platform]):
-    def __new__(
-        cls: type[_BuildTypeItem], flutter: str, output: str, platform: Platform
-    ) -> _BuildTypeItem:
-        _Ensure.type(flutter, str, "flutter")
-        _Ensure.type(output, str, "output")
-        _Ensure.type(platform, Platform, "platform")
-        return super().__new__(_BuildTypeItem, (flutter, output, platform))
-
-    flutter: str = property(itemgetter(0))
-    output: str = property(itemgetter(1))
-    platform: Platform = property(itemgetter(2))
+class _BuildTypeItem:
+    def __init__(self, flutter: str, output: str, platform: Platform) -> None:
+        self.flutter: str = _Ensure.instance(flutter, str, "flutter")
+        self.output: str = _Ensure.instance(output, str, "output")
+        self.platform: Platform = _Ensure.instance(platform, Platform, "platform")
 
 
 class BuildType(Enum):
@@ -28,9 +21,17 @@ class BuildType(Enum):
     BUNDLE = _BuildTypeItem("appbundle", "aab", Platform.ANDROID)
     IPA = _BuildTypeItem("ios", "ipa", Platform.IOS)
 
-    flutter: str = property(attrgetter("value.flutter"))
-    output: str = property(attrgetter("value.output"))
-    platform: Platform = property(attrgetter("value.platform"))
+    @property
+    def flutter(self) -> str:
+        return self.value.flutter
+
+    @property
+    def output(self) -> str:
+        return self.value.output
+
+    @property
+    def platform(self) -> Platform:
+        return self.value.platform
 
     @staticmethod
     def from_flutter(value: str) -> BuildType:

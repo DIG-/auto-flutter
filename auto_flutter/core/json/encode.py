@@ -10,6 +10,7 @@ class _JsonEncode(metaclass=ABCMeta):
     Input = Union[Json, Serializable, Enum]
     Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]], Type[str]]
 
+    @staticmethod
     def encode_optional(
         input: Optional[Input], encoder: Optional[Encoder] = None
     ) -> Optional[Json]:
@@ -17,6 +18,7 @@ class _JsonEncode(metaclass=ABCMeta):
             return None
         return _JsonEncode.encode(input, encoder)
 
+    @staticmethod
     def encode(input: Input, encoder: Optional[Encoder] = None) -> Json:
         if encoder is None:
             if isinstance(input, str):
@@ -51,11 +53,13 @@ class _JsonEncode(metaclass=ABCMeta):
         else:
             raise AssertionError("Invalid encoder `{}`".format(type(encoder)))
 
+    @staticmethod
     def encode_list(
         input: List[Input], encoder: Optional[Encoder] = None
     ) -> List[Json]:
         return list(map(lambda x: _JsonEncode.encode(x, encoder), input))
 
+    @staticmethod
     def encode_dict(
         input: Dict[Input, Input],
         encoder_key: Encoder,
@@ -68,6 +72,7 @@ class _JsonEncode(metaclass=ABCMeta):
             )
         )
 
+    @staticmethod
     def __encode_dict_tuple(
         input: Tuple[Input, Input],
         encoder_key: Encoder,
@@ -78,6 +83,7 @@ class _JsonEncode(metaclass=ABCMeta):
             _JsonEncode.encode(input[1], enoder_value),
         )
 
+    @staticmethod
     def __encode_dict_key(key: Input, encoder: Encoder) -> str:
         output = _JsonEncode.encode(key, encoder)
         if isinstance(output, str):
@@ -86,6 +92,7 @@ class _JsonEncode(metaclass=ABCMeta):
 
     C = TypeVar("C", Dict, List)
 
+    @staticmethod
     def clear_nones(input: C) -> C:
         if isinstance(input, List):
             return [_JsonEncode.clear_nones(x) for x in input if x is not None]

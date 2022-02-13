@@ -31,6 +31,7 @@ class Args(Dict[str, Arg]):
             return self[key].argument
         return self[key].value
 
+    @staticmethod
     def __get_key(option: Union[str, Option]) -> str:
         key: str = None
         if isinstance(option, str):

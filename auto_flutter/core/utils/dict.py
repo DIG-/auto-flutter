@@ -6,12 +6,15 @@ class _Dict(ABC):
     K = TypeVar("K")
     V = TypeVar("V")
 
+    @staticmethod
     def get_or_none(input: Dict[K, V], key: K) -> Optional[V]:
         return None if not key in input else input[key]
 
+    @staticmethod
     def get_or_default(input: Dict[K, V], key: K, fallback: Callable[[], V]) -> V:
         return fallback() if not key in input else input[key]
 
+    @staticmethod
     def merge(a: Dict[K, V], b: Optional[Dict[K, V]]) -> Dict[K, V]:
         if b is None:
             return a
@@ -20,6 +23,7 @@ class _Dict(ABC):
             c[k] = v
         return c
 
+    @staticmethod
     def merge_append(
         a: Dict[K, List[V]], b: Optional[Dict[K, List[V]]]
     ) -> Dict[K, List[V]]:
@@ -33,5 +37,6 @@ class _Dict(ABC):
                 c[k] = v
         return c
 
+    @staticmethod
     def flatten(input: Dict[K, V]) -> List[V]:
         return list(map(lambda x: x[1], input.items()))
