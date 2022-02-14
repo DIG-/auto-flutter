@@ -1,14 +1,16 @@
 from abc import ABCMeta
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from .serializable import Serializable
 from .type import Json
 
 
 class _JsonEncode(metaclass=ABCMeta):
-    Input = Union[Json, Serializable, Enum]
+    Input = TypeVar("Input", bound=Union[Serializable, Enum, Json])
+    kInput = TypeVar("kInput", bound=Union[Enum, str])
     Encoder = Callable[[Input], Json]
+    kEncoder = Callable[[kInput], Json]
 
     @staticmethod
     def encode_optional(
@@ -53,8 +55,8 @@ class _JsonEncode(metaclass=ABCMeta):
 
     @staticmethod
     def encode_dict(
-        input: Dict[Input, Input],
-        encoder_key: Encoder,
+        input: Dict[kInput, Input],
+        encoder_key: kEncoder,
         enoder_value: Encoder,
     ) -> Dict[str, Json]:
         return dict(
@@ -66,8 +68,8 @@ class _JsonEncode(metaclass=ABCMeta):
 
     @staticmethod
     def __encode_dict_tuple(
-        input: Tuple[Input, Input],
-        encoder_key: Encoder,
+        input: Tuple[kInput, Input],
+        encoder_key: kEncoder,
         enoder_value: Encoder,
     ) -> Tuple[str, Json]:
         return (
@@ -76,8 +78,8 @@ class _JsonEncode(metaclass=ABCMeta):
         )
 
     @staticmethod
-    def __encode_dict_key(key: Input, encoder: Encoder) -> str:
-        output = _JsonEncode.encode(key, encoder)
+    def __encode_dict_key(key: kInput, encoder: kEncoder) -> str:
+        output = encoder(key)
         if isinstance(output, str):
             return output
         raise ValueError('Can not accept "{}" as dictionary key'.format(type(output)))

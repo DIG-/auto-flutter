@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 from ...core.json import *
 from ...core.utils import _Ensure
 from ..build import BuildType
-from ..build.serializer import _BuildType_SerializeOutput
 from ..task.id import TaskId
 from .run_type import RunType
 
@@ -92,7 +91,9 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             "output": _JsonEncode.encode_optional(self.output),
             "outputs": None
             if self.outputs is None
-            else _JsonEncode.encode_dict(self.outputs, _BuildType_SerializeOutput, str),
+            else _JsonEncode.encode_dict(
+                self.outputs, lambda x: x.flutter, lambda x: x
+            ),
         }
         if extras is None:
             return output
@@ -117,7 +118,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
                 output.outputs = _JsonDecode.decode_optional_dict(
-                    value, _BuildType_SerializeOutput, str
+                    value, BuildType, str, BuildType.from_output
                 )
                 pass
             elif isinstance(value, str):
