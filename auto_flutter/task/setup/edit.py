@@ -62,27 +62,26 @@ class SetupEdit(Task):
         if args.contains(self.option_show) or args.contains(self.option_check):
             return TaskResult(args)  # Nothing to edit in show mode
 
-        from ...core.task.manager import TaskManager
-
-        manager = TaskManager
+        error: BaseException
+        message: Optional[str] = None
 
         if args.contains(self.option_flutter):
             flutter = args.get_value(self.option_flutter)
             if flutter is None or len(flutter) == 0:
                 return TaskResult(
-                    args, ValueError("Require valid path for flutter"), False
+                    args, ValueError("Require valid path for flutter"), success=False
                 )
             found = SetupEdit.__parse_path(flutter)
             if found[0] in (
                 SetupEdit.__PathResult.NOT_FOUND,
                 SetupEdit.__PathResult.NOT_EXECUTABLE,
             ):
-                error: BaseException = FileNotFoundError(
+                error = FileNotFoundError(
                     'Can not find flutter in "{}"'.format(flutter)
                 )
                 if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
                     error = FileNotFoundError('Not executable in "{}"'.format(flutter))
-                message: Optional[str] = None
+                message = None
                 if not found[1] is None:
                     message = (
                         SB()
@@ -101,25 +100,27 @@ class SetupEdit(Task):
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
             Config.flutter = OS.machine_to_posix_path(found[1])
-            manager.add(FlutterCheck(skip_on_failure=True))
+            self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
             firebase = args.get_value(self.option_firebase)
             if firebase is None or len(firebase) == 0:
                 return TaskResult(
-                    args, ValueError("Require valid path for firebase-cli"), False
+                    args,
+                    ValueError("Require valid path for firebase-cli"),
+                    success=False,
                 )
             found = SetupEdit.__parse_path(firebase)
             if found[0] in (
                 SetupEdit.__PathResult.NOT_FOUND,
                 SetupEdit.__PathResult.NOT_EXECUTABLE,
             ):
-                error: BaseException = FileNotFoundError(
+                error = FileNotFoundError(
                     'Can not find firebase-cli in "{}"'.format(firebase)
                 )
                 if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
                     error = FileNotFoundError('Not executable in "{}"'.format(firebase))
-                message: Optional[str] = None
+                message = None
                 if not found[1] is None:
                     message = (
                         SB()
@@ -138,7 +139,7 @@ class SetupEdit(Task):
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
             Config.firebase = OS.machine_to_posix_path(found[1])
-            manager.add(FirebaseCheck(skip_on_failure=True))
+            self._append_task(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
             Config.firebase_standalone = True
@@ -197,7 +198,7 @@ class SetupEdit(Task):
             current: Path = Path(node)
             if not current.exists():
                 continue
-            current += path
+            current /= path
             if current.exists():
                 return True
         return False
