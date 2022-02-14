@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from abc import ABC
-from typing import Callable, Iterable, List, Optional, TypeVar
+from typing import Callable, Generic, Iterable, Iterator, List, Optional, Tuple, TypeVar
 
 
 class _Iterable(ABC):
@@ -31,9 +33,38 @@ class _Iterable(ABC):
         return out
 
     def is_empty(iterable: Iterable[T]) -> bool:
-        try:
-            next(iterable)
+        for it in iterable:
             return False
-        except StopIteration:
-            pass
         return True
+
+    class not_none(Iterator[T], Generic[T]):
+        def __init__(self, iter: Iterable[Optional[_Iterable.T]]) -> None:
+            super().__init__()
+            self._iter = iter.__iter__()
+
+        def __iter__(self) -> _Iterable.not_none[_Iterable.T]:
+            return self
+
+        def __next__(self) -> _Iterable.T:
+            while True:
+                out = next(self._iter)
+                if not out is None:
+                    return out
+
+    K = TypeVar("K")
+
+    class tuple_not_none(Iterator[Tuple[K, T]]):
+        def __init__(
+            self, iter: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]
+        ) -> None:
+            super().__init__()
+            self._iter = iter.__iter__()
+
+        def __iter__(self) -> _Iterable.tuple_not_none:
+            return self
+
+        def __next__(self) -> Tuple[_Iterable.K, _Iterable.T]:
+            while True:
+                out = next(self._iter)
+                if not out[1] is None:
+                    return (out[0], out[1])
