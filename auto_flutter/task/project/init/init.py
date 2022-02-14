@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List, Optional
 
 from ....core.string import SB
-from ....core.task.manager import TaskManager
 from ....model.project import Project
 from ....model.task import *
 from ...options import ParseOptions
@@ -60,8 +59,9 @@ class ProjectInit(Task):
                     success=False,
                 )
         name = ProjectInit._project_name_from_pubspec(pubspec)
-        if "name" in args and len(args["name"].value) > 0:
-            name = args["name"].value
+        name_arg = args.get_value("name")
+        if not name_arg is None and len(name_arg) > 0:
+            name = name_arg
         elif name is None:
             return TaskResult(args, error=Exception("Project name not informed"))
 
@@ -74,11 +74,7 @@ class ProjectInit(Task):
         )
 
         # Remember, TaskManager is stack
-        manager = TaskManager
-        manager.add(ProjectSave())
-        manager.add(CommonConfig())
-        manager.add(FindFlavor())
-        manager.add(FindPlatform())
+        self._append_task([ProjectSave(), CommonConfig(), FindFlavor(), FindPlatform()])
 
         return TaskResult(args, error=overwrite, success=True)
 
