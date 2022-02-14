@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Optional, Type, TypeVar, Union
+from typing import Any, Optional, Tuple, Type, TypeVar, Union
 
 
 class _Ensure(ABC):
@@ -16,7 +16,9 @@ class _Ensure(ABC):
 
     @staticmethod
     def type(
-        input: Optional[T], cls: Type[T], name: Optional[str] = None
+        input: Optional[T],
+        cls: Union[Type[T], Tuple[Type, ...]],
+        name: Optional[str] = None,
     ) -> Optional[T]:
         if input is None:
             return None
@@ -35,7 +37,9 @@ class _Ensure(ABC):
 
     @staticmethod
     def type_returned(
-        input: Optional[T], cls: Type[T], name: Optional[str] = None
+        input: Optional[T],
+        cls: Union[Type[T], Tuple[Type, ...]],
+        name: Optional[str] = None,
     ) -> Optional[T]:
         if input is None:
             return None
