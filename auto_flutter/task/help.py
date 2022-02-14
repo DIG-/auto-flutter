@@ -178,7 +178,7 @@ class Help(Task):
         self._show_task_name_description(builder, identity)
         options: List[Option] = _Iterable.flatten(
             map(
-                lambda task: TaskIdentity.options,
+                lambda task: task.identity.options,
                 TaskResolver.resolve(task),
             )
         )

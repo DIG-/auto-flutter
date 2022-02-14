@@ -8,28 +8,21 @@ from ...task import TaskId
 from .content import CustomTaskContent
 from .type import CustomTaskType
 
-
 class CustomTask(Serializable["CustomTask"]):
-    ## Start - Alias to reduce import
-    ID = TaskId
-    Type = CustomTaskType
-    Content = CustomTaskContent
-    ## End - Alias to reduce import
-
     def __init__(
         self,
-        id: ID,
+        id: TaskId,
         name: str,
-        type: Type,
+        type: CustomTaskType,
         require: Optional[List[str]] = None,
-        content: Optional[Content] = None,
+        content: Optional[CustomTaskContent] = None,
     ) -> None:
         super().__init__()
         self.id: TaskId = _Ensure.instance(id, TaskId, "id")
         self.name: str = _Ensure.instance(name, str, "name")
-        self.type: CustomTask.Type = _Ensure.instance(type, CustomTask.Type, "type")
+        self.type: CustomTaskType = _Ensure.instance(type, CustomTaskType, "type")
         self.require: Optional[List[str]] = require
-        self.content: Optional[CustomTask.Content] = content
+        self.content: Optional[CustomTaskContent] = content
 
     def to_json(self) -> Json:
         return {
@@ -64,4 +57,4 @@ class CustomTask(Serializable["CustomTask"]):
                 require = _JsonDecode.decode_list(value, str)
             elif key == "content":
                 content = _JsonDecode.decode(value, CustomTaskContent)
-        return CustomTask(id, name, type, require, content)
+        return CustomTask(id, name, type, require, content)  # type: ignore[arg-type]

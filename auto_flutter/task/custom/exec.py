@@ -1,4 +1,4 @@
-from ...model.project.custom_task import CustomTask
+from ...model.project.custom_task import CustomTask, CustomTaskType
 from ...model.task import *
 from ..flutter._const import FLUTTER_DISABLE_VERSION_CHECK
 from ..flutter.exec import Flutter
@@ -6,7 +6,7 @@ from ..flutter.exec import Flutter
 
 class CustomTaskExec(Flutter):
     def __init__(self, identity: TaskIdentity, custom: CustomTask) -> None:
-        if custom.type != CustomTask.Type.EXEC:
+        if custom.type != CustomTaskType.EXEC:
             raise TypeError("Require CustomTask EXEC, but found " + str(custom.type))
         if custom.content is None:
             raise ValueError("CustomTask EXEC require content")

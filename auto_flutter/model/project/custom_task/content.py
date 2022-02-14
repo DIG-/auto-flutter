@@ -66,4 +66,4 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
                 output = _JsonDecode.decode(value, bool)
             elif key == "skip_failure":
                 skip_failure = _JsonDecode.decode(value, bool)
-        return CustomTaskContent(command, args, output, skip_failure)
+        return CustomTaskContent(command, args, output, skip_failure)  # type: ignore[arg-type]

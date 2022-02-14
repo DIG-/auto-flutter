@@ -6,7 +6,7 @@ from ...core import VERSION
 from ...core.json import *
 from ...core.utils import _Ensure, _Iterable
 from ...model.platform import Platform, PlatformConfigFlavored
-from .custom_task import CustomTask
+from .custom_task import CustomTask, TaskId
 from .flavor import Flavor
 
 __all__ = ["Project"]
@@ -52,7 +52,7 @@ class Project(Serializable["Project"]):
             self.tasks = []
         self.tasks.append(task)
 
-    def remove_task_id(self, id: CustomTask.ID) -> bool:
+    def remove_task_id(self, id: TaskId) -> bool:
         if self.tasks is None:
             return False
         found = _Iterable.first_or_none(self.tasks, lambda x: x.id == id)
@@ -98,4 +98,4 @@ class Project(Serializable["Project"]):
             elif key == "tasks":
                 tasks = _JsonDecode.decode_list(value, CustomTask)
 
-        return Project(name, platforms, flavors, platform_config, tasks)
+        return Project(name, platforms, flavors, platform_config, tasks)  # type: ignore[arg-type]

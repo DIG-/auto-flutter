@@ -1,7 +1,7 @@
 from auto_flutter.core.string.builder import SB
 
 from ...model.project import Project
-from ...model.project.custom_task import CustomTask
+from ...model.project.custom_task import CustomTask, CustomTaskType
 from ...model.task import *
 from ...model.task.custom import *
 
@@ -19,7 +19,7 @@ class ProjectTaskImport(Task):
                 success=True,
             )
         for custom in project.tasks:
-            if custom.type == CustomTask.Type.EXEC:
+            if custom.type == CustomTaskType.EXEC:
                 self.__add_custom_task(CustomExecIdentity(custom))
             else:
                 self._print(
