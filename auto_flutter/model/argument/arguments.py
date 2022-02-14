@@ -1,6 +1,4 @@
-import re
-from itertools import chain
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 from .argument import Arg
 from .option import Option
@@ -29,7 +27,7 @@ class Args(Dict[str, Arg]):
 
     @staticmethod
     def __get_key(option: Union[str, Option]) -> str:
-        key: str = None
+        key: Optional[str] = None
         if isinstance(option, str):
             key = option
         elif isinstance(option, Option):
