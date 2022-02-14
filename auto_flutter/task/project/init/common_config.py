@@ -1,6 +1,6 @@
 from ....core.string import SB
 from ....model.build import BuildType
-from ....model.platform import PlatformConfigFlavored
+from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
 
@@ -13,15 +13,11 @@ class CommonConfig(Task):
         project = Project.current
         if Platform.ANDROID in project.platforms:
             self._print("    Apply common config for android")
-            self._print("    Disabling gradle daemon in build")
-            if not Platform.ANDROID in project.platform_config:
-                project.platform_config[
-                    Platform.ANDROID
-                ] = PlatformConfigFlavored()
-            config = project.platform_config[Platform.ANDROID]
-            config._append_build_param("--no-android-gradle-daemon")
+            self._print("    Disable gradle daemon in build")
+            config = project.obtain_platform_cofig(Platform.ANDROID)
+            config.append_build_param(None, "--no-android-gradle-daemon")
 
-            if len(project.flavors) > 0:
+            if not project.flavors is None and len(project.flavors) > 0:
                 self._print("    Applying default output for android flavored build")
                 config.outputs = {
                     BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build_type}.apk",
