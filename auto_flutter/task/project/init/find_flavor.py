@@ -6,7 +6,7 @@ from xml.etree.ElementTree import parse as xml_parse
 from ....core.os import OS
 from ....core.session import Session
 from ....core.string import SB
-from ....model.platform import Platform, PlatformConfig, PlatformConfigFlavored
+from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
 
@@ -107,6 +107,7 @@ class FindFlavor(Task):
                 SB()
                 .append("    Flavors were found: ", SB.Color.GREEN)
                 .append(" ".join(project.flavors), SB.Color.GREEN, True)
+                .str()
             )
             return True
         return False
@@ -123,24 +124,9 @@ class FindFlavor(Task):
         project.flavors.append(flavor)
 
         if not build_param is None and len(build_param) > 0:
-            if not platform in project.platform_config:
-                project.platform_config[platform] = PlatformConfigFlavored(
-                    build_param=None,
-                    run_before=None,
-                    output=None,
-                    outputs=None,
-                    extras=None,
-                    flavored={},
-                )
-            if project.platform_config[platform].flavored is None:
-                project.platform_config[platform].flavored = {}
-            project.platform_config[platform].flavored[flavor] = PlatformConfig(
-                build_param=build_param,
-                run_before=None,
-                output=None,
-                outputs=None,
-                extras=None,
-            )
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(
+                flavor
+            ).build_param = build_param
 
     def _extract_from_idea(self, project: Project, filename: Path):
         file = open(filename, "r")
@@ -212,16 +198,16 @@ class FindFlavor(Task):
         count = 0
         buffer = ""
         space = re_compile("\s")
-        for i in flavors:
-            if not space.match(i) is None:
+        for i, c in enumerate(flavors):
+            if not space.match(c) is None:
                 continue
-            elif i == "{":
+            elif c == "{":
                 count += 1
                 if count == 1:
                     self._append_flavor(project, Platform.ANDROID, buffer, None)
                     buffer = ""
                 continue
-            elif i == "}":
+            elif c == "}":
                 count -= 1
             elif count == 0:
-                buffer += i
+                buffer += c
