@@ -1,6 +1,7 @@
 from typing import Optional
 
 from ...core.utils import _Dict, _Enum, _If
+from ...model.platform import Platform
 from ..firebase._const import FIREBASE_PROJECT_APP_ID_KEY
 from ._base import *
 
