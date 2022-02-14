@@ -1,20 +1,19 @@
 from __future__ import annotations
 
-from abc import abstractclassmethod
+from abc import abstractmethod
 from typing import Callable, Generic, Optional, TypeVar
 
 T = TypeVar("T")
 
 
 class _Gettable(Generic[T]):
-    @abstractclassmethod
+    @abstractmethod
     def get(self) -> T:
         raise NotImplementedError()
 
-    def __get(self) -> T:
+    @property
+    def value(self) -> T:
         return self.get()
-
-    value: T = property(__get)
 
 
 class _NotLazy(_Gettable[T]):
