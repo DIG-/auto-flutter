@@ -68,7 +68,7 @@ class _Ensure(ABC):
         )
 
     @staticmethod
-    def name(cls: Union[T, Type[T]]) -> str:
+    def name(cls: Union[T, Type[T], Type]) -> str:
         if hasattr(cls, "__name__"):
-            return cls.__name__
+            return cls.__name__  # type: ignore
         return str(cls)
