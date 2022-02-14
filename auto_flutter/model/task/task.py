@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractclassmethod, abstractmethod
-from typing import Iterable, List, Union
+from typing import Iterable, List, Optional, Union
 
 from ..argument import Args
 from .id import TaskId
@@ -20,7 +20,9 @@ class Task(ABC):
     def describe(self, args: Args) -> str:
         return self.identity.name
 
-    def _print(self, message: str) -> None:
+    def _print(self, message: Optional[str]) -> None:
+        if message is None:
+            return
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
