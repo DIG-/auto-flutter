@@ -8,7 +8,7 @@ from .type import Json
 
 class _JsonEncode(metaclass=ABCMeta):
     Input = Union[Json, Serializable, Enum]
-    Encoder = Union[Callable[[Input], Json], Type[Serializable[Input]], Type[str]]
+    Encoder = Callable[[Input], Json]
 
     @staticmethod
     def encode_optional(
@@ -35,6 +35,7 @@ class _JsonEncode(metaclass=ABCMeta):
                     lambda x: _JsonEncode.encode(x),
                     lambda x: _JsonEncode.encode(x),
                 )
+            raise TypeError("Unknown encoder for {}".format(type(input)))
         if isinstance(input, List):
             return _JsonEncode.encode_list(input, encoder)
         if isinstance(input, Dict):
@@ -42,16 +43,7 @@ class _JsonEncode(metaclass=ABCMeta):
                 "Can not encode Dict with only one encoder. Use encode_dict"
             )
 
-        if encoder is str:
-            return encoder(input)
-        if isinstance(encoder, Type) and issubclass(encoder, Serializable):
-            if isinstance(input, encoder):
-                return input.to_json()
-            return encoder(input).to_json()
-        elif isinstance(encoder, Callable):
-            return encoder(input)
-        else:
-            raise AssertionError("Invalid encoder `{}`".format(type(encoder)))
+        return encoder(input)
 
     @staticmethod
     def encode_list(
@@ -64,7 +56,7 @@ class _JsonEncode(metaclass=ABCMeta):
         input: Dict[Input, Input],
         encoder_key: Encoder,
         enoder_value: Encoder,
-    ):
+    ) -> Dict[str, Json]:
         return dict(
             map(
                 lambda x: _JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
