@@ -65,7 +65,7 @@ class ConfigFirebase(_BaseConfigTask):
                         str(platform), flavor
                     )
                 )
-            if not config.remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
+            if not config._remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
                 has_warning = Warning(
                     "Selected platform and flavor does not have app id"
                 )
@@ -74,7 +74,7 @@ class ConfigFirebase(_BaseConfigTask):
         if not add_app_id is None:
             project.obtain_platform_cofig(platform).obtain_config_by_flavor(
                 flavor
-            ).add_extra(FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id)
+            )._add_extra(FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id)
 
         self._add_save_project()
         return TaskResult(args, error=has_warning, success=True)

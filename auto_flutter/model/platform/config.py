@@ -9,6 +9,8 @@ from ..build.serializer import _BuildType_SerializeOutput
 from ..task.id import TaskId
 from .run_type import RunType
 
+__all__ = ["PlatformConfig", "RunType", "BuildType", "TaskIdList", "TaskId"]
+
 
 class TaskIdList(List[TaskId], Serializable["TaskIdList"]):
     def to_json(self) -> Json:
@@ -28,11 +30,6 @@ class TaskIdList(List[TaskId], Serializable["TaskIdList"]):
 
 
 class PlatformConfig(Serializable["PlatformConfig"]):
-    ## Start - Alias to reduce import
-    RunType = RunType
-    BuildType = BuildType
-    ## End - Alias to reduce import
-
     def __init__(
         self,
         build_param: Optional[List[str]] = None,
@@ -43,35 +40,35 @@ class PlatformConfig(Serializable["PlatformConfig"]):
     ) -> None:
         super().__init__()
         self.build_param: Optional[List[str]] = build_param
-        self.run_before: Optional[Dict[PlatformConfig.RunType, TaskIdList]] = run_before
+        self.run_before: Optional[Dict[RunType, TaskIdList]] = run_before
         self.output: Optional[str] = output
-        self.outputs: Optional[Dict[PlatformConfig.BuildType, str]] = outputs
+        self.outputs: Optional[Dict[BuildType, str]] = outputs
         self.extras: Optional[Dict[str, str]] = extras
 
-    def append_build_param(self, param: str):
+    def _append_build_param(self, param: str):
         if self.build_param is None:
             self.build_param = []
         self.build_param.append(_Ensure.instance(param, str, "build-param"))
 
-    def get_output(self, type: BuildType) -> Optional[str]:
+    def _get_output(self, type: BuildType) -> Optional[str]:
         if not self.outputs is None:
             if type in self.outputs:
                 return self.outputs[type]
         return self.output
 
-    def get_extra(self, key: str) -> Optional[str]:
+    def _get_extra(self, key: str) -> Optional[str]:
         if self.extras is None:
             return None
         if key in self.extras:
             return self.extras[key]
         return None
 
-    def add_extra(self, key: str, value: str):
+    def _add_extra(self, key: str, value: str):
         if self.extras is None:
             self.extras = {}
         self.extras[key] = value
 
-    def remove_extra(self, key: str) -> bool:
+    def _remove_extra(self, key: str) -> bool:
         if self.extras is None:
             return False
         if not key in self.extras:
@@ -81,7 +78,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self.extras = None
         return True
 
-    def get_run_before(self, type: RunType) -> Optional[List[TaskId]]:
+    def _get_run_before(self, type: RunType) -> Optional[List[TaskId]]:
         _Ensure.type(type, RunType, "type")
         if self.run_before is None or type not in self.run_before:
             return None
