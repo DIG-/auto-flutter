@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from os import environ
 from pathlib import PurePath
 from typing import Callable, Dict, List, Optional, Union
@@ -9,7 +9,8 @@ from ..os import OS
 from ..utils import _Ensure
 
 
-class Process(metaclass=ABCMeta):
+class Process(ABC):
+    @staticmethod
     def create(
         executable: Union[str, PurePath],
         arguments: Optional[List[str]] = None,
