@@ -1,5 +1,6 @@
 from typing import List
 
+from ...core.utils import _Ensure
 from ...model.build import BuildType
 from ...model.platform import MergePlatformConfigFlavored, Platform
 from ...model.project import Project
@@ -25,7 +26,9 @@ class FirebaseBuildValidate(Task):
     def execute(self, args: Args) -> TaskResult:
         flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
-            args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE)
+            _Ensure.instance(
+                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), str, "build-type"
+            )
         )
         project = Project.current
         config = MergePlatformConfigFlavored(
