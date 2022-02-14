@@ -31,7 +31,7 @@ class CustomTask(Serializable["CustomTask"]):
         self.require: Optional[List[str]] = require
         self.content: Optional[CustomTask.Content] = content
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         return {
             "id": self.id,
             "name": self.name,
@@ -40,7 +40,8 @@ class CustomTask(Serializable["CustomTask"]):
             "content": _JsonEncode.encode_optional(self.content),
         }
 
-    def from_json(json: Serializable.Json) -> Optional[CustomTask]:
+    @staticmethod
+    def from_json(json: Json) -> Optional[CustomTask]:
         if not isinstance(json, dict):
             return None
 

@@ -70,7 +70,7 @@ class Project(Serializable["Project"]):
             self.tasks = None
         return True
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         return {
             "_creator": "Auto-Flutter " + VERSION,
             "name": self.name,
@@ -80,7 +80,8 @@ class Project(Serializable["Project"]):
             "tasks": _JsonEncode.encode_optional(self.tasks),
         }
 
-    def from_json(json: Serializable.Json) -> Optional[Project]:
+    @staticmethod
+    def from_json(json: Json) -> Optional[Project]:
         if not isinstance(json, Dict):
             return None
         name: Optional[str] = None

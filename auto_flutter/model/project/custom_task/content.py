@@ -37,7 +37,7 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
     def skip_failure(self, value: Optional[bool]):
         self.__skip_failure = _Ensure.type(value, bool, "value")
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         return {
             "command": self.command,
             "args": None
@@ -48,7 +48,7 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
         }
 
     @staticmethod
-    def from_json(json: Serializable.Json) -> Optional[CustomTaskContent]:
+    def from_json(json: Json) -> Optional[CustomTaskContent]:
         if not isinstance(json, Dict):
             return None
         command: Optional[str] = None

@@ -7,15 +7,15 @@ from .type import Json
 
 T = TypeVar("T")
 
+__all__ = ["Json", "Serializable"]
+
 
 class Serializable(Generic[T], metaclass=ABCMeta):
-    Json = Json
-
     @abstractmethod
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         raise NotImplementedError("to_json is not implemented")
 
     @staticmethod
     @abstractmethod
-    def from_json(json: Serializable.Json) -> Optional[T]:
+    def from_json(json: Json) -> Optional[T]:
         raise NotImplementedError("from_json is not implemented")

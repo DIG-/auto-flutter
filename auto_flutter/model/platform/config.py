@@ -4,17 +4,18 @@ from typing import Dict, List, Optional
 
 from ...core.json import *
 from ...core.utils import _Ensure
-from ..task.id import TaskId
 from ..build import BuildType
 from ..build.serializer import _BuildType_SerializeOutput
+from ..task.id import TaskId
 from .run_type import RunType
 
 
 class TaskIdList(List[TaskId], Serializable["TaskIdList"]):
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         return _JsonEncode.encode_list(self)
 
-    def from_json(json: Serializable.Json) -> Optional["TaskIdList"]:
+    @staticmethod
+    def from_json(json: Json) -> Optional["TaskIdList"]:
         if json is None:
             return None
         if not isinstance(json, List):
@@ -82,7 +83,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             return None
         return self.run_before[type]
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         extras = self.extras
         output = {
             "build-param": _JsonEncode.encode_optional(self.build_param),
@@ -96,7 +97,8 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             return output
         return {**output, **extras}
 
-    def from_json(json: Serializable.Json) -> Optional[PlatformConfig]:
+    @staticmethod
+    def from_json(json: Json) -> Optional[PlatformConfig]:
         if not isinstance(json, Dict):
             return None
         output = PlatformConfig()

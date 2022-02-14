@@ -68,14 +68,15 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
                 return from_flavor
         return super().get_extra(key)
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         parent = super().to_json()
         if not self.flavored is None:
             flavored = {"flavored": _JsonEncode.encode(self.flavored)}
             return {**parent, **flavored}
         return parent
 
-    def from_json(json: Serializable.Json) -> Optional[PlatformConfigFlavored]:
+    @staticmethod
+    def from_json(json: Json) -> Optional[PlatformConfigFlavored]:
         output = PlatformConfigFlavored()
         other = PlatformConfig.from_json(json)
         if not other is None:
