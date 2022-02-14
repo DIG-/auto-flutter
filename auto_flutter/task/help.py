@@ -71,7 +71,7 @@ class Help(Task):
                 self._show_task_help_with_actions(builder, identity, task_instance)
                 return TaskResult(args, message=builder.str())
             else:
-                self._show_task_help(builder, identity, task_instance)
+                self._show_task_help(builder, identity)
                 return TaskResult(args, message=builder.str())
 
         if not self._message is None:
@@ -80,6 +80,7 @@ class Help(Task):
         self._show_header(builder)
 
         if task_not_found:
+            assert not task_name is None
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(
                 task_name, SB.Color.CYAN, True
             ).append(" not found\n")
@@ -116,7 +117,7 @@ class Help(Task):
         ).append(identity.name, end="\n")
         pass
 
-    def _show_task_help(self, builder: SB, identity: TaskIdentity, task: Task):
+    def _show_task_help(self, builder: SB, identity: TaskIdentity):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
@@ -165,7 +166,15 @@ class Help(Task):
     def _show_task_help_with_actions(
         self, builder: SB, identity: TaskIdentity, task: Task
     ):
-        helper = _Ensure.instance(task, HelpAction, "task")
+        helper = task
+        if not isinstance(helper, HelpAction):
+            raise TypeError(
+                "Field `{name}` must be instance of `{cls}`, but `{input}` was used".format(
+                    name="helper",
+                    cls=HelpAction.__name__,
+                    input=_Ensure.name(type(helper)),
+                )
+            )
         self._show_header(builder, True)
         self._show_task_description(builder, identity)
         builder.append("\nActions:\n")
