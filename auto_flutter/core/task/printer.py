@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from distutils.log import error
-from operator import itemgetter
 from queue import Queue
 from sys import stdout as sys_stdout
 from threading import Lock, Thread
 from time import sleep, time
-from typing import Optional, Tuple
+from typing import Optional
 
 from ...model.error import SilentWarning
-from ...model.task import Task
+from ...model.task import TaskResult
 from ..session import Session
 from ..string import SB
 
@@ -108,6 +106,7 @@ class TaskPrinter:
                 if not has_warning:
                     print("")
             if has_warning:
+                assert not result.error is None
                 print(
                     SB()
                     .append("\n")
@@ -130,9 +129,11 @@ class TaskPrinter:
         print(message)
         TaskPrinter.__print_description(self._current_task)
 
+    @staticmethod
     def __clear_line(description: str):
         print("\r" + (" " * (len(description) + 8)), end="\r")
 
+    @staticmethod
     def __print_description(
         description: str,
         success: bool = False,
