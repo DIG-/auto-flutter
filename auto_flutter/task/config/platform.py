@@ -1,7 +1,4 @@
-from typing import Optional
-
-from ...core.json import _JsonDecode
-from ...core.utils import _Ensure
+from ...core.utils import _Enum
 from ...model.platform import Platform, PlatformConfigFlavored
 from ._base import *
 
@@ -26,7 +23,7 @@ class ConfigPlatform(_BaseConfigTask):
         platform_add = args.get_value(self.option_add)
         if not platform_add is None and len(platform_add) > 0:
             self._print("    Adding platform {}".format(platform_add))
-            parsed_add = ConfigPlatform.__parse_platform(platform_add)
+            parsed_add = _Enum.parse_value(Platform, platform_add)
             if parsed_add is None:
                 return TaskResult(
                     args,
@@ -49,7 +46,7 @@ class ConfigPlatform(_BaseConfigTask):
         platform_rem = args.get_value(self.option_rem)
         if not platform_rem is None and len(platform_rem) > 0:
             self._print("    Removing platform {}".format(platform_rem))
-            parsed_rem = ConfigPlatform.__parse_platform(platform_rem)
+            parsed_rem = _Enum.parse_value(Platform, platform_rem)
             if parsed_rem is None:
                 return TaskResult(
                     args,
@@ -72,13 +69,7 @@ class ConfigPlatform(_BaseConfigTask):
                 project.platform_config.pop(parsed_rem)
 
         if not had_change:
-            return TaskResult(
-                args, error=AssertionError("No change was made"), success=True
-            )
+            return TaskResult(args, error=Warning("No change was made"), success=True)
 
         self._add_save_project()
         return TaskResult(args)
-
-    def __parse_platform(platform: str) -> Optional[Platform]:
-        _Ensure.instance(platform, str, "platform")
-        return _JsonDecode.decode(platform, Platform)
