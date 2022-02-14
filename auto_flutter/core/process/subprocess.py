@@ -100,11 +100,13 @@ class _SubProcess(Process):
             output.append(decoded)
             self._write_output(decoded)
 
+    @staticmethod
     def __get_default_decoder() -> IncrementalDecoder:
         if _SubProcess.__DEFAULT_DECODER is None:
             _SubProcess.__DEFAULT_DECODER = _SubProcess.__generate_decoder()
         return _SubProcess.__DEFAULT_DECODER
 
+    @staticmethod
     def __generate_decoder() -> IncrementalDecoder:
         if OS.current() != OS.WINDOWS:
             return getincrementaldecoder("utf-8")()
