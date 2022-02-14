@@ -12,15 +12,19 @@ from .run_type import RunType
 
 class TaskIdList(List[TaskId], Serializable["TaskIdList"]):
     def to_json(self) -> Json:
-        return _JsonEncode.encode_list(self)
+        output: List[str] = []
+        output.extend(self)
+        return output
 
     @staticmethod
-    def from_json(json: Json) -> Optional["TaskIdList"]:
+    def from_json(json: Json) -> Optional[TaskIdList]:
         if json is None:
             return None
         if not isinstance(json, List):
             return None
-        return _JsonDecode.decode_list(json, TaskId)
+        output = TaskIdList()
+        output.extend(json)
+        return output
 
 
 class PlatformConfig(Serializable["PlatformConfig"]):
