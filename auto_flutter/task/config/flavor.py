@@ -69,6 +69,8 @@ class ConfigFlavor(_BaseConfigTask):
                 return TaskResult(
                     args, error=ValueError("Trying to rename without origin name")
                 )
+            assert not ren_flavor is None
+            assert not to_flavor is None
             self._print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if ren_flavor == to_flavor:
                 return TaskResult(
