@@ -7,7 +7,6 @@ from ....core.utils import _Ensure
 
 
 class CustomTaskContent(Serializable["CustomTaskContent"]):
-    @classmethod
     def __init__(
         self,
         command: str,
@@ -38,7 +37,6 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
     def skip_failure(self, value: Optional[bool]):
         self.__skip_failure = _Ensure.type(value, bool, "value")
 
-    @classmethod
     def to_json(self) -> Serializable.Json:
         return {
             "command": self.command,

@@ -22,11 +22,11 @@ class TaskPrinter:
         def __init__(
             self,
             message: Optional[str] = None,
-            result: Optional[Task.Result] = None,
+            result: Optional[TaskResult] = None,
             description: Optional[str] = None,
         ) -> None:
             self.message: Optional[str] = message
-            self.result: Optional[Task.Result] = result
+            self.result: Optional[TaskResult] = result
             self.description: Optional[str] = description
 
     def __init__(self) -> None:
@@ -45,7 +45,7 @@ class TaskPrinter:
         self.__stop_mutex.release()
         self.__thread.join()
 
-    def set_result(self, result: Task.Result):
+    def set_result(self, result: TaskResult):
         self._operations.put(TaskPrinter._Operation(result=result))
 
     def set_task_description(self, description: str):
@@ -80,7 +80,7 @@ class TaskPrinter:
         elif not operation.message is None:
             self.__handle_operation_message(operation.message)
 
-    def __handle_operation_result(self, result: Task.Result):
+    def __handle_operation_result(self, result: TaskResult):
         has_task_name = len(self._current_task) > 0
         if not result.success:
             if has_task_name:

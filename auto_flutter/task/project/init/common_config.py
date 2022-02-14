@@ -2,14 +2,14 @@ from ....core.string import SB
 from ....model.build import BuildType
 from ....model.platform import PlatformConfigFlavored
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 
 
 class CommonConfig(Task):
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Applying common config"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
         if Project.Platform.ANDROID in project.platforms:
             self._print("    Apply common config for android")
@@ -56,4 +56,4 @@ class CommonConfig(Task):
                 .str()
             )
 
-        return Task.Result(args)
+        return TaskResult(args)

@@ -35,8 +35,8 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
 
     def get_run_before(
         self, type: PlatformConfig.RunType, flavor: Optional[Flavor]
-    ) -> List[Task.ID]:
-        output: List[Task.ID] = list()
+    ) -> List[TaskId]:
+        output: List[TaskId] = list()
         _If.not_none(
             super().get_run_before(type),
             lambda x: output.extend(x),

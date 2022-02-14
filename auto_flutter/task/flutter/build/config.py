@@ -4,19 +4,18 @@ from ....core.string import SB
 from ....core.utils import _Dict
 from ....model.build import BuildType
 from ....model.platform import Platform
-from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 from ...options import ParseOptions
 from ...project.read import ProjectRead
 
 
 class FlutterBuildConfig(Task):
     __options = {
-        "flavor": Task.Option("f", "flavor", "Flavor to build", True),
-        "debug": Task.Option(None, "debug", "Build a debug version", False),
+        "flavor": Option("f", "flavor", "Flavor to build", True),
+        "debug": Option(None, "debug", "Build a debug version", False),
     }
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "-build-config",
         "",
         _Dict.flatten(__options),
@@ -30,13 +29,13 @@ class FlutterBuildConfig(Task):
     class Error(RuntimeError):
         ...
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return [ParseOptions.identity.id, ProjectRead.identity.id]
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Preparing flutter build"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         if not "-0" in args or len(args["-0"].argument) <= 0:
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
@@ -93,4 +92,4 @@ class FlutterBuildConfig(Task):
             args.add_arg(FlutterBuildConfig.ARG_DEBUG)
         elif args.contains(FlutterBuildConfig.ARG_DEBUG):
             args.pop(FlutterBuildConfig.ARG_DEBUG)
-        return Task.Result(args)
+        return TaskResult(args)

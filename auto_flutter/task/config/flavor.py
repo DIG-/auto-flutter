@@ -2,23 +2,23 @@ from ._base import *
 
 
 class ConfigFlavor(_BaseConfigTask):
-    option_add = Task.Option(None, "add", "Add flavor to project", True)
-    option_remove = Task.Option(None, "remove", "Remove flavor from project", True)
-    option_rename = Task.Option(
+    option_add = Option(None, "add", "Add flavor to project", True)
+    option_remove = Option(None, "remove", "Remove flavor from project", True)
+    option_rename = Option(
         None, "rename", "Rename flavor from project. Use with --to-name", True
     )
-    option_toname = Task.Option(None, "to-name", "New flavor name from --rename", True)
-    identity = Task.Identity(
+    option_toname = Option(None, "to-name", "New flavor name from --rename", True)
+    identity = TaskIdentity(
         "flavor",
         "Handle project flavors in general",
         [option_add, option_remove, option_rename, option_toname],
         lambda: ConfigFlavor(),
     )
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Updating project flavor"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
         if project.flavors is None:
             project.flavors = []
@@ -29,7 +29,7 @@ class ConfigFlavor(_BaseConfigTask):
         if not add_flavor is None and len(add_flavor) > 0:
             self._print("    Adding flavor " + add_flavor)
             if add_flavor in project.flavors:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=AssertionError(
                         "Flavor `{}` already exist in project".format(add_flavor)
@@ -42,7 +42,7 @@ class ConfigFlavor(_BaseConfigTask):
         if not rem_flavor is None and len(rem_flavor) > 0:
             self._print("    Removing flavor " + rem_flavor)
             if not rem_flavor in project.flavors:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=AssertionError(
                         "Flavor `{}` do not exist in project".format(rem_flavor)
@@ -62,24 +62,24 @@ class ConfigFlavor(_BaseConfigTask):
         if has_ren or has_to:
             if has_ren != has_to:
                 if has_ren:
-                    return Task.Result(
+                    return TaskResult(
                         args,
                         error=ValueError("Trying to rename without destination name"),
                     )
-                return Task.Result(
+                return TaskResult(
                     args, error=ValueError("Trying to rename without origin name")
                 )
             self._print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if ren_flavor == to_flavor:
-                return Task.Result(
+                return TaskResult(
                     args, error=ValueError("Trying to rename flavor to same name")
                 )
             if to_flavor in project.flavors:
-                return Task.Result(
+                return TaskResult(
                     args, error=AssertionError("Destination flavor name already exist")
                 )
             if not ren_flavor in project.flavors:
-                return Task.Result(
+                return TaskResult(
                     args, error=AssertionError("Origin flavor name does not exist")
                 )
             project.flavors.remove(ren_flavor)
@@ -91,11 +91,11 @@ class ConfigFlavor(_BaseConfigTask):
                         config.flavored[to_flavor] = config.flavored.pop(ren_flavor)
 
         if not has_change:
-            return Task.Result(
+            return TaskResult(
                 args, error=AssertionError("No change was made"), success=True
             )
         if len(project.flavors) <= 0:
             project.flavors = None
 
         self._add_save_project()
-        return Task.Result(args)
+        return TaskResult(args)

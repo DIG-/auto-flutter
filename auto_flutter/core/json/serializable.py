@@ -11,7 +11,6 @@ T = TypeVar("T")
 class Serializable(Generic[T], metaclass=ABCMeta):
     Json = Json
 
-    @classmethod
     @abstractmethod
     def to_json(self) -> Serializable.Json:
         raise NotImplementedError("to_json is not implemented")

@@ -1,42 +1,28 @@
 from __future__ import annotations
 
+from abc import ABC
 from collections import deque
 from typing import Deque, Iterable, List, Optional, Union
 
 from ...model.error import TaskNotFound
-from ...model.task import Task
+from ...model.task import *
 
 
-class TaskResolver:
-    """
-    def resolve(task: Task) -> Deque[Task]:
-        output: Deque[Task] = deque()
-        temp = Queue()
-        temp.put(task)
-        while not temp.empty():
-            current: Task = temp.get()
-            output.append(current)
-            for required in reversed(current.require()):
-                found = TaskResolver.find_task(required)
-                if found is None:
-                    raise LookupError('Task not found "{}"'.format(required))
-                temp.put(found.creator())
-        return output
-    """
-
+class TaskResolver(ABC):
+    @staticmethod
     def resolve(
-        task: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
+        task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
     ) -> Deque[Task]:
-        temp: List[Task.Identity] = []
+        temp: List[TaskIdentity] = []
         if isinstance(task, Task):
             temp = [TaskResolver.__TaskIdentityWrapper(task)]
-        elif isinstance(task, Task.Identity):
+        elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
                 if isinstance(it, Task):
                     temp.append(TaskResolver.__TaskIdentityWrapper(it))
-                elif isinstance(it, Task.Identity):
+                elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
                     raise TypeError(
@@ -54,9 +40,10 @@ class TaskResolver:
             output.appendleft(identity.creator())
         return output
 
-    def __resolve_dependencies(items: List[Task.Identity]) -> List[Task.Identity]:
+    @staticmethod
+    def __resolve_dependencies(items: List[TaskIdentity]) -> List[TaskIdentity]:
         if len(items) <= 0:
-            raise IndexError("Require at least one Task.Identity")
+            raise IndexError("Require at least one TaskIdentity")
         i = 0
         while i < len(items):
             current = items[i]
@@ -70,7 +57,8 @@ class TaskResolver:
             i += 1
         return items
 
-    def __clear_repeatable(items: List[Task.Identity]) -> List[Task.Identity]:
+    @staticmethod
+    def __clear_repeatable(items: List[TaskIdentity]) -> List[TaskIdentity]:
         i = 0
         while i < len(items):
             current = items[i]
@@ -86,7 +74,8 @@ class TaskResolver:
             i += 1
         return items
 
-    def find_task(id: Task.ID) -> Optional[Task.Identity]:
+    @staticmethod
+    def find_task(id: TaskId) -> Optional[TaskIdentity]:
         from ...task._list import task_list, user_task
 
         if id in task_list:
@@ -98,5 +87,5 @@ class TaskResolver:
     class __TaskIdentityWrapper:
         def __new__(
             cls: type[TaskResolver.__TaskIdentityWrapper], task: Task
-        ) -> Task.Identity:
-            return Task.Identity("-#-#-", "", [], lambda: task, True)
+        ) -> TaskIdentity:
+            return TaskIdentity("-#-#-", "", [], lambda: task, True)

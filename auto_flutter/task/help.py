@@ -5,16 +5,16 @@ from typing import Dict, List, Optional, Union
 from ..core.string import SB
 from ..core.task import TaskResolver
 from ..core.utils import _Ensure, _If, _Iterable
-from ..model.task import Task
+from ..model.task import *
 from ..model.task.help_action import HelpAction
 from .options import ParseOptions
 from .project.read import ProjectRead
 
 
 class Help(Task):
-    option_task = Task.Option("t", "task", "Show help details about given task", True)
+    option_task = Option("t", "task", "Show help details about given task", True)
 
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "help",
         "Show help",
         [option_task],
@@ -23,34 +23,34 @@ class Help(Task):
 
     def __init__(
         self,
-        task_id: Optional[Union[Task.ID, Task.Identity]] = None,
+        task_id: Optional[Union[TaskId, TaskIdentity]] = None,
         message: Optional[str] = None,
     ) -> None:
         super().__init__()
-        self._show_task: Optional[Task.ID] = None
+        self._show_task: Optional[TaskId] = None
         self._message: Optional[str] = message
-        if isinstance(task_id, Task.Identity):
+        if isinstance(task_id, TaskIdentity):
             self._show_task = task_id.id
-        elif isinstance(task_id, Task.ID):
+        elif isinstance(task_id, TaskId):
             self._show_task = task_id
         elif not task_id is None:
             raise TypeError(
                 "Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
-                    clsa=Task.ID.__name__,
-                    clsb=Task.Identity.__name__,
+                    clsa=TaskId.__name__,
+                    clsb=TaskIdentity.__name__,
                     input=type(task_id),
                 )
             )
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Showing help page"
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         if self._show_task is None:
             return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
         return [ProjectRead.identity_skip.id]
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         builder = SB()
         task_name = args.get_value(self.option_task)
         if not self._show_task is None:
@@ -69,10 +69,10 @@ class Help(Task):
                 task_not_found = True
             elif isinstance(task_instance, HelpAction):
                 self._show_task_help_with_actions(builder, identity, task_instance)
-                return Task.Result(args, message=builder.str())
+                return TaskResult(args, message=builder.str())
             else:
                 self._show_task_help(builder, identity, task_instance)
-                return Task.Result(args, message=builder.str())
+                return TaskResult(args, message=builder.str())
 
         if not self._message is None:
             builder.append(self._message, end="\n")
@@ -95,12 +95,12 @@ class Help(Task):
 
         user_reduced = Help.reduce_indexed_task_into_list(user_task)
         if len(user_reduced) <= 0:
-            return Task.Result(args, message=builder.str())
+            return TaskResult(args, message=builder.str())
 
         builder.append("\nUser tasks:\n")
         for identity in user_reduced:
             self._show_task_name_description(builder, identity)
-        return Task.Result(args, message=builder.str())
+        return TaskResult(args, message=builder.str())
 
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
@@ -110,31 +110,31 @@ class Help(Task):
             "TASK ACTION" if has_action else "TASK", SB.Color.CYAN, True
         ).append(" [options]\n", SB.Color.MAGENTA)
 
-    def _show_task_description(self, builder: SB, identity: Task.Identity):
+    def _show_task_description(self, builder: SB, identity: TaskIdentity):
         builder.append("\nTask:\t").append(
             identity.id, SB.Color.CYAN, True, end="\n"
         ).append(identity.name, end="\n")
         pass
 
-    def _show_task_help(self, builder: SB, identity: Task.Identity, task: Task):
+    def _show_task_help(self, builder: SB, identity: TaskIdentity, task: Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda task: filter(lambda x: not x.hidden, task.identity.options),
+            lambda task: filter(lambda x: not x.hidden, TaskIdentity.options),
             TaskResolver.resolve(identity.creator()),
         )
         options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
         self._show_task_options(builder, options)
 
-    def _show_task_name_description(self, builder: SB, identity: Task.Identity):
+    def _show_task_name_description(self, builder: SB, identity: TaskIdentity):
         builder.append("  ").append(identity.id, SB.Color.CYAN, True)
         if len(identity.id) < 8:
             builder.append(" " * (8 - len(identity.id)))
         builder.append("\t").append(identity.name, end="\n")
 
     def _show_task_options(
-        self, builder: SB, options: List[Task.Option], is_action: bool = False
+        self, builder: SB, options: List[Option], is_action: bool = False
     ):
         if len(options) <= 0:
             if is_action:
@@ -163,9 +163,9 @@ class Help(Task):
         pass
 
     def _show_task_help_with_actions(
-        self, builder: SB, identity: Task.Identity, task: Task
+        self, builder: SB, identity: TaskIdentity, task: Task
     ):
-        helper = _Ensure.type(task, HelpAction, "task")
+        helper = _Ensure.instance(task, HelpAction, "task")
         self._show_header(builder, True)
         self._show_task_description(builder, identity)
         builder.append("\nActions:\n")
@@ -174,20 +174,21 @@ class Help(Task):
             pass
         pass
 
-    def _show_task_actions(self, builder: SB, identity: Task.Identity, task: Task):
+    def _show_task_actions(self, builder: SB, identity: TaskIdentity, task: Task):
         self._show_task_name_description(builder, identity)
-        options: List[Task.Option] = _Iterable.flatten(
+        options: List[Option] = _Iterable.flatten(
             map(
-                lambda task: task.identity.options,
+                lambda task: TaskIdentity.options,
                 TaskResolver.resolve(task),
             )
         )
         self._show_task_options(builder, options)
         pass
 
+    @staticmethod
     def reduce_indexed_task_into_list(
-        tasks: Dict[str, Task.Identity]
-    ) -> List[Task.Identity]:
+        tasks: Dict[str, TaskIdentity]
+    ) -> List[TaskIdentity]:
         filtered = filter(lambda it: not it[0].startswith("-"), tasks.items())
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)

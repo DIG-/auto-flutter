@@ -4,12 +4,12 @@ from typing import Optional, Union
 from ...core.process import Process
 from ...core.string import SB
 from ...model.config import Config
-from ...model.task import Task
+from ...model.task import *
 from ._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
 
 
 class FirebaseCheck(Task):
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "-firebase-check", "Checking firebase-cli", [], lambda: FirebaseCheck()
     )
 
@@ -20,7 +20,7 @@ class FirebaseCheck(Task):
         self.__process: Optional[Process] = None
         self.__output: Union[None, bool, BaseException] = None
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         self.__process = Process.create(
             Config.firebase,
             arguments=[FIREBASE_DISABLE_INTERACTIVE_MODE.value, "--version"],
@@ -56,15 +56,15 @@ class FirebaseCheck(Task):
 
         output = self.__output
         if isinstance(output, BaseException):
-            return Task.Result(args, error=output, success=self._skip)
+            return TaskResult(args, error=output, success=self._skip)
         if process_killed:
-            return Task.Result(
+            return TaskResult(
                 args,
                 error=ChildProcessError("Firebase-cli process was killed"),
                 success=self._skip,
             )
         if output == False:
-            return Task.Result(
+            return TaskResult(
                 args,
                 error=RuntimeError(
                     "Firebase-cli command return with code #"
@@ -72,7 +72,7 @@ class FirebaseCheck(Task):
                 ),
                 success=self._skip,
             )
-        return Task.Result(args)
+        return TaskResult(args)
 
     def __run(self):
         self.__output = self.__process.try_run()

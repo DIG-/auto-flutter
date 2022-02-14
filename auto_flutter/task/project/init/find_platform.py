@@ -4,14 +4,14 @@ from ....core.os import OS
 from ....core.string import SB
 from ....core.utils import _Iterable
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 
 
 class FindPlatform(Task):
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Detecting project platforms"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
 
         self._print("    Detecting platform android")
@@ -32,7 +32,7 @@ class FindPlatform(Task):
                 project.platforms.append(Project.Platform.WEB)
 
         if len(project.platforms) <= 0:
-            return Task.Result(
+            return TaskResult(
                 args,
                 error=Warning("No platform was found"),
                 message=SB()
@@ -53,4 +53,4 @@ class FindPlatform(Task):
                 )
                 .str()
             )
-            return Task.Result(args)
+            return TaskResult(args)

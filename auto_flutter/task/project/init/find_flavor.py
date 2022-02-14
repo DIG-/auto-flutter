@@ -8,33 +8,33 @@ from ....core.session import Session
 from ....core.string import SB
 from ....model.platform import PlatformConfig, PlatformConfigFlavored
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 
 
 class FindFlavor(Task):
-    option_skip_idea = Task.Option(
+    option_skip_idea = Option(
         None,
         "skip-flavor-idea",
         "Skip algorithm to detect flavor from Idea Run config",
         False,
     )
-    option_skip_android = Task.Option(
+    option_skip_android = Option(
         None,
         "skip-flavor-android",
         "Skip algorithm to detect flavor using android data",
         False,
     )
-    option_skip_ios = Task.Option(
+    option_skip_ios = Option(
         None,
         "skip-flavor-ios",
         "Skip algorithm to detect flavor using ios data",
         False,
     )
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Detecting project flavors"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
         if not args.contains(FindFlavor.option_skip_idea):
             idea_run = Path(".run")
@@ -50,7 +50,7 @@ class FindFlavor(Task):
                             'Failed to process "{}": '.format(str(filename)), error
                         )
                 if self._check_flavor_success(project):
-                    return Task.Result(args)
+                    return TaskResult(args)
 
         if not args.contains(FindFlavor.option_skip_android):
             gradle = Path(
@@ -69,7 +69,7 @@ class FindFlavor(Task):
                 except BaseException as error:
                     self.print_error("Failed to extract flavor from android. ", error)
                 if self._check_flavor_success(project):
-                    return Task.Result(args)
+                    return TaskResult(args)
 
         if not args.contains(FindFlavor.option_skip_ios):
             if not Project.Platform.IOS in project.platforms:
@@ -90,7 +90,7 @@ class FindFlavor(Task):
             self._print(
                 "  No flavors were found. Maybe this project does not have flavor 🙂"
             )
-        return Task.Result(args, success=True)
+        return TaskResult(args, success=True)
 
     def print_error(self, message: str, error: BaseException):
         self._print(

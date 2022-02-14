@@ -7,26 +7,24 @@ from ._base import *
 
 class ConfigFirebase(_BaseConfigTask):
     __options = {
-        "add": Task.Option(
+        "add": Option(
             None, "set-app-id", "Set app id for platform and/or flavor", True
         ),
-        "remove": Task.Option(
+        "remove": Option(
             None, "remove-app-id", "Remove app id from platform and/or flavor"
         ),
-        "platform": Task.Option(
-            None, "platform", "Select platform to apply change", True
-        ),
-        "flavor": Task.Option(None, "flavor", "Select flavor to apply change", True),
+        "platform": Option(None, "platform", "Select platform to apply change", True),
+        "flavor": Option(None, "flavor", "Select flavor to apply change", True),
     }
 
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "firebase",
         "Update project firebase config",
         _Dict.flatten(__options),
         lambda: ConfigFirebase(),
     )
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
 
         platform: Project.Platform = _If.none(
@@ -79,4 +77,4 @@ class ConfigFirebase(_BaseConfigTask):
             ).add_extra(FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id)
 
         self._add_save_project()
-        return Task.Result(args, error=has_warning, success=True)
+        return TaskResult(args, error=has_warning, success=True)

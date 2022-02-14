@@ -8,5 +8,5 @@ from .task import Task
 
 class HelpAction(ABC):
     @abstractclassmethod
-    def actions(self) -> List[Task.Identity]:
+    def actions(self) -> List[TaskIdentity]:
         raise NotImplementedError()

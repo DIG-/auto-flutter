@@ -4,7 +4,7 @@ from typing import Deque, Iterable, Union
 
 from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
-from ...model.task import Task
+from ...model.task import *
 from ..string import SB
 from .printer import TaskPrinter
 from .resolver import TaskResolver
@@ -18,29 +18,29 @@ class __TaskManager:
         self._printer = TaskPrinter()
 
     def add(
-        self, tasks: Union[Task, Iterable[Task], Task.Identity, Iterable[Task.Identity]]
+        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
     ):
         if (
             not isinstance(tasks, Task)
-            and not isinstance(tasks, Task.Identity)
+            and not isinstance(tasks, TaskIdentity)
             and not isinstance(tasks, Iterable)
         ):
             raise TypeError(
-                "Field `tasks` must be instance of `Task` or `Task.Identity` or `Iterable` of both, but `{}` was received".format(
+                "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, but `{}` was received".format(
                     type(tasks)
                 )
             )
 
         self._task_stack.extend(TaskResolver.resolve(tasks))
 
-    def add_id(self, ids: Union[Task.ID, Iterable[Task.ID]]):
-        if isinstance(ids, Task.ID):
+    def add_id(self, ids: Union[TaskId, Iterable[TaskId]]):
+        if isinstance(ids, TaskId):
             self.add(self.__find_task(ids))
         elif isinstance(ids, Iterable):
             self.add(map(lambda id: self.__find_task(id), ids))
         else:
             raise TypeError(
-                "Field `ids` must be instance of `Task.ID` or `Iterable[Task.ID]`, but `{}` was received".format(
+                "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, but `{}` was received".format(
                     type(ids)
                 )
             )
@@ -51,8 +51,8 @@ class __TaskManager:
     def stop_printer(self):
         self._printer.stop()
 
-    def __find_task(self, id: Task.ID) -> Task.Identity:
-        _Ensure.type(id, Task.ID, "id")
+    def __find_task(self, id: TaskId) -> TaskIdentity:
+        _Ensure.type(id, TaskId, "id")
         identity = TaskResolver.find_task(id)
         if identity is None:
             raise TaskNotFound(id)
@@ -63,7 +63,7 @@ class __TaskManager:
         self._printer.write(message)
 
     def execute(self) -> bool:
-        args = Task.Args()
+        args = Args()
 
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
@@ -75,9 +75,9 @@ class __TaskManager:
             try:
                 output = current.execute(args)
             except BaseException as error:
-                output = Task.Result(args, error, success=False)
-            if not isinstance(output, Task.Result):
-                output = Task.Result(
+                output = TaskResult(args, error, success=False)
+            if not isinstance(output, TaskResult):
+                output = TaskResult(
                     args,
                     AssertionError(
                         "Task {} returned without result".format(type(current).__name__)

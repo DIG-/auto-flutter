@@ -1,25 +1,17 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractclassmethod
+from abc import ABC, abstractclassmethod, abstractmethod
 from typing import Iterable, List, Union
 
 from ..argument import Args
 from .id import TaskId
-from .identity import Option, TaskIdentity
+from .identity import TaskIdentity
 from .result import TaskResult
 
 __all__ = ["Task", "List"]
 
 
-class Task(metaclass=ABCMeta):
-    ## Start - Alias to reduce import
-    ID = TaskId
-    Args = Args
-    Result = TaskResult
-    Identity = TaskIdentity
-    Option = Option
-    ## End - alias
-
+class Task(ABC):
     identity: TaskIdentity
 
     def require(self) -> List[TaskId]:
@@ -45,7 +37,7 @@ class Task(metaclass=ABCMeta):
 
         TaskManager.add_id(ids)
 
-    @abstractclassmethod
+    @abstractmethod
     def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args

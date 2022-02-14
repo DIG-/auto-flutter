@@ -7,21 +7,19 @@ from ._base import *
 
 
 class ConfigPlatform(_BaseConfigTask):
-    option_add = Task.Option(None, "add", "Add platform support to project", True)
-    option_rem = Task.Option(
-        None, "remove", "Remove platform support from project", True
-    )
-    identity = Task.Identity(
+    option_add = Option(None, "add", "Add platform support to project", True)
+    option_rem = Option(None, "remove", "Remove platform support from project", True)
+    identity = TaskIdentity(
         "platform",
         "Manage platform support for project",
         [option_add, option_rem],
         lambda: ConfigPlatform(),
     )
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Updating project platform support"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
         had_change = False
 
@@ -30,12 +28,12 @@ class ConfigPlatform(_BaseConfigTask):
             self._print("    Adding platform {}".format(platform_add))
             parsed_add = ConfigPlatform.__parse_platform(platform_add)
             if parsed_add is None:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=ValueError("Unrecognized platform `{}`".format(platform_add)),
                 )
             if parsed_add in project.platforms:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=Warning(
                         "Project already had platform `{}`".format(platform_add)
@@ -53,12 +51,12 @@ class ConfigPlatform(_BaseConfigTask):
             self._print("    Removing platform {}".format(platform_rem))
             parsed_rem = ConfigPlatform.__parse_platform(platform_rem)
             if parsed_rem is None:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=ValueError("Unrecognized platform `{}`".format(platform_rem)),
                 )
             if not parsed_rem in project.platforms:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=Warning(
                         "Project do not have platform `{}`".format(platform_rem)
@@ -74,12 +72,12 @@ class ConfigPlatform(_BaseConfigTask):
                 project.platform_config.pop(parsed_rem)
 
         if not had_change:
-            return Task.Result(
+            return TaskResult(
                 args, error=AssertionError("No change was made"), success=True
             )
 
         self._add_save_project()
-        return Task.Result(args)
+        return TaskResult(args)
 
     def __parse_platform(platform: str) -> Optional[Project.Platform]:
         _Ensure.instance(platform, str, "platform")

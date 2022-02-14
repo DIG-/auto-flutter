@@ -5,37 +5,37 @@ from typing import List, Optional
 from ..core.session import Session
 from ..core.utils import _Dict, _Iterable
 from ..model.argument import Arg, OptionAll
-from ..model.task import Task
+from ..model.task import *
 from .help_stub import HelpStub
 
 
 class ParseOptions(Task):
-    option_stack_trace = Task.Option(
+    option_stack_trace = Option(
         None, "aflutter-stack-trace", "Show stacktrace of task output"
     )
     __options = {
-        "stack-trace": Task.Option(
+        "stack-trace": Option(
             None,
             "aflutter-stack-trace",
             "Show stack trace of task output error",
             False,
             True,
         ),
-        "help": Task.Option("h", "help", "Show help of task", False, True),
+        "help": Option("h", "help", "Show help of task", False, True),
     }
 
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "-parse-options",
         "Parsing arguments",
         _Dict.flatten(__options),
         lambda: ParseOptions(),
     )
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         # Fill options list with current tasks
         from ..core.task.manager import TaskManager
 
-        options: List[Task.Identity.Option] = self.identity.options.copy()
+        options: List[Option] = self.identity.options.copy()
         for task in TaskManager._task_stack:
             options.extend(task.identity.options)
         skip = (
@@ -53,7 +53,7 @@ class ParseOptions(Task):
                     TaskManager._task_stack.clear()
                     TaskManager.add(HelpStub(sys_argv[1]))
                 encoder.add(arg)
-            return Task.Result(args)
+            return TaskResult(args)
 
         short = ""
         long: List[str] = []
@@ -65,11 +65,11 @@ class ParseOptions(Task):
         try:
             opts, positional = gnu_getopt(sys_argv[2:], short, long)
         except GetoptError as error:
-            return Task.Result(args, error, success=False)
+            return TaskResult(args, error, success=False)
 
         for opt, value in opts:
             opt_strip = opt.lstrip("-")
-            found: Optional[Task.Identity.Option] = None
+            found: Optional[Option] = None
             if len(opt_strip) <= 2:
                 found = _Iterable.first_or_none(
                     options, lambda option: option.short == opt_strip
@@ -100,4 +100,4 @@ class ParseOptions(Task):
             TaskManager._task_stack.clear()
             TaskManager.add(HelpStub(sys_argv[1]))
 
-        return Task.Result(args)
+        return TaskResult(args)
