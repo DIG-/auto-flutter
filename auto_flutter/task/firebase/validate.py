@@ -29,7 +29,7 @@ class FirebaseBuildValidate(Task):
         )
         project = Project.current
         config = MergePlatformConfigFlavored(
-            project.get_platform_config(Project.Platform.DEFAULT),
+            project.get_platform_config(Platform.DEFAULT),
             project.get_platform_config(build_type.platform),
         )
         id = config.get_extra(flavor, FIREBASE_PROJECT_APP_ID_KEY.value)

@@ -27,12 +27,12 @@ class ConfigFirebase(_BaseConfigTask):
     def execute(self, args: Args) -> TaskResult:
         project = Project.current
 
-        platform: Project.Platform = _If.none(
+        platform: Platform = _If.none(
             args.get_value(self.__options["platform"]),
-            lambda: Project.Platform.DEFAULT,
-            _Enum.parse(Project.Platform),
+            lambda: Platform.DEFAULT,
+            _Enum.parse(Platform),
         )
-        if platform != Project.Platform.DEFAULT and platform not in project.platforms:
+        if platform != Platform.DEFAULT and platform not in project.platforms:
             raise ValueError(
                 "Project does not support platform {}".format(str(platform))
             )

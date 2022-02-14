@@ -2,7 +2,7 @@ from typing import Optional
 
 from ...core.json import _JsonDecode
 from ...core.utils import _Ensure
-from ...model.platform import PlatformConfigFlavored
+from ...model.platform import Platform, PlatformConfigFlavored
 from ._base import *
 
 
@@ -79,6 +79,6 @@ class ConfigPlatform(_BaseConfigTask):
         self._add_save_project()
         return TaskResult(args)
 
-    def __parse_platform(platform: str) -> Optional[Project.Platform]:
+    def __parse_platform(platform: str) -> Optional[Platform]:
         _Ensure.instance(platform, str, "platform")
-        return _JsonDecode.decode(platform, Project.Platform)
+        return _JsonDecode.decode(platform, Platform)

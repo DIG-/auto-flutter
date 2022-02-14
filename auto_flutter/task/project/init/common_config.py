@@ -11,14 +11,14 @@ class CommonConfig(Task):
 
     def execute(self, args: Args) -> TaskResult:
         project = Project.current
-        if Project.Platform.ANDROID in project.platforms:
+        if Platform.ANDROID in project.platforms:
             self._print("    Apply common config for android")
             self._print("    Disabling gradle daemon in build")
-            if not Project.Platform.ANDROID in project.platform_config:
+            if not Platform.ANDROID in project.platform_config:
                 project.platform_config[
-                    Project.Platform.ANDROID
+                    Platform.ANDROID
                 ] = PlatformConfigFlavored()
-            config = project.platform_config[Project.Platform.ANDROID]
+            config = project.platform_config[Platform.ANDROID]
             config._append_build_param("--no-android-gradle-daemon")
 
             if len(project.flavors) > 0:
@@ -34,7 +34,7 @@ class CommonConfig(Task):
                     BuildType.BUNDLE: "build/app/outputs/bundle/${arg:build_type}/app-${arg:build_type}.aab",
                 }
 
-        if Project.Platform.IOS in project.platforms:
+        if Platform.IOS in project.platforms:
             self._print("    Apply common config for ios")
             self._print(
                 SB()
@@ -45,7 +45,7 @@ class CommonConfig(Task):
                 .str()
             )
 
-        if Project.Platform.IOS in project.platforms:
+        if Platform.IOS in project.platforms:
             self._print("    Apply common config for web")
             self._print(
                 SB()

@@ -6,7 +6,7 @@ from xml.etree.ElementTree import parse as xml_parse
 from ....core.os import OS
 from ....core.session import Session
 from ....core.string import SB
-from ....model.platform import PlatformConfig, PlatformConfigFlavored
+from ....model.platform import Platform, PlatformConfig, PlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import *
 
@@ -56,7 +56,7 @@ class FindFlavor(Task):
             gradle = Path(
                 OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle"))
             )
-            if not Project.Platform.ANDROID in project.platforms:
+            if not Platform.ANDROID in project.platforms:
                 self._print(
                     "    Skip android analysis, since project does not support android"
                 )
@@ -72,7 +72,7 @@ class FindFlavor(Task):
                     return TaskResult(args)
 
         if not args.contains(FindFlavor.option_skip_ios):
-            if not Project.Platform.IOS in project.platforms:
+            if not Platform.IOS in project.platforms:
                 self._print("    Skip ios analysis, since project does not support ios")
             else:
                 self._print("    Trying to detect flavor from ios project")
@@ -114,7 +114,7 @@ class FindFlavor(Task):
     def _append_flavor(
         self,
         project: Project,
-        platform: Project.Platform,
+        platform: Platform,
         flavor: str,
         build_param: Optional[List[str]],
     ):
@@ -182,7 +182,7 @@ class FindFlavor(Task):
                 build_param = value.split()
 
         if not flavor is None:
-            self._append_flavor(project, Project.Platform.DEFAULT, flavor, build_param)
+            self._append_flavor(project, Platform.DEFAULT, flavor, build_param)
 
     def _extract_from_gradle(self, project: Project, filename: Path):
         file = open(filename, "r")
@@ -218,7 +218,7 @@ class FindFlavor(Task):
             elif i == "{":
                 count += 1
                 if count == 1:
-                    self._append_flavor(project, Project.Platform.ANDROID, buffer, None)
+                    self._append_flavor(project, Platform.ANDROID, buffer, None)
                     buffer = ""
                 continue
             elif i == "}":

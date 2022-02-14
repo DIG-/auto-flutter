@@ -17,19 +17,19 @@ class FindPlatform(Task):
         self._print("    Detecting platform android")
         path = PurePosixPath("android/build.gradle")
         if Path(OS.posix_to_machine_path(path)).exists():
-            project.platforms.append(Project.Platform.ANDROID)
+            project.platforms.append(Platform.ANDROID)
 
         self._print("    Detecting platform ios")
         path = PurePosixPath("ios/Runner.xcodeproj")
         if Path(OS.posix_to_machine_path(path)).exists():
-            project.platforms.append(Project.Platform.IOS)
+            project.platforms.append(Platform.IOS)
 
         self._print("    Detecting platform web")
         path = PurePosixPath("web")
         real_path = Path(OS.posix_to_machine_path(path))
         if real_path.exists() and real_path.is_dir():
             if _Iterable.count(real_path.glob("*")) > 2:
-                project.platforms.append(Project.Platform.WEB)
+                project.platforms.append(Platform.WEB)
 
         if len(project.platforms) <= 0:
             return TaskResult(
