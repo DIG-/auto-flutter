@@ -3,6 +3,7 @@ from pathlib import Path, PurePosixPath
 from ....core.os import OS
 from ....core.string import SB
 from ....core.utils import _Iterable
+from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
 
