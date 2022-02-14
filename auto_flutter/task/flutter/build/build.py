@@ -1,17 +1,15 @@
 from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
-from auto_flutter.model.error import SilentWarning
-from auto_flutter.model.platform.run_type import RunType
-
 from ....core.os import OS
 from ....core.string import SB, SF
 from ....model.build import BuildType
-from ....model.platform import Platform, PlatformConfigFlavored
+from ....model.error import SilentWarning
+from ....model.platform import Platform, PlatformConfigFlavored, RunType
 from ....model.project import Flavor, Project
 from ....model.task import *
-from .. import Flutter
 from .._const import FLUTTER_DISABLE_VERSION_CHECK
+from ..exec import Flutter
 
 
 class FlutterBuild(Flutter):
@@ -90,7 +88,8 @@ class FlutterBuild(Flutter):
             else:
                 output = args.get_value("output")
                 if (
-                    output.find(
+                    output is None
+                    or output.find(
                         "This issue appears to be https://github.com/flutter/flutter/issues/58247"
                     )
                     < 0
@@ -103,11 +102,8 @@ class FlutterBuild(Flutter):
                     others_flavors = filter(
                         lambda x: x != self.flavor, self.project.flavors
                     )
-                    from ....core.task import TaskManager
-
-                    manager = TaskManager
                     ## Add to rebuild self task
-                    manager.add(
+                    self._append_task(
                         FlutterBuild(
                             project=self.project,
                             platform=self.platform,
@@ -120,7 +116,7 @@ class FlutterBuild(Flutter):
                         )
                     )
                     for flavor in others_flavors:
-                        manager.add(
+                        self._append_task(
                             FlutterBuild(
                                 project=self.project,
                                 platform=self.platform,
@@ -174,7 +170,7 @@ class FlutterBuild(Flutter):
             output_file,
             args,
             {
-                "flavor": self.flavor,
+                "flavor": "" if self.flavor is None else self.flavor,
                 "build_type": "debug" if self.debug else "release",
                 "platform": self.platform.value,
             },
