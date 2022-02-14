@@ -8,7 +8,7 @@ from .type import Json
 
 
 class _JsonDecode(ABC):
-    T = TypeVar("T", bound=Union[str, Serializable, Enum])
+    T = TypeVar("T", bound=Union[str, Serializable, Enum, bool])
     K = TypeVar("K", bound=Union[str, Enum])
     Decoder = Callable[[Json], Optional[T]]
     KDecoder = Callable[[str], Optional[K]]
