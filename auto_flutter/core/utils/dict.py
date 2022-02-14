@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Callable, Dict, List, Optional, TypeVar
+from typing import Callable, Dict, List, Mapping, Optional, TypeVar
 
 
 class _Dict(ABC):
@@ -7,11 +7,11 @@ class _Dict(ABC):
     V = TypeVar("V")
 
     @staticmethod
-    def get_or_none(input: Dict[K, V], key: K) -> Optional[V]:
+    def get_or_none(input: Mapping[K, V], key: K) -> Optional[V]:
         return None if not key in input else input[key]
 
     @staticmethod
-    def get_or_default(input: Dict[K, V], key: K, fallback: Callable[[], V]) -> V:
+    def get_or_default(input: Mapping[K, V], key: K, fallback: Callable[[], V]) -> V:
         return fallback() if not key in input else input[key]
 
     @staticmethod
@@ -38,5 +38,5 @@ class _Dict(ABC):
         return c
 
     @staticmethod
-    def flatten(input: Dict[K, V]) -> List[V]:
+    def flatten(input: Mapping[K, V]) -> List[V]:
         return list(map(lambda x: x[1], input.items()))
