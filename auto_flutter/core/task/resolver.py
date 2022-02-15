@@ -84,8 +84,6 @@ class TaskResolver(ABC):
             return user_task[id]
         return None
 
-    class __TaskIdentityWrapper:
-        def __new__(
-            cls: type[TaskResolver.__TaskIdentityWrapper], task: Task
-        ) -> TaskIdentity:
-            return TaskIdentity("-#-#-", "", [], lambda: task, True)
+    class __TaskIdentityWrapper(TaskIdentity):
+        def __init__(self, task: Task) -> None:
+            super().__init__("-#-#-", "", [], lambda: task, True)
