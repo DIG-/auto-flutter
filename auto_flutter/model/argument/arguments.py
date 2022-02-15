@@ -1,6 +1,4 @@
-import re
-from itertools import chain
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 from .argument import Arg
 from .option import Option
@@ -16,10 +14,6 @@ class Args(Dict[str, Arg]):
     def add_arg(self, key: str, value: Optional[str] = None):
         self.add(Arg("--" + key, value))
 
-    def to_command_arg(self) -> List[str]:
-        mapped = map(lambda x: x[1], self.items())
-        return list(filter(None.__ne__, chain(*mapped)))
-
     def contains(self, option: Union[str, Option]) -> bool:
         return Args.__get_key(option) in self
 
@@ -31,8 +25,9 @@ class Args(Dict[str, Arg]):
             return self[key].argument
         return self[key].value
 
+    @staticmethod
     def __get_key(option: Union[str, Option]) -> str:
-        key: str = None
+        key: Optional[str] = None
         if isinstance(option, str):
             key = option
         elif isinstance(option, Option):

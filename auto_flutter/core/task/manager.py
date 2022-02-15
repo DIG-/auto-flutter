@@ -1,50 +1,69 @@
 from __future__ import annotations
 
-from typing import Deque
+from typing import Deque, Iterable, Union
 
 from ...core.utils import _Ensure
-from ...model.task import Task
+from ...model.error import TaskNotFound
+from ...model.task import *
 from ..string import SB
 from .printer import TaskPrinter
 from .resolver import TaskResolver
 
+__all__ = ["TaskManager"]
 
-class TaskManager:
-    __instance: TaskManager = None
 
-    def instance() -> TaskManager:
-        if TaskManager.__instance is None:
-            TaskManager.__instance = TaskManager()
-        return TaskManager.__instance
-
+class __TaskManager:
     def __init__(self) -> None:
         self._task_stack: Deque[Task] = Deque()
         self._printer = TaskPrinter()
 
-    def add(self, task: Task):
-        _Ensure.type(task, Task, "task")
-        self._task_stack.extend(TaskResolver.resolve(task))
-
-    def add_id(self, task_id: Task.ID):
-        _Ensure.type(task_id, str, "task_id")
-        identity = TaskResolver.find_task(task_id)
-        if identity is None:
-            raise LookupError(
-                SB()
-                .append("Task ")
-                .append(task_id, SB.Color.CYAN, True)
-                .append(" not found")
-                .str()
+    def add(
+        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
+    ):
+        if (
+            not isinstance(tasks, Task)
+            and not isinstance(tasks, TaskIdentity)
+            and not isinstance(tasks, Iterable)
+        ):
+            raise TypeError(
+                "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, but `{}` was received".format(
+                    type(tasks)
+                )
             )
-        self.add(identity.creator())
+
+        self._task_stack.extend(TaskResolver.resolve(tasks))
+
+    def add_id(self, ids: Union[TaskId, Iterable[TaskId]]):
+        if isinstance(ids, TaskId):
+            self.add(self.__find_task(ids))
+        elif isinstance(ids, Iterable):
+            self.add(map(lambda id: self.__find_task(id), ids))
+        else:
+            raise TypeError(
+                "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, but `{}` was received".format(
+                    type(ids)
+                )
+            )
+
+    def start_printer(self):
+        self._printer.start()
+
+    def stop_printer(self):
+        self._printer.stop()
+
+    def __find_task(self, id: TaskId) -> TaskIdentity:
+        _Ensure.type(id, TaskId, "id")
+        identity = TaskResolver.find_task(id)
+        if identity is None:
+            raise TaskNotFound(id)
+        return identity
 
     def print(self, message: str):
         _Ensure.type(message, str, "message")
         self._printer.write(message)
 
     def execute(self) -> bool:
-        args = Task.Args()
-        self._printer.start()
+        args = Args()
 
         while len(self._task_stack) > 0:
             current = self._task_stack.pop()
@@ -56,14 +75,23 @@ class TaskManager:
             try:
                 output = current.execute(args)
             except BaseException as error:
-                output = Task.Result(args, error, success=False)
+                output = TaskResult(args, error, success=False)
+            if not isinstance(output, TaskResult):
+                output = TaskResult(
+                    args,
+                    AssertionError(
+                        "Task {} returned without result".format(type(current).__name__)
+                    ),
+                    success=False,
+                )
 
             self._printer.set_result(output)
 
             if not output.success:
-                self._printer.stop()
                 return False
             args = output.args
 
-        self._printer.stop()
         return True
+
+
+TaskManager = __TaskManager()

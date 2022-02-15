@@ -11,6 +11,7 @@ class _Enum(ABC):
     E = TypeVar("E", bound=Enum)
     V = TypeVar("V")
 
+    @staticmethod
     def parse_value(
         enum: Type[E], value: V, field: Callable[[E], V] = lambda x: x.value
     ) -> E:
@@ -21,6 +22,7 @@ class _Enum(ABC):
             )
         return output
 
+    @staticmethod
     def parse(
         enum: Type[E], field: Callable[[E], V] = lambda x: x.value
     ) -> Callable[[V], E]:

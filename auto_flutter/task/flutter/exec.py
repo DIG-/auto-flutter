@@ -4,14 +4,14 @@ from ...core.process.process import Process
 from ...core.string import SB
 from ...model.argument import Arg, OptionAll
 from ...model.config import Config
-from ...model.task import Task
+from ...model.task import *
 from ..options import ParseOptions
 from ..project.read import ProjectRead
 from ._const import FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "exec", "Run flutter command", [OptionAll()], lambda: Flutter()
     )
 
@@ -35,17 +35,17 @@ class Flutter(Task):
         self._output_end: bool = output_end
         self._output_arg: bool = output_arg
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         if self._project:
             return [ParseOptions.identity.id, ProjectRead.identity.id]
         return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
 
-    def execute(self, args: Task.Args) -> Task.Result:
-        flutter = Config.instance().flutter
-        writer = None if not self._output_running else lambda x: self.print(x)
+    def execute(self, args: Args) -> TaskResult:
+        flutter = Config.flutter
+        writer = None if not self._output_running else lambda x: self._print(x)
 
         if self._output_end and self._output_running:
-            self.print(
+            self._print(
                 SB()
                 .append("[!] Running command will show output twice", SB.Color.YELLOW)
                 .str()
@@ -53,23 +53,23 @@ class Flutter(Task):
 
         if not self._command is None and len(self._command) > 0:
             if self._command_args:
-                self._command.extend(args.to_command_arg())
+                self._command.extend(OptionAll.ArgsDecode(args).all())
             p = Process.create(flutter, arguments=self._command, writer=writer)
         else:
             arguments = [FLUTTER_DISABLE_VERSION_CHECK]
-            arguments.extend(args.to_command_arg())
+            arguments.extend(OptionAll.ArgsDecode(args).all())
             p = Process.create(flutter, arguments=arguments, writer=writer)
         output = p.try_run()
 
         if self._output_end:
-            self.print(p.output)
+            self._print(p.output)
 
         if self._output_arg:
             args.add_arg("output", p.output)
 
         if isinstance(output, BaseException):
-            return Task.Result(args, error=output)
-        return Task.Result(
+            return TaskResult(args, error=output)
+        return TaskResult(
             args,
             success=output,
         )

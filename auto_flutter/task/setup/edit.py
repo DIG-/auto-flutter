@@ -1,47 +1,45 @@
-from email import message
 from enum import Enum, auto
 from os import X_OK as os_X_OK
 from os import access as os_access
 from os import environ as os_environ
 from pathlib import Path
-from pprint import pprint
 from typing import List, Optional, Tuple
 
 from ...core.os import OS
 from ...core.string import SB
 from ...model.config import Config
-from ...model.task import Task
+from ...model.task import *
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
 
 
 class SetupEdit(Task):
-    option_flutter = Task.Option(
+    option_flutter = Option(
         None,
         "flutter",
         "Flutter command, can be absolute path if it is not in PATH",
         True,
     )
-    option_firebase = Task.Option(
+    option_firebase = Option(
         None,
         "firebase-cli",
         "Firebase cli command, can be absolute path if it is not in PATH",
         True,
     )
-    option_firebase_standalone = Task.Option(
+    option_firebase_standalone = Option(
         None,
         "firebase-standalone",
         "When firebase cli is standalone version",
     )
-    option_firebase_non_standalone = Task.Option(
+    option_firebase_non_standalone = Option(
         None,
         "no-firebase-standalone",
         "When firebase cli is not standalone version",
     )
-    option_show = Task.Option(None, "show", "Show current config")
-    option_check = Task.Option(None, "check", "Check current config")
+    option_show = Option(None, "show", "Show current config")
+    option_check = Option(None, "check", "Check current config")
 
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "-setup-edit",
         "",
         [
@@ -55,36 +53,35 @@ class SetupEdit(Task):
         lambda: SetupEdit(),
     )
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         if args.contains(self.option_show) or args.contains(self.option_check):
             return ""
         return "Editing config"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         if args.contains(self.option_show) or args.contains(self.option_check):
-            return Task.Result(args)  # Nothing to edit in show mode
+            return TaskResult(args)  # Nothing to edit in show mode
 
-        from ...core.task.manager import TaskManager
-
-        manager = TaskManager.instance()
+        error: BaseException
+        message: Optional[str] = None
 
         if args.contains(self.option_flutter):
             flutter = args.get_value(self.option_flutter)
             if flutter is None or len(flutter) == 0:
-                return Task.Result(
-                    args, ValueError("Require valid path for flutter"), False
+                return TaskResult(
+                    args, ValueError("Require valid path for flutter"), success=False
                 )
             found = SetupEdit.__parse_path(flutter)
             if found[0] in (
                 SetupEdit.__PathResult.NOT_FOUND,
                 SetupEdit.__PathResult.NOT_EXECUTABLE,
             ):
-                error: BaseException = FileNotFoundError(
+                error = FileNotFoundError(
                     'Can not find flutter in "{}"'.format(flutter)
                 )
                 if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
                     error = FileNotFoundError('Not executable in "{}"'.format(flutter))
-                message: Optional[str] = None
+                message = None
                 if not found[1] is None:
                     message = (
                         SB()
@@ -92,36 +89,38 @@ class SetupEdit(Task):
                         .append(str(found[1]), SB.Color.YELLOW, True)
                         .str()
                     )
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=error,
                     message=message,
                     success=False,
                 )
             if found[1] is None:
-                return Task.Result(
+                return TaskResult(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.instance().flutter = OS.machine_to_posix_path(found[1])
-            manager.add(FlutterCheck(skip_on_failure=True))
+            Config.flutter = OS.machine_to_posix_path(found[1])
+            self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
             firebase = args.get_value(self.option_firebase)
             if firebase is None or len(firebase) == 0:
-                return Task.Result(
-                    args, ValueError("Require valid path for firebase-cli"), False
+                return TaskResult(
+                    args,
+                    ValueError("Require valid path for firebase-cli"),
+                    success=False,
                 )
             found = SetupEdit.__parse_path(firebase)
             if found[0] in (
                 SetupEdit.__PathResult.NOT_FOUND,
                 SetupEdit.__PathResult.NOT_EXECUTABLE,
             ):
-                error: BaseException = FileNotFoundError(
+                error = FileNotFoundError(
                     'Can not find firebase-cli in "{}"'.format(firebase)
                 )
                 if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
                     error = FileNotFoundError('Not executable in "{}"'.format(firebase))
-                message: Optional[str] = None
+                message = None
                 if not found[1] is None:
                     message = (
                         SB()
@@ -129,25 +128,25 @@ class SetupEdit(Task):
                         .append(str(found[1]), SB.Color.YELLOW, True)
                         .str()
                     )
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=error,
                     message=message,
                     success=False,
                 )
             if found[1] is None:
-                return Task.Result(
+                return TaskResult(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.instance().firebase = OS.machine_to_posix_path(found[1])
-            manager.add(FirebaseCheck(skip_on_failure=True))
+            Config.firebase = OS.machine_to_posix_path(found[1])
+            self._append_task(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
-            Config.instance().firebase_standalone = True
+            Config.firebase_standalone = True
         elif args.contains(self.option_firebase_non_standalone):
-            Config.instance().firebase_standalone = False
+            Config.firebase_standalone = False
 
-        return Task.Result(args)
+        return TaskResult(args)
 
     class __PathResult(Enum):
         FOUND = auto()
@@ -156,6 +155,7 @@ class SetupEdit(Task):
 
     __FindResult = Tuple[__PathResult, Optional[Path]]
 
+    @staticmethod
     def __parse_path(initial: str) -> __FindResult:
         path: Path = Path(initial)
         if path.is_absolute():
@@ -171,6 +171,7 @@ class SetupEdit(Task):
             return (SetupEdit.__PathResult.FOUND, path)
         return SetupEdit.__check_if_executable(path.resolve())
 
+    @staticmethod
     def __check_if_executable(path: Path) -> __FindResult:
         if OS.current() == OS.WINDOWS:
             if path.suffix.lower() in (".exe", ".bat", ".cmd"):
@@ -191,16 +192,18 @@ class SetupEdit(Task):
             return (SetupEdit.__PathResult.FOUND, path)
         return (SetupEdit.__PathResult.NOT_EXECUTABLE, path)
 
+    @staticmethod
     def __check_if_in_sys_path(path: Path) -> bool:
         for node in SetupEdit.__get_environ_path():
             current: Path = Path(node)
             if not current.exists():
                 continue
-            current += path
+            current /= path
             if current.exists():
                 return True
         return False
 
+    @staticmethod
     def __get_environ_path() -> List[str]:
         path: Optional[str] = None
         if "PATH" in os_environ:

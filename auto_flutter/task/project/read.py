@@ -2,23 +2,33 @@ from json import load as json_load
 
 from ...core.string import SB
 from ...model.project import Project
-from ...model.task import Task
+from ...model.task import *
+from .inport import ProjectTaskImport
 
 
 class ProjectRead(Task):
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "-project-read", "Reading project file", [], lambda: ProjectRead(False)
     )
 
-    identity_skip = Task.Identity(
+    identity_skip = TaskIdentity(
         "-project-read-skip", "Reading project file", [], lambda: ProjectRead(True)
     )
 
+    _warn_if_fail: bool
+
     def __init__(self, warn_if_fail: bool) -> None:
         super().__init__()
-        self.warn_if_fail: bool = warn_if_fail
+        self._warn_if_fail = warn_if_fail
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def describe(self, args: Args) -> str:
+        if not Project.current is None:
+            return ""
+        return super().describe(args)
+
+    def execute(self, args: Args) -> TaskResult:
+        if not Project.current is None:
+            return TaskResult(args)
         try:
             file = open("aflutter.json", "r")
         except BaseException as error:
@@ -40,11 +50,9 @@ class ProjectRead(Task):
             return self.__return_error(args, error)
 
         if not Project.current.tasks is None:
-            self.print(
-                SB().append("Custom task not implemented yet", SB.Color.YELLOW).str()
-            )
+            self._append_task(ProjectTaskImport())
 
-        return Task.Result(args)
+        return TaskResult(args)
 
-    def __return_error(self, args: Task.Args, error: BaseException) -> Task.Result:
-        return Task.Result(args, error, success=self.warn_if_fail)
+    def __return_error(self, args: Args, error: BaseException) -> TaskResult:
+        return TaskResult(args, error, success=self._warn_if_fail)

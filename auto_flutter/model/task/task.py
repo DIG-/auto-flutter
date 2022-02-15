@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractclassmethod
-from typing import List
+from abc import ABC, abstractclassmethod, abstractmethod
+from typing import Iterable, List, Optional, Union
 
 from ..argument import Args
 from .id import TaskId
@@ -11,30 +11,36 @@ from .result import TaskResult
 __all__ = ["Task", "List"]
 
 
-class Task(metaclass=ABCMeta):
-    ## Start - Alias to reduce import
-    ID = TaskId
-    Args = Args
-    Result = TaskResult
-    Identity = TaskIdentity
-    Option = TaskIdentity.Option
-    ## End - alias
+class Task(ABC):
+    identity: TaskIdentity
 
-    identity: Identity = None
-
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return []
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return self.identity.name
 
-    def print(self, message: str):
+    def _print(self, message: Optional[str]) -> None:
+        if message is None:
+            return
         from ...core.task.manager import TaskManager
 
-        TaskManager.instance().print(message)
+        TaskManager.print(message)
 
-    @abstractclassmethod
-    def execute(self, args: Task.Args) -> Task.Result:
+    def _append_task(
+        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
+    ) -> None:
+        from ...core.task.manager import TaskManager
+
+        TaskManager.add(tasks)
+
+    def _append_task_id(self, ids: Union[TaskId, Iterable[TaskId]]) -> None:
+        from ...core.task.manager import TaskManager
+
+        TaskManager.add_id(ids)
+
+    @abstractmethod
+    def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args
         raise NotImplementedError

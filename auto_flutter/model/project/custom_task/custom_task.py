@@ -1,17 +1,15 @@
+from __future__ import annotations
+
 from typing import List, Optional
-from ..model._serializable import Serializable
-from ..model.task import TaskId
-from ..model.custom_task_type import CustomTaskType
-from ..model.custom_task_content import CustomTaskContent
-from ..core.json import _JsonDecode, _JsonEncode
-from ..core.utils import _Ensure
+
+from ....core.json import *
+from ....core.utils import _Ensure
+from ...task import TaskId
+from .content import CustomTaskContent
+from .type import CustomTaskType
 
 
 class CustomTask(Serializable["CustomTask"]):
-    ID = TaskId
-    Type = CustomTaskType
-    Content = CustomTaskContent
-
     def __init__(
         self,
         id: TaskId,
@@ -21,13 +19,13 @@ class CustomTask(Serializable["CustomTask"]):
         content: Optional[CustomTaskContent] = None,
     ) -> None:
         super().__init__()
-        self.id: TaskId = _Ensure.not_none(id, "id")
-        self.name: str = _Ensure.not_none(name, "name")
-        self.type: CustomTaskType = _Ensure.not_none(type, "type")
+        self.id: TaskId = _Ensure.instance(id, TaskId, "id")
+        self.name: str = _Ensure.instance(name, str, "name")
+        self.type: CustomTaskType = _Ensure.instance(type, CustomTaskType, "type")
         self.require: Optional[List[str]] = require
         self.content: Optional[CustomTaskContent] = content
 
-    def to_json(self) -> Serializable.Json:
+    def to_json(self) -> Json:
         return {
             "id": self.id,
             "name": self.name,
@@ -36,7 +34,8 @@ class CustomTask(Serializable["CustomTask"]):
             "content": _JsonEncode.encode_optional(self.content),
         }
 
-    def from_json(json: Serializable.Json) -> Optional["CustomTask"]:
+    @staticmethod
+    def from_json(json: Json) -> Optional[CustomTask]:
         if not isinstance(json, dict):
             return None
 
@@ -59,4 +58,4 @@ class CustomTask(Serializable["CustomTask"]):
                 require = _JsonDecode.decode_list(value, str)
             elif key == "content":
                 content = _JsonDecode.decode(value, CustomTaskContent)
-        return CustomTask(id, name, type, require, content)
+        return CustomTask(id, name, type, require, content)  # type: ignore[arg-type]

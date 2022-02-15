@@ -42,11 +42,11 @@ class StringBuilder:
     def __str__(self) -> str:
         return "".join(self.__content)
 
-    def str(self) -> str:
-        return self.__str__()
-
     def __repr__(self) -> str:
         return str(self.__content)
+
+    def str(self) -> str:
+        return self.__str__()
 
 
 # Simple alias

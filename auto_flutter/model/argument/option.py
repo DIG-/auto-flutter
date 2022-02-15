@@ -1,38 +1,36 @@
 from __future__ import annotations
 
-from operator import itemgetter
-from typing import Optional, Tuple
+from typing import Optional
 
-from ...core.utils import _Ensure
+from ...core.utils import _Ensure, _If
 
 
-class Option(Tuple[Optional[str], Optional[str], str, bool]):
-    def __new__(
-        cls: type[Option],
+class Option:
+    def __init__(
+        self,
         short: Optional[str],
         long: Optional[str],
         description: str,
         value: bool = False,
-    ) -> Option:
-        _Ensure.type(short, str, "short")
-        _Ensure.type(long, str, "long")
-        _Ensure.type(description, str, "description")
-        _Ensure.type(value, bool, "value")
-        if (
-            cls is Option
-            and (short is None or len(short) == 0)
-            and (long is None or len(long) == 0)
-        ):
-            raise ValueError("Require at least short or long option")
-        return super().__new__(
-            cls if issubclass(cls, Option) else Option,
-            (short, long, description, value),
+        hidden: bool = False,
+    ) -> None:
+        self.short: Optional[str] = _If.not_none(
+            _Ensure.type(short, str, "short"), lambda x: x.strip(), lambda: None
         )
+        self.long: Optional[str] = _If.not_none(
+            _Ensure.type(long, str, "long"), lambda x: x.strip(), lambda: None
+        )
+        self.description: str = _Ensure.instance(description, str, "description")
+        self.has_value: bool = _Ensure.instance(value, bool, "value")
+        self.hidden: bool = _Ensure.instance(hidden, bool, "hidden")
 
-    short: Optional[str] = property(itemgetter(0))
-    long: Optional[str] = property(itemgetter(1))
-    description: str = property(itemgetter(2))
-    has_value: bool = property(itemgetter(3))
+        if not self.short is None and len(self.short) != 1:
+            raise ValueError("Short option must have only one character")
+        if not self.long is None and len(self.long) <= 1:
+            raise ValueError("Long option must have more than one character")
+        if self.short is None and self.long is None:
+            raise ValueError("Require at least short or long option")
+        pass
 
     def short_formatted(self) -> str:
         if self.short is None:

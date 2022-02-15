@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from os import environ
-from pathlib import PurePath
+from pathlib import PurePath, PurePosixPath
 from typing import Callable, Dict, List, Optional, Union
 
 from ..os import OS
-from ..utils import _Ensure
+from ..utils import _Ensure, _EnsureCallable
 
 
-class Process(metaclass=ABCMeta):
+class Process(ABC):
+    @staticmethod
     def create(
         executable: Union[str, PurePath],
         arguments: Optional[List[str]] = None,
@@ -31,15 +32,18 @@ class Process(metaclass=ABCMeta):
         writer: Optional[Callable[[str], None]] = None,
         inherit_environment: bool = True,
     ) -> None:
+        _Ensure.not_none(executable, "executable")
         _Ensure.type(executable, (str, PurePath), "executable")
         _Ensure.type(arguments, List, "arguments")
         _Ensure.type(environment, Dict, "environment")
-        _Ensure.type(writer, Callable, "writer")
+        _EnsureCallable.type(writer, "writer")
         _Ensure.type(inherit_environment, bool, "inherit_environment")
         self.output: Optional[str] = None
         self.exit_code: int = -1
         self._executable: PurePath = OS.posix_to_machine_path(
-            _Ensure.not_none(executable, "executable")
+            executable
+            if isinstance(executable, PurePath)
+            else PurePosixPath(executable)
         )
         environment = {} if environment is None else environment
         if inherit_environment:

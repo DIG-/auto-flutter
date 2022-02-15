@@ -1,25 +1,24 @@
-from operator import contains
 from typing import List
 
-from ....core.json import _JsonDecode
 from ....core.string import SB
 from ....core.utils import _Dict
-from ....model.platform import BuildType, Platform
-from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....model.build import BuildType
+from ....model.platform import Platform
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 from ...options import ParseOptions
 from ...project.read import ProjectRead
 
 
 class FlutterBuildConfig(Task):
-    identity = Task.Identity(
+    __options = {
+        "flavor": Option("f", "flavor", "Flavor to build", True),
+        "debug": Option(None, "debug", "Build a debug version", False),
+    }
+    identity = TaskIdentity(
         "-build-config",
         "",
-        [
-            Task.Identity.Option("f", "flavor", "Flavor to build", True),
-            Task.Identity.Option(None, "debug", "Build a debug version", False),
-        ],
+        _Dict.flatten(__options),
         lambda: FlutterBuildConfig(),
     )
 
@@ -30,20 +29,18 @@ class FlutterBuildConfig(Task):
     class Error(RuntimeError):
         ...
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return [ParseOptions.identity.id, ProjectRead.identity.id]
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Preparing flutter build"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         if not "-0" in args or len(args["-0"].argument) <= 0:
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type: BuildType = _JsonDecode.decode(
-            args["-0"].argument, _BuildType_SerializeFlutter
-        )
+        build_type: BuildType = BuildType.from_flutter(args["-0"].argument)
         if build_type is None:
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
@@ -53,11 +50,11 @@ class FlutterBuildConfig(Task):
         if project is None:
             raise FlutterBuildConfig.Error("Project was not initialized.")
 
-        flavor = args["flavor"].value if "flavor" in args else None
+        flavor = args.get_value(self.__options["flavor"])
         if not project.flavors is None:
             if len(project.flavors) == 1:
                 if flavor is None or len(flavor) == 0:
-                    self.print(
+                    self._print(
                         SB()
                         .append(
                             "Flavor not informed, but project has only one. Assuming it.",
@@ -78,7 +75,7 @@ class FlutterBuildConfig(Task):
         config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.platform_config, platform)
         if config_default is None and config_platform is None:
-            self.print(
+            self._print(
                 SB()
                 .append(
                     "Project does nos have platform config default and not for {}".format(
@@ -91,8 +88,8 @@ class FlutterBuildConfig(Task):
 
         args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
         args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
-        if args.contains("debug"):
+        if args.contains(self.__options["debug"]):
             args.add_arg(FlutterBuildConfig.ARG_DEBUG)
         elif args.contains(FlutterBuildConfig.ARG_DEBUG):
             args.pop(FlutterBuildConfig.ARG_DEBUG)
-        return Task.Result(args)
+        return TaskResult(args)

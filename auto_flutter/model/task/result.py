@@ -1,36 +1,25 @@
 from __future__ import annotations
 
-from operator import itemgetter
-from typing import Optional, Tuple
+from typing import Optional
 
 from ...core.utils import _Ensure
 from ..argument import Args
 
 
-class TaskResult(Tuple[Args, Optional[BaseException], Optional[str], bool]):
-    def __new__(
-        cls: type[TaskResult],
+class TaskResult:
+    def __init__(
+        self,
         args: Args,
         error: Optional[BaseException] = None,
         message: Optional[str] = None,
         success: Optional[bool] = None,
-    ) -> TaskResult:
-        _Ensure.type(args, Args, "args")
-        _Ensure.type(error, BaseException, "error")
-        _Ensure.type(message, str, "message")
-        _Ensure.type(success, bool, "success")
-
-        if success is None:
-            if error is None:
-                success = True
-            else:
-                success = False
-
-        return super().__new__(
-            TaskResult, (_Ensure.not_none(args), error, message, success)
+    ) -> None:
+        self.args: Args = _Ensure.instance(args, Args, "args")
+        self.error: Optional[BaseException] = _Ensure.type(
+            error, BaseException, "error"
         )
-
-    args: Args = property(itemgetter(0))
-    error: Optional[BaseException] = property(itemgetter(1))
-    message: Optional[str] = property(itemgetter(2))
-    success: bool = property(itemgetter(3))
+        self.message: Optional[str] = _Ensure.type(message, str, "message")
+        success = _Ensure.type(success, bool, "success")
+        self.success: bool = (
+            success if not success is None else (True if error is None else False)
+        )

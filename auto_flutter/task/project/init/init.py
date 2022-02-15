@@ -2,9 +2,8 @@ from pathlib import Path
 from typing import List, Optional
 
 from ....core.string import SB
-from ....core.task.manager import TaskManager
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 from ...options import ParseOptions
 from ..save import ProjectSave
 from .common_config import CommonConfig
@@ -13,12 +12,12 @@ from .find_platform import FindPlatform
 
 
 class ProjectInit(Task):
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "init",
         "Initialize Auto-Flutter project",
         [
-            Task.Option("n", "name", "Project name", True),
-            Task.Option(None, "force", "Overwrite existent project", False),
+            Option("n", "name", "Project name", True),
+            Option(None, "force", "Overwrite existent project", False),
             FindFlavor.option_skip_idea,
             FindFlavor.option_skip_android,
             FindFlavor.option_skip_ios,
@@ -26,16 +25,16 @@ class ProjectInit(Task):
         lambda: ProjectInit(),
     )
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return [ParseOptions.identity.id]
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Initializing project"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         pubspec = Path("pubspec.yaml")
         if not pubspec.exists():
-            return Task.Result(
+            return TaskResult(
                 args,
                 error=FileNotFoundError("File pubspec.yaml not found"),
                 message="Make sure to run this command on flutter project root",
@@ -46,7 +45,7 @@ class ProjectInit(Task):
             if "force" in args:
                 overwrite = Warning("Current project will be overwritten")
             else:
-                return Task.Result(
+                return TaskResult(
                     args,
                     error=Exception("Auto-Flutter project already initialized"),
                     message=SB()
@@ -60,10 +59,11 @@ class ProjectInit(Task):
                     success=False,
                 )
         name = ProjectInit._project_name_from_pubspec(pubspec)
-        if "name" in args and len(args["name"].value) > 0:
-            name = args["name"].value
+        name_arg = args.get_value("name")
+        if not name_arg is None and len(name_arg) > 0:
+            name = name_arg
         elif name is None:
-            return Task.Result(args, error=Exception("Project name not informed"))
+            return TaskResult(args, error=Exception("Project name not informed"))
 
         Project.current = Project(
             name=name,
@@ -74,14 +74,11 @@ class ProjectInit(Task):
         )
 
         # Remember, TaskManager is stack
-        manager = TaskManager.instance()
-        manager.add(ProjectSave())
-        manager.add(CommonConfig())
-        manager.add(FindFlavor())
-        manager.add(FindPlatform())
+        self._append_task([ProjectSave(), CommonConfig(), FindFlavor(), FindPlatform()])
 
-        return Task.Result(args, error=overwrite, success=True)
+        return TaskResult(args, error=overwrite, success=True)
 
+    @staticmethod
     def _project_name_from_pubspec(pubspec: Path) -> Optional[str]:
         try:
             from yaml import safe_load as yaml_load  # type: ignore

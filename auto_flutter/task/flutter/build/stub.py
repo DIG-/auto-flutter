@@ -1,34 +1,31 @@
-from ast import arg
 from typing import List
 
-from auto_flutter.model import platform
-
-from ....core.json import _JsonDecode
-from ....core.task.manager import TaskManager
-from ....core.utils import _Dict
-from ....model.platform import BuildType, MergePlatformConfigFlavored, Platform
-from ....model.platform.build_type import _BuildType_SerializeFlutter
+from ....core.utils import _Dict, _Ensure
+from ....model.build import BuildType
+from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 from .build import FlutterBuild
 from .config import FlutterBuildConfig
 
 
 class FlutterBuildStub(Task):
-    identity = Task.Identity(
+    identity = TaskIdentity(
         "build", "Build flutter app", [], lambda: FlutterBuildStub()
     )
 
-    def require(self) -> List[Task.ID]:
+    def require(self) -> List[TaskId]:
         return [FlutterBuildConfig.identity.id]
 
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return ""
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
-            args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE)
+            _Ensure.not_none(
+                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
+            )
         )
         debug = args.contains(FlutterBuildConfig.ARG_DEBUG)
         project = Project.current
@@ -38,7 +35,7 @@ class FlutterBuildStub(Task):
         config_platform = _Dict.get_or_none(project.platform_config, platform)
         config = MergePlatformConfigFlavored(config_default, config_platform)
 
-        TaskManager.instance().add(
+        self._append_task(
             FlutterBuild(project, platform, build_type, flavor, config, debug)
         )
-        return Task.Result(args)
+        return TaskResult(args)

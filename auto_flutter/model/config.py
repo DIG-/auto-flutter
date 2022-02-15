@@ -1,24 +1,22 @@
 from __future__ import annotations
-from json import load as json_load, dump as json_dump
+
+from json import dump as json_dump
+from json import load as json_load
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Optional
-from appdirs import user_config_dir
+
+from appdirs import user_config_dir  # type: ignore[import]
+
 from ..core.os import OS
 
+__all__ = ["Config"]
 
-class Config:
-    _instance: Optional[Config] = None
 
-    @staticmethod
-    def instance() -> Config:
-        if Config._instance is None:
-            Config._instance = Config()
-        return Config._instance
-
+class __Config:
     def __init__(self):
         self.flutter: PurePosixPath = PurePosixPath("flutter")
         self.firebase: PurePosixPath = PurePosixPath("firebase")
         self.firebase_standalone: bool = False
+        self.loaded: bool = False
 
     def __repr__(self) -> str:
         return str(self)
@@ -38,7 +36,7 @@ class Config:
         )
 
     def load(self) -> bool:
-        filepath = Config.get_config_file_path()
+        filepath = self.get_config_file_path()
         if not filepath.exists():
             return False
         file = open(filepath, mode="r", encoding="utf-8")
@@ -56,10 +54,11 @@ class Config:
             and type(parsed["firebase-standalone"]) is bool
         ):
             self.firebase_standalone = bool(parsed["firebase-standalone"])
+        self.loaded = True
         return True
 
     def save(self):
-        filepath = Config.get_config_file_path()
+        filepath = self.get_config_file_path()
         if not filepath.exists():
             filepath.parent.mkdir(parents=True, exist_ok=True)
         output = {
@@ -74,3 +73,6 @@ class Config:
     @staticmethod
     def get_config_file_path() -> Path:
         return Path(user_config_dir("auto-flutter", "DIG")).joinpath("config.json")
+
+
+Config = __Config()

@@ -1,17 +1,11 @@
 from __future__ import annotations
 
 from traceback import TracebackException
-from typing import Optional
+
+__all__ = ["Session"]
 
 
-class _Session:
-    __instance: Optional[_Session] = None
-
-    def instance() -> _Session:
-        if _Session.__instance is None:
-            _Session.__instance = _Session()
-        return _Session.__instance
-
+class __Session:
     def __init__(self, show_stacktrace: bool = False) -> None:
         self.show_stacktrace = show_stacktrace
 
@@ -21,4 +15,4 @@ class _Session:
         return str(error)
 
 
-Session = _Session.instance()
+Session = __Session()

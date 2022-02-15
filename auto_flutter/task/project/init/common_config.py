@@ -1,42 +1,38 @@
 from ....core.string import SB
-from ....model.platform import PlatformConfigFlavored
-from ....model.platform.build_type import BuildType
+from ....model.build import BuildType
+from ....model.platform import Platform
 from ....model.project import Project
-from ....model.task import Task
+from ....model.task import *
 
 
 class CommonConfig(Task):
-    def describe(self, args: Task.Args) -> str:
+    def describe(self, args: Args) -> str:
         return "Applying common config"
 
-    def execute(self, args: Task.Args) -> Task.Result:
+    def execute(self, args: Args) -> TaskResult:
         project = Project.current
-        if Project.Platform.ANDROID in project.platforms:
-            self.print("    Apply common config for android")
-            self.print("    Disabling gradle daemon in build")
-            if not Project.Platform.ANDROID in project.platform_config:
-                project.platform_config[
-                    Project.Platform.ANDROID
-                ] = PlatformConfigFlavored()
-            config = project.platform_config[Project.Platform.ANDROID]
-            config.append_build_param("--no-android-gradle-daemon")
+        if Platform.ANDROID in project.platforms:
+            self._print("    Apply common config for android")
+            self._print("    Disable gradle daemon in build")
+            config = project.obtain_platform_cofig(Platform.ANDROID)
+            config.append_build_param(None, "--no-android-gradle-daemon")
 
-            if len(project.flavors) > 0:
-                self.print("    Applying default output for android flavored build")
+            if not project.flavors is None and len(project.flavors) > 0:
+                self._print("    Applying default output for android flavored build")
                 config.outputs = {
                     BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build_type}.apk",
                     BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build_type|capitalize}/app-${arg:flavor}-${arg:build_type}.aab",
                 }
             else:
-                self.print("    Applying default output for android build")
+                self._print("    Applying default output for android build")
                 config.outputs = {
                     BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:build_type}.apk",
                     BuildType.BUNDLE: "build/app/outputs/bundle/${arg:build_type}/app-${arg:build_type}.aab",
                 }
 
-        if Project.Platform.IOS in project.platforms:
-            self.print("    Apply common config for ios")
-            self.print(
+        if Platform.IOS in project.platforms:
+            self._print("    Apply common config for ios")
+            self._print(
                 SB()
                 .append(
                     "  Sorry. I don't known how to configure this little thing",
@@ -45,9 +41,9 @@ class CommonConfig(Task):
                 .str()
             )
 
-        if Project.Platform.IOS in project.platforms:
-            self.print("    Apply common config for web")
-            self.print(
+        if Platform.IOS in project.platforms:
+            self._print("    Apply common config for web")
+            self._print(
                 SB()
                 .append(
                     "  Sorry. I don't known how to configure this little thing",
@@ -56,4 +52,4 @@ class CommonConfig(Task):
                 .str()
             )
 
-        return Task.Result(args)
+        return TaskResult(args)
