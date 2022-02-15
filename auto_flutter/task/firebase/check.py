@@ -12,7 +12,7 @@ class FirebaseCheck(BaseProcessTimeoutTask):
     )
 
     def __init__(self, skip_on_failure: bool = False) -> None:
-        super().__init__(skip_on_failure, 5, 30)
+        super().__init__(ignore_failure=skip_on_failure, interval=5, timeout=30)
 
     def _create_process(self, args: Args) -> Process:
         return Process.create(

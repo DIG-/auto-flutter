@@ -19,8 +19,13 @@ __all__ = [
 
 
 class BaseProcessIntervalTask(BaseProcessTask):
-    def __init__(self, ignore_failure: bool = False, interval: float = 5) -> None:
-        super().__init__(ignore_failure)
+    def __init__(
+        self,
+        ignore_failure: bool = False,
+        show_output_at_end: bool = False,
+        interval: float = 5,
+    ) -> None:
+        super().__init__(ignore_failure, show_output_at_end)
         self._interval = interval
         self.__output: Union[bool, BaseException, None] = None
 

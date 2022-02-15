@@ -21,10 +21,13 @@ __all__ = [
 
 
 class BaseProcessTask(Task):
-    def __init__(self, ignore_failure: bool = False) -> None:
+    def __init__(
+        self, ignore_failure: bool = False, show_output_at_end: bool = False
+    ) -> None:
         super().__init__()
         self._process: Process
         self._ignore_failure: bool = ignore_failure
+        self._show_output_at_end: bool = show_output_at_end
 
     def execute(self, args: Args) -> TaskResult:
         self._process = self._create_process(args)
@@ -90,6 +93,7 @@ class BaseProcessTask(Task):
         if (
             message is None
             and output
+            and self._show_output_at_end
             and not process.output is None
             and len(process.output) > 0
         ):

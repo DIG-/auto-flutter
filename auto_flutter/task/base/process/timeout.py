@@ -15,9 +15,13 @@ __all__ = [
 
 class BaseProcessTimeoutTask(BaseProcessIntervalTask):
     def __init__(
-        self, ignore_failure: bool = False, interval: float = 5, timeout: float = 30
+        self,
+        ignore_failure: bool = False,
+        show_output_at_end: bool = False,
+        interval: float = 5,
+        timeout: float = 30,
     ) -> None:
-        super().__init__(ignore_failure, interval)
+        super().__init__(ignore_failure, show_output_at_end, interval)
         self._timeout = timeout
         if timeout < interval:
             self._interval = timeout
