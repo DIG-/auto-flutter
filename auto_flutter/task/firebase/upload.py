@@ -1,6 +1,7 @@
 from pathlib import Path, PurePosixPath
 
 from ...core.os import OS
+from ...core.utils import _Dict, _If
 from ...model.config import Config
 from ...task.base.process import *
 from ...task.firebase._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
@@ -10,10 +11,25 @@ from ...task.flutter.build.stub import FlutterBuildStub
 
 
 class FirebaseBuildUpload(BaseProcessTask):
+    __options = {
+        "notes": Option(None, "notes", "Release notes to include", True),
+        "testers": Option(
+            None,
+            "testers",
+            "A comma separated list of tester emails to distribute to",
+            True,
+        ),
+        "groups": Option(
+            None,
+            "groups",
+            "A comma separated list of group aliases to distribute to",
+            True,
+        ),
+    }
     identity = TaskIdentity(
         "firebase",
         "Upload build to firebase",
-        [],
+        _Dict.flatten(__options),
         lambda: FirebaseBuildUpload(),
     )
 
@@ -42,15 +58,35 @@ class FirebaseBuildUpload(BaseProcessTask):
         if google_id is None or len(google_id) <= 0:
             return TaskResult(args, AssertionError("Google app id not found"))
 
+        arguments: List[str] = [
+            FIREBASE_DISABLE_INTERACTIVE_MODE.value,
+            "appdistribution:distribute",
+            str(file),
+            "--app",
+            google_id,
+        ]
+
+        _If.not_none(
+            args.get_value(self.__options["notes"]),
+            lambda notes: arguments.extend(("--release-notes", notes)),
+            lambda: None,
+        )
+
+        _If.not_none(
+            args.get_value(self.__options["testers"]),
+            lambda testers: arguments.extend(("--testers", testers)),
+            lambda: None,
+        )
+
+        _If.not_none(
+            args.get_value(self.__options["groups"]),
+            lambda groups: arguments.extend(("--groups", groups)),
+            lambda: None,
+        )
+
         return Process.create(
             Config.firebase,
-            arguments=[
-                FIREBASE_DISABLE_INTERACTIVE_MODE.value,
-                "appdistribution:distribute",
-                str(file),
-                "--app",
-                google_id,
-            ],
+            arguments=arguments,
             environment=FIREBASE_ENV.value,
             writer=self._print,
         )
