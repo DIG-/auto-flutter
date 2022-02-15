@@ -85,3 +85,9 @@ class Process(ABC):
     @abstractmethod
     def kill(self):
         raise NotImplementedError("This method must be implemented")
+
+    class ChildProcessStopped(ChildProcessError):
+        ...
+
+    class ChildProcessKilled(ChildProcessStopped):
+        ...

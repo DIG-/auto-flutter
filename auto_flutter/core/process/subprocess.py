@@ -24,6 +24,8 @@ class _SubProcess(Process):
             executable, arguments, environment, writer, inherit_environment
         )
         self.__process: Optional[Popen] = None
+        self.__stopped: bool = False
+        self.__killed: bool = False
 
     def run(self):
         if self._executable.is_absolute():
@@ -59,15 +61,25 @@ class _SubProcess(Process):
                 raise FileNotFoundError(
                     0, "Command `{}` not found".format(self._executable)
                 )
+            if self.__killed:
+                raise Process.ChildProcessKilled(
+                    "Command `{}` was killed".format(self._executable)
+                )
+            if self.__stopped:
+                raise Process.ChildProcessStopped(
+                    "Command `{}` was stopped".format(self._executable)
+                )
 
     def stop(self):
         process = self.__process
         if not process is None:
+            self.__stopped = True
             process.terminate()
 
     def kill(self):
         process = self.__process
         if not process is None:
+            self.__killed = True
             process.kill()
             if OS.current() == OS.WINDOWS:
                 try:
