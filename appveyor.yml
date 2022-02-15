@@ -4,7 +4,6 @@ image: Ubuntu2004
 clone_depth: 1
 init:
   - sh: source $HOME/venv$PY_VER/bin/activate
-  - sh: cat $HOME/venv$PY_VER/bin/activate
   - sh: python --version
 build: false
 install:
@@ -36,3 +35,5 @@ for:
   environment:
     PY_VER: 3.10
     TOX_DISCOVER: "$HOME/venv3.7:$HOME/venv3.7/bin:/home/appveyor/venv3.7/bin/python"
+  init:
+    - sh: echo $TOX_DISCOVER
