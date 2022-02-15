@@ -4,7 +4,7 @@ from json import dump as json_dump
 from json import load as json_load
 from pathlib import Path, PurePath, PurePosixPath
 
-from appdirs import user_config_dir
+from appdirs import user_config_dir  # type: ignore[import]
 
 from ..core.os import OS
 

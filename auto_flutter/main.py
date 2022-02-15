@@ -27,7 +27,7 @@ def _main():
                 sys.stderr = getwriter("utf-8")(sys.stderr.detach())
                 sys.stdin = getreader("utf-8")(sys.stdin.detach())
         else:
-            from colorama import init
+            from colorama import init  # type: ignore[import]
 
             init()
 
