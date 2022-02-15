@@ -11,6 +11,7 @@ class CustomTaskExec(Flutter):
         if custom.content is None:
             raise ValueError("CustomTask EXEC require content")
         self._custom: CustomTask = custom
+        self._content = custom.content
         command = [custom.content.command]
         if not custom.content.args is None:
             command.extend(custom.content.args)
@@ -19,12 +20,13 @@ class CustomTaskExec(Flutter):
         self.identity = identity
 
     def require(self) -> List[TaskId]:
+        parent = super().require()
         if not self._custom.require is None:
-            return super().require().extend(self._custom.require)
-        return super().require()
+            parent.extend(self._custom.require)
+        return parent
 
     def execute(self, args: Args) -> TaskResult:
         result = super().execute(args)
-        if self._custom.content.skip_failure:
+        if self._content.skip_failure:
             result.success = True
         return result
