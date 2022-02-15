@@ -11,6 +11,7 @@ install:
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
+for:
 -
   branches:
     only:
