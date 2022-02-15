@@ -1,17 +1,15 @@
 from pathlib import Path, PurePosixPath
-from typing import List
 
 from ...core.os import OS
-from ...core.process import Process
 from ...model.config import Config
-from ...model.task import *
-from ..flutter.build.stub import FlutterBuildStub
-from ._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
-from .check import FirebaseCheck
-from .validate import FirebaseBuildValidate
+from ...task.base.process import *
+from ...task.firebase._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
+from ...task.firebase.check import FirebaseCheck
+from ...task.firebase.validate import FirebaseBuildValidate
+from ...task.flutter.build.stub import FlutterBuildStub
 
 
-class FirebaseBuildUpload(Task):
+class FirebaseBuildUpload(BaseProcessTask):
     identity = TaskIdentity(
         "firebase",
         "Upload build to firebase",
@@ -26,7 +24,7 @@ class FirebaseBuildUpload(Task):
             FlutterBuildStub.identity.id,
         ]
 
-    def execute(self, args: Args) -> TaskResult:
+    def _create_process(self, args: Args) -> ProcessOrResult:
         filename = args.get_value("output")
         if filename is None or len(filename) <= 0:
             return TaskResult(
@@ -44,7 +42,7 @@ class FirebaseBuildUpload(Task):
         if google_id is None or len(google_id) <= 0:
             return TaskResult(args, AssertionError("Google app id not found"))
 
-        p = Process.create(
+        return Process.create(
             Config.firebase,
             arguments=[
                 FIREBASE_DISABLE_INTERACTIVE_MODE.value,
@@ -56,8 +54,3 @@ class FirebaseBuildUpload(Task):
             environment=FIREBASE_ENV.value,
             writer=self._print,
         )
-        output = p.try_run()
-        if isinstance(output, BaseException):
-            return TaskResult(args, error=output)
-
-        return TaskResult(args, success=output)
