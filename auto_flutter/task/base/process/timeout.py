@@ -1,5 +1,3 @@
-from tkinter.messagebox import NO
-
 from .interval import *
 
 __all__ = [
