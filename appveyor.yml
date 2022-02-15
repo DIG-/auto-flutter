@@ -35,4 +35,4 @@ for:
       - /test/
   environment:
     PY_VER: 3.10
-    TOX_DISCOVER: "$HOME/venv3.7:$HOME/venv3.7/bin:/home/appveyor/venv3.7/bin"
+    TOX_DISCOVER: "$HOME/venv3.7:$HOME/venv3.7/bin:/home/appveyor/venv3.7/bin/python"
