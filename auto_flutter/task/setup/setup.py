@@ -1,7 +1,7 @@
 from typing import List
 
+from ...core.config import Config
 from ...model.argument import Args
-from ...model.config import Config
 from ...model.task import *
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck

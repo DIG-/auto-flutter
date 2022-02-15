@@ -1,21 +1,39 @@
 from pathlib import Path, PurePosixPath
-from typing import List
 
+from ...core.config import Config
 from ...core.os import OS
-from ...core.process import Process
-from ...model.config import Config
-from ...model.task import *
-from ..flutter.build.stub import FlutterBuildStub
-from ._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
-from .check import FirebaseCheck
-from .validate import FirebaseBuildValidate
+from ...core.utils import _Dict, _If
+from ...task.base.process import *
+from ...task.firebase._const import (
+    FIREBASE_CONFIG_KEY_PATH,
+    FIREBASE_DISABLE_INTERACTIVE_MODE,
+    FIREBASE_ENV,
+)
+from ...task.firebase.check import FirebaseCheck
+from ...task.firebase.validate import FirebaseBuildValidate
+from ...task.flutter.build.stub import FlutterBuildStub
 
 
-class FirebaseBuildUpload(Task):
+class FirebaseBuildUpload(BaseProcessTask):
+    __options = {
+        "notes": Option(None, "notes", "Release notes to include", True),
+        "testers": Option(
+            None,
+            "testers",
+            "A comma separated list of tester emails to distribute to",
+            True,
+        ),
+        "groups": Option(
+            None,
+            "groups",
+            "A comma separated list of group aliases to distribute to",
+            True,
+        ),
+    }
     identity = TaskIdentity(
         "firebase",
         "Upload build to firebase",
-        [],
+        _Dict.flatten(__options),
         lambda: FirebaseBuildUpload(),
     )
 
@@ -26,7 +44,7 @@ class FirebaseBuildUpload(Task):
             FlutterBuildStub.identity.id,
         ]
 
-    def execute(self, args: Args) -> TaskResult:
+    def _create_process(self, args: Args) -> ProcessOrResult:
         filename = args.get_value("output")
         if filename is None or len(filename) <= 0:
             return TaskResult(
@@ -44,20 +62,35 @@ class FirebaseBuildUpload(Task):
         if google_id is None or len(google_id) <= 0:
             return TaskResult(args, AssertionError("Google app id not found"))
 
-        p = Process.create(
-            Config.firebase,
-            arguments=[
-                FIREBASE_DISABLE_INTERACTIVE_MODE.value,
-                "appdistribution:distribute",
-                str(file),
-                "--app",
-                google_id,
-            ],
+        arguments: List[str] = [
+            FIREBASE_DISABLE_INTERACTIVE_MODE.value,
+            "appdistribution:distribute",
+            str(file),
+            "--app",
+            google_id,
+        ]
+
+        _If.not_none(
+            args.get_value(self.__options["notes"]),
+            lambda notes: arguments.extend(("--release-notes", notes)),
+            lambda: None,
+        )
+
+        _If.not_none(
+            args.get_value(self.__options["testers"]),
+            lambda testers: arguments.extend(("--testers", testers)),
+            lambda: None,
+        )
+
+        _If.not_none(
+            args.get_value(self.__options["groups"]),
+            lambda groups: arguments.extend(("--groups", groups)),
+            lambda: None,
+        )
+
+        return Process.create(
+            Config.get_path(FIREBASE_CONFIG_KEY_PATH),
+            arguments=arguments,
             environment=FIREBASE_ENV.value,
             writer=self._print,
         )
-        output = p.try_run()
-        if isinstance(output, BaseException):
-            return TaskResult(args, error=output)
-
-        return TaskResult(args, success=output)

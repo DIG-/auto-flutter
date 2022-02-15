@@ -1,27 +1,36 @@
-version: "0.2.0-{build}"
-branches:
-  only:
-    - main
-    - /rc\/([\d\w\-\.]+)/
+version: "0.2.1-{build}"
 skip_tags: true
 image: Ubuntu2004
 clone_depth: 1
 init:
   - sh: source $HOME/venv$PY_VER/bin/activate
   - sh: python --version
-environment:
-  matrix:
-    - TOXENV: py37
-      PY_VER: 3.7
-    - TOXENV: py38
-      PY_VER: 3.8
-    - TOXENV: py39
-      PY_VER: 3.9
-    - TOXENV: py310
-      PY_VER: 3.10
 build: false
 install:
-  - python -m pip install --upgrade pip wheel || python -c "print('')"
+  - python -m pip install "pip>=21" "wheel>=0.37" || python -c "print('')"
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
+for:
+-
+  branches: # Test each version individually
+    only:
+      - /rc\/([\d\w\-\.]+)/
+  environment:
+    matrix:
+      - TOXENV: py37
+        PY_VER: 3.7
+      - TOXENV: py38
+        PY_VER: 3.8
+      - TOXENV: py39
+        PY_VER: 3.9
+      - TOXENV: py310
+        PY_VER: 3.10
+- 
+  branches: # Full one test
+    only:
+      - main
+  environment:
+    PY_VER: 3.10
+  before_test:
+    - sh: export TOX_DISCOVER="$HOME/venv3.7/bin/python:$HOME/venv3.8/bin/python:$HOME/venv3.9/bin/python:$HOME/venv3.10/bin/python"

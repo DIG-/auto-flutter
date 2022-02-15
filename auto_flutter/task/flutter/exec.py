@@ -1,13 +1,13 @@
 from typing import List, Optional
 
+from ...core.config import Config
 from ...core.process.process import Process
 from ...core.string import SB
-from ...model.argument import Arg, OptionAll
-from ...model.config import Config
+from ...model.argument import OptionAll
 from ...model.task import *
 from ..options import ParseOptions
 from ..project.read import ProjectRead
-from ._const import FLUTTER_DISABLE_VERSION_CHECK
+from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):
@@ -41,7 +41,7 @@ class Flutter(Task):
         return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
 
     def execute(self, args: Args) -> TaskResult:
-        flutter = Config.flutter
+        flutter = Config.get_path(FLUTTER_CONFIG_KEY_PATH)
         writer = None if not self._output_running else lambda x: self._print(x)
 
         if self._output_end and self._output_running:

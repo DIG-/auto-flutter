@@ -121,7 +121,7 @@ class Help(Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda task: filter(lambda x: not x.hidden, TaskIdentity.options),
+            lambda task: filter(lambda x: not x.hidden, task.identity.options),
             TaskResolver.resolve(identity.creator()),
         )
         options = _Iterable.flatten(options_mapped)

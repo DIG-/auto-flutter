@@ -5,10 +5,10 @@ def _main():
     import sys
     from platform import system as platform_system
 
+    from .core.config import Config
     from .core.logger import log
     from .core.string import SB
     from .core.task import TaskManager
-    from .model.config import Config
     from .task.help_stub import HelpStub
 
     # Enable color support on windows

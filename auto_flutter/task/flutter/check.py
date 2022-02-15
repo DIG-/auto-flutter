@@ -1,7 +1,7 @@
+from ...core.config import Config
 from ...core.process import Process
-from ...model.config import Config
 from ...model.task import *
-from ._const import FLUTTER_DISABLE_VERSION_CHECK
+from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterCheck(Task):
@@ -17,7 +17,8 @@ class FlutterCheck(Task):
 
     def execute(self, args: Args) -> TaskResult:
         process = Process.create(
-            Config.flutter, [FLUTTER_DISABLE_VERSION_CHECK, "--version"]
+            Config.get_path(FLUTTER_CONFIG_KEY_PATH),
+            [FLUTTER_DISABLE_VERSION_CHECK, "--version"],
         )
         output = process.try_run()
         if isinstance(output, BaseException):

@@ -5,9 +5,9 @@ from os import environ as os_environ
 from pathlib import Path
 from typing import List, Optional, Tuple
 
+from ...core.config import Config
 from ...core.os import OS
 from ...core.string import SB
-from ...model.config import Config
 from ...model.task import *
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
@@ -99,7 +99,7 @@ class SetupEdit(Task):
                 return TaskResult(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.flutter = OS.machine_to_posix_path(found[1])
+            Config.put_path("flutter", OS.machine_to_posix_path(found[1]))
             self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
@@ -138,13 +138,13 @@ class SetupEdit(Task):
                 return TaskResult(
                     args, RuntimeError("Path was expected, but nothing appears")
                 )
-            Config.firebase = OS.machine_to_posix_path(found[1])
+            Config.put_path("firebase", OS.machine_to_posix_path(found[1]))
             self._append_task(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
-            Config.firebase_standalone = True
+            Config.put_bool("firebase-standalone", True)
         elif args.contains(self.option_firebase_non_standalone):
-            Config.firebase_standalone = False
+            Config.put_bool("firebase-standalone", False)
 
         return TaskResult(args)
 
