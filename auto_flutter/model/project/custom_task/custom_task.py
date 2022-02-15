@@ -8,6 +8,7 @@ from ...task import TaskId
 from .content import CustomTaskContent
 from .type import CustomTaskType
 
+
 class CustomTask(Serializable["CustomTask"]):
     def __init__(
         self,
