@@ -85,13 +85,24 @@ class BaseProcessTask(Task):
         )
 
     def _handle_process_finished(
-        self, args: Args, process: Process, output: bool
+        self, args: Args, process: Process, output: bool, message: Optional[str] = None
     ) -> TaskResult:
-        if output and not process.output is None and len(process.output) > 0:
-            return TaskResult(args, message=process.output, success=output)
-        return TaskResult(args, success=self._ignore_failure or output)
+        if (
+            message is None
+            and output
+            and not process.output is None
+            and len(process.output) > 0
+        ):
+            message = process.output
+        return TaskResult(args, message=message, success=self._ignore_failure or output)
 
     def _handle_process_exception(
-        self, args: Args, process: Process, output: BaseException
+        self,
+        args: Args,
+        process: Process,
+        output: BaseException,
+        message: Optional[str] = None,
     ) -> TaskResult:
-        return TaskResult(args, error=output, success=self._ignore_failure)
+        return TaskResult(
+            args, error=output, message=message, success=self._ignore_failure
+        )
