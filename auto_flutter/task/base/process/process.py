@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Dict, Iterable, Optional, Union
+from typing import Dict, Iterable, Optional, TypeVar, Union
 
 from ....core.os import OS
 from ....core.process import Process
@@ -17,7 +17,10 @@ __all__ = [
     "Args",
     "Process",
     "BaseProcessTask",
+    "ProcessOrResult",
 ]
+
+ProcessOrResult = Union[Process, TaskResult]
 
 
 class BaseProcessTask(Task):
@@ -30,7 +33,10 @@ class BaseProcessTask(Task):
         self._show_output_at_end: bool = show_output_at_end
 
     def execute(self, args: Args) -> TaskResult:
-        self._process = self._create_process(args)
+        process = self._create_process(args)
+        if isinstance(process, TaskResult):
+            return process
+        self._process = process
         output = self._process.try_run()
         return self._handle_process_output(args, self._process, output)
 
@@ -67,7 +73,7 @@ class BaseProcessTask(Task):
         return OS.posix_to_machine_path(executable)
 
     @abstractmethod
-    def _create_process(self, args: Args) -> Process:
+    def _create_process(self, args: Args) -> ProcessOrResult:
         ## Use self._sanitize_executable() before passing to Process
         ## Use self._sanitize_arguments() before passing to Process
         raise NotImplementedError(

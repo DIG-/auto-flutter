@@ -14,7 +14,7 @@ class FirebaseCheck(BaseProcessTimeoutTask):
     def __init__(self, skip_on_failure: bool = False) -> None:
         super().__init__(ignore_failure=skip_on_failure, interval=5, timeout=30)
 
-    def _create_process(self, args: Args) -> Process:
+    def _create_process(self, args: Args) -> ProcessOrResult:
         return Process.create(
             Config.firebase,
             arguments=[FIREBASE_DISABLE_INTERACTIVE_MODE.value, "--version"],

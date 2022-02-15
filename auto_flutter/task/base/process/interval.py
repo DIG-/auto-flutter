@@ -15,6 +15,7 @@ __all__ = [
     "Args",
     "Process",
     "BaseProcessIntervalTask",
+    "ProcessOrResult",
 ]
 
 
@@ -30,7 +31,10 @@ class BaseProcessIntervalTask(BaseProcessTask):
         self.__output: Union[bool, BaseException, None] = None
 
     def execute(self, args: Args) -> TaskResult:
-        self._process = self._create_process(args)
+        process = self._create_process(args)
+        if isinstance(process, TaskResult):
+            return process
+        self._process = process
         thread = Thread(target=BaseProcessIntervalTask.__run, args=[self])
         time_start = time()
         count = 0

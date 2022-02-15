@@ -10,6 +10,7 @@ __all__ = [
     "Args",
     "Process",
     "BaseProcessTimeoutTask",
+    "ProcessOrResult",
 ]
 
 
