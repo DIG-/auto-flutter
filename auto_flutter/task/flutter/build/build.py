@@ -1,22 +1,22 @@
 from pathlib import Path, PurePosixPath
-from typing import List, Optional
+from typing import Optional
 
 from ....core.os import OS
 from ....core.string import SB, SF
-from ....model.build import BuildType
+from ....model.build import *
 from ....model.error import SilentWarning
-from ....model.platform import Platform, PlatformConfigFlavored, RunType
-from ....model.project import Flavor, Project
+from ....model.platform import *
+from ....model.project import *
 from ....model.task import *
-from .._const import FLUTTER_DISABLE_VERSION_CHECK
-from ..exec import Flutter
+from ....task.flutter.command import FlutterCommand
 
 
-class FlutterBuild(Flutter):
+class FlutterBuildTask(FlutterCommand):
+    identity = TaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
+
     def __init__(
         self,
         project: Project,
-        platform: Platform,
         type: BuildType,
         flavor: Optional[Flavor],
         config: PlatformConfigFlavored,
@@ -25,21 +25,19 @@ class FlutterBuild(Flutter):
         android_rebuild_fix_desired: bool = False,
     ) -> None:
         super().__init__(
-            project=False,
+            ignore_failure=False,
+            show_output_at_end=False,
             command=None,
-            command_append_args=False,
-            output_running=True,
-            output_end=False,
-            output_arg=True,
+            show_output_running=True,
+            put_output_args=True,
         )
-        self.project = project
-        self.platform = platform
-        self.type = type
-        self.flavor = flavor
-        self.config = config
-        self.debug = debug
-        self.android_rebuild_fix_other = android_rebuild_fix_other
-        self.android_rebuild_fix_desired = android_rebuild_fix_desired
+        self._project: Project = project
+        self._type: BuildType = type
+        self._flavor: Optional[Flavor] = flavor
+        self._config: PlatformConfigFlavored = config
+        self._debug: bool = debug
+        self._android_rebuild_fix_other: bool = android_rebuild_fix_other
+        self._android_rebuild_fix_desired: bool = android_rebuild_fix_desired
         if (
             android_rebuild_fix_other or android_rebuild_fix_desired
         ) and android_rebuild_fix_other == android_rebuild_fix_desired:
@@ -48,118 +46,47 @@ class FlutterBuild(Flutter):
             )
 
     def require(self) -> List[TaskId]:
-        return self.config.get_run_before(RunType.BUILD, self.flavor)
+        return self._config.get_run_before(RunType.BUILD, self._flavor)
 
     def describe(self, args: Args) -> str:
-        if self.android_rebuild_fix_desired:
+        if self._android_rebuild_fix_desired:
             return "Rebuild flutter {}, flavor {}".format(
-                self.platform.value, self.flavor
+                self._type.platform.value, self._flavor
             )
-        if self.flavor is None:
-            return "Building flutter {}".format(self.platform.value)
+        if self._flavor is None:
+            return "Building flutter {}".format(self._type.platform.value)
         else:
             return "Building flutter {}, flavor {}".format(
-                self.platform.value, self.flavor
+                self._type.platform.value, self._flavor
             )
 
     def execute(self, args: Args) -> TaskResult:
-        command: List[str] = [FLUTTER_DISABLE_VERSION_CHECK, "build", self.type.flutter]
+        self._command = ["build", self._type.flutter]
 
-        if not self.flavor is None:
-            command.append("--flavor")
-            command.append(self.flavor)
+        if not self._flavor is None:
+            self._command.extend(("--flavor", self._flavor))
 
-        if self.debug:
-            command.append("--debug")
+        if self._debug:
+            self._command.append("--debug")
         else:
-            command.append("--release")
+            self._command.append("--release")
 
-        command.extend(self.config.get_build_param(self.flavor))
-        self._command = command
+        self._command.extend(self._config.get_build_param(self._flavor))
 
-        process = super().execute(args)
-        if not process.error is None:
-            process.args.pop("output")
-            return process
+        result = super().execute(args)
 
-        if not process.success and self.platform == Platform.ANDROID:
-            if self.android_rebuild_fix_other or self.android_rebuild_fix_desired:
-                pass  # Skip, since it is a fix build
-            else:
-                output = args.get_value("output")
-                if (
-                    output is None
-                    or output.find(
-                        "This issue appears to be https://github.com/flutter/flutter/issues/58247"
-                    )
-                    < 0
-                ):
-                    pass  # Error can be from others reasons
-                elif self.project.flavors is None or len(self.project.flavors) <= 1:
-                    pass  # There is no other flavor to raise this error
-                else:
-                    process.args.pop("output")
-                    others_flavors = filter(
-                        lambda x: x != self.flavor, self.project.flavors
-                    )
-                    ## Add to rebuild self task
-                    self._append_task(
-                        FlutterBuild(
-                            project=self.project,
-                            platform=self.platform,
-                            type=self.type,
-                            flavor=self.flavor,
-                            config=self.config,
-                            debug=self.debug,
-                            android_rebuild_fix_other=False,
-                            android_rebuild_fix_desired=True,
-                        )
-                    )
-                    for flavor in others_flavors:
-                        self._append_task(
-                            FlutterBuild(
-                                project=self.project,
-                                platform=self.platform,
-                                type=self.type,
-                                flavor=flavor,
-                                config=self.config,
-                                debug=self.debug,
-                                android_rebuild_fix_other=True,
-                                android_rebuild_fix_desired=False,
-                            )
-                        )
-                    self._print(
-                        SB()
-                        .append(
-                            "Flutter issue #58247 detected, building others flavors to fix",
-                            SB.Color.BLUE,
-                            True,
-                        )
-                        .str()
-                    )
-                    return TaskResult(
-                        args,
-                        error=SilentWarning(
-                            "Build others flavor, than rebuild current flavor"
-                        ),
-                        success=True,
-                    )
+        if result.success:
+            self._clear_output(args)
+            return self._check_output_file(args)
 
-        process.args.pop("output")
-        if not process.success:
-            if (
-                self.android_rebuild_fix_other
-            ):  # Other build failed, maybe there is more to build
-                return TaskResult(
-                    process.args,
-                    error=SilentWarning(
-                        "Build failed. Maybe there is more flavors to build"
-                    ),
-                    success=True,
-                )
-            return process
+        if self._type.platform == Platform.ANDROID:
+            return self._handle_android_error(args, result)
 
-        output_file = self.config.get_output(self.flavor, self.type)
+        self._clear_output(args)
+        return result
+
+    def _check_output_file(self, args: Args) -> TaskResult:
+        output_file = self._config.get_output(self._flavor, self._type)
         if output_file is None:
             return TaskResult(
                 args,
@@ -170,9 +97,9 @@ class FlutterBuild(Flutter):
             output_file,
             args,
             {
-                "flavor": "" if self.flavor is None else self.flavor,
-                "build_type": "debug" if self.debug else "release",
-                "platform": self.platform.value,
+                "flavor": "" if self._flavor is None else self._flavor,
+                "build_type": "debug" if self._debug else "release",
+                "platform": self._type.platform.value,
             },
         )
 
@@ -189,3 +116,80 @@ class FlutterBuild(Flutter):
 
         args.add_arg("output", output_file)
         return TaskResult(args, success=True)
+
+    def _handle_android_error(self, args: Args, result: TaskResult) -> TaskResult:
+        if self._android_rebuild_fix_other:
+            # Skip, since it is a fix build
+            self._clear_output(args)
+            return TaskResult(
+                args,
+                error=SilentWarning(
+                    "Build failed. Maybe there is more flavors to build"
+                ),
+                success=True,
+            )
+
+        if self._android_rebuild_fix_desired:
+            # Failed our desired build
+            self._clear_output(args)
+            return result
+
+        output = args.get_value("output")
+        self._clear_output(args)
+        if (
+            output is None
+            or output.find(
+                "This issue appears to be https://github.com/flutter/flutter/issues/58247"
+            )
+            < 0
+        ):
+            # This error is not the issue we handle
+            return result
+
+        flavors = self._project.flavors
+        if flavors is None or len(flavors) <= 1:
+            # There is no other flavor to be the reason of this issue
+            return result
+
+        self._append_task(
+            FlutterBuildTask(
+                self._project,
+                self._type,
+                self._flavor,
+                self._config,
+                self._debug,
+                android_rebuild_fix_other=False,
+                android_rebuild_fix_desired=True,
+            )
+        )
+        for flavor in filter(lambda x: x != self._flavor, flavors):
+            self._append_task(
+                FlutterBuildTask(
+                    self._project,
+                    self._type,
+                    flavor,
+                    self._config,
+                    self._debug,
+                    android_rebuild_fix_other=True,
+                    android_rebuild_fix_desired=False,
+                )
+            )
+
+        self._print(
+            SB()
+            .append(
+                "Flutter issue #58247 detected, building others flavors to fix",
+                SB.Color.BLUE,
+                True,
+            )
+            .str()
+        )
+        return TaskResult(
+            args,
+            error=SilentWarning("Build others flavor, than rebuild current flavor"),
+            success=True,
+        )
+
+    def _clear_output(self, args: Args) -> None:
+        if args.contains("output"):
+            args.pop("output")

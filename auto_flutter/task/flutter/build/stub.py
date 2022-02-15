@@ -5,7 +5,7 @@ from ....model.build import BuildType
 from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
 from ....model.task import *
-from .build import FlutterBuild
+from .build import FlutterBuildTask
 from .config import FlutterBuildConfig
 
 
@@ -35,7 +35,5 @@ class FlutterBuildStub(Task):
         config_platform = _Dict.get_or_none(project.platform_config, platform)
         config = MergePlatformConfigFlavored(config_default, config_platform)
 
-        self._append_task(
-            FlutterBuild(project, platform, build_type, flavor, config, debug)
-        )
+        self._append_task(FlutterBuildTask(project, build_type, flavor, config, debug))
         return TaskResult(args)
