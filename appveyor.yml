@@ -13,9 +13,9 @@ test_script:
   - python -m tox
 for:
 -
-  branches:
+  branches: # Test each version individually
     only:
-      - main
+      - /rc\/([\d\w\-\.]+)/
   environment:
     matrix:
       - TOXENV: py37
@@ -27,11 +27,9 @@ for:
       - TOXENV: py310
         PY_VER: 3.10
 - 
-  branches:
+  branches: # Full one test
     only:
-      - /rc\/([\d\w\-\.]+)/
-      - test/fast-build
-      - /test/
+      - main
   environment:
     PY_VER: 3.10
   before_test:
