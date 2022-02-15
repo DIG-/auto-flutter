@@ -7,7 +7,7 @@ init:
   - sh: python --version
 build: false
 install:
-  - python -m pip install --upgrade "pip>=21" "wheel>=0.37" || python -c "print('')"
+  - python -m pip install "pip>=21" "wheel>=0.37" || python -c "print('')"
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
