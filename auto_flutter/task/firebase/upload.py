@@ -1,10 +1,14 @@
 from pathlib import Path, PurePosixPath
 
+from ...core.config import Config
 from ...core.os import OS
 from ...core.utils import _Dict, _If
-from ...model.config import Config
 from ...task.base.process import *
-from ...task.firebase._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
+from ...task.firebase._const import (
+    FIREBASE_CONFIG_KEY_PATH,
+    FIREBASE_DISABLE_INTERACTIVE_MODE,
+    FIREBASE_ENV,
+)
 from ...task.firebase.check import FirebaseCheck
 from ...task.firebase.validate import FirebaseBuildValidate
 from ...task.flutter.build.stub import FlutterBuildStub
@@ -85,7 +89,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         )
 
         return Process.create(
-            Config.firebase,
+            Config.get_path(FIREBASE_CONFIG_KEY_PATH),
             arguments=arguments,
             environment=FIREBASE_ENV.value,
             writer=self._print,

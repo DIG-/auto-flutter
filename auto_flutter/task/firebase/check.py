@@ -1,9 +1,13 @@
 from typing import Optional
 
+from ...core.config import Config
 from ...core.string import SB
-from ...model.config import Config
 from ..base.process.timeout import *
-from ._const import FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
+from ._const import (
+    FIREBASE_CONFIG_KEY_PATH,
+    FIREBASE_DISABLE_INTERACTIVE_MODE,
+    FIREBASE_ENV,
+)
 
 
 class FirebaseCheck(BaseProcessTimeoutTask):
@@ -16,7 +20,7 @@ class FirebaseCheck(BaseProcessTimeoutTask):
 
     def _create_process(self, args: Args) -> ProcessOrResult:
         return Process.create(
-            Config.firebase,
+            Config.get_path(FIREBASE_CONFIG_KEY_PATH),
             arguments=[FIREBASE_DISABLE_INTERACTIVE_MODE.value, "--version"],
             environment=FIREBASE_ENV.value,
         )

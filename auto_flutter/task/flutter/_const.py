@@ -1,1 +1,2 @@
+FLUTTER_CONFIG_KEY_PATH = "flutter"
 FLUTTER_DISABLE_VERSION_CHECK = "--no-version-check"
