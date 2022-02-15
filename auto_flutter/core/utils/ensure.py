@@ -1,5 +1,5 @@
 from abc import ABC
-from types import FunctionType
+from types import FunctionType, MethodType
 from typing import Any, Callable, NoReturn, Optional, Tuple, Type, TypeVar, Union
 
 
@@ -108,7 +108,7 @@ class _EnsureCallable(ABC):
     ) -> Optional[T]:
         if input is None:
             return None
-        if isinstance(input, FunctionType):
+        if isinstance(input, (FunctionType, MethodType)):
             return input  # type: ignore
         return _Ensure._raise_error_instance(name, Callable, type(input))
 
@@ -119,12 +119,12 @@ class _EnsureCallable(ABC):
     ) -> Optional[T]:
         if input is None:
             return None
-        if isinstance(input, FunctionType):
+        if isinstance(input, (FunctionType, MethodType)):
             return input  # type: ignore
         return _Ensure._raise_error_value(name, Callable, type(input))
 
     @staticmethod
     def instance(input: Optional[T], name: Optional[str] = None) -> T:
-        if not input is None and isinstance(input, FunctionType):
+        if not input is None and isinstance(input, (FunctionType, MethodType)):
             return input  # type: ignore
         return _Ensure._raise_error_instance(name, Callable, type(input))
