@@ -30,6 +30,7 @@ test_script:
     only:
       - /rc\/([\d\w\-\.]+)/
       - test/fast-build
+      - /test/
   environment:
     PY_VER: 3.10
     TOX_DISCOVER: "$HOME/venv3.7:$HOME/venv3.8:$HOME/venv3.9:$HOME/venv3.10"
