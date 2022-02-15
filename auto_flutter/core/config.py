@@ -48,7 +48,7 @@ class __Config:
 
     def load(self) -> bool:
         self.__is_loaded = True  # Load was called
-        filepath = __Config.__config_file_path()
+        filepath = self.__config_file_path()
         if not filepath.exists():
             return False
         file = open(filepath, mode="r", encoding="utf-8")
@@ -66,7 +66,7 @@ class __Config:
         return self.__is_loaded
 
     def save(self) -> None:
-        filepath = __Config.__config_file_path()
+        filepath = self.__config_file_path()
         if not filepath.exists():
             filepath.parent.mkdir(parents=True, exist_ok=True)
 
