@@ -9,6 +9,7 @@ from ..save import ProjectSave
 from .common_config import CommonConfig
 from .find_flavor import FindFlavor
 from .find_platform import FindPlatform
+from .gitignore import InitGitIgnore
 
 
 class ProjectInit(Task):
@@ -74,7 +75,15 @@ class ProjectInit(Task):
         )
 
         # Remember, TaskManager is stack
-        self._append_task([ProjectSave(), CommonConfig(), FindFlavor(), FindPlatform()])
+        self._append_task(
+            [
+                ProjectSave(),
+                InitGitIgnore(),
+                CommonConfig(),
+                FindFlavor(),
+                FindPlatform(),
+            ]
+        )
 
         return TaskResult(args, error=overwrite, success=True)
 
