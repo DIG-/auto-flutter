@@ -13,7 +13,7 @@ class TaskResolver(ABC):
     @staticmethod
     def resolve(
         task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
-    ) -> Deque[Task]:
+    ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
             temp = [_TaskUniqueIdentity(task)]
@@ -36,9 +36,9 @@ class TaskResolver(ABC):
         temp = TaskResolver.__resolve_dependencies(temp)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp)
-        output: Deque[Task] = deque()
+        output: Deque[TaskIdentity] = deque()
         for identity in temp:
-            output.appendleft(identity.creator())
+            output.appendleft(identity)
         return output
 
     @staticmethod

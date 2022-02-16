@@ -14,7 +14,8 @@ __all__ = ["TaskManager"]
 
 class __TaskManager:
     def __init__(self) -> None:
-        self._task_stack: Deque[Task] = Deque()
+        self._task_stack: Deque[TaskIdentity] = Deque()
+        self._task_done: List[TaskIdentity] = []
         self._printer = TaskPrinter()
 
     def add(
@@ -66,21 +67,23 @@ class __TaskManager:
         args = Args()
 
         while len(self._task_stack) > 0:
-            current = self._task_stack.pop()
+            identity = self._task_stack.pop()
+            self._task_done.append(identity)
+            task = identity.creator()
 
-            describe = current.describe(args)
+            describe = task.describe(args)
             if (not describe is None) and len(describe) != 0:
                 self._printer.set_task_description(describe)
 
             try:
-                output = current.execute(args)
+                output = task.execute(args)
             except BaseException as error:
                 output = TaskResult(args, error, success=False)
             if not isinstance(output, TaskResult):
                 output = TaskResult(
                     args,
                     AssertionError(
-                        "Task {} returned without result".format(type(current).__name__)
+                        "Task {} returned without result".format(type(task).__name__)
                     ),
                     success=False,
                 )

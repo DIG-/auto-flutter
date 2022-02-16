@@ -37,7 +37,7 @@ class ParseOptions(Task):
 
         options: List[Option] = self.identity.options.copy()
         for task in TaskManager._task_stack:
-            options.extend(task.identity.options)
+            options.extend(task.options)
         skip = (
             not _Iterable.first_or_none(options, lambda x: isinstance(x, OptionAll))
             is None
