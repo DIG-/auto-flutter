@@ -17,11 +17,16 @@ class FlutterCommand(BaseProcessTask):
         command: Optional[List[str]] = None,
         show_output_running: bool = True,
         put_output_args: bool = False,
+        describe: Optional[str] = None,
     ) -> None:
         super().__init__(ignore_failure, show_output_at_end)
         self._command: List[str] = _If.not_none(command, lambda x: x, lambda: [])
         self._show_output_running: bool = show_output_running
         self._put_output_args: bool = put_output_args
+        self._describe: str = _If.not_none(describe, lambda x: x, lambda: "")
+
+    def describe(self, args: Args) -> str:
+        return self._describe
 
     def _create_process(self, args: Args) -> ProcessOrResult:
         if len(self._command) <= 0:
