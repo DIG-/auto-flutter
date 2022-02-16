@@ -5,7 +5,6 @@ from typing import Deque, Iterable, Union
 from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
 from ...model.task import *
-from ..string import SB
 from .printer import TaskPrinter
 from .resolver import TaskResolver
 
@@ -31,8 +30,7 @@ class __TaskManager:
                     type(tasks)
                 )
             )
-
-        self._task_stack.extend(TaskResolver.resolve(tasks))
+        self._task_stack.extend(TaskResolver.resolve(tasks, self._task_done))
 
     def add_id(self, ids: Union[TaskId, Iterable[TaskId]]):
         if isinstance(ids, TaskId):
@@ -68,7 +66,6 @@ class __TaskManager:
 
         while len(self._task_stack) > 0:
             identity = self._task_stack.pop()
-            self._task_done.append(identity)
             task = identity.creator()
 
             describe = task.describe(args)
@@ -88,6 +85,7 @@ class __TaskManager:
                     success=False,
                 )
 
+            self._task_done.append(identity)
             self._printer.set_result(output)
 
             if not output.success:
