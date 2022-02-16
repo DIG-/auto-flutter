@@ -91,9 +91,7 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             "output": _JsonEncode.encode_optional(self.output),
             "outputs": None
             if self.outputs is None
-            else _JsonEncode.encode_dict(
-                self.outputs, lambda x: x.flutter, lambda x: x
-            ),
+            else _JsonEncode.encode_dict(self.outputs, lambda x: x.output, lambda x: x),
         }
         if extras is None:
             return output
