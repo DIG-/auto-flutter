@@ -17,7 +17,7 @@ Auto Flutter came with that in mind. Tasks that can be bind with other, and some
 ## Installation
 ### From github release:
 ``` sh
-python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.3.0/auto_flutter_dig.whl"
+python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.3.0/auto_flutter_dig-0.3.0-py3-none-any.whl"
 ```
 or
 ``` sh
