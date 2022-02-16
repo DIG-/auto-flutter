@@ -7,6 +7,7 @@ from ...task.flutter._const import (
     FLUTTER_CONFIG_KEY_PATH,
     FLUTTER_DISABLE_VERSION_CHECK,
 )
+from ...task.project import ProjectRead
 
 
 class FlutterCommand(BaseProcessTask):
@@ -18,15 +19,23 @@ class FlutterCommand(BaseProcessTask):
         show_output_running: bool = True,
         put_output_args: bool = False,
         describe: Optional[str] = None,
+        require_project: bool = False,
     ) -> None:
         super().__init__(ignore_failure, show_output_at_end)
         self._command: List[str] = _If.not_none(command, lambda x: x, lambda: [])
         self._show_output_running: bool = show_output_running
         self._put_output_args: bool = put_output_args
         self._describe: str = _If.not_none(describe, lambda x: x, lambda: "")
+        self._require_project: bool = require_project
 
     def describe(self, args: Args) -> str:
         return self._describe
+
+    def require(self) -> List[TaskId]:
+        parent = super().require()
+        if self._require_project:
+            parent.append(ProjectRead.identity.id)
+        return parent
 
     def _create_process(self, args: Args) -> ProcessOrResult:
         if len(self._command) <= 0:
