@@ -2,8 +2,8 @@ from ...core.string import SB
 from ...core.utils import _Dict
 from ...model.task import *
 from ...task.flutter.command import FlutterCommand
+from ...task.flutter.pub import FlutterPubGet
 from ...task.options import ParseOptions
-from ...task.project import ProjectRead
 
 
 class FlutterGeneratorTask(Task):
@@ -44,7 +44,7 @@ class FlutterGeneratorTask(Task):
         self.force = force
 
     def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id, ProjectRead.identity.id]
+        return [ParseOptions.identity.id, FlutterPubGet.id]
 
     def describe(self, args: Args) -> str:
         return ""
