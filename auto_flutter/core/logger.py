@@ -1,6 +1,10 @@
-import logging
+from logging import basicConfig, getLogger
 
-logging.basicConfig(
-    format="%(asctime)s %(filename)s@%(lineno)03d [%(levelname)s]: %(message)s"
+__all__ = ["log"]
+basicConfig(
+    filename="aflutter.log",
+    filemode="wt",
+    format="%(asctime)s %(filename)s@%(lineno)03d [%(levelname)s]: %(message)s",
 )
-log = logging.getLogger(__name__)
+
+log = getLogger(__name__)
