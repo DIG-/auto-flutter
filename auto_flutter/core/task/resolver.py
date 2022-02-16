@@ -6,6 +6,7 @@ from typing import Deque, Iterable, List, Optional, Union
 
 from ...model.error import TaskNotFound
 from ...model.task import *
+from ._unique_identity import _TaskUniqueIdentity
 
 
 class TaskResolver(ABC):
@@ -15,13 +16,13 @@ class TaskResolver(ABC):
     ) -> Deque[Task]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
-            temp = [TaskResolver.__TaskIdentityWrapper(task)]
+            temp = [_TaskUniqueIdentity(task)]
         elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
                 if isinstance(it, Task):
-                    temp.append(TaskResolver.__TaskIdentityWrapper(it))
+                    temp.append(_TaskUniqueIdentity(it))
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
@@ -83,7 +84,3 @@ class TaskResolver(ABC):
         if id in user_task:
             return user_task[id]
         return None
-
-    class __TaskIdentityWrapper(TaskIdentity):
-        def __init__(self, task: Task) -> None:
-            super().__init__("-#-#-", "", [], lambda: task, True)
