@@ -106,7 +106,7 @@ class Help(Task):
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
         if program == "__main__.py":
-            program = "python -m auto_flutter"
+            program = "python -m auto_flutter_dig"
         builder.append("\nUsage:\t").append(program, end=" ").append(
             "TASK ACTION" if has_action else "TASK", SB.Color.CYAN, True
         ).append(" [options]\n", SB.Color.MAGENTA)
