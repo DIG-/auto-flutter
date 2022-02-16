@@ -35,7 +35,7 @@ class FlutterCommand(BaseProcessTask):
                 error=AssertionError("Flutter command require at least one command"),
             )
         flutter = Config.get_path(FLUTTER_CONFIG_KEY_PATH)
-        self._command.append(FLUTTER_DISABLE_VERSION_CHECK)
+        self._command.insert(0, FLUTTER_DISABLE_VERSION_CHECK)
 
         return Process.create(
             executable=flutter,
