@@ -6,22 +6,24 @@ from typing import Deque, Iterable, List, Optional, Union
 
 from ...model.error import TaskNotFound
 from ...model.task import *
+from ._unique_identity import _TaskUniqueIdentity
 
 
 class TaskResolver(ABC):
     @staticmethod
     def resolve(
-        task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
-    ) -> Deque[Task]:
+        task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
+        previous: List[TaskIdentity] = [],
+    ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
-            temp = [TaskResolver.__TaskIdentityWrapper(task)]
+            temp = [_TaskUniqueIdentity(task)]
         elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
                 if isinstance(it, Task):
-                    temp.append(TaskResolver.__TaskIdentityWrapper(it))
+                    temp.append(_TaskUniqueIdentity(it))
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
@@ -34,10 +36,10 @@ class TaskResolver(ABC):
             )
         temp = TaskResolver.__resolve_dependencies(temp)
         temp.reverse()
-        temp = TaskResolver.__clear_repeatable(temp)
-        output: Deque[Task] = deque()
+        temp = TaskResolver.__clear_repeatable(temp, previous)
+        output: Deque[TaskIdentity] = deque()
         for identity in temp:
-            output.appendleft(identity.creator())
+            output.appendleft(identity)
         return output
 
     @staticmethod
@@ -58,7 +60,12 @@ class TaskResolver(ABC):
         return items
 
     @staticmethod
-    def __clear_repeatable(items: List[TaskIdentity]) -> List[TaskIdentity]:
+    def __clear_repeatable(
+        new: List[TaskIdentity], previous: List[TaskIdentity] = []
+    ) -> List[TaskIdentity]:
+        items = previous.copy()
+        items.extend(new)
+        start = len(previous)
         i = 0
         while i < len(items):
             current = items[i]
@@ -68,11 +75,13 @@ class TaskResolver(ABC):
                 if it.allow_more:
                     pass
                 elif it.id == current.id:
+                    if j <= start:
+                        start -= 1
                     del items[j]
                     continue
                 j += 1
             i += 1
-        return items
+        return items[start:]
 
     @staticmethod
     def find_task(id: TaskId) -> Optional[TaskIdentity]:
@@ -83,7 +92,3 @@ class TaskResolver(ABC):
         if id in user_task:
             return user_task[id]
         return None
-
-    class __TaskIdentityWrapper(TaskIdentity):
-        def __init__(self, task: Task) -> None:
-            super().__init__("-#-#-", "", [], lambda: task, True)

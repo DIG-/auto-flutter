@@ -1,5 +1,4 @@
-from auto_flutter.core.string.builder import SB
-
+from ...core.string.builder import SB
 from ...model.project import Project
 from ...model.project.custom_task import CustomTask, CustomTaskType
 from ...model.task import *

@@ -8,6 +8,8 @@ from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
 from .flutter.build.stub import FlutterBuildStub
 from .flutter.doctor import FlutterDoctor
+from .flutter.generator import FlutterGeneratorTask
+from .flutter.pub.get import FlutterPubGet
 from .options import ParseOptions
 from .project.init import ProjectInit
 from .project.read import ProjectRead
@@ -33,6 +35,9 @@ task_list: Dict[TaskId, TaskIdentity] = dict(
             FirebaseBuildValidate.identity.to_map(),
             FirebaseBuildUpload.identity.to_map(),
             ConfigDispatcher.identity.to_map(),
+            FlutterGeneratorTask.identity.to_map(),
+            FlutterGeneratorTask.identity_code.to_map(),
+            FlutterPubGet.to_map(),
         ],
         key=lambda x: x[0],
     )

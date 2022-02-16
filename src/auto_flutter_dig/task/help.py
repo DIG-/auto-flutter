@@ -106,7 +106,7 @@ class Help(Task):
     def _show_header(self, builder: SB, has_action: bool = False):
         program = Path(sys_argv[0]).name
         if program == "__main__.py":
-            program = "python -m auto_flutter"
+            program = "python -m auto_flutter_dig"
         builder.append("\nUsage:\t").append(program, end=" ").append(
             "TASK ACTION" if has_action else "TASK", SB.Color.CYAN, True
         ).append(" [options]\n", SB.Color.MAGENTA)
@@ -121,8 +121,8 @@ class Help(Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda task: filter(lambda x: not x.hidden, task.identity.options),
-            TaskResolver.resolve(identity.creator()),
+            lambda r_identity: filter(lambda x: not x.hidden, r_identity.options),
+            TaskResolver.resolve(identity),
         )
         options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
@@ -187,7 +187,7 @@ class Help(Task):
         self._show_task_name_description(builder, identity)
         options: List[Option] = _Iterable.flatten(
             map(
-                lambda task: task.identity.options,
+                lambda r_identity: r_identity.options,
                 TaskResolver.resolve(task),
             )
         )

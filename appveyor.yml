@@ -1,9 +1,16 @@
-version: "0.2.1-{build}"
+version: "0.3.0-{build}"
 skip_tags: true
 image: Ubuntu2004
 clone_depth: 1
+branches:
+  only:
+    - main
+    - /rc\/([\d\w\-\.]+)/
+environment:
+  PY_VER: 3.10
 init:
   - sh: source $HOME/venv$PY_VER/bin/activate
+  - sh: export TOX_DISCOVER="$HOME/venv3.7/bin/python:$HOME/venv3.8/bin/python:$HOME/venv3.9/bin/python:$HOME/venv3.10/bin/python"
   - sh: python --version
 build: false
 install:
@@ -11,26 +18,3 @@ install:
   - python -m pip install --upgrade --prefer-binary tox
 test_script:
   - python -m tox
-for:
--
-  branches: # Test each version individually
-    only:
-      - /rc\/([\d\w\-\.]+)/
-  environment:
-    matrix:
-      - TOXENV: py37
-        PY_VER: 3.7
-      - TOXENV: py38
-        PY_VER: 3.8
-      - TOXENV: py39
-        PY_VER: 3.9
-      - TOXENV: py310
-        PY_VER: 3.10
-- 
-  branches: # Full one test
-    only:
-      - main
-  environment:
-    PY_VER: 3.10
-  before_test:
-    - sh: export TOX_DISCOVER="$HOME/venv3.7/bin/python:$HOME/venv3.8/bin/python:$HOME/venv3.9/bin/python:$HOME/venv3.10/bin/python"

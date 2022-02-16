@@ -12,6 +12,7 @@ from ...project.read import ProjectRead
 
 class FlutterBuildConfig(Task):
     __options = {
+        "build-type": Option(None, "build-type", "Flutter build type", True, True),
         "flavor": Option("f", "flavor", "Flavor to build", True),
         "debug": Option(None, "debug", "Build a debug version", False),
     }
@@ -45,6 +46,7 @@ class FlutterBuildConfig(Task):
             raise FlutterBuildConfig.Error(
                 "Unknown build type `{}`.".format(args["-0"].argument)
             )
+        args.add_arg("build-type", build_type.flutter)
         platform: Platform = build_type.platform
         project = Project.current
         if project is None:
