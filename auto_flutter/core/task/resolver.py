@@ -59,7 +59,12 @@ class TaskResolver(ABC):
         return items
 
     @staticmethod
-    def __clear_repeatable(items: List[TaskIdentity]) -> List[TaskIdentity]:
+    def __clear_repeatable(
+        new: List[TaskIdentity], previous: List[TaskIdentity] = []
+    ) -> List[TaskIdentity]:
+        items = previous.copy()
+        items.extend(new)
+        start = len(previous)
         i = 0
         while i < len(items):
             current = items[i]
@@ -69,11 +74,13 @@ class TaskResolver(ABC):
                 if it.allow_more:
                     pass
                 elif it.id == current.id:
+                    if j <= start:
+                        start -= 1
                     del items[j]
                     continue
                 j += 1
             i += 1
-        return items
+        return items[start:]
 
     @staticmethod
     def find_task(id: TaskId) -> Optional[TaskIdentity]:
