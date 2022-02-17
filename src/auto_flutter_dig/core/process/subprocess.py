@@ -35,7 +35,7 @@ class _SubProcess(Process):
                 )
         output = SB()
         self.__process = Popen(
-            [self._executable] + self._arguments,
+            " ".join(map(self.__escape_arg, [str(self._executable)] + self._arguments)),
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
@@ -111,6 +111,21 @@ class _SubProcess(Process):
         if len(decoded) > 0:
             output.append(decoded)
             self._write_output(decoded)
+
+    @staticmethod
+    def __escape_arg(arg: str) -> str:
+        arg = arg.strip()
+        if arg.find(" ") < 0:
+            return arg
+        st_double = arg.startswith('"')
+        st_single = arg.startswith("'")
+        if st_double and arg.endswith('"'):
+            return arg  # Already escaped
+        if st_single and arg.endswith("'"):
+            return arg  # Already escaped
+        if st_double:
+            return "'{}'".format(arg)
+        return '"{}"'.format(arg)
 
     @staticmethod
     def __get_default_decoder() -> IncrementalDecoder:
