@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from pathlib import Path, PurePath
+from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import Iterable, Optional
 
 from ...core.utils import _Iterable
@@ -53,7 +53,9 @@ class ExecutableResolver(ABC):
             # Already absolute
             return ExecutableResolver.get_executable(path)
 
-        if path.parent != PurePath("."):
+        if (isinstance(path, PurePosixPath) and path.parent != PurePosixPath(".")) or (
+            isinstance(path, PureWindowsPath) and path.parent != PureWindowsPath(".")
+        ):
             # Is relative
             _path = ExecutableResolver.get_executable(path)
             if not _path is None:
