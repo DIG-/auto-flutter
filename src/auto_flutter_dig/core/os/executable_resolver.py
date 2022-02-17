@@ -49,7 +49,30 @@ class ExecutableResolver(ABC):
 
     @staticmethod
     def resolve_executable(path: PurePath) -> Optional[PurePath]:
-        raise NotImplementedError("Not Yet")
+        if path.is_absolute():
+            # Already absolute
+            return ExecutableResolver.get_executable(path)
+
+        if path.parent != PurePath("."):
+            # Is relative
+            _path = ExecutableResolver.get_executable(path)
+            if not _path is None:
+                return _path.resolve()
+            return None
+
+        # Then can be at current local or in sys path
+        # First try sys path
+        for root in ExecutableResolver.get_sys_path():
+            _path = ExecutableResolver.get_executable(root / path)
+            if not _path is None:
+                # Executable is in path
+                return PurePath(_path.name)
+            pass
+        # Not in path, try at current local
+        _path = ExecutableResolver.get_executable(path)
+        if not _path is None:
+            return _path.absolute()
+        return None
 
     @staticmethod
     def get_sys_path() -> Iterable[Path]:
