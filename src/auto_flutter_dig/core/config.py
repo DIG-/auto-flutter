@@ -1,4 +1,5 @@
 from json import dump as json_dump
+from json import dumps as json_dumps
 from json import load as json_load
 from pathlib import Path, PurePath, PurePosixPath
 from typing import Dict, NoReturn, Optional, Union
@@ -79,6 +80,9 @@ class __Config:
 
     def remove(self, key: str) -> None:
         self._put_value(key, None)
+
+    def __str__(self) -> str:
+        return json_dumps(self.__content, indent=2)
 
     ## Boolean methods
 
