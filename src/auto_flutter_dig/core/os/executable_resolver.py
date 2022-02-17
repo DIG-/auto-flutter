@@ -81,7 +81,7 @@ class ExecutableResolver(ABC):
         splitted = ExecutableResolver.__get_sys_path().split(os.pathsep)
         mapped = map(ExecutableResolver.__try_create_path, splitted)
         not_none = _Iterable.not_none(mapped)
-        return filter(lambda x: not x.exists(), not_none)
+        return filter(lambda x: x.exists(), not_none)
 
     @staticmethod
     def __try_create_path(path: str) -> Optional[Path]:
