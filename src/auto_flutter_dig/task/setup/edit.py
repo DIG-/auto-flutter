@@ -1,12 +1,7 @@
-from enum import Enum, auto
-from os import X_OK as os_X_OK
-from os import access as os_access
-from os import environ as os_environ
-from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from ...core.config import Config
-from ...core.os import OS
+from ...core.os import ExecutableResolver, PathConverter
 from ...core.string import SB
 from ...model.task import *
 from ..firebase import FirebaseCheck
@@ -71,35 +66,25 @@ class SetupEdit(Task):
                 return TaskResult(
                     args, ValueError("Require valid path for flutter"), success=False
                 )
-            found = SetupEdit.__parse_path(flutter)
-            if found[0] in (
-                SetupEdit.__PathResult.NOT_FOUND,
-                SetupEdit.__PathResult.NOT_EXECUTABLE,
-            ):
+            flutter_path = PathConverter.from_path(flutter).to_posix()
+            flutter_exec = ExecutableResolver.resolve_executable(flutter_path)
+            if flutter_exec is None:
                 error = FileNotFoundError(
-                    'Can not find flutter in "{}"'.format(flutter)
+                    'Can not find flutter executable in "{}"'.format(flutter)
                 )
-                if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
-                    error = FileNotFoundError('Not executable in "{}"'.format(flutter))
-                message = None
-                if not found[1] is None:
-                    message = (
-                        SB()
-                        .append("Resolved as: ", SB.Color.YELLOW)
-                        .append(str(found[1]), SB.Color.YELLOW, True)
-                        .str()
-                    )
+                message = (
+                    SB()
+                    .append("Resolved as: ", SB.Color.YELLOW)
+                    .append(str(flutter_path), SB.Color.YELLOW, True)
+                    .str()
+                )
                 return TaskResult(
                     args,
                     error=error,
                     message=message,
                     success=False,
                 )
-            if found[1] is None:
-                return TaskResult(
-                    args, RuntimeError("Path was expected, but nothing appears")
-                )
-            Config.put_path("flutter", OS.machine_to_posix_path(found[1]))
+            Config.put_path("flutter", flutter_exec)
             self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
@@ -110,35 +95,25 @@ class SetupEdit(Task):
                     ValueError("Require valid path for firebase-cli"),
                     success=False,
                 )
-            found = SetupEdit.__parse_path(firebase)
-            if found[0] in (
-                SetupEdit.__PathResult.NOT_FOUND,
-                SetupEdit.__PathResult.NOT_EXECUTABLE,
-            ):
+            firebase_path = PathConverter.from_path(firebase).to_posix()
+            firebase_exec = ExecutableResolver.resolve_executable(firebase_path)
+            if firebase_exec is None:
                 error = FileNotFoundError(
                     'Can not find firebase-cli in "{}"'.format(firebase)
                 )
-                if found[0] == SetupEdit.__PathResult.NOT_EXECUTABLE:
-                    error = FileNotFoundError('Not executable in "{}"'.format(firebase))
-                message = None
-                if not found[1] is None:
-                    message = (
-                        SB()
-                        .append("Resolved as: ", SB.Color.YELLOW)
-                        .append(str(found[1]), SB.Color.YELLOW, True)
-                        .str()
-                    )
+                message = (
+                    SB()
+                    .append("Resolved as: ", SB.Color.YELLOW)
+                    .append(str(firebase_path), SB.Color.YELLOW, True)
+                    .str()
+                )
                 return TaskResult(
                     args,
                     error=error,
                     message=message,
                     success=False,
                 )
-            if found[1] is None:
-                return TaskResult(
-                    args, RuntimeError("Path was expected, but nothing appears")
-                )
-            Config.put_path("firebase", OS.machine_to_posix_path(found[1]))
+            Config.put_path("firebase", firebase_exec)
             self._append_task(FirebaseCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase_standalone):
@@ -147,73 +122,3 @@ class SetupEdit(Task):
             Config.put_bool("firebase-standalone", False)
 
         return TaskResult(args)
-
-    class __PathResult(Enum):
-        FOUND = auto()
-        NOT_FOUND = auto()
-        NOT_EXECUTABLE = auto()
-
-    __FindResult = Tuple[__PathResult, Optional[Path]]
-
-    @staticmethod
-    def __parse_path(initial: str) -> __FindResult:
-        path: Path = Path(initial)
-        if path.is_absolute():
-            if not path.exists():
-                return (SetupEdit.__PathResult.NOT_FOUND, None)
-            return SetupEdit.__check_if_executable(path.resolve())
-        if path.parent == Path("."):
-            if path.exists():
-                # Local file, make absolute
-                return SetupEdit.__check_if_executable(path.resolve())
-            if not SetupEdit.__check_if_in_sys_path(path):
-                return (SetupEdit.__PathResult.NOT_FOUND, None)
-            return (SetupEdit.__PathResult.FOUND, path)
-        return SetupEdit.__check_if_executable(path.resolve())
-
-    @staticmethod
-    def __check_if_executable(path: Path) -> __FindResult:
-        if OS.current() == OS.WINDOWS:
-            if path.suffix.lower() in (".exe", ".bat", ".cmd"):
-                return (SetupEdit.__PathResult.FOUND, path)
-            elif len(path.suffix) <= 0:
-                npath = path.with_suffix(".exe")
-                if npath.exists():
-                    return (SetupEdit.__PathResult.FOUND, npath)
-                npath = path.with_suffix(".bat")
-                if npath.exists():
-                    return (SetupEdit.__PathResult.FOUND, npath)
-                npath = path.with_suffix(".cmd")
-                if npath.exists():
-                    return (SetupEdit.__PathResult.FOUND, npath)
-            return (SetupEdit.__PathResult.NOT_EXECUTABLE, path)
-        ## Not Windows
-        if os_access(path, os_X_OK):
-            return (SetupEdit.__PathResult.FOUND, path)
-        return (SetupEdit.__PathResult.NOT_EXECUTABLE, path)
-
-    @staticmethod
-    def __check_if_in_sys_path(path: Path) -> bool:
-        for node in SetupEdit.__get_environ_path():
-            current: Path = Path(node)
-            if not current.exists():
-                continue
-            current /= path
-            if current.exists():
-                return True
-        return False
-
-    @staticmethod
-    def __get_environ_path() -> List[str]:
-        path: Optional[str] = None
-        if "PATH" in os_environ:
-            path = os_environ["PATH"]
-        elif "path" in os_environ:
-            path = os_environ["path"]
-        elif "Path" in os_environ:
-            path = os_environ["Path"]
-        if path is None:
-            return []
-        if OS.current() == OS.WINDOWS:
-            return path.split(";")
-        return path.split(":")
