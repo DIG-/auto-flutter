@@ -4,35 +4,25 @@ from queue import Queue
 from sys import stdout as sys_stdout
 from threading import Lock, Thread
 from time import sleep, time
-from typing import Optional
 
+from ....core.utils import _Ensure
 from ....model.error import SilentWarning
 from ....model.task import TaskResult
 from ...session import Session
 from ...string import SB
+from .operation import *
 
 
 class TaskPrinter:
     __COUNTER = "⡀⡄⡆⡇⡏⡟⡿⣿⢿⢻⢹⢸⢰⢠⢀"
     __COUNTER_LEN = len(__COUNTER)
 
-    class _Operation:
-        def __init__(
-            self,
-            message: Optional[str] = None,
-            result: Optional[TaskResult] = None,
-            description: Optional[str] = None,
-        ) -> None:
-            self.message: Optional[str] = message
-            self.result: Optional[TaskResult] = result
-            self.description: Optional[str] = description
-
     def __init__(self) -> None:
         self.__thread = Thread(target=TaskPrinter.__run, args=[self])
-        self._operations: Queue[TaskPrinter._Operation] = Queue()
+        self._operations: Queue[Operation] = Queue()
         self.__stop_mutex = Lock()
         self.__stop = False
-        self._current_task: str = ""
+        self._current_description: str = ""
 
     def start(self):
         self.__thread.start()
@@ -43,14 +33,18 @@ class TaskPrinter:
         self.__stop_mutex.release()
         self.__thread.join()
 
+    def append(self, operation: Operation):
+        self._operations.put(_Ensure.instance(operation, Operation, "operation"))
+        pass
+
     def set_result(self, result: TaskResult):
-        self._operations.put(TaskPrinter._Operation(result=result))
+        self.append(OpResult(result))
 
     def set_task_description(self, description: str):
-        self._operations.put(TaskPrinter._Operation(description=description))
+        self.append(OpDescription(description))
 
     def write(self, message: str):
-        self._operations.put(TaskPrinter._Operation(message=message))
+        self.append(OpMessage(message))
 
     def __run(self):
         while True:
@@ -67,22 +61,30 @@ class TaskPrinter:
                     self.__handle_operation(self._operations.get())
 
             else:
-                TaskPrinter.__print_description(self._current_task)
+                TaskPrinter.__print_description(self._current_description)
                 sleep(0.008)
 
-    def __handle_operation(self, operation: _Operation):
-        if not operation.result is None:
-            self.__handle_operation_result(operation.result)
-        elif not operation.description is None:
-            self.__handle_operation_description(operation.description)
-        elif not operation.message is None:
-            self.__handle_operation_message(operation.message)
+    def __handle_operation(self, op: Operation):
+        if isinstance(op, OpMessage):
+            self.__handle_operation_message(op)
+        elif isinstance(op, OpDescription):
+            self.__handle_operation_description(op)
+        elif isinstance(op, OpResult):
+            self.__handle_operation_result(op)
+        else:
+            print(
+                Session.format_exception(
+                    TypeError("Unknown Operation type: {}".format(type(op).__name__))
+                )
+            )
+            pass
 
-    def __handle_operation_result(self, result: TaskResult):
-        has_task_name = len(self._current_task) > 0
+    def __handle_operation_result(self, op: OpResult):
+        result = op.result
+        has_description = len(self._current_description) > 0
         if not result.success:
-            if has_task_name:
-                TaskPrinter.__print_description(self._current_task, failure=True)
+            if has_description:
+                TaskPrinter.__print_description(self._current_description, failure=True)
             if not result.error is None:
                 print(
                     SB()
@@ -93,15 +95,17 @@ class TaskPrinter:
                     )
                     .str()
                 )
-            elif has_task_name:
+            elif has_description:
                 print("")
         else:
             has_warning = not result.error is None or isinstance(
                 result.error, SilentWarning
             )
-            if has_task_name:
+            if has_description:
                 TaskPrinter.__print_description(
-                    self._current_task, success=not has_warning, warning=has_warning
+                    self._current_description,
+                    success=not has_warning,
+                    warning=has_warning,
                 )
                 if not has_warning:
                     print("")
@@ -116,18 +120,19 @@ class TaskPrinter:
                     )
                     .str()
                 )
-        self._current_task = ""
+        self._current_description = ""
         if not result.message is None:
             print(result.message)
 
-    def __handle_operation_description(self, description: str):
-        self._current_task = description
-        TaskPrinter.__print_description(self._current_task)
+    def __handle_operation_description(self, op: OpDescription):
+        self.__clear_line(self._current_description)
+        self._current_description = op.description
+        TaskPrinter.__print_description(self._current_description)
 
-    def __handle_operation_message(self, message: str):
-        TaskPrinter.__clear_line(self._current_task)
-        print(message)
-        TaskPrinter.__print_description(self._current_task)
+    def __handle_operation_message(self, op: OpMessage):
+        TaskPrinter.__clear_line(self._current_description)
+        print(op.message)
+        TaskPrinter.__print_description(self._current_description)
 
     @staticmethod
     def __clear_line(description: str):
