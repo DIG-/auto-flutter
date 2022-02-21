@@ -9,5 +9,5 @@ class CustomExecIdentity(TaskIdentity):
         from ....task.custom.exec import CustomTaskExec
 
         super().__init__(
-            custom.id, custom.name, [], lambda: CustomTaskExec(self, custom)
+            "-#-#-", custom.id, custom.name, [], lambda: CustomTaskExec(self, custom)
         )

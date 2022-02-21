@@ -4,6 +4,7 @@ from ...core.config import Config
 from ...core.os import ExecutableResolver, PathConverter
 from ...core.string import SB
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
 
@@ -34,7 +35,7 @@ class SetupEdit(Task):
     option_show = Option(None, "show", "Show current config")
     option_check = Option(None, "check", "Check current config")
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "-setup-edit",
         "",
         [

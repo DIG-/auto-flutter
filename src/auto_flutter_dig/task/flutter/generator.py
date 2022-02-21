@@ -3,6 +3,7 @@ from ...core.utils import _Dict
 from ...model.task import *
 from ...task.flutter.command import FlutterCommand
 from ...task.flutter.pub import FlutterPubGet
+from ...task.identity import FlutterTaskIdentity
 from ...task.options import ParseOptions
 
 
@@ -25,14 +26,14 @@ class FlutterGeneratorTask(Task):
         ),
     }
 
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "generate",
         "Generate code, appicon and/or splash screen. Default is code",
         _Dict.flatten(__options),
         lambda: FlutterGeneratorTask(False),
     )
 
-    identity_code = TaskIdentity(
+    identity_code = FlutterTaskIdentity(
         "generate-code",
         "Generate code with --force",
         [],

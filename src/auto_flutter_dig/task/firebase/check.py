@@ -3,6 +3,7 @@ from typing import Optional
 from ...core.config import Config
 from ...core.string import SB
 from ..base.process.timeout import *
+from ...task.identity import FirebaseTaskIdentity
 from ._const import (
     FIREBASE_CONFIG_KEY_PATH,
     FIREBASE_DISABLE_INTERACTIVE_MODE,
@@ -11,7 +12,7 @@ from ._const import (
 
 
 class FirebaseCheck(BaseProcessTimeoutTask):
-    identity = TaskIdentity(
+    identity = FirebaseTaskIdentity(
         "-firebase-check", "Checking firebase-cli", [], lambda: FirebaseCheck()
     )
 

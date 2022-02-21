@@ -5,12 +5,13 @@ from ....model.build import BuildType
 from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
 from ....model.task import *
+from ....task.identity import FlutterTaskIdentity
 from .build import FlutterBuildTask
 from .config import FlutterBuildConfig
 
 
 class FlutterBuildStub(Task):
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "build", "Build flutter app", [], lambda: FlutterBuildStub()
     )
 

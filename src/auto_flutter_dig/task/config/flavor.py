@@ -8,7 +8,7 @@ class ConfigFlavor(_BaseConfigTask):
         None, "rename", "Rename flavor from project. Use with --to-name", True
     )
     option_toname = Option(None, "to-name", "New flavor name from --rename", True)
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "flavor",
         "Handle project flavors in general",
         [option_add, option_remove, option_rename, option_toname],

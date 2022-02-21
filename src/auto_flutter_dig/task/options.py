@@ -7,6 +7,7 @@ from ..core.utils import _Dict, _Iterable
 from ..model.argument import Arg, OptionAll
 from ..model.task import *
 from .help_stub import HelpStub
+from .identity import AflutterTaskIdentity
 
 
 class ParseOptions(Task):
@@ -24,7 +25,7 @@ class ParseOptions(Task):
         "help": Option("h", "help", "Show help of task", False, True),
     }
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "-parse-options",
         "Parsing arguments",
         _Dict.flatten(__options),

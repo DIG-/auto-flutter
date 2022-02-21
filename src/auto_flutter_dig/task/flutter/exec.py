@@ -5,13 +5,14 @@ from ...core.process.process import Process
 from ...core.string import SB
 from ...model.argument import OptionAll
 from ...model.task import *
+from ...task.identity import FlutterTaskIdentity
 from ..options import ParseOptions
 from ..project.read import ProjectRead
 from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):
-    identity = TaskIdentity(
+    identity: TaskIdentity = FlutterTaskIdentity(
         "exec", "Run flutter command", [OptionAll()], lambda: Flutter()
     )
 

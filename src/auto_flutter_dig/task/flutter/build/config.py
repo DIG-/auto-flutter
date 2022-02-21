@@ -6,6 +6,7 @@ from ....model.build import BuildType
 from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
+from ....task.identity import FlutterTaskIdentity
 from ...options import ParseOptions
 from ...project.read import ProjectRead
 
@@ -16,7 +17,7 @@ class FlutterBuildConfig(Task):
         "flavor": Option("f", "flavor", "Flavor to build", True),
         "debug": Option(None, "debug", "Build a debug version", False),
     }
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "-build-config",
         "",
         _Dict.flatten(__options),

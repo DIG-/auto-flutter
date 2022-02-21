@@ -3,15 +3,16 @@ from json import load as json_load
 from ...core.string import SB
 from ...model.project import Project
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from .inport import ProjectTaskImport
 
 
 class ProjectRead(Task):
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "-project-read", "Reading project file", [], lambda: ProjectRead(False)
     )
 
-    identity_skip = TaskIdentity(
+    identity_skip = AflutterTaskIdentity(
         "-project-read-skip", "Reading project file", [], lambda: ProjectRead(True)
     )
 

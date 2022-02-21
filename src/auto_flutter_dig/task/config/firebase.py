@@ -18,7 +18,7 @@ class ConfigFirebase(_BaseConfigTask):
         "flavor": Option(None, "flavor", "Select flavor to apply change", True),
     }
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "firebase",
         "Update project firebase config",
         _Dict.flatten(__options),

@@ -12,6 +12,7 @@ from ...task.firebase._const import (
 from ...task.firebase.check import FirebaseCheck
 from ...task.firebase.validate import FirebaseBuildValidate
 from ...task.flutter.build.stub import FlutterBuildStub
+from ...task.identity import FirebaseTaskIdentity
 
 
 class FirebaseBuildUpload(BaseProcessTask):
@@ -30,7 +31,7 @@ class FirebaseBuildUpload(BaseProcessTask):
             True,
         ),
     }
-    identity = TaskIdentity(
+    identity = FirebaseTaskIdentity(
         "firebase",
         "Upload build to firebase",
         _Dict.flatten(__options),

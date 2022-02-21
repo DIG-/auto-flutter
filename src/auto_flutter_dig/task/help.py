@@ -7,6 +7,7 @@ from ..core.task import TaskResolver
 from ..core.utils import _Ensure, _If, _Iterable
 from ..model.task import *
 from ..model.task.help_action import HelpAction
+from ..task.identity import AflutterTaskIdentity
 from .options import ParseOptions
 from .project.read import ProjectRead
 
@@ -14,7 +15,7 @@ from .project.read import ProjectRead
 class Help(Task):
     option_task = Option("t", "task", "Show help details about given task", True)
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "help",
         "Show help",
         [option_task],

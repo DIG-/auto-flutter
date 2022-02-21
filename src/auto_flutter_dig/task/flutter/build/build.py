@@ -9,10 +9,11 @@ from ....model.platform import *
 from ....model.project import *
 from ....model.task import *
 from ....task.flutter.command import FlutterCommand
+from ....task.identity import FlutterTaskIdentity
 
 
 class FlutterBuildTask(FlutterCommand):
-    identity = TaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
+    identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
 
     def __init__(
         self,

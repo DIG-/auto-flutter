@@ -5,13 +5,14 @@ from ...model.build import BuildType
 from ...model.platform import MergePlatformConfigFlavored, Platform
 from ...model.project import Project
 from ...model.task import *
+from ...task.identity import FirebaseTaskIdentity
 from ..flutter.build.config import FlutterBuildConfig
 from ..project.read import ProjectRead
 from ._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
-    identity = TaskIdentity(
+    identity = FirebaseTaskIdentity(
         "-firebase-build-validate",
         "Checking if project is able to upload to firebase",
         [],

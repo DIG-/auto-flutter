@@ -1,5 +1,6 @@
 from ...model.project import Project  # Will be used by children
 from ...model.task import *
+from ..identity import AflutterTaskIdentity
 from ..options import ParseOptions
 from ..project import ProjectRead, ProjectSave
 
@@ -13,6 +14,7 @@ __all__ = [
     "TaskResult",
     "Option",
     "Args",
+    "AflutterTaskIdentity",
 ]
 
 

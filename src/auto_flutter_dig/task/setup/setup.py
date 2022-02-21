@@ -3,6 +3,7 @@ from typing import List
 from ...core.config import Config
 from ...model.argument import Args
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
 from ..options import ParseOptions
@@ -10,7 +11,7 @@ from .edit import SetupEdit
 
 
 class Setup(Task):
-    identity: TaskIdentity = TaskIdentity(
+    identity: TaskIdentity = AflutterTaskIdentity(
         "setup",
         "Edit global config",
         [],

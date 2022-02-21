@@ -6,7 +6,7 @@ from ._base import *
 class ConfigPlatform(_BaseConfigTask):
     option_add = Option(None, "add", "Add platform support to project", True)
     option_rem = Option(None, "remove", "Remove platform support from project", True)
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "platform",
         "Manage platform support for project",
         [option_add, option_rem],

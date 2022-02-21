@@ -4,7 +4,8 @@ from typing import List, Optional
 from ....core.string import SB
 from ....model.project import Project
 from ....model.task import *
-from ...options import ParseOptions
+from ....task.identity import AflutterTaskIdentity
+from ....task.options import ParseOptions
 from ..save import ProjectSave
 from .common_config import CommonConfig
 from .find_flavor import FindFlavor
@@ -13,7 +14,7 @@ from .gitignore import InitGitIgnore
 
 
 class ProjectInit(Task):
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "init",
         "Initialize Auto-Flutter project",
         [
