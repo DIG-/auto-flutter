@@ -6,10 +6,10 @@ from threading import Lock, Thread
 from time import sleep, time
 from typing import Optional
 
-from ...model.error import SilentWarning
-from ...model.task import TaskResult
-from ..session import Session
-from ..string import SB
+from ....model.error import SilentWarning
+from ....model.task import TaskResult
+from ...session import Session
+from ...string import SB
 
 
 class TaskPrinter:
