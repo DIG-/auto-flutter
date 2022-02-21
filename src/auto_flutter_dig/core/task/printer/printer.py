@@ -37,15 +37,6 @@ class TaskPrinter:
         self._operations.put(_Ensure.instance(operation, Operation, "operation"))
         pass
 
-    def set_result(self, result: TaskResult):
-        self.append(OpResult(result))
-
-    def set_task_description(self, description: str):
-        self.append(OpDescription(description))
-
-    def write(self, message: str):
-        self.append(OpMessage(message))
-
     def __run(self):
         while True:
             self.__stop_mutex.acquire()
