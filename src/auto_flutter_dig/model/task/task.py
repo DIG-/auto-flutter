@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, List, Optional, Union
 
+from ...model.result import Result
 from ..argument import Args
 from .id import TaskId
 from .identity import TaskIdentity
@@ -30,7 +31,7 @@ class Task(ABC):
     def _uptade_description(
         self,
         description: str,
-        result: Optional[TaskResult] = None,  # Show some part had failed
+        result: Optional[Result] = None,  # Show some part had failed
     ):
         from ...core.task.manager import TaskManager
 

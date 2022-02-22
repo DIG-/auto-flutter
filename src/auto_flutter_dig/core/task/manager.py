@@ -4,6 +4,7 @@ from typing import Deque, Iterable, Optional, Union
 
 from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
+from ...model.result import Result
 from ...model.task import *
 from .printer import *
 from .resolver import TaskResolver
@@ -63,7 +64,7 @@ class __TaskManager:
     def update_description(
         self,
         description: Optional[str],
-        result: Optional[TaskResult] = None,
+        result: Optional[Result] = None,
     ):
         if not result is None:
             self._printer.append(OpResult(result))

@@ -112,8 +112,9 @@ class TaskPrinter:
                     .str()
                 )
         self._current_description = ""
-        if not result.message is None:
-            print(result.message)
+        if isinstance(result, TaskResult):
+            if not result.message is None:
+                print(result.message)
 
     def __handle_operation_description(self, op: OpDescription):
         self.__clear_line(self._current_description)
