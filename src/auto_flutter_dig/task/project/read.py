@@ -1,6 +1,7 @@
 from json import load as json_load
 
 from ...core.string import SB
+from ...model.error import E
 from ...model.project import Project
 from ...model.task import *
 from ...task.identity import AflutterTaskIdentity
@@ -33,7 +34,12 @@ class ProjectRead(Task):
         try:
             file = open("aflutter.json", "r")
         except BaseException as error:
-            return self.__return_error(args, error)
+            return self.__return_error(
+                args,
+                E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(
+                    error
+                ),
+            )
 
         if file is None:
             return self.__return_error(
@@ -43,12 +49,20 @@ class ProjectRead(Task):
         try:
             json = json_load(file)
         except BaseException as error:
-            return self.__return_error(args, error)
+            return self.__return_error(
+                args,
+                E(RuntimeError('Failed to read file "afutter.json"')).caused_by(error),
+            )
 
         try:
             Project.current = Project.from_json(json)
         except BaseException as error:
-            return self.__return_error(args, error)
+            return self.__return_error(
+                args,
+                E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(
+                    error
+                ),
+            )
 
         if not Project.current.tasks is None:
             self._append_task(ProjectTaskImport())
