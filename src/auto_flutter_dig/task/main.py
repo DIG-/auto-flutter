@@ -1,8 +1,12 @@
+import sys
+
 from ..core.config import Config
 from ..core.string import SB
-from ..model.error import E
+from ..model.error import E, SilentWarning, TaskNotFound
 from ..model.task import *
+from ..task.help_stub import HelpStub
 from ..task.identity import AflutterTaskIdentity
+from ..task.project import ProjectRead
 
 
 class ReadConfigTask(Task):
@@ -35,7 +39,49 @@ class ReadConfigTask(Task):
 
 
 class MainTask(Task):
+    def __init__(self, first_load: bool = True) -> None:
+        super().__init__()
+        self.__first_load = first_load
+
+    def describe(self, args: Args) -> str:
+        return "Resolve task"
+
     def execute(self, args: Args) -> TaskResult:
-        return TaskResult(args, NotImplementedError())
+        if len(sys.argv) <= 1:
+            self._append_task(
+                HelpStub(
+                    message=SB()
+                    .append("Auto-Flutter requires at least one task", SB.Color.RED)
+                    .str()
+                )
+            )
+            return TaskResult(args, SilentWarning(), success=True)
+        task_id = sys.argv[1].lower()
+        if task_id.startswith("-"):
+            if task_id in ("-h", "--help"):
+                self._append_task(HelpStub())
+                return TaskResult(args)
+            else:
+                self._append_task(HelpStub(task_id))
+                return TaskResult(args, SilentWarning(), success=True)
+
+        try:
+            self._append_task_id(task_id)
+        except TaskNotFound as error:
+            if self.__first_load:
+                self._append_task(ProjectRead.identity_skip)
+                self._append_task(MainTask(False))
+            else:
+                self._append_task(HelpStub(task_id))
+            return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
+        except BaseException as error:
+            return TaskResult(
+                args,
+                E(LookupError("Failed to append task {}".format(task_id))).caused_by(
+                    error
+                ),
+            )
+
+        return TaskResult(args)
 
     pass
