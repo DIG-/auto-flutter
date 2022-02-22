@@ -11,7 +11,7 @@ class Result:
             error, BaseException, "error"
         )
         _Ensure.type(success, bool, "success")
-        self.success = success if not success is None else not error is None
+        self.success: bool = success if not success is None else error is None
         pass
 
     @property
