@@ -102,5 +102,14 @@ class __TaskManager:
 
         return True
 
+    def __repr__(self) -> str:
+        return "{cls}(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
+            cls=type(self).__name__,
+            stack_size=len(self._task_stack),
+            done_size=len(self._task_done),
+            stack=self._task_stack,
+            done=self._task_done,
+        )
+
 
 TaskManager = __TaskManager()
