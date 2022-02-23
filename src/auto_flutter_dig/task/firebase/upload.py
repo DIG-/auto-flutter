@@ -3,6 +3,7 @@ from pathlib import Path, PurePosixPath
 from ...core.config import Config
 from ...core.os import OS
 from ...core.utils import _Dict, _If
+from ...model.argument.option import LongOptionWithValue
 from ...task.base.process import *
 from ...task.firebase._const import (
     FIREBASE_CONFIG_KEY_PATH,
@@ -16,18 +17,12 @@ from ...task.flutter.build.stub import FlutterBuildStub
 
 class FirebaseBuildUpload(BaseProcessTask):
     __options = {
-        "notes": Option(None, "notes", "Release notes to include", True),
-        "testers": Option(
-            None,
-            "testers",
-            "A comma separated list of tester emails to distribute to",
-            True,
+        "notes": LongOptionWithValue("notes", "Release notes to include"),
+        "testers": LongOptionWithValue(
+            "testers", "A comma separated list of tester emails to distribute to"
         ),
-        "groups": Option(
-            None,
-            "groups",
-            "A comma separated list of group aliases to distribute to",
-            True,
+        "groups": LongOptionWithValue(
+            "groups", "A comma separated list of group aliases to distribute to"
         ),
     }
     identity = TaskIdentity(
