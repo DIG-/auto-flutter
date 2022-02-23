@@ -1,7 +1,7 @@
 from json import load as json_load
 
 from ...core.string import SB
-from ...model.error import E
+from ...model.error import E, SilentWarning
 from ...model.project import Project
 from ...model.task import *
 from ...task.identity import AflutterTaskIdentity
@@ -34,6 +34,13 @@ class ProjectRead(Task):
         try:
             file = open("aflutter.json", "r")
         except BaseException as error:
+            if self._warn_if_fail:
+                return self.__return_error(
+                    args,
+                    E(SilentWarning('Failed to open file "aflutter.json"')).caused_by(
+                        error
+                    ),
+                )
             return self.__return_error(
                 args,
                 E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(
