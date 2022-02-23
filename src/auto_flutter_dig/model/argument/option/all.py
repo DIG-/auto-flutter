@@ -1,22 +1,19 @@
-from __future__ import annotations
+from typing import Optional, Tuple
 
-from typing import Optional
-
-from .arguments import Arg, Args
+from ..arguments import Arg, Args
 from .option import Option
+
+__all__ = ["OptionAll"]
 
 
 class OptionAll(Option):
-    def __init__(self, task: bool = True) -> None:
-        super().__init__(
-            None,
-            "#-#-#-#-#",
-            "This task does not parse options, it bypass directly to command"
-            if task
-            else "This action does not parse options, it bypass directly to command",
-            False,
-        )
+    def __init__(self) -> None:
+        super().__init__("")
 
+    def describe(self) -> Tuple[str, str]:
+        return ("", "Accept everything")
+
+    ## Must be deprecated
     class ArgsEncode:
         def __init__(self, args: Args) -> None:
             self._args = args
@@ -26,6 +23,7 @@ class OptionAll(Option):
             self._args["-{}-".format(self._count)] = Arg(argument, None)
             self._count += 1
 
+    ## Must be deprecated
     class ArgsDecode:
         def __init__(self, args: Args) -> None:
             self._args = args
