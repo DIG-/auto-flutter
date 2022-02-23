@@ -76,6 +76,7 @@ class __TaskManager:
         while len(self._task_stack) > 0:
             identity = self._task_stack.pop()
             task = identity.creator()
+            args.select_group(identity.group)
 
             self._printer.append(OpDescription(task.describe(args)))
 

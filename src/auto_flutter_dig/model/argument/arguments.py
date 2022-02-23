@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Union
+from typing import Dict, Iterable, Optional, Union
 
-from .argument import Arg
-from .option import LongOption, Option, PositionalOption, ShortOption
+from .option import LongOption, Option, OptionAll, PositionalOption, ShortOption
 
 Value = Optional[str]
 Argument = str
@@ -11,7 +10,7 @@ Group = str
 Key = Union[Argument, Option]
 
 
-class _Args:
+class Args:
     def __init__(
         self,
         initial: Dict[Group, Dict[Argument, Value]] = {},
@@ -26,7 +25,7 @@ class _Args:
     def __repr__(self) -> str:
         return self.__content.__repr__()
 
-    def select_group(self, group: Group) -> _Args:
+    def select_group(self, group: Group) -> Args:
         self.__selected_group = group
         if group in self.__content:
             self.__selected_content = self.__content[group]
@@ -52,6 +51,11 @@ class _Args:
         key = self.__get_key(key)
         if key in self.__selected_content:
             self.__selected_content.pop(key)
+
+    def get_all(self, key: OptionAll) -> Iterable[Argument]:
+        if self.__selected_group is None:
+            return []
+        return self.group_get_all(self.__selected_group, key)
 
     def group_contains(self, group: Group, key: Key) -> bool:
         if not group in self.__content:
@@ -79,6 +83,18 @@ class _Args:
         if key in self.__content[group]:
             self.__content[group].pop(key)
 
+    def group_get_all(self, group: Group, option: OptionAll) -> Iterable[Argument]:
+        group += "#all"
+        if not group in self.__content:
+            return []
+        return map(lambda x: x[0], self.__content[group].items())
+
+    def group_add_all(self, group: Group, option: OptionAll, argument: Argument):
+        group += "#all"
+        if not group in self.__content:
+            self.__content[group] = {}
+        self.__content[group][argument] = None
+
     def __get_key(self, option: Key) -> Argument:
         key: Optional[Argument] = None
         if isinstance(option, Argument):
@@ -90,50 +106,6 @@ class _Args:
                 key = option.short
             elif isinstance(option, PositionalOption):
                 key = str(option.position)
-            else:
-                raise TypeError(
-                    "Can not get correct type of Option: {}".format(
-                        type(option).__name__
-                    )
-                )
-        if key is None:
-            raise KeyError("Can not extract key from `{}`".format(type(option)))
-        return key.lower()
-
-
-class Args(Dict[str, Arg]):
-    def add(self, arg: Arg):
-        key = arg.argument.lstrip("-").lower()
-        if not arg.argument.startswith("-"):
-            key = "-#-" + key
-        self[key] = arg
-
-    def add_arg(self, key: str, value: Optional[str] = None):
-        self.add(Arg("--" + key, value))
-
-    def contains(self, option: Union[str, Option]) -> bool:
-        return Args.__get_key(option) in self
-
-    def get_value(self, option: Union[str, Option]) -> Optional[str]:
-        key = Args.__get_key(option)
-        if not key in self:
-            return None
-        if key.startswith("-"):
-            return self[key].argument
-        return self[key].value
-
-    @staticmethod
-    def __get_key(option: Union[str, Option]) -> str:
-        key: Optional[str] = None
-        if isinstance(option, str):
-            key = option
-        elif isinstance(option, Option):
-            if isinstance(option, LongOption):
-                key = option.long
-            elif isinstance(option, ShortOption):
-                key = option.short
-            elif isinstance(option, PositionalOption):
-                key = "-" + str(option.position)
             else:
                 raise TypeError(
                     "Can not get correct type of Option: {}".format(

@@ -22,10 +22,10 @@ class FlutterBuildStub(Task):
         return ""
 
     def execute(self, args: Args) -> TaskResult:
-        flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
+        flavor = args.get(FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
             _Ensure.not_none(
-                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
+                args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
             )
         )
         debug = args.contains(FlutterBuildConfig.ARG_DEBUG)

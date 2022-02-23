@@ -56,7 +56,7 @@ class SetupEdit(Task):
         message: Optional[str] = None
 
         if args.contains(self.option_flutter):
-            flutter = args.get_value(self.option_flutter)
+            flutter = args.get(self.option_flutter)
             if flutter is None or len(flutter) == 0:
                 return TaskResult(
                     args, ValueError("Require valid path for flutter"), success=False
@@ -83,7 +83,7 @@ class SetupEdit(Task):
             self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
-            firebase = args.get_value(self.option_firebase)
+            firebase = args.get(self.option_firebase)
             if firebase is None or len(firebase) == 0:
                 return TaskResult(
                     args,

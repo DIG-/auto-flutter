@@ -30,7 +30,7 @@ class ConfigFirebase(_BaseConfigTask):
         project = Project.current
 
         platform: Platform = _If.none(
-            args.get_value(self.__options["platform"]),
+            args.get(self.__options["platform"]),
             lambda: Platform.DEFAULT,
             _Enum.parse(Platform),
         )
@@ -39,12 +39,12 @@ class ConfigFirebase(_BaseConfigTask):
                 "Project does not support platform {}".format(str(platform))
             )
 
-        flavor = args.get_value(self.__options["flavor"])
+        flavor = args.get(self.__options["flavor"])
         if not flavor is None:
             if project.flavors is None or not flavor in project.flavors:
                 raise ValueError("Project does not contains flavor {}".format(flavor))
 
-        add_app_id = args.get_value(self.__options["add"])
+        add_app_id = args.get(self.__options["add"])
         remove_app_id = args.contains(self.__options["remove"])
         if not add_app_id is None and remove_app_id:
             raise ValueError("Can not set and remove app id at same time")

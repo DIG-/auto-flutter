@@ -5,7 +5,6 @@ from ...model.task import *
 from ...task.flutter.command import FlutterCommand
 from ...task.flutter.pub import FlutterPubGet
 from ...task.identity import FlutterTaskIdentity
-from ...task.options import ParseOptions
 
 
 class FlutterGeneratorTask(Task):
@@ -43,7 +42,7 @@ class FlutterGeneratorTask(Task):
         self.force = force
 
     def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id, FlutterPubGet.id]
+        return [FlutterPubGet.id]
 
     def describe(self, args: Args) -> str:
         return ""

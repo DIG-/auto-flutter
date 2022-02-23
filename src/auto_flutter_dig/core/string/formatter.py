@@ -43,7 +43,7 @@ class StringFormatter:
                 arg = "-" + arg
             parsed = _Dict.get_or_none(args_extras, arg)
             if parsed is None:
-                parsed = args.get_value(arg)
+                parsed = args.get(arg)
         elif source in ("env", "ENV", "Env"):
             parsed = _Dict.get_or_none(environ, option)
         else:

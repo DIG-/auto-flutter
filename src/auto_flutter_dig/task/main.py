@@ -6,6 +6,7 @@ from ..model.error import E, SilentWarning, TaskNotFound
 from ..model.task import *
 from ..task.help_stub import HelpStub
 from ..task.identity import AflutterTaskIdentity
+from ..task.options import ParseOptions
 from ..task.project import ProjectRead
 
 
@@ -81,6 +82,8 @@ class MainTask(Task):
                     error
                 ),
             )
+
+        self._append_task(ParseOptions())
 
         return TaskResult(args)
 

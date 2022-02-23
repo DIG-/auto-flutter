@@ -25,10 +25,12 @@ class FirebaseBuildValidate(Task):
         return [ProjectRead.identity.id, FlutterBuildConfig.identity.id]
 
     def execute(self, args: Args) -> TaskResult:
-        flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
+        flavor = args.group_get("flutter", FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
             _Ensure.instance(
-                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), str, "build-type"
+                args.group_get("flutter", FlutterBuildConfig.ARG_BUILD_TYPE),
+                str,
+                "build-type",
             )
         )
         project = Project.current
@@ -44,5 +46,5 @@ class FirebaseBuildValidate(Task):
                 success=False,
             )
 
-        args.add_arg(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID, id)
+        args.add(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID, id)
         return TaskResult(args)

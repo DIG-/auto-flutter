@@ -1,7 +1,6 @@
 from ...model.project import Project  # Will be used by children
 from ...model.task import *
 from ..identity import AflutterTaskIdentity
-from ..options import ParseOptions
 from ..project import ProjectRead, ProjectSave
 
 __all__ = [
@@ -19,7 +18,7 @@ __all__ = [
 
 class _BaseConfigTask(Task):
     def require(self) -> List[TaskId]:
-        return [ProjectRead.identity.id, ParseOptions.identity.id]
+        return [ProjectRead.identity.id]
 
     def _add_save_project(self):
         self._append_task(ProjectSave())
