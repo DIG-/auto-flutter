@@ -4,24 +4,28 @@ from typing import List, Optional
 
 from ..core.session import Session
 from ..core.utils import _Dict, _Iterable
-from ..model.argument import Arg, OptionAll
+from ..model.argument import Arg
+from ..model.argument.option import (
+    LongOption,
+    LongShortOptionWithValue,
+    Option,
+    OptionAll,
+    OptionWithValue,
+    ShortOption,
+)
 from ..model.task import *
 from .help_stub import HelpStub
 
 
 class ParseOptions(Task):
-    option_stack_trace = Option(
-        None, "aflutter-stack-trace", "Show stacktrace of task output"
+    option_stack_trace = LongOption(
+        "aflutter-stack-trace", "Show stacktrace of task output"
     )
     __options = {
-        "stack-trace": Option(
-            None,
-            "aflutter-stack-trace",
-            "Show stack trace of task output error",
-            False,
-            True,
+        "stack-trace": LongOption(
+            "aflutter-stack-trace", "Show stack trace of task output error"
         ),
-        "help": Option("h", "help", "Show help of task", False, True),
+        "help": LongShortOptionWithValue("h", "help", "Show help of task"),
     }
 
     identity = TaskIdentity(
@@ -58,10 +62,17 @@ class ParseOptions(Task):
         short = ""
         long: List[str] = []
         for option in options:
-            short += option.short_formatted()
-            long_fmt = option.long_formatted()
-            if not long_fmt is None:
-                long.append(long_fmt)
+            if isinstance(option, LongOption):
+                if isinstance(option, OptionWithValue):
+                    long.append(option.long + "=")
+                else:
+                    long.append(option.long)
+                pass
+            if isinstance(option, ShortOption):
+                short += option.short
+                if isinstance(option, OptionWithValue):
+                    short += ":"
+                pass
         try:
             opts, positional = gnu_getopt(sys_argv[2:], short, long)
         except GetoptError as error:
@@ -70,23 +81,41 @@ class ParseOptions(Task):
         for opt, value in opts:
             opt_strip = opt.lstrip("-")
             found: Optional[Option] = None
-            if len(opt_strip) <= 2:
+            if len(opt_strip) == 1:
                 found = _Iterable.first_or_none(
-                    options, lambda option: option.short == opt_strip
+                    options,
+                    lambda option: isinstance(option, ShortOption)
+                    and option.short == opt_strip,
                 )
             else:
                 found = _Iterable.first_or_none(
-                    options, lambda option: option.long == opt_strip
+                    options,
+                    lambda option: isinstance(option, LongOption)
+                    and option.long == opt_strip,
                 )
 
             if found is None:
                 # Argument is not parameter
                 args.add(Arg(opt, None))
-            elif found.long is None:
+            elif isinstance(found, ShortOption):
                 # Using short argument
-                args.add(Arg(opt, value if found.has_value else None))
+                args.add(
+                    Arg(
+                        opt,
+                        value if isinstance(found, OptionWithValue) else None,
+                    )
+                )
+            elif isinstance(found, LongOption):
+                args.add(
+                    Arg(
+                        "--" + found.long,
+                        value if isinstance(found, OptionWithValue) else None,
+                    )
+                )
             else:
-                args.add(Arg("--" + found.long, value if found.has_value else None))
+                raise TypeError(
+                    "Unexpected instance of Option: {}".format(type(found).__name__)
+                )
 
         i = 0
         for value in positional:

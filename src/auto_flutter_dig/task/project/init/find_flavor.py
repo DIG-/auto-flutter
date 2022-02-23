@@ -6,29 +6,24 @@ from xml.etree.ElementTree import parse as xml_parse
 from ....core.os import OS
 from ....core.session import Session
 from ....core.string import SB
+from ....model.argument.option import LongOption
 from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
 
 
 class FindFlavor(Task):
-    option_skip_idea = Option(
-        None,
+    option_skip_idea = LongOption(
         "skip-flavor-idea",
         "Skip algorithm to detect flavor from Idea Run config",
-        False,
     )
-    option_skip_android = Option(
-        None,
+    option_skip_android = LongOption(
         "skip-flavor-android",
         "Skip algorithm to detect flavor using android data",
-        False,
     )
-    option_skip_ios = Option(
-        None,
+    option_skip_ios = LongOption(
         "skip-flavor-ios",
         "Skip algorithm to detect flavor using ios data",
-        False,
     )
 
     def describe(self, args: Args) -> str:

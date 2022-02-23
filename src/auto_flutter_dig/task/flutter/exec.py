@@ -3,7 +3,7 @@ from typing import List, Optional
 from ...core.config import Config
 from ...core.process.process import Process
 from ...core.string import SB
-from ...model.argument import OptionAll
+from ...model.argument.option import OptionAll
 from ...model.task import *
 from ..options import ParseOptions
 from ..project.read import ProjectRead
