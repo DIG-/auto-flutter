@@ -1,4 +1,4 @@
-from ...model.argument import OptionAll
+from ...model.argument.option import OptionAll
 from ...model.task import *
 from .exec import Flutter
 
