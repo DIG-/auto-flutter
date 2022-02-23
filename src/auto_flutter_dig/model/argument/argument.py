@@ -11,3 +11,8 @@ class Arg:
         self.value: Optional[str] = _Ensure.type(value, str, "value")
         if not self.value is None:
             self.value = self.value.strip()
+
+    def __repr__(self) -> str:
+        return "{cls}(\nargument={argument}\nvalue={value}\n)".format(
+            cls=type(self).__name__, argument=self.argument, value=self.value
+        )
