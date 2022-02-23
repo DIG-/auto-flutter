@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Iterable, Mapping, Optional
 
 from ..arguments import Arg, Args
 
@@ -25,5 +25,5 @@ class ArgsDecode:
             return None
         return self._args[index].argument
 
-    def all(self) -> map[str]:
+    def all(self) -> Iterable[str]:
         return map(lambda x: x[1].argument, self._args.items())
