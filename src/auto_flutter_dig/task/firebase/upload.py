@@ -41,7 +41,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         ]
 
     def _create_process(self, args: Args) -> ProcessOrResult:
-        filename = args.get("output")
+        filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
             return TaskResult(
                 args, AssertionError("Previous task does not have output")

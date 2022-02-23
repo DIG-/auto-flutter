@@ -115,7 +115,7 @@ class FlutterBuildTask(FlutterCommand):
                 success=False,
             )
 
-        args.add("output", output_file)
+        args.global_add("output", output_file)
         return TaskResult(args, success=True)
 
     def _handle_android_error(self, args: Args, result: TaskResult) -> TaskResult:
@@ -135,7 +135,7 @@ class FlutterBuildTask(FlutterCommand):
             self._clear_output(args)
             return result
 
-        output = args.get("output")
+        output = args.global_get("output")
         self._clear_output(args)
         if (
             output is None
@@ -192,4 +192,4 @@ class FlutterBuildTask(FlutterCommand):
         )
 
     def _clear_output(self, args: Args) -> None:
-        args.remove("output")
+        args.global_remove("output")
