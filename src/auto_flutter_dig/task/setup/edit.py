@@ -3,6 +3,7 @@ from typing import Optional
 from ...core.config import Config
 from ...core.os import ExecutableResolver, PathConverter
 from ...core.string import SB
+from ...model.argument.option import LongOption, LongOptionWithValue
 from ...model.task import *
 from ...task.identity import AflutterTaskIdentity
 from ..firebase import FirebaseCheck
@@ -10,30 +11,23 @@ from ..flutter import FlutterCheck
 
 
 class SetupEdit(Task):
-    option_flutter = Option(
-        None,
-        "flutter",
-        "Flutter command, can be absolute path if it is not in PATH",
-        True,
+    option_flutter = LongOptionWithValue(
+        "flutter", "Flutter command, can be absolute path if it is not in PATH"
     )
-    option_firebase = Option(
-        None,
+    option_firebase = LongOptionWithValue(
         "firebase-cli",
         "Firebase cli command, can be absolute path if it is not in PATH",
-        True,
     )
-    option_firebase_standalone = Option(
-        None,
+    option_firebase_standalone = LongOption(
         "firebase-standalone",
         "When firebase cli is standalone version",
     )
-    option_firebase_non_standalone = Option(
-        None,
+    option_firebase_non_standalone = LongOption(
         "no-firebase-standalone",
         "When firebase cli is not standalone version",
     )
-    option_show = Option(None, "show", "Show current config")
-    option_check = Option(None, "check", "Check current config")
+    option_show = LongOption("show", "Show current config")
+    option_check = LongOption("check", "Check current config")
 
     identity = AflutterTaskIdentity(
         "-setup-edit",

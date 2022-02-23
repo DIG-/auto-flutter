@@ -1,5 +1,6 @@
 from ...core.string import SB
 from ...core.utils import _Dict
+from ...model.argument.option import LongOption
 from ...model.task import *
 from ...task.flutter.command import FlutterCommand
 from ...task.flutter.pub import FlutterPubGet
@@ -9,20 +10,17 @@ from ...task.options import ParseOptions
 
 class FlutterGeneratorTask(Task):
     __options = {
-        "code": Option(None, "code", "Generate code with `pub run build_runner build`"),
-        "force1": Option(
-            None,
+        "code": LongOption("code", "Generate code with `pub run build_runner build`"),
+        "force1": LongOption(
             "delete-conflicting-outputs",
             "Delete conflicting output for code generation",
         ),
-        "force2": Option(None, "force", "Same as --delete-conflicting-outputs"),
-        "appicon": Option(
-            None, "appicon", "Generate app icon with package `flutter_launcher_icons`"
+        "force2": LongOption("force", "Same as --delete-conflicting-outputs"),
+        "appicon": LongOption(
+            "appicon", "Generate app icon with package `flutter_launcher_icons`"
         ),
-        "splash": Option(
-            None,
-            "splash",
-            "Generate splash screen with package `flutter_native_splash`",
+        "splash": LongOption(
+            "splash", "Generate splash screen with package `flutter_native_splash`"
         ),
     }
 

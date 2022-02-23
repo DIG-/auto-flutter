@@ -1,11 +1,12 @@
 from ...core.utils import _Enum
+from ...model.argument.option import LongOptionWithValue
 from ...model.platform import Platform, PlatformConfigFlavored
 from ._base import *
 
 
 class ConfigPlatform(_BaseConfigTask):
-    option_add = Option(None, "add", "Add platform support to project", True)
-    option_rem = Option(None, "remove", "Remove platform support from project", True)
+    option_add = LongOptionWithValue("add", "Add platform support to project")
+    option_rem = LongOptionWithValue("remove", "Remove platform support from project")
     identity = AflutterTaskIdentity(
         "platform",
         "Manage platform support for project",

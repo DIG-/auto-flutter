@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from ....core.string import SB
+from ....model.argument.option import LongOption, LongShortOptionWithValue
 from ....model.project import Project
 from ....model.task import *
 from ....task.identity import AflutterTaskIdentity
@@ -18,8 +19,8 @@ class ProjectInit(Task):
         "init",
         "Initialize Auto-Flutter project",
         [
-            Option("n", "name", "Project name", True),
-            Option(None, "force", "Overwrite existent project", False),
+            LongShortOptionWithValue("n", "name", "Project name"),
+            LongOption("force", "Overwrite existent project"),
             FindFlavor.option_skip_idea,
             FindFlavor.option_skip_android,
             FindFlavor.option_skip_ios,

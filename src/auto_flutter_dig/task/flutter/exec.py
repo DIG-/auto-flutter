@@ -3,7 +3,8 @@ from typing import List, Optional
 from ...core.config import Config
 from ...core.process.process import Process
 from ...core.string import SB
-from ...model.argument import OptionAll
+from ...model.argument.option import OptionAll
+from ...model.argument.option.opt_all_codec import ArgsDecode
 from ...model.task import *
 from ...task.identity import FlutterTaskIdentity
 from ..options import ParseOptions
@@ -54,11 +55,11 @@ class Flutter(Task):
 
         if not self._command is None and len(self._command) > 0:
             if self._command_args:
-                self._command.extend(OptionAll.ArgsDecode(args).all())
+                self._command.extend(ArgsDecode(args).all())
             p = Process.create(flutter, arguments=self._command, writer=writer)
         else:
             arguments = [FLUTTER_DISABLE_VERSION_CHECK]
-            arguments.extend(OptionAll.ArgsDecode(args).all())
+            arguments.extend(ArgsDecode(args).all())
             p = Process.create(flutter, arguments=arguments, writer=writer)
         output = p.try_run()
 

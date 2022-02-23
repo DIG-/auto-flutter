@@ -5,6 +5,13 @@ from typing import Dict, List, Optional, Union
 from ..core.string import SB
 from ..core.task import TaskResolver
 from ..core.utils import _Ensure, _If, _Iterable
+from ..model.argument.option import (
+    LongOption,
+    LongShortOptionWithValue,
+    Option,
+    OptionWithValue,
+    ShortOption,
+)
 from ..model.task import *
 from ..model.task.help_action import HelpAction
 from ..task.identity import AflutterTaskIdentity
@@ -13,7 +20,9 @@ from .project.read import ProjectRead
 
 
 class Help(Task):
-    option_task = Option("t", "task", "Show help details about given task", True)
+    option_task = LongShortOptionWithValue(
+        "t", "task", "Show help details about given task"
+    )
 
     identity = AflutterTaskIdentity(
         "help",
@@ -122,7 +131,7 @@ class Help(Task):
         self._show_header(builder)
         self._show_task_description(builder, identity)
         options_mapped = map(
-            lambda r_identity: filter(lambda x: not x.hidden, r_identity.options),
+            lambda r_identity: r_identity.options,
             TaskResolver.resolve(identity),
         )
         options = _Iterable.flatten(options_mapped)
@@ -146,16 +155,18 @@ class Help(Task):
             return
         for option in options:
             length = 0
-            if not option.short is None:
+            if isinstance(option, ShortOption):
                 builder.append("-" + option.short, SB.Color.MAGENTA)
                 length += len(option.short) + 1
-                if not option.long is None:
+
+            if isinstance(option, LongOption):
+                if length != 0:
                     builder.append(", ")
-                    length += 1
-            if not option.long is None:
+                    length += 2
                 builder.append("--" + option.long, SB.Color.MAGENTA)
                 length += len(option.long) + 2
-            if option.has_value:
+
+            if isinstance(option, OptionWithValue):
                 builder.append(" <value>", SB.Color.MAGENTA, True)
                 length += 8
 

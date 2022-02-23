@@ -12,7 +12,6 @@ __all__ = [
     "TaskId",
     "TaskIdentity",
     "TaskResult",
-    "Option",
     "Args",
     "AflutterTaskIdentity",
 ]

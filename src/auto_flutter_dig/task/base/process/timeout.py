@@ -6,7 +6,6 @@ __all__ = [
     "TaskIdentity",
     "TaskResult",
     "TaskId",
-    "Option",
     "Args",
     "Process",
     "BaseProcessTimeoutTask",
