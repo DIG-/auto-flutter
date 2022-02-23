@@ -70,8 +70,8 @@ class MainTask(Task):
             self._append_task_id(task_id)
         except TaskNotFound as error:
             if self.__first_load:
-                self._append_task(ProjectRead.identity_skip)
                 self._append_task(MainTask(False))
+                self._append_task(ProjectRead.identity_skip)
             else:
                 self._append_task(HelpStub(task_id))
             return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
