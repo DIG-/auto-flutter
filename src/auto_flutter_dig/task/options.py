@@ -87,6 +87,7 @@ class ParseOptions(Task):
         has_param: List[_Helper] = []
         maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
         position_count = 0
+        has_option_all = len(option_all) > 0
         for argument in input:
             for helper_all in option_all:
                 self.__append_argument(args, helper_all, argument)
@@ -138,6 +139,8 @@ class ParseOptions(Task):
                         else:
                             self.__append_argument(args, helper_short, None)
                     continue
+                elif has_option_all:
+                    continue
                 else:
                     raise OptionNotFound(
                         "Unrecognized command line option {}".format(argument)
@@ -153,6 +156,8 @@ class ParseOptions(Task):
                 elif split_len == 2:
                     sub = split[1]
                     group = split[0]
+                elif has_option_all:
+                    continue
                 else:
                     raise OptionInvalidFormat(
                         "Invalid argument group structure for command line option {}".format(
@@ -172,6 +177,8 @@ class ParseOptions(Task):
                         maybe_has_param = _Helper(
                             _ShortOptionMaybeWithValue(sub, ""), group, ShortOption
                         )
+                        continue
+                    elif has_option_all:
                         continue
                     else:
                         raise OptionNotFound(
@@ -207,6 +214,8 @@ class ParseOptions(Task):
                         _LongOptionMaybeWithValue(sub, ""), group, LongOption
                     )
                     continue
+                elif has_option_all:
+                    continue
                 else:
                     raise OptionNotFound(
                         "Unrecognized command line option {}".format(argument)
@@ -215,10 +224,14 @@ class ParseOptions(Task):
             else:
                 # Positional argument
                 pos = str(position_count)
+                position_count += 1
                 if not pos in positional_options:
-                    raise OptionNotFound(
-                        'Unrecognized positional command line "{}"'.format(argument)
-                    )
+                    if has_option_all:
+                        continue
+                    else:
+                        raise OptionNotFound(
+                            'Unrecognized positional command line "{}"'.format(argument)
+                        )
                 for group, helper_positional in positional_options[pos].items():
                     self.__append_argument(args, helper_positional, argument)
             pass
