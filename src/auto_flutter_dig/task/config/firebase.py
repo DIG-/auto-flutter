@@ -1,6 +1,7 @@
 from typing import Optional
 
 from ...core.utils import _Dict, _Enum, _If
+from ...model.argument.option import LongOption, LongOptionWithValue
 from ...model.platform import Platform
 from ..firebase._const import FIREBASE_PROJECT_APP_ID_KEY
 from ._base import *
@@ -8,14 +9,14 @@ from ._base import *
 
 class ConfigFirebase(_BaseConfigTask):
     __options = {
-        "add": Option(
-            None, "set-app-id", "Set app id for platform and/or flavor", True
+        "add": LongOptionWithValue(
+            "set-app-id", "Set app id for platform and/or flavor"
         ),
-        "remove": Option(
-            None, "remove-app-id", "Remove app id from platform and/or flavor"
+        "remove": LongOption(
+            "remove-app-id", "Remove app id from platform and/or flavor"
         ),
-        "platform": Option(None, "platform", "Select platform to apply change", True),
-        "flavor": Option(None, "flavor", "Select flavor to apply change", True),
+        "platform": LongOptionWithValue("platform", "Select platform to apply change"),
+        "flavor": LongOptionWithValue("flavor", "Select flavor to apply change"),
     }
 
     identity = TaskIdentity(
