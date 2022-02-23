@@ -1,14 +1,39 @@
-from pprint import pprint
-from sys import argv as sys_argv
-from typing import Dict, Optional
+from __future__ import annotations
 
-from ..model.argument.option_all import OptionAll
+from sys import argv as sys_argv
+from typing import Dict, Generic, Optional, Type, TypeVar
+
+from ..model.argument.option import *
 from ..model.task import *
 
 Argument = str
 Group = str
 GroupedOptions = Dict[Group, Option]
 OptionsByArgument = Dict[Argument, GroupedOptions]
+
+T = TypeVar("T", bound=Option)
+
+
+class _Helper(Generic[T]):
+    def __init__(self, option: T, identity: TaskIdentity, cls: Type[T]) -> None:
+        self.option: T = option
+        self.identity: TaskIdentity = identity
+        self.group = identity.group
+        self.has_value: bool = isinstance(option, OptionWithValue)
+        self.argument: str = ""
+        if cls is LongOption:
+            assert isinstance(option, LongOption)
+            self.argument = option.long
+        elif cls is ShortOption:
+            assert isinstance(option, ShortOption)
+            self.argument = option.short
+        elif cls is PositionalOption:
+            assert isinstance(option, PositionalOption)
+            self.argument = str(option.position)
+        pass
+
+    def into(self, target: Dict[str, T]):
+        target[self.argument] = self
 
 
 class NewParseOptions(Task):
@@ -18,23 +43,24 @@ class NewParseOptions(Task):
     def execute(self, args: Args) -> TaskResult:
         from ..core.task import TaskManager
 
-        long_options: OptionsByArgument = {}
-        short_options: OptionsByArgument = {}
-        option_all: List[Group] = []
+        long_options: Dict[str, _Helper[LongOption]] = {}
+        short_options: Dict[str, _Helper[ShortOption]] = {}
+        positional_options: Dict[str, _Helper[PositionalOption]] = {}
+        option_all: List[_Helper[OptionAll]] = []
 
+        # Separate and identify options by type
         for identity in TaskManager._task_stack.copy():
             for option in identity.options:
                 if isinstance(option, OptionAll):
-                    option_all.append(identity.group)
+                    option_all.append(_Helper(option, identity, OptionAll))
                     continue
-                if not option.short is None and len(option.short) == 1:
-                    self.__insert_option(
-                        short_options, option.short, identity.group, option
-                    )
-                if not option.long is None and len(option.long) > 1:
-                    self.__insert_option(
-                        long_options, option.long, identity.group, option
-                    )
+                if isinstance(option, LongOption):
+                    _Helper(option, identity, LongOption).into(long_options)
+                if isinstance(option, ShortOption):
+                    _Helper(option, identity, ShortOption).into(short_options)
+                if isinstance(option, PositionalOption):
+                    _Helper(option, identity, PositionalOption).into(
+                        positional_options)
             pass
 
         positional: List[str] = []
@@ -115,11 +141,13 @@ class NewParseOptions(Task):
                             param_groups = long_options[sub]
                             continue
                         else:
-                            self.__append_arg(args, sub, long_options[sub], None)
+                            self.__append_arg(
+                                args, sub, long_options[sub], None)
                             continue
                     else:
                         if group in long_options[sub]:
-                            v_group: GroupedOptions = {group: long_options[sub][group]}
+                            v_group: GroupedOptions = {
+                                group: long_options[sub][group]}
                             if long_options[sub][group].has_value:
                                 param_next = True
                                 param_option = sub
