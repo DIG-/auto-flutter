@@ -2,6 +2,8 @@ from typing import List
 
 from ....core.string import SB
 from ....core.utils import _Dict
+from ....model.argument.option import (LongOption, LongPositionalOption,
+                                       LongShortOptionWithValue)
 from ....model.build import BuildType
 from ....model.platform import Platform
 from ....model.project import Project
@@ -12,9 +14,9 @@ from ...project.read import ProjectRead
 
 class FlutterBuildConfig(Task):
     __options = {
-        "build-type": Option(None, "build-type", "Flutter build type", True, True),
-        "flavor": Option("f", "flavor", "Flavor to build", True),
-        "debug": Option(None, "debug", "Build a debug version", False),
+        "build-type": LongPositionalOption("build-type", 0, "Flutter build type"),
+        "flavor": LongShortOptionWithValue("f", "flavor", "Flavor to build"),
+        "debug": LongOption("debug", "Build a debug version"),
     }
     identity = TaskIdentity(
         "-build-config",
