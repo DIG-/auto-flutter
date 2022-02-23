@@ -1,13 +1,14 @@
+from ...model.argument.option import LongOptionWithValue
 from ._base import *
 
 
 class ConfigFlavor(_BaseConfigTask):
-    option_add = Option(None, "add", "Add flavor to project", True)
-    option_remove = Option(None, "remove", "Remove flavor from project", True)
-    option_rename = Option(
-        None, "rename", "Rename flavor from project. Use with --to-name", True
+    option_add = LongOptionWithValue("add", "Add flavor to project")
+    option_remove = LongOptionWithValue("remove", "Remove flavor from project")
+    option_rename = LongOptionWithValue(
+        "rename", "Rename flavor from project. Use with --to-name"
     )
-    option_toname = Option(None, "to-name", "New flavor name from --rename", True)
+    option_toname = LongOptionWithValue("to-name", "New flavor name from --rename")
     identity = TaskIdentity(
         "flavor",
         "Handle project flavors in general",
