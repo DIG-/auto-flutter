@@ -5,6 +5,7 @@ from ...core.os import ExecutableResolver, PathConverter
 from ...core.string import SB
 from ...model.argument.option import LongOption, LongOptionWithValue
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
 
@@ -28,7 +29,7 @@ class SetupEdit(Task):
     option_show = LongOption("show", "Show current config")
     option_check = LongOption("check", "Check current config")
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "-setup-edit",
         "",
         [
@@ -55,7 +56,7 @@ class SetupEdit(Task):
         message: Optional[str] = None
 
         if args.contains(self.option_flutter):
-            flutter = args.get_value(self.option_flutter)
+            flutter = args.get(self.option_flutter)
             if flutter is None or len(flutter) == 0:
                 return TaskResult(
                     args, ValueError("Require valid path for flutter"), success=False
@@ -82,7 +83,7 @@ class SetupEdit(Task):
             self._append_task(FlutterCheck(skip_on_failure=True))
 
         if args.contains(self.option_firebase):
-            firebase = args.get_value(self.option_firebase)
+            firebase = args.get(self.option_firebase)
             if firebase is None or len(firebase) == 0:
                 return TaskResult(
                     args,

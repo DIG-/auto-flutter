@@ -1,9 +1,9 @@
-from ....model.task import TaskIdentity
 from ....task.flutter.command import FlutterCommand
+from ....task.identity import FlutterTaskIdentity
 
 __all__ = ["FlutterPubGet"]
 
-FlutterPubGet = TaskIdentity(
+FlutterPubGet = FlutterTaskIdentity(
     "pub-get",
     "Runs flutter pub get",
     [],

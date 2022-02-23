@@ -5,7 +5,7 @@ from ....core.string import SB
 from ....model.argument.option import LongOption, LongShortOptionWithValue
 from ....model.project import Project
 from ....model.task import *
-from ...options import ParseOptions
+from ....task.identity import AflutterTaskIdentity
 from ..save import ProjectSave
 from .common_config import CommonConfig
 from .find_flavor import FindFlavor
@@ -14,21 +14,21 @@ from .gitignore import InitGitIgnore
 
 
 class ProjectInit(Task):
-    identity = TaskIdentity(
+    opt_project_name = LongShortOptionWithValue("n", "name", "Project name")
+    opt_project_overwrite = LongOption("force", "Overwrite existent project")
+
+    identity = AflutterTaskIdentity(
         "init",
         "Initialize Auto-Flutter project",
         [
-            LongShortOptionWithValue("n", "name", "Project name"),
-            LongOption("force", "Overwrite existent project"),
+            opt_project_name,
+            opt_project_overwrite,
             FindFlavor.option_skip_idea,
             FindFlavor.option_skip_android,
             FindFlavor.option_skip_ios,
         ],
         lambda: ProjectInit(),
     )
-
-    def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id]
 
     def describe(self, args: Args) -> str:
         return "Initializing project"
@@ -44,7 +44,7 @@ class ProjectInit(Task):
             )
         overwrite: Optional[Warning] = None
         if Path("aflutter.json").exists():
-            if "force" in args:
+            if args.contains(self.opt_project_overwrite):
                 overwrite = Warning("Current project will be overwritten")
             else:
                 return TaskResult(
@@ -61,7 +61,7 @@ class ProjectInit(Task):
                     success=False,
                 )
         name = ProjectInit._project_name_from_pubspec(pubspec)
-        name_arg = args.get_value("name")
+        name_arg = args.get("name")
         if not name_arg is None and len(name_arg) > 0:
             name = name_arg
         elif name is None:

@@ -14,16 +14,30 @@ from ..model.argument.option import (
 )
 from ..model.task import *
 from ..model.task.help_action import HelpAction
-from .options import ParseOptions
+from ..task.identity import AflutterTaskIdentity
 from .project.read import ProjectRead
 
 
 class Help(Task):
+    class Stub(AflutterTaskIdentity):
+        def __init__(
+            self,
+            task_id: Optional[Union[TaskId, TaskIdentity]] = None,
+            message: Optional[str] = None,
+        ) -> None:
+            super().__init__(
+                Help.identity.id,
+                Help.identity.name,
+                Help.identity.options,
+                lambda: Help(task_id, message),
+                Help.identity.allow_more,
+            )
+
     option_task = LongShortOptionWithValue(
         "t", "task", "Show help details about given task"
     )
 
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "help",
         "Show help",
         [option_task],
@@ -55,13 +69,11 @@ class Help(Task):
         return "Showing help page"
 
     def require(self) -> List[TaskId]:
-        if self._show_task is None:
-            return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
         return [ProjectRead.identity_skip.id]
 
     def execute(self, args: Args) -> TaskResult:
         builder = SB()
-        task_name = args.get_value(self.option_task)
+        task_name = args.get(self.option_task)
         if not self._show_task is None:
             task_name = self._show_task
         task_not_found = False
@@ -93,9 +105,6 @@ class Help(Task):
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(
                 task_name, SB.Color.CYAN, True
             ).append(" not found\n")
-
-        builder.append("\nCommon options:\n")
-        self._show_task_options(builder, ParseOptions.identity.options, False)
 
         builder.append("\nDefault tasks:\n")
         from ..task._list import task_list, user_task

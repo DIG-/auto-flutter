@@ -2,13 +2,16 @@ from typing import List
 
 from ....core.string import SB
 from ....core.utils import _Dict
-from ....model.argument.option import (LongOption, LongPositionalOption,
-                                       LongShortOptionWithValue)
+from ....model.argument.option import (
+    LongOption,
+    LongPositionalOption,
+    LongShortOptionWithValue,
+)
 from ....model.build import BuildType
 from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
-from ...options import ParseOptions
+from ....task.identity import FlutterTaskIdentity
 from ...project.read import ProjectRead
 
 
@@ -18,7 +21,7 @@ class FlutterBuildConfig(Task):
         "flavor": LongShortOptionWithValue("f", "flavor", "Flavor to build"),
         "debug": LongOption("debug", "Build a debug version"),
     }
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "-build-config",
         "",
         _Dict.flatten(__options),
@@ -33,28 +36,29 @@ class FlutterBuildConfig(Task):
         ...
 
     def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id, ProjectRead.identity.id]
+        return [ProjectRead.identity.id]
 
     def describe(self, args: Args) -> str:
         return "Preparing flutter build"
 
     def execute(self, args: Args) -> TaskResult:
-        if not "-0" in args or len(args["-0"].argument) <= 0:
+        build_type_arg = args.get(self.__options["build-type"])
+        if build_type_arg is None or len(build_type_arg) <= 0:
             raise FlutterBuildConfig.Error(
                 "Build type not found. Usage is similar to pure flutter."
             )
-        build_type: BuildType = BuildType.from_flutter(args["-0"].argument)
+        build_type: BuildType = BuildType.from_flutter(build_type_arg)
         if build_type is None:
             raise FlutterBuildConfig.Error(
-                "Unknown build type `{}`.".format(args["-0"].argument)
+                "Unknown build type `{}`.".format(build_type_arg)
             )
-        args.add_arg("build-type", build_type.flutter)
+        args.add("build-type", build_type.flutter)
         platform: Platform = build_type.platform
         project = Project.current
         if project is None:
             raise FlutterBuildConfig.Error("Project was not initialized.")
 
-        flavor = args.get_value(self.__options["flavor"])
+        flavor = args.get(self.__options["flavor"])
         if not project.flavors is None:
             if len(project.flavors) == 1:
                 if flavor is None or len(flavor) == 0:
@@ -90,10 +94,10 @@ class FlutterBuildConfig(Task):
                 .str()
             )
 
-        args.add_arg(FlutterBuildConfig.ARG_FLAVOR, flavor)
-        args.add_arg(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
+        args.add(FlutterBuildConfig.ARG_FLAVOR, flavor)
+        args.add(FlutterBuildConfig.ARG_BUILD_TYPE, build_type.flutter)
         if args.contains(self.__options["debug"]):
-            args.add_arg(FlutterBuildConfig.ARG_DEBUG)
+            args.add(FlutterBuildConfig.ARG_DEBUG)
         elif args.contains(FlutterBuildConfig.ARG_DEBUG):
-            args.pop(FlutterBuildConfig.ARG_DEBUG)
+            args.remove(FlutterBuildConfig.ARG_DEBUG)
         return TaskResult(args)

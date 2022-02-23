@@ -5,13 +5,14 @@ from ...model.build import BuildType
 from ...model.platform import MergePlatformConfigFlavored, Platform
 from ...model.project import Project
 from ...model.task import *
+from ...task.identity import FirebaseTaskIdentity
 from ..flutter.build.config import FlutterBuildConfig
 from ..project.read import ProjectRead
 from ._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
-    identity = TaskIdentity(
+    identity = FirebaseTaskIdentity(
         "-firebase-build-validate",
         "Checking if project is able to upload to firebase",
         [],
@@ -24,10 +25,12 @@ class FirebaseBuildValidate(Task):
         return [ProjectRead.identity.id, FlutterBuildConfig.identity.id]
 
     def execute(self, args: Args) -> TaskResult:
-        flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
+        flavor = args.group_get("flutter", FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
             _Ensure.instance(
-                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), str, "build-type"
+                args.group_get("flutter", FlutterBuildConfig.ARG_BUILD_TYPE),
+                str,
+                "build-type",
             )
         )
         project = Project.current
@@ -43,5 +46,5 @@ class FirebaseBuildValidate(Task):
                 success=False,
             )
 
-        args.add_arg(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID, id)
+        args.add(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID, id)
         return TaskResult(args)

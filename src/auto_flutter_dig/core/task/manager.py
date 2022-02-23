@@ -4,6 +4,7 @@ from typing import Deque, Iterable, Optional, Union
 
 from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
+from ...model.result import Result
 from ...model.task import *
 from .printer import *
 from .resolver import TaskResolver
@@ -63,7 +64,7 @@ class __TaskManager:
     def update_description(
         self,
         description: Optional[str],
-        result: Optional[TaskResult] = None,
+        result: Optional[Result] = None,
     ):
         if not result is None:
             self._printer.append(OpResult(result))
@@ -75,6 +76,7 @@ class __TaskManager:
         while len(self._task_stack) > 0:
             identity = self._task_stack.pop()
             task = identity.creator()
+            args.select_group(identity.group)
 
             self._printer.append(OpDescription(task.describe(args)))
 
@@ -99,6 +101,15 @@ class __TaskManager:
             args = output.args
 
         return True
+
+    def __repr__(self) -> str:
+        return "{cls}(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
+            cls=type(self).__name__,
+            stack_size=len(self._task_stack),
+            done_size=len(self._task_done),
+            stack=self._task_stack,
+            done=self._task_done,
+        )
 
 
 TaskManager = __TaskManager()

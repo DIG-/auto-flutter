@@ -4,7 +4,7 @@ from ...model.argument.option import LongOption
 from ...model.task import *
 from ...task.flutter.command import FlutterCommand
 from ...task.flutter.pub import FlutterPubGet
-from ...task.options import ParseOptions
+from ...task.identity import FlutterTaskIdentity
 
 
 class FlutterGeneratorTask(Task):
@@ -23,14 +23,14 @@ class FlutterGeneratorTask(Task):
         ),
     }
 
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "generate",
         "Generate code, appicon and/or splash screen. Default is code",
         _Dict.flatten(__options),
         lambda: FlutterGeneratorTask(False),
     )
 
-    identity_code = TaskIdentity(
+    identity_code = FlutterTaskIdentity(
         "generate-code",
         "Generate code with --force",
         [],
@@ -42,7 +42,7 @@ class FlutterGeneratorTask(Task):
         self.force = force
 
     def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id, FlutterPubGet.id]
+        return [FlutterPubGet.id]
 
     def describe(self, args: Args) -> str:
         return ""

@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 from ....core.utils import _Ensure, _If
-from ....model.task import TaskResult
+from ....model.result import Result
 
 __all__ = ["Operation", "OpMessage", "OpDescription", "OpResult"]
 
@@ -26,6 +26,6 @@ class OpDescription(Operation):
 
 
 class OpResult(Operation):
-    def __init__(self, result: TaskResult) -> None:
+    def __init__(self, result: Result) -> None:
         super().__init__()
-        self.result: TaskResult = _Ensure.instance(result, TaskResult, "result")
+        self.result: Result = _Ensure.instance(result, Result, "result")

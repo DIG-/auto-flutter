@@ -7,7 +7,7 @@ from ._base import *
 class ConfigPlatform(_BaseConfigTask):
     option_add = LongOptionWithValue("add", "Add platform support to project")
     option_rem = LongOptionWithValue("remove", "Remove platform support from project")
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "platform",
         "Manage platform support for project",
         [option_add, option_rem],
@@ -21,7 +21,7 @@ class ConfigPlatform(_BaseConfigTask):
         project = Project.current
         had_change = False
 
-        platform_add = args.get_value(self.option_add)
+        platform_add = args.get(self.option_add)
         if not platform_add is None and len(platform_add) > 0:
             self._print("    Adding platform {}".format(platform_add))
             parsed_add = _Enum.parse_value(Platform, platform_add)
@@ -44,7 +44,7 @@ class ConfigPlatform(_BaseConfigTask):
                 project.platform_config = {}
             project.platform_config[parsed_add] = PlatformConfigFlavored()
 
-        platform_rem = args.get_value(self.option_rem)
+        platform_rem = args.get(self.option_rem)
         if not platform_rem is None and len(platform_rem) > 0:
             self._print("    Removing platform {}".format(platform_rem))
             parsed_rem = _Enum.parse_value(Platform, platform_rem)

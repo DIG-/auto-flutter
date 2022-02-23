@@ -5,13 +5,13 @@ from ...core.process.process import Process
 from ...core.string import SB
 from ...model.argument.option import OptionAll
 from ...model.task import *
-from ..options import ParseOptions
+from ...task.identity import FlutterTaskIdentity
 from ..project.read import ProjectRead
 from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):
-    identity = TaskIdentity(
+    identity: TaskIdentity = FlutterTaskIdentity(
         "exec", "Run flutter command", [OptionAll()], lambda: Flutter()
     )
 
@@ -37,8 +37,8 @@ class Flutter(Task):
 
     def require(self) -> List[TaskId]:
         if self._project:
-            return [ParseOptions.identity.id, ProjectRead.identity.id]
-        return [ParseOptions.identity.id, ProjectRead.identity_skip.id]
+            return [ProjectRead.identity.id]
+        return [ProjectRead.identity_skip.id]
 
     def execute(self, args: Args) -> TaskResult:
         flutter = Config.get_path(FLUTTER_CONFIG_KEY_PATH)
@@ -53,11 +53,11 @@ class Flutter(Task):
 
         if not self._command is None and len(self._command) > 0:
             if self._command_args:
-                self._command.extend(OptionAll.ArgsDecode(args).all())
+                self._command.extend(args.get_all(OptionAll()))
             p = Process.create(flutter, arguments=self._command, writer=writer)
         else:
             arguments = [FLUTTER_DISABLE_VERSION_CHECK]
-            arguments.extend(OptionAll.ArgsDecode(args).all())
+            arguments.extend(args.get_all(OptionAll()))
             p = Process.create(flutter, arguments=arguments, writer=writer)
         output = p.try_run()
 
@@ -65,7 +65,7 @@ class Flutter(Task):
             self._print(p.output)
 
         if self._output_arg:
-            args.add_arg("output", p.output)
+            args.global_add("output", p.output)
 
         if isinstance(output, BaseException):
             return TaskResult(args, error=output)

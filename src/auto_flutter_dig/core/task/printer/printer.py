@@ -89,7 +89,8 @@ class TaskPrinter:
             elif has_description:
                 print("")
         else:
-            has_warning = not result.error is None or isinstance(
+            has_warning = not result.error is None
+            print_warning = not result.error is None and not isinstance(
                 result.error, SilentWarning
             )
             if has_description:
@@ -98,9 +99,9 @@ class TaskPrinter:
                     success=not has_warning,
                     warning=has_warning,
                 )
-                if not has_warning:
+                if not print_warning:
                     print("")
-            if has_warning:
+            if print_warning:
                 assert not result.error is None
                 print(
                     SB()
@@ -112,8 +113,9 @@ class TaskPrinter:
                     .str()
                 )
         self._current_description = ""
-        if not result.message is None:
-            print(result.message)
+        if isinstance(result, TaskResult):
+            if not result.message is None:
+                print(result.message)
 
     def __handle_operation_description(self, op: OpDescription):
         self.__clear_line(self._current_description)
