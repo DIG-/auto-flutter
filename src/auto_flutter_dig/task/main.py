@@ -4,7 +4,7 @@ from ..core.config import Config
 from ..core.string import SB
 from ..model.error import E, SilentWarning, TaskNotFound
 from ..model.task import *
-from ..task.help_stub import HelpStub
+from ..task.help import Help
 from ..task.identity import AflutterTaskIdentity
 from ..task.options import ParseOptions
 from ..task.project import ProjectRead
@@ -50,7 +50,7 @@ class MainTask(Task):
     def execute(self, args: Args) -> TaskResult:
         if len(sys.argv) <= 1:
             self._append_task(
-                HelpStub(
+                Help.Stub(
                     message=SB()
                     .append("Auto-Flutter requires at least one task", SB.Color.RED)
                     .str()
@@ -60,10 +60,10 @@ class MainTask(Task):
         task_id = sys.argv[1].lower()
         if task_id.startswith("-"):
             if task_id in ("-h", "--help"):
-                self._append_task(HelpStub())
+                self._append_task(Help.Stub())
                 return TaskResult(args)
             else:
-                self._append_task(HelpStub(task_id))
+                self._append_task(Help.Stub(task_id))
                 return TaskResult(args, SilentWarning(), success=True)
 
         try:
@@ -73,7 +73,7 @@ class MainTask(Task):
                 self._append_task(MainTask(False))
                 self._append_task(ProjectRead.identity_skip)
             else:
-                self._append_task(HelpStub(task_id))
+                self._append_task(Help.Stub(task_id))
             return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
         except BaseException as error:
             return TaskResult(

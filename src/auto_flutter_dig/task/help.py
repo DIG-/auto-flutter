@@ -19,6 +19,20 @@ from .project.read import ProjectRead
 
 
 class Help(Task):
+    class Stub(AflutterTaskIdentity):
+        def __init__(
+            self,
+            task_id: Optional[Union[TaskId, TaskIdentity]] = None,
+            message: Optional[str] = None,
+        ) -> None:
+            super().__init__(
+                Help.identity.id,
+                Help.identity.name,
+                Help.identity.options,
+                lambda: Help(task_id, message),
+                Help.identity.allow_more,
+            )
+
     option_task = LongShortOptionWithValue(
         "t", "task", "Show help details about given task"
     )
