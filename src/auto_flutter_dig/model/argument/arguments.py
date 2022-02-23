@@ -1,7 +1,7 @@
 from typing import Dict, Optional, Union
 
 from .argument import Arg
-from .option import Option
+from .option import LongOption, Option, PositionalOption, ShortOption
 
 
 class Args(Dict[str, Arg]):
@@ -31,10 +31,18 @@ class Args(Dict[str, Arg]):
         if isinstance(option, str):
             key = option
         elif isinstance(option, Option):
-            if option.long is None:
-                key = option.short
-            else:
+            if isinstance(option, LongOption):
                 key = option.long
+            elif isinstance(option, ShortOption):
+                key = option.short
+            elif isinstance(option, PositionalOption):
+                key = "-" + str(option.position)
+            else:
+                raise TypeError(
+                    "Can not get correct type of Option: {}".format(
+                        type(option).__name__
+                    )
+                )
         if key is None:
             raise KeyError("Can not extract key from `{}`".format(type(option)))
         return key.lower()
