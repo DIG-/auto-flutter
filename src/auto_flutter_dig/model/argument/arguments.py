@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from tokenize import group
 from typing import Dict, Iterable, Optional, Union
 
 from .option import LongOption, Option, OptionAll, PositionalOption, ShortOption
@@ -11,6 +12,8 @@ Key = Union[Argument, Option]
 
 
 class Args:
+    GLOBAL = "--"
+
     def __init__(
         self,
         initial: Dict[Group, Dict[Argument, Value]] = {},
@@ -27,11 +30,13 @@ class Args:
 
     def select_group(self, group: Group) -> Args:
         self.__selected_group = group
-        if group in self.__content:
-            self.__selected_content = self.__content[group]
-        else:
-            self.__selected_content = {}
+        if not group in self.__content:
+            self.__content[group] = {}
+        self.__selected_content = self.__content[group]
         return self
+
+    ###############
+    ## Methods for a selected group
 
     def contains(self, key: Key) -> bool:
         key = self.__get_key(key)
@@ -56,6 +61,9 @@ class Args:
         if self.__selected_group is None:
             return []
         return self.group_get_all(self.__selected_group, key)
+
+    ###############
+    ## Methods for a specified group
 
     def group_contains(self, group: Group, key: Key) -> bool:
         if not group in self.__content:
@@ -94,6 +102,24 @@ class Args:
         if not group in self.__content:
             self.__content[group] = {}
         self.__content[group][argument] = None
+
+    ###############
+    ## Methods for the special group GLOBAL
+
+    def global_contains(self, key: Key) -> bool:
+        return self.group_contains(Args.GLOBAL, key)
+
+    def global_get(self, key: Key) -> Value:
+        return self.group_get(Args.GLOBAL, key)
+
+    def global_add(self, key: Key, value: Value):
+        return self.group_add(Args.GLOBAL, key, value)
+
+    def global_remove(self, key: Key):
+        return self.group_remove(Args.GLOBAL, key)
+
+    ###############
+    ## Internal help method
 
     def __get_key(self, option: Key) -> Argument:
         key: Optional[Argument] = None
