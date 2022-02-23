@@ -10,6 +10,7 @@ from ..model.argument.option.error import (
     OptionRequireValue,
 )
 from ..model.task import *
+from ..task.help import Help
 
 Argument = str
 Group = str
@@ -58,6 +59,8 @@ class _LongOptionMaybeWithValue(LongOptionWithValue):
 
 
 class ParseOptions(Task):
+    __option_help = LongShortOption("h", "help", "Show help of task")
+
     def describe(self, args: Args) -> str:
         return "Parsing arguments"
 
@@ -82,6 +85,8 @@ class ParseOptions(Task):
                 if isinstance(option, PositionalOption):
                     _Helper(option, identity, PositionalOption).into(positional_options)
             pass
+        _Helper(ParseOptions.__option_help, "aflutter", ShortOption).into(short_options)
+        _Helper(ParseOptions.__option_help, "aflutter", LongOption).into(long_options)
 
         input = sys_argv[2:]
         has_param: List[_Helper] = []
@@ -235,6 +240,10 @@ class ParseOptions(Task):
                 for group, helper_positional in positional_options[pos].items():
                     self.__append_argument(args, helper_positional, argument)
             pass
+
+        if args.group_contains("aflutter", ParseOptions.__option_help):
+            TaskManager._task_stack.clear()
+            self._append_task(Help.Stub(sys_argv[1]))
 
         return TaskResult(args)
 
