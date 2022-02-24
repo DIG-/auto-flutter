@@ -3,6 +3,8 @@ from pathlib import Path, PurePath
 from subprocess import PIPE, STDOUT, Popen, run
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+from ...aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
+from ..config import Config
 from ..logger import log
 from ..os import OS
 from ..string import SB
@@ -34,8 +36,14 @@ class _SubProcess(Process):
                     0, "Executable `{}` not found".format(self._executable)
                 )
         output = SB()
+        command = " ".join(
+            map(self.__escape_arg, [str(self._executable)] + self._arguments)
+        )
+        if Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND):
+            self._write_output(command)
+            self._write_output("\n")
         self.__process = Popen(
-            " ".join(map(self.__escape_arg, [str(self._executable)] + self._arguments)),
+            command,
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
