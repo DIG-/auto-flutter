@@ -68,3 +68,24 @@ class _Iterable(ABC):
                 out = next(self._iter)
                 if not out[1] is None:
                     return (out[0], out[1])
+
+    class join(Iterator[T]):
+        def __init__(self, *iterables: Iterable[_Iterable.T]) -> None:
+            super().__init__()
+            self.__iterators: List[Iterator[_Iterable.T]] = list(
+                map(lambda x: x.__iter__(), iterables)
+            )
+            self.__current = 0
+
+        def __iter__(self) -> Iterator[_Iterable.T]:
+            return self
+
+        def __next__(self) -> _Iterable.T:
+            while self.__current < len(self.__iterators):
+                try:
+                    item = next(self.__iterators[self.__current])
+                except StopIteration:
+                    self.__current += 1
+                    continue
+                return item
+            raise StopIteration()
