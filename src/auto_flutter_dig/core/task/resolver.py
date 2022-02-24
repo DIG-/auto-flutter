@@ -4,6 +4,7 @@ from abc import ABC
 from collections import deque
 from typing import Deque, Iterable, List, Optional, Union
 
+from ...core.utils import _If
 from ...model.error import TaskNotFound
 from ...model.task import *
 from ...model.task.subtask import Subtask
@@ -19,13 +20,19 @@ class TaskResolver(ABC):
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
-            temp = [_TaskUniqueIdentity(task)]
+            t_identity = _TaskUniqueIdentity(task)
+            if not task.identity is None:
+                t_identity.parent = task.identity.parent
+            temp = [t_identity]
         elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
                 if isinstance(it, Task):
-                    temp.append(_TaskUniqueIdentity(it))
+                    it_identity = _TaskUniqueIdentity(it)
+                    if not it.identity is None:
+                        it_identity.parent = it.identity.parent
+                    temp.append(it_identity)
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
@@ -56,7 +63,10 @@ class TaskResolver(ABC):
             current = items[i]
             _task: Task = current.creator()
             for id in _task.require():
-                identity = TaskResolver.find_task(id, origin)
+                identity = TaskResolver.find_task(
+                    id,
+                    _If.not_none(origin, lambda x: x, lambda: current.parent),
+                )
                 if identity is None:
                     raise TaskNotFound(id)
                 j = i + 1
