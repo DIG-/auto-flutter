@@ -6,6 +6,7 @@ from typing import Deque, Iterable, List, Optional, Union
 
 from ...model.error import TaskNotFound
 from ...model.task import *
+from ...model.task.subtask import Subtask
 from ._unique_identity import _TaskUniqueIdentity
 
 
@@ -84,11 +85,16 @@ class TaskResolver(ABC):
         return items[start:]
 
     @staticmethod
-    def find_task(id: TaskId) -> Optional[TaskIdentity]:
-        from ...task._list import task_list, user_task
+    def find_task(
+        id: TaskId, origin: Optional[Subtask] = None
+    ) -> Optional[TaskIdentity]:
+        if origin is None:
+            from ...aflutter.task.root import Root
 
-        if id in task_list:
-            return task_list[id]
-        if id in user_task:
-            return user_task[id]
+            origin = Root
+        if id in origin.subtasks:
+            return origin.subtasks[id]
+        if not origin.parent is None:
+            # Recursive, not good, but not expexct to have more than 3 level
+            return TaskResolver.find_task(id, origin.parent)
         return None
