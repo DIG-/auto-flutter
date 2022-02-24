@@ -6,7 +6,7 @@ __all__ = ["Session"]
 
 
 class __Session:
-    def __init__(self, show_stacktrace: bool = True) -> None:
+    def __init__(self, show_stacktrace: bool = False) -> None:
         self.show_stacktrace = show_stacktrace
 
     def format_exception(self, error: BaseException) -> str:

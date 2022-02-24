@@ -3,6 +3,7 @@ from __future__ import annotations
 from sys import argv as sys_argv
 from typing import Dict, Generic, Optional, Type, TypeVar, Union
 
+from ..core.session import Session
 from ..model.argument.option import *
 from ..model.argument.option.error import (
     OptionInvalidFormat,
@@ -60,6 +61,7 @@ class _LongOptionMaybeWithValue(LongOptionWithValue):
 
 class ParseOptions(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
+    __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
 
     def describe(self, args: Args) -> str:
         return "Parsing arguments"
@@ -87,6 +89,9 @@ class ParseOptions(Task):
             pass
         _Helper(ParseOptions.__option_help, "aflutter", ShortOption).into(short_options)
         _Helper(ParseOptions.__option_help, "aflutter", LongOption).into(long_options)
+        _Helper(ParseOptions.__option_stack_trace, "aflutter", LongOption).into(
+            long_options
+        )
 
         input = sys_argv[2:]
         has_param: List[_Helper] = []
@@ -244,6 +249,10 @@ class ParseOptions(Task):
         if args.group_contains("aflutter", ParseOptions.__option_help):
             TaskManager._task_stack.clear()
             self._append_task(Help.Stub(sys_argv[1]))
+
+        Session.show_stacktrace = args.group_contains(
+            "aflutter", ParseOptions.__option_stack_trace
+        )
 
         return TaskResult(args)
 

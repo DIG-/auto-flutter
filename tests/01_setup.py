@@ -8,6 +8,6 @@ _command.command(
         "tests/dummy/flutter",
         "--firebase-cli",
         "tests/dummy/firebase",
-        "--aflutter-stack-trace",
+        "--aflutter:stack-trace",
     ]
 )
