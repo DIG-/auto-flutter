@@ -6,6 +6,7 @@ from typing import Callable, Generic, Iterable, Iterator, List, Optional, Tuple,
 
 class _Iterable(ABC):
     T = TypeVar("T")
+    T_co = TypeVar("T_co", covariant=True)
 
     def first_or_none(
         iterable: Iterable[T], condition: Callable[[T], bool]
@@ -89,3 +90,18 @@ class _Iterable(ABC):
                     continue
                 return item
             raise StopIteration()
+
+    class modify(Iterator[T_co]):
+        def __init__(
+            self,
+            iterable: Iterable[_Iterable.T_co],
+            apply: Callable[[_Iterable.T_co], None],
+        ) -> None:
+            super().__init__()
+            self.__iterator = iterable.__iter__()
+            self.__apply = apply
+
+        def __next__(self) -> _Iterable.T_co:
+            item = next(self.__iterator)
+            self.__apply(item)
+            return item
