@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sys import argv as sys_argv
-from typing import Dict, Generic, Optional, Type, TypeVar, Union
+from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
 from ..core.session import Session
 from ..model.argument.option import *
@@ -99,11 +99,9 @@ class ParseOptions(Task):
         position_count = 0
         has_option_all = len(option_all) > 0
         for argument in input:
-            for helper_all in option_all:
-                self.__append_argument(args, helper_all, argument)
-
             # Last iteration require param
             if len(has_param) > 0:
+                self.__append_argument_all(args, option_all, argument)  # OptionAll
                 for helper_has_param in has_param:
                     self.__append_argument(args, helper_has_param, argument)
                 has_param = []
@@ -135,12 +133,14 @@ class ParseOptions(Task):
                         )
                     maybe_has_param = None
                 else:
+                    self.__append_argument_all(args, option_all, argument)  # OptionAll
                     self.__append_argument(args, maybe_has_param, argument)
                     maybe_has_param = None
                     continue
 
             # Handle short option argument
             if size == 2 and argument[0] == "-":
+                self.__append_argument_all(args, option_all, argument)  # OptionAll
                 sub = argument[1:].lower()
                 if sub in short_options:
                     for group, helper_short in short_options[sub].items():
@@ -167,6 +167,7 @@ class ParseOptions(Task):
                     sub = split[1]
                     group = split[0]
                 elif has_option_all:
+                    self.__append_argument_all(args, option_all, argument)  # OptionAll
                     continue
                 else:
                     raise OptionInvalidFormat(
@@ -174,6 +175,24 @@ class ParseOptions(Task):
                             argument
                         )
                     )
+
+                ###########
+                # OptionAll
+                if not group is None:
+                    self.__append_argument_all(
+                        args,
+                        filter(lambda x: x.group == group, option_all),
+                        "-" + sub if len(sub) == 1 else "--" + sub,
+                    )
+                else:
+                    self.__append_argument_all(
+                        args,
+                        option_all,
+                        "-" + sub if len(sub) == 1 else "--" + sub,
+                    )
+                # OptionAll
+                ###########
+
                 # Short argument with group
                 if len(sub) == 1:
                     if sub in short_options:
@@ -233,6 +252,7 @@ class ParseOptions(Task):
 
             else:
                 # Positional argument
+                self.__append_argument_all(args, option_all, argument)  # OptionAll
                 pos = str(position_count)
                 position_count += 1
                 if not pos in positional_options:
@@ -268,3 +288,9 @@ class ParseOptions(Task):
             args.group_add_all(group, option, value)
             return
         args.group_add(group, option, value)
+
+    def __append_argument_all(
+        self, args: Args, helper: Iterable[_Helper], argument: Argument
+    ):
+        for helper_all in helper:
+            self.__append_argument(args, helper_all, argument)
