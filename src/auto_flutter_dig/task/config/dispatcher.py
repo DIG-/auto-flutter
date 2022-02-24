@@ -4,6 +4,7 @@ from typing import List
 from ...core.utils import _Iterable
 from ...model.task import *
 from ...model.task.help_action import HelpAction
+from ...task.identity import AflutterTaskIdentity
 from .firebase import ConfigFirebase
 from .flavor import ConfigFlavor
 from .platform import ConfigPlatform
@@ -11,7 +12,7 @@ from .refresh import ConfigRefresh
 
 
 class ConfigDispatcher(Task, HelpAction):
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "config", "Configure project", [], lambda: ConfigDispatcher()
     )
 

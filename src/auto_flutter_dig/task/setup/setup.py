@@ -3,14 +3,14 @@ from typing import List
 from ...core.config import Config
 from ...model.argument import Args
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from ..firebase import FirebaseCheck
 from ..flutter import FlutterCheck
-from ..options import ParseOptions
 from .edit import SetupEdit
 
 
 class Setup(Task):
-    identity: TaskIdentity = TaskIdentity(
+    identity: TaskIdentity = AflutterTaskIdentity(
         "setup",
         "Edit global config",
         [],
@@ -18,7 +18,7 @@ class Setup(Task):
     )
 
     def require(self) -> List[TaskId]:
-        return [ParseOptions.identity.id, SetupEdit.identity.id]
+        return [SetupEdit.identity.id]
 
     def describe(self, args: Args) -> str:
         if args.contains(SetupEdit.option_show):

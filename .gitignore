@@ -178,5 +178,5 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 
-!/auto_flutter/task/flutter/build
-!/auto_flutter/model/build
+!src/auto_flutter_dig/task/flutter/build
+!src/auto_flutter_dig/model/build

@@ -9,10 +9,11 @@ from ....model.platform import *
 from ....model.project import *
 from ....model.task import *
 from ....task.flutter.command import FlutterCommand
+from ....task.identity import FlutterTaskIdentity
 
 
 class FlutterBuildTask(FlutterCommand):
-    identity = TaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
+    identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
 
     def __init__(
         self,
@@ -114,7 +115,7 @@ class FlutterBuildTask(FlutterCommand):
                 success=False,
             )
 
-        args.add_arg("output", output_file)
+        args.global_add("output", output_file)
         return TaskResult(args, success=True)
 
     def _handle_android_error(self, args: Args, result: TaskResult) -> TaskResult:
@@ -134,7 +135,7 @@ class FlutterBuildTask(FlutterCommand):
             self._clear_output(args)
             return result
 
-        output = args.get_value("output")
+        output = args.global_get("output")
         self._clear_output(args)
         if (
             output is None
@@ -191,5 +192,4 @@ class FlutterBuildTask(FlutterCommand):
         )
 
     def _clear_output(self, args: Args) -> None:
-        if args.contains("output"):
-            args.pop("output")
+        args.global_remove("output")

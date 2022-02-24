@@ -1,6 +1,6 @@
 from .id import TaskId
-from .identity import Option, TaskIdentity
+from .identity import TaskIdentity
 from .result import TaskResult
-from .task import List, Task, Args
+from .task import Args, List, Task
 
-__all__ = ["Task", "List", "TaskIdentity", "TaskResult", "TaskId", "Option", "Args"]
+__all__ = ["Task", "List", "TaskIdentity", "TaskResult", "TaskId", "Args"]

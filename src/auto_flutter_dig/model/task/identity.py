@@ -2,14 +2,17 @@ from __future__ import annotations
 
 from typing import Callable, List, Tuple
 
-from ...core.utils import _Ensure, _EnsureCallable, _If, _Raise
-from ..argument import Option
+from ...core.utils import _Ensure, _EnsureCallable
+from ..argument.option import Option
 from .id import TaskId
+
+__all__ = ["TaskIdentity", "TaskId", "List", "Callable", "Option"]
 
 
 class TaskIdentity:
     def __init__(
         self,
+        group: str,
         id: TaskId,
         name: str,
         options: List[Option],
@@ -18,6 +21,7 @@ class TaskIdentity:
     ) -> None:
         from .task import Task
 
+        self.group: str = _Ensure.instance(group, str, "group")
         self.id: TaskId = _Ensure.instance(id, TaskId, "id")
         self.name: str = _Ensure.instance(name, str, "name")
         if not isinstance(options, List):
@@ -28,3 +32,14 @@ class TaskIdentity:
 
     def to_map(self) -> Tuple[TaskId, TaskIdentity]:
         return (self.id, self)
+
+    def __repr__(self) -> str:
+        return "{cls}(group={group}, id={id}, name={name}, options={options}, creator={creator}, allow_more={allow_more})".format(
+            cls=type(self).__name__,
+            group=self.group,
+            id=self.id,
+            name=self.name,
+            options=self.options,
+            creator=self.creator,
+            allow_more=self.allow_more,
+        )

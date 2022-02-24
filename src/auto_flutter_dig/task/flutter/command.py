@@ -56,5 +56,5 @@ class FlutterCommand(BaseProcessTask):
         self, args: Args, process: Process, output: bool, message: Optional[str] = None
     ) -> TaskResult:
         if self._put_output_args:
-            args.add_arg("output", process.output)
+            args.global_add("output", process.output)
         return super()._handle_process_finished(args, process, output, message)

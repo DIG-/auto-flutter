@@ -1,11 +1,12 @@
 from typing import List
 
 from ...model.task import *
+from ...task.identity import AflutterTaskIdentity
 from ..project import ProjectRead, ProjectSave
 
 
 class ConfigRefresh(Task):
-    identity = TaskIdentity(
+    identity = AflutterTaskIdentity(
         "refresh",
         "Update aflutter.json with aflutter style. Usefully after manually editing aflutter.json",
         [],
