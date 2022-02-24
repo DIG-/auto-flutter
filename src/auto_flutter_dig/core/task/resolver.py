@@ -15,6 +15,7 @@ class TaskResolver(ABC):
     def resolve(
         task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
         previous: List[TaskIdentity] = [],
+        origin: Optional[Subtask] = None,
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
@@ -35,7 +36,7 @@ class TaskResolver(ABC):
             raise TypeError(
                 "Trying to resolve task, but received {}".format(type(task))
             )
-        temp = TaskResolver.__resolve_dependencies(temp)
+        temp = TaskResolver.__resolve_dependencies(temp, origin)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp, previous)
         output: Deque[TaskIdentity] = deque()
@@ -44,7 +45,10 @@ class TaskResolver(ABC):
         return output
 
     @staticmethod
-    def __resolve_dependencies(items: List[TaskIdentity]) -> List[TaskIdentity]:
+    def __resolve_dependencies(
+        items: List[TaskIdentity],
+        origin: Optional[Subtask] = None,
+    ) -> List[TaskIdentity]:
         if len(items) <= 0:
             raise IndexError("Require at least one TaskIdentity")
         i = 0
@@ -52,7 +56,7 @@ class TaskResolver(ABC):
             current = items[i]
             _task: Task = current.creator()
             for id in _task.require():
-                identity = TaskResolver.find_task(id)
+                identity = TaskResolver.find_task(id, origin)
                 if identity is None:
                     raise TaskNotFound(id)
                 j = i + 1
