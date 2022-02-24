@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Dict, Iterable, Optional, TypeVar, Union
+from typing import Dict, Iterable, Optional, Union
 
 from ....core.os import OS
 from ....core.process import Process
@@ -60,20 +60,8 @@ class BaseProcessTask(Task):
             output.append(argument)
         return output
 
-    def _sanitize_executable(self, executable: Union[str, PurePath]) -> PurePath:
-        if isinstance(executable, str):
-            executable = PurePosixPath(executable)
-        if not isinstance(executable, PurePath):
-            raise ValueError(
-                "executable must be `str` or `PurePath`, but received `{}`".format(
-                    type(executable).__name__
-                )
-            )
-        return OS.posix_to_machine_path(executable)
-
     @abstractmethod
     def _create_process(self, args: Args) -> ProcessOrResult:
-        ## Use self._sanitize_executable() before passing to Process
         ## Use self._sanitize_arguments() before passing to Process
         raise NotImplementedError(
             "{} requires to implement _create_process".format(type(self).__name__)
