@@ -1,22 +1,34 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Dict, Iterable, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from ...core.utils import _Ensure, _Iterable
 from .id import TaskId
 from .identity import TaskIdentity
 
+__all__ = ["Subtask"]
+
 
 class Subtask(ABC):
     def __init__(
         self,
-        subtasks: Dict[TaskId, TaskIdentity],
+        subtasks: Union[Dict[TaskId, TaskIdentity], List[TaskIdentity]],
         parent: Optional[Subtask] = None,
     ) -> None:
         super().__init__()
-        self.subtasks: Dict[TaskId, TaskIdentity] = subtasks
+        self.subtasks: Dict[TaskId, TaskIdentity] = {}
         self.parent: Optional[Subtask] = parent
+        if isinstance(subtasks, List):
+            self.register_subtask(subtasks)
+        elif isinstance(subtasks, Dict):
+            self.register_subtask(map(lambda x: x[1], subtasks.items()))
+        else:
+            raise TypeError(
+                "Field `subtask` must be instance of `List[TaskIdentity]` or `Dict[Any,TaskIdentity]`, but `{input}` was used".format(
+                    input=type(subtasks).__name__
+                )
+            )
 
     def register_subtask(self, task: Union[TaskIdentity, Iterable[TaskIdentity]]):
         if isinstance(task, TaskIdentity):
@@ -33,4 +45,14 @@ class Subtask(ABC):
         pass
 
     def __insert_sorted(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
-        self.subtasks = dict(sorted(tasks, key=lambda x: x[0]))
+        w_parent = _Iterable.modify(tasks, _SetParent(self).apply)
+        w_order = sorted(w_parent, key=lambda x: x[0])
+        self.subtasks = dict(w_order)
+
+
+class _SetParent:
+    def __init__(self, parent: Subtask) -> None:
+        self.parent = parent
+
+    def apply(self, input: Tuple[TaskId, TaskIdentity]):
+        input[1].parent = self.parent
