@@ -6,6 +6,7 @@ from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
 from ...model.result import Result
 from ...model.task import *
+from ...model.task.subtask import Subtask
 from .printer import *
 from .resolver import TaskResolver
 
@@ -19,7 +20,8 @@ class __TaskManager:
         self._printer = TaskPrinter()
 
     def add(
-        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
+        self,
+        tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
     ):
         if (
             not isinstance(tasks, Task)
@@ -28,20 +30,24 @@ class __TaskManager:
         ):
             raise TypeError(
                 "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, but `{}` was received".format(
-                    type(tasks)
+                    type(tasks).__name__
                 )
             )
         self._task_stack.extend(TaskResolver.resolve(tasks, self._task_done))
 
-    def add_id(self, ids: Union[TaskId, Iterable[TaskId]]):
+    def add_id(
+        self,
+        ids: Union[TaskId, Iterable[TaskId]],
+        origin: Optional[Subtask] = None,
+    ):
         if isinstance(ids, TaskId):
-            self.add(self.__find_task(ids))
+            self.add(self.__find_task(ids, origin))
         elif isinstance(ids, Iterable):
-            self.add(map(lambda id: self.__find_task(id), ids))
+            self.add(map(lambda id: self.__find_task(id, origin), ids))
         else:
             raise TypeError(
                 "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, but `{}` was received".format(
-                    type(ids)
+                    type(ids).__name__
                 )
             )
 
@@ -51,9 +57,13 @@ class __TaskManager:
     def stop_printer(self):
         self._printer.stop()
 
-    def __find_task(self, id: TaskId) -> TaskIdentity:
+    def __find_task(
+        self,
+        id: TaskId,
+        origin: Optional[Subtask] = None,
+    ) -> TaskIdentity:
         _Ensure.type(id, TaskId, "id")
-        identity = TaskResolver.find_task(id)
+        identity = TaskResolver.find_task(id, origin)
         if identity is None:
             raise TaskNotFound(id)
         return identity
@@ -103,8 +113,7 @@ class __TaskManager:
         return True
 
     def __repr__(self) -> str:
-        return "{cls}(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
-            cls=type(self).__name__,
+        return "TaskManager(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
             stack_size=len(self._task_stack),
             done_size=len(self._task_done),
             stack=self._task_stack,
