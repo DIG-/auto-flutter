@@ -5,12 +5,13 @@ from ....model.build import BuildType
 from ....model.platform import MergePlatformConfigFlavored, Platform
 from ....model.project import Project
 from ....model.task import *
+from ....task.identity import FlutterTaskIdentity
 from .build import FlutterBuildTask
 from .config import FlutterBuildConfig
 
 
 class FlutterBuildStub(Task):
-    identity = TaskIdentity(
+    identity = FlutterTaskIdentity(
         "build", "Build flutter app", [], lambda: FlutterBuildStub()
     )
 
@@ -21,10 +22,10 @@ class FlutterBuildStub(Task):
         return ""
 
     def execute(self, args: Args) -> TaskResult:
-        flavor = args.get_value(FlutterBuildConfig.ARG_FLAVOR)
+        flavor = args.get(FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
             _Ensure.not_none(
-                args.get_value(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
+                args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
             )
         )
         debug = args.contains(FlutterBuildConfig.ARG_DEBUG)

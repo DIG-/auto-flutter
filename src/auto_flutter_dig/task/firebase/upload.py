@@ -3,6 +3,7 @@ from pathlib import Path, PurePosixPath
 from ...core.config import Config
 from ...core.os import OS
 from ...core.utils import _Dict, _If
+from ...model.argument.option import LongOptionWithValue
 from ...task.base.process import *
 from ...task.firebase._const import (
     FIREBASE_CONFIG_KEY_PATH,
@@ -12,25 +13,20 @@ from ...task.firebase._const import (
 from ...task.firebase.check import FirebaseCheck
 from ...task.firebase.validate import FirebaseBuildValidate
 from ...task.flutter.build.stub import FlutterBuildStub
+from ...task.identity import FirebaseTaskIdentity
 
 
 class FirebaseBuildUpload(BaseProcessTask):
     __options = {
-        "notes": Option(None, "notes", "Release notes to include", True),
-        "testers": Option(
-            None,
-            "testers",
-            "A comma separated list of tester emails to distribute to",
-            True,
+        "notes": LongOptionWithValue("notes", "Release notes to include"),
+        "testers": LongOptionWithValue(
+            "testers", "A comma separated list of tester emails to distribute to"
         ),
-        "groups": Option(
-            None,
-            "groups",
-            "A comma separated list of group aliases to distribute to",
-            True,
+        "groups": LongOptionWithValue(
+            "groups", "A comma separated list of group aliases to distribute to"
         ),
     }
-    identity = TaskIdentity(
+    identity = FirebaseTaskIdentity(
         "firebase",
         "Upload build to firebase",
         _Dict.flatten(__options),
@@ -45,7 +41,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         ]
 
     def _create_process(self, args: Args) -> ProcessOrResult:
-        filename = args.get_value("output")
+        filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
             return TaskResult(
                 args, AssertionError("Previous task does not have output")
@@ -58,7 +54,7 @@ class FirebaseBuildUpload(BaseProcessTask):
             )
 
         file = file.absolute()
-        google_id = args.get_value(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID)
+        google_id = args.get(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID)
         if google_id is None or len(google_id) <= 0:
             return TaskResult(args, AssertionError("Google app id not found"))
 
@@ -71,19 +67,19 @@ class FirebaseBuildUpload(BaseProcessTask):
         ]
 
         _If.not_none(
-            args.get_value(self.__options["notes"]),
+            args.get(self.__options["notes"]),
             lambda notes: arguments.extend(("--release-notes", notes)),
             lambda: None,
         )
 
         _If.not_none(
-            args.get_value(self.__options["testers"]),
+            args.get(self.__options["testers"]),
             lambda testers: arguments.extend(("--testers", testers)),
             lambda: None,
         )
 
         _If.not_none(
-            args.get_value(self.__options["groups"]),
+            args.get(self.__options["groups"]),
             lambda groups: arguments.extend(("--groups", groups)),
             lambda: None,
         )

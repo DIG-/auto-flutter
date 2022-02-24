@@ -66,20 +66,20 @@ class TaskResolver(ABC):
         items = previous.copy()
         items.extend(new)
         start = len(previous)
-        i = 0
+        i = start
         while i < len(items):
-            current = items[i]
-            j = i + 1
-            while j < len(items):
-                it = items[j]
-                if it.allow_more:
-                    pass
-                elif it.id == current.id:
-                    if j <= start:
-                        start -= 1
-                    del items[j]
-                    continue
-                j += 1
+            n_item = items[i]
+            if n_item.allow_more:
+                pass
+            else:
+                j = i - 1
+                while j >= 0:
+                    p_item = items[j]
+                    if p_item.id == n_item.id:
+                        del items[i]
+                        i -= 1
+                        break
+                    j -= 1
             i += 1
         return items[start:]
 

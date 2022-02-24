@@ -1,8 +1,9 @@
-from ...model.argument import OptionAll
+from ...model.argument.option import OptionAll
 from ...model.task import *
+from ...task.identity import FlutterTaskIdentity
 from .exec import Flutter
 
-FlutterDoctor = TaskIdentity(
+FlutterDoctor = FlutterTaskIdentity(
     "doctor",
     "Run flutter doctor",
     [OptionAll()],

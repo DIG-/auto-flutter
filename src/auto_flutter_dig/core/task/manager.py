@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Deque, Iterable, Union
+from typing import Deque, Iterable, Optional, Union
 
 from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
+from ...model.result import Result
 from ...model.task import *
-from .printer import TaskPrinter
+from .printer import *
 from .resolver import TaskResolver
 
 __all__ = ["TaskManager"]
@@ -58,8 +59,16 @@ class __TaskManager:
         return identity
 
     def print(self, message: str):
-        _Ensure.type(message, str, "message")
-        self._printer.write(message)
+        self._printer.append(OpMessage(message))
+
+    def update_description(
+        self,
+        description: Optional[str],
+        result: Optional[Result] = None,
+    ):
+        if not result is None:
+            self._printer.append(OpResult(result))
+        self._printer.append(OpDescription(description))
 
     def execute(self) -> bool:
         args = Args()
@@ -67,10 +76,9 @@ class __TaskManager:
         while len(self._task_stack) > 0:
             identity = self._task_stack.pop()
             task = identity.creator()
+            args.select_group(identity.group)
 
-            describe = task.describe(args)
-            if (not describe is None) and len(describe) != 0:
-                self._printer.set_task_description(describe)
+            self._printer.append(OpDescription(task.describe(args)))
 
             try:
                 output = task.execute(args)
@@ -86,13 +94,22 @@ class __TaskManager:
                 )
 
             self._task_done.append(identity)
-            self._printer.set_result(output)
+            self._printer.append(OpResult(output))
 
             if not output.success:
                 return False
             args = output.args
 
         return True
+
+    def __repr__(self) -> str:
+        return "{cls}(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
+            cls=type(self).__name__,
+            stack_size=len(self._task_stack),
+            done_size=len(self._task_done),
+            stack=self._task_stack,
+            done=self._task_done,
+        )
 
 
 TaskManager = __TaskManager()
