@@ -21,7 +21,7 @@ class TaskResolver(ABC):
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
             t_identity = _TaskUniqueIdentity(task)
-            if not task.identity is None:
+            if hasattr(task, "identity") and not task.identity is None:
                 t_identity.parent = task.identity.parent
             temp = [t_identity]
         elif isinstance(task, TaskIdentity):
@@ -30,7 +30,7 @@ class TaskResolver(ABC):
             for it in task:
                 if isinstance(it, Task):
                     it_identity = _TaskUniqueIdentity(it)
-                    if hasattr(it,"identity") and not it.identity is None:
+                    if hasattr(it, "identity") and not it.identity is None:
                         it_identity.parent = it.identity.parent
                     temp.append(it_identity)
                 elif isinstance(it, TaskIdentity):
