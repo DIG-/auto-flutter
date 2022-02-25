@@ -2,9 +2,9 @@ def _main():
     import sys
     from platform import system as platform_system
 
-    from .core.session import Session
     from .core.string import SB
     from .core.task import TaskManager
+    from .model.error import format_exception
     from .task.main import MainTask, ReadConfigTask
 
     # Enable color support on windows
@@ -37,7 +37,7 @@ def _main():
         TaskManager.print(
             SB()
             .append("Unhandled error caught\n\n", SB.Color.RED)
-            .append(Session.format_exception(error), SB.Color.RED, True)
+            .append(format_exception(error), SB.Color.RED, True)
             .str()
         )
 

@@ -6,9 +6,8 @@ from threading import Lock, Thread
 from time import sleep, time
 
 from ....core.utils import _Ensure
-from ....model.error import SilentWarning
+from ....model.error import SilentWarning, format_exception
 from ....model.task import TaskResult
-from ...session import Session
 from ...string import SB
 from .operation import *
 
@@ -64,7 +63,7 @@ class TaskPrinter:
             self.__handle_operation_result(op)
         else:
             print(
-                Session.format_exception(
+                format_exception(
                     TypeError("Unknown Operation type: {}".format(type(op).__name__))
                 )
             )
@@ -81,7 +80,7 @@ class TaskPrinter:
                     SB()
                     .append("\n")
                     .append(
-                        Session.format_exception(result.error),
+                        format_exception(result.error),
                         SB.Color.RED,
                     )
                     .str()
@@ -107,7 +106,7 @@ class TaskPrinter:
                     SB()
                     .append("\n")
                     .append(
-                        Session.format_exception(result.error),
+                        format_exception(result.error),
                         SB.Color.YELLOW,
                     )
                     .str()

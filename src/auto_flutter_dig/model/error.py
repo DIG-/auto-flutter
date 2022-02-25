@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from traceback import TracebackException
 from typing import Generic, TypeVar
 
-__all__ = ["SilentWarning", "TaskNotFound", "E"]
+__all__ = ["SilentWarning", "TaskNotFound", "E", "format_exception"]
 
 
 class SilentWarning(Warning):
@@ -29,3 +30,12 @@ class E(Generic[T]):
     def caused_by(self, error: BaseException) -> T:
         self._error.__cause__ = error
         return self._error
+
+
+def format_exception(error: BaseException) -> str:
+    from ..core.config import Config
+    from ..module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
+
+    if Config.get_bool(AFLUTTER_CONFIG_ENABLE_STACK_STRACE):
+        return "".join(TracebackException.from_exception(error).format())
+    return str(error)

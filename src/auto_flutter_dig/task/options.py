@@ -3,7 +3,7 @@ from __future__ import annotations
 from sys import argv as sys_argv
 from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
-from ..core.session import Session
+from ..core.config import Config
 from ..model.argument.option import *
 from ..model.argument.option.error import (
     OptionInvalidFormat,
@@ -11,6 +11,7 @@ from ..model.argument.option.error import (
     OptionRequireValue,
 )
 from ..model.task import *
+from ..module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from ..task.help import Help
 
 Argument = str
@@ -270,8 +271,9 @@ class ParseOptions(Task):
             TaskManager._task_stack.clear()
             self._append_task(Help.Stub(sys_argv[1]))
 
-        Session.show_stacktrace = args.group_contains(
-            "aflutter", ParseOptions.__option_stack_trace
+        Config.put_bool(
+            AFLUTTER_CONFIG_ENABLE_STACK_STRACE,
+            args.group_contains("aflutter", ParseOptions.__option_stack_trace),
         )
 
         return TaskResult(args)

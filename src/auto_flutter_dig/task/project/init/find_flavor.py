@@ -4,9 +4,9 @@ from typing import List, Optional
 from xml.etree.ElementTree import parse as xml_parse
 
 from ....core.os import OS
-from ....core.session import Session
 from ....core.string import SB
 from ....model.argument.option import LongOption
+from ....model.error import format_exception
 from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
@@ -92,7 +92,7 @@ class FindFlavor(Task):
             SB()
             .append("  ")
             .append(message, SB.Color.RED)
-            .append(Session.format_exception(error), SB.Color.RED)
+            .append(format_exception(error), SB.Color.RED)
             .str()
         )
 
