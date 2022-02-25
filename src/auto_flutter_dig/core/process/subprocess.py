@@ -3,7 +3,7 @@ from pathlib import Path, PurePath
 from subprocess import PIPE, STDOUT, Popen, run
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from ...aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
+from ...module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
 from ..config import Config
 from ..logger import log
 from ..os import OS

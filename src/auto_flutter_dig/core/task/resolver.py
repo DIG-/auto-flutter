@@ -30,7 +30,7 @@ class TaskResolver(ABC):
             for it in task:
                 if isinstance(it, Task):
                     it_identity = _TaskUniqueIdentity(it)
-                    if not it.identity is None:
+                    if hasattr(it,"identity") and not it.identity is None:
                         it_identity.parent = it.identity.parent
                     temp.append(it_identity)
                 elif isinstance(it, TaskIdentity):
@@ -103,7 +103,7 @@ class TaskResolver(ABC):
         id: TaskId, origin: Optional[Subtask] = None
     ) -> Optional[TaskIdentity]:
         if origin is None:
-            from ...aflutter.task.root import Root
+            from ...module.aflutter.task.root import Root
 
             origin = Root
         if id in origin.subtasks:
