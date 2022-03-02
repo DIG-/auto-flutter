@@ -1,10 +1,11 @@
 from sys import argv as sys_argv
-from typing import Tuple
+from typing import Optional, Tuple
 
-from .....model.error import E, TaskNotFound
+from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task import *
 from .....model.task.subtask import Subtask
 from .....module.aflutter.task.root import Root
+from .....task.help import Help
 from .....task.options import ParseOptions
 from .....task.project import ProjectRead
 from .read_config import ReadConfigTask
@@ -38,7 +39,8 @@ class AflutterInitTask(Task):
         try:
             task, offset = self.__find_task(Root)
         except TaskNotFound as error:
-            raise error
+            self._append_task(Help.Stub(error.task_id))
+            return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
         except BaseException as error:
             return TaskResult(
                 args,
@@ -59,4 +61,23 @@ class AflutterInitTask(Task):
         return parse_options_result
 
     def __find_task(self, root: Subtask) -> Tuple[TaskIdentity, int]:
-        raise NotImplementedError("Not Implemented yet")
+        task: Optional[TaskIdentity] = None
+        offset = 1
+        limit = len(sys_argv)
+        while offset < limit:
+            task_id = sys_argv[offset]
+            if task_id.startswith("-"):
+                break
+            if not task_id in root.subtasks:
+                break
+            task = root.subtasks[task_id]
+            offset += 1
+            if isinstance(task, Subtask):
+                root = task
+            else:
+                break
+            pass
+
+        if not task is None:
+            return (task, offset)
+        raise TaskNotFound(task_id)
