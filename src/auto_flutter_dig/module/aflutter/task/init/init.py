@@ -80,4 +80,4 @@ class AflutterInitTask(Task):
 
         if not task is None:
             return (task, offset)
-        raise TaskNotFound(task_id)
+        raise TaskNotFound(task_id, root)

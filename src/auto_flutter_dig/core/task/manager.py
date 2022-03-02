@@ -63,10 +63,7 @@ class __TaskManager:
         origin: Optional[Subtask] = None,
     ) -> TaskIdentity:
         _Ensure.type(id, TaskId, "id")
-        identity = TaskResolver.find_task(id, origin)
-        if identity is None:
-            raise TaskNotFound(id)
-        return identity
+        return TaskResolver.find_task(id, origin)
 
     def print(self, message: str):
         self._printer.append(OpMessage(message))

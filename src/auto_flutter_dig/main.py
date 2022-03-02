@@ -4,7 +4,7 @@ def _main():
 
     from .core.string import SB
     from .core.task import TaskManager
-    from .model.error import format_exception
+    from .model.error.formater import format_exception
     from .task.main import MainTask, ReadConfigTask
 
     # Enable color support on windows

@@ -67,8 +67,6 @@ class TaskResolver(ABC):
                     id,
                     _If.not_none(origin, lambda x: x, lambda: current.parent),
                 )
-                if identity is None:
-                    raise TaskNotFound(id)
                 j = i + 1
                 items[j:j] = [identity]
             i += 1
@@ -99,9 +97,7 @@ class TaskResolver(ABC):
         return items[start:]
 
     @staticmethod
-    def find_task(
-        id: TaskId, origin: Optional[Subtask] = None
-    ) -> Optional[TaskIdentity]:
+    def find_task(id: TaskId, origin: Optional[Subtask] = None) -> TaskIdentity:
         if origin is None:
             from ...module.aflutter.task.root import Root
 
@@ -111,4 +107,4 @@ class TaskResolver(ABC):
         if not origin.parent is None:
             # Recursive, not good, but not expexct to have more than 3 level
             return TaskResolver.find_task(id, origin.parent)
-        return None
+        raise TaskNotFound(id, origin)
