@@ -6,7 +6,8 @@ from threading import Lock, Thread
 from time import sleep, time
 
 from ....core.utils import _Ensure
-from ....model.error import SilentWarning, format_exception
+from ....model.error import SilentWarning
+from ....model.error.formater import format_exception
 from ....model.task import TaskResult
 from ...string import SB
 from .operation import *

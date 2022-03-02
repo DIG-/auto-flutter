@@ -6,7 +6,7 @@ from xml.etree.ElementTree import parse as xml_parse
 from ....core.os import OS
 from ....core.string import SB
 from ....model.argument.option import LongOption
-from ....model.error import format_exception
+from ....model.error.formater import format_exception
 from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
