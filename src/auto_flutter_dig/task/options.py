@@ -64,6 +64,10 @@ class ParseOptions(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
     __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
 
+    def __init__(self, input: List[str] = sys_argv[2:]) -> None:
+        super().__init__()
+        self._input = input
+
     def describe(self, args: Args) -> str:
         return "Parsing arguments"
 
@@ -94,12 +98,11 @@ class ParseOptions(Task):
             long_options
         )
 
-        input = sys_argv[2:]
         has_param: List[_Helper] = []
         maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
         position_count = 0
         has_option_all = len(option_all) > 0
-        for argument in input:
+        for argument in self._input:
             # Last iteration require param
             if len(has_param) > 0:
                 self.__append_argument_all(args, option_all, argument)  # OptionAll
