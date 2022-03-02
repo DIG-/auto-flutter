@@ -33,8 +33,8 @@ class E(Generic[T]):
 
 
 def format_exception(error: BaseException) -> str:
-    from ..core.config import Config
-    from ..module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
+    from ...core.config import Config
+    from ...module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 
     if Config.get_bool(AFLUTTER_CONFIG_ENABLE_STACK_STRACE):
         return "".join(TracebackException.from_exception(error).format())
