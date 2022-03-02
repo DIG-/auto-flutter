@@ -221,7 +221,7 @@ class Help(Task):
         group: str,
         identities: List[TaskIdentity],
     ):
-        builder.append("  Tasks for ").append(group, SB.Color.CYAN).append(":\n")
+        builder.append("Tasks for ").append(group, SB.Color.CYAN).append(":\n")
         for identity in identities:
             self._show_task_identity_description(builder, identity)
         pass
@@ -236,7 +236,10 @@ class Help(Task):
 
     def _grouped_tasks(self, root: Subtask) -> Dict[str, List[TaskIdentity]]:
         output: Dict[str, List[TaskIdentity]] = {}
-        for id, identity in root.subtasks.items():
+        for group in sorted(map(lambda x: x[1].group, root.subtasks.items())):
+            if not group in output:
+                output[group] = []
+        for _, identity in root.subtasks.items():
             if not identity.group in output:
                 output[identity.group] = []
             output[identity.group].append(identity)
