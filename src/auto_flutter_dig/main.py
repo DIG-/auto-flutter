@@ -5,7 +5,7 @@ def _main():
     from .core.string import SB
     from .core.task import TaskManager
     from .model.error.formater import format_exception
-    from .task.main import MainTask, ReadConfigTask
+    from .module.aflutter.task.init import AflutterInitTask
 
     # Enable color support on windows
     if platform_system() == "Windows":
@@ -28,7 +28,7 @@ def _main():
             init()
 
     TaskManager.start_printer()
-    TaskManager.add((MainTask(), ReadConfigTask()))
+    TaskManager.add(AflutterInitTask())
 
     try:
         has_error = not TaskManager.execute()
