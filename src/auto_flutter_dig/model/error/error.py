@@ -3,11 +3,7 @@ from __future__ import annotations
 from traceback import TracebackException
 from typing import Generic, TypeVar
 
-__all__ = ["SilentWarning", "TaskNotFound", "E", "format_exception"]
-
-
-class SilentWarning(Warning):
-    ...
+__all__ = ["TaskNotFound", "E", "format_exception"]
 
 
 class TaskNotFound(LookupError):
