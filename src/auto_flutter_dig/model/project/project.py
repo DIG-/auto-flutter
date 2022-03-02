@@ -5,7 +5,8 @@ from typing import Dict, List, Optional
 from ...core import VERSION
 from ...core.json import *
 from ...core.utils import _Ensure, _Iterable
-from ...model.platform import Platform, PlatformConfigFlavored
+from ...model.platform import Platform
+from ...model.platform.flavored_config import PlatformConfigFlavored
 from .custom_task import CustomTask, TaskId
 from .flavor import Flavor
 

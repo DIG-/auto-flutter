@@ -2,7 +2,8 @@ from typing import List
 
 from ....core.utils import _Dict, _Ensure
 from ....model.build import BuildType
-from ....model.platform import MergePlatformConfigFlavored, Platform
+from ....model.platform import Platform
+from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import *
 from ....task.identity import FlutterTaskIdentity
@@ -24,9 +25,7 @@ class FlutterBuildStub(Task):
     def execute(self, args: Args) -> TaskResult:
         flavor = args.get(FlutterBuildConfig.ARG_FLAVOR)
         build_type = BuildType.from_flutter(
-            _Ensure.not_none(
-                args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"
-            )
+            _Ensure.not_none(args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type")
         )
         debug = args.contains(FlutterBuildConfig.ARG_DEBUG)
         project = Project.current

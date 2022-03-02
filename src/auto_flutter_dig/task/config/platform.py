@@ -1,6 +1,7 @@
 from ...core.utils import _Enum
 from ...model.argument.option import LongOptionWithValue
-from ...model.platform import Platform, PlatformConfigFlavored
+from ...model.platform import Platform
+from ...model.platform.flavored_config import PlatformConfigFlavored
 from ._base import *
 
 
