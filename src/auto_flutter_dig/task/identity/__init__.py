@@ -1,4 +1,4 @@
-from .aflutter import AflutterTaskIdentity
+from ...module.aflutter.identity import AflutterTaskIdentity
 from .firebase import FirebaseTaskIdentity
 from .flutter import FlutterTaskIdentity
 

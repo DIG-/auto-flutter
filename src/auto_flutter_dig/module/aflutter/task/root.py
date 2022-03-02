@@ -1,7 +1,7 @@
 from ....core.utils import _Raise
 from ....model.task.subtask import Subtask
 from ....task._list import task_list
-from ....task.identity.aflutter import AflutterTaskIdentity
+from ..identity import AflutterTaskIdentity
 
 __all__ = ["Root"]
 
