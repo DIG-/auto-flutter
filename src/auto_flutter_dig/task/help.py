@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 
 from ..core.string import SB
 from ..core.task import TaskResolver
-from ..core.utils import _Ensure, _If, _Iterable
+from ..core.utils import _Iterable
 from ..model.argument.option import (
     LongOption,
     LongShortOptionWithValue,
@@ -12,17 +12,17 @@ from ..model.argument.option import (
     OptionWithValue,
     ShortOption,
 )
+from ..model.error import E, TaskNotFound
 from ..model.task import *
-from ..model.task.help_action import HelpAction
+from ..model.task.subtask import Subtask
 from ..task.identity import AflutterTaskIdentity
-from .project.read import ProjectRead
 
 
 class Help(Task):
     class Stub(AflutterTaskIdentity):
         def __init__(
             self,
-            task_id: Optional[Union[TaskId, TaskIdentity]] = None,
+            task_id: Optional[Union[TaskId, TaskIdentity, TaskNotFound]] = None,
             message: Optional[str] = None,
         ) -> None:
             super().__init__(
@@ -46,88 +46,115 @@ class Help(Task):
 
     def __init__(
         self,
-        task_id: Optional[Union[TaskId, TaskIdentity]] = None,
+        task_id: Optional[Union[TaskId, TaskIdentity, TaskNotFound]] = None,
         message: Optional[str] = None,
     ) -> None:
         super().__init__()
-        self._show_task: Optional[TaskId] = None
+        self._task_id: Optional[TaskId] = None
+        self._task_identity: Optional[TaskIdentity] = None
+        self._task_parent: Optional[Subtask] = None
         self._message: Optional[str] = message
         if isinstance(task_id, TaskIdentity):
-            self._show_task = task_id.id
+            self._task_identity = task_id
+            self._task_parent = task_id.parent
         elif isinstance(task_id, TaskId):
-            self._show_task = task_id
+            self._task_id = task_id
+        elif isinstance(task_id, TaskNotFound):
+            self._task_id = task_id.task_id
+            self._task_parent = task_id.parent
         elif not task_id is None:
             raise TypeError(
-                "Field `task_id` must be instance of `{clsa}` or `{clsb}`, but `{input}` was used".format(
-                    clsa=TaskId.__name__,
-                    clsb=TaskIdentity.__name__,
-                    input=type(task_id),
+                "Field `task_id` must be instance of `TaskId`, `TaskIdentity` or `TaskNotFound`, but `{input}` was used".format(
+                    input=type(task_id)
                 )
             )
 
     def describe(self, args: Args) -> str:
-        return "Showing help page"
-
-    def require(self) -> List[TaskId]:
-        return [ProjectRead.identity_skip.id]
+        return "Processing help page"
 
     def execute(self, args: Args) -> TaskResult:
         builder = SB()
-        task_name = args.get(self.option_task)
-        if not self._show_task is None:
-            task_name = self._show_task
-        task_not_found = False
+        opt_task_id = args.get(self.option_task)
+        if not opt_task_id is None:
+            self._task_id = opt_task_id
+            self._task_parent = None
+
+        if self._task_parent is None:
+            from ..module.aflutter.task.root import Root
+
+            self._task_parent = Root
+
+        assert not self._task_parent is None
+
         if (
-            (not task_name is None)
-            and (len(task_name) > 0)
-            and (not task_name.startswith("-"))
+            self._task_identity is None
+            and (not self._task_id is None)
+            and (len(self._task_id) > 0)
+            and (not self._task_id.startswith("-"))
         ):
-            identity = TaskResolver.find_task(task_name)
-            task_instance: Optional[Task] = _If.not_none(
-                identity, lambda x: x.creator(), lambda: None
-            )
-            if identity is None:
-                task_not_found = True
-            elif isinstance(task_instance, HelpAction):
-                self._show_task_help_with_actions(builder, identity, task_instance)
-                return TaskResult(args, message=builder.str())
-            else:
-                self._show_task_help(builder, identity)
-                return TaskResult(args, message=builder.str())
+            try:
+                self._task_identity = TaskResolver.find_task(
+                    self._task_id, self._task_parent
+                )
+            except TaskNotFound:
+                pass
+            except BaseException as error:
+                return TaskResult(
+                    args,
+                    error=E(
+                        LookupError(
+                            "Failed to search for task {}.".format(self._task_id)
+                        )
+                    ).caused_by(error),
+                )
+            pass
 
-        if not self._message is None:
-            builder.append(self._message, end="\n")
+        self._show_header(builder, self._task_identity)
 
-        self._show_header(builder)
-
-        if task_not_found:
-            assert not task_name is None
+        if not self._task_identity is None:
+            task_parent = self._task_identity.parent
+            if task_parent is None:
+                task_parent = self._task_parent
+            self._show_task_help(builder, self._task_identity, task_parent)
+        elif not self._task_id is None:
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(
-                task_name, SB.Color.CYAN, True
+                self._task_id, SB.Color.CYAN, True
             ).append(" not found\n")
+            self._show_help_default(builder, self._task_parent)
+        else:
+            self._show_help_default(builder, self._task_parent)
 
-        builder.append("\nDefault tasks:\n")
-        from ..task._list import task_list, user_task
-
-        for identity in Help.reduce_indexed_task_into_list(task_list):
-            self._show_task_name_description(builder, identity)
-
-        user_reduced = Help.reduce_indexed_task_into_list(user_task)
-        if len(user_reduced) <= 0:
-            return TaskResult(args, message=builder.str())
-
-        builder.append("\nUser tasks:\n")
-        for identity in user_reduced:
-            self._show_task_name_description(builder, identity)
+        self._uptade_description("Showing help page")
         return TaskResult(args, message=builder.str())
 
-    def _show_header(self, builder: SB, has_action: bool = False):
+    def _show_help_default(self, builder: SB, root: Subtask):
+        self._show_help_grouped(builder, self._grouped_tasks(root))
+
+    def _show_header(self, builder: SB, identity: Optional[TaskIdentity]):
+        from ..module.aflutter.task.root import Root
+
         program = Path(sys_argv[0]).name
         if program == "__main__.py":
             program = "python -m auto_flutter_dig"
-        builder.append("\nUsage:\t").append(program, end=" ").append(
-            "TASK ACTION" if has_action else "TASK", SB.Color.CYAN, True
-        ).append(" [options]\n", SB.Color.MAGENTA)
+        builder.append("\nUsage:\t").append(program, end=" ")
+
+        tasks: List[str] = []
+        t_identity = identity
+        while not t_identity is None:
+            if t_identity != Root:
+                tasks.append(t_identity.id)
+            parent = t_identity.parent
+            if isinstance(parent, TaskIdentity):
+                t_identity = parent
+            else:
+                t_identity = None
+        if len(tasks) > 0:
+            tasks.reverse()
+            builder.append(" ".join(tasks), SB.Color.CYAN, True, end=" ")
+
+        if isinstance(identity, Subtask) or identity is None:
+            builder.append("TASK ", SB.Color.CYAN, True)
+        builder.append("[options]\n", SB.Color.MAGENTA)
 
     def _show_task_description(self, builder: SB, identity: TaskIdentity):
         builder.append("\nTask:\t").append(
@@ -135,18 +162,17 @@ class Help(Task):
         ).append(identity.name, end="\n")
         pass
 
-    def _show_task_help(self, builder: SB, identity: TaskIdentity):
-        self._show_header(builder)
+    def _show_task_help(self, builder: SB, identity: TaskIdentity, root: Subtask):
         self._show_task_description(builder, identity)
         options_mapped = map(
             lambda r_identity: r_identity.options,
-            TaskResolver.resolve(identity),
+            TaskResolver.resolve(identity, origin=root),
         )
         options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
         self._show_task_options(builder, options)
 
-    def _show_task_name_description(self, builder: SB, identity: TaskIdentity):
+    def _show_task_identity_description(self, builder: SB, identity: TaskIdentity):
         builder.append("  ").append(identity.id, SB.Color.CYAN, True)
         if len(identity.id) < 8:
             builder.append(" " * (8 - len(identity.id)))
@@ -183,35 +209,21 @@ class Help(Task):
             builder.append("\t").append(option.description, end="\n")
         pass
 
-    def _show_task_help_with_actions(
-        self, builder: SB, identity: TaskIdentity, task: Task
-    ):
-        helper = task
-        if not isinstance(helper, HelpAction):
-            raise TypeError(
-                "Field `{name}` must be instance of `{cls}`, but `{input}` was used".format(
-                    name="helper",
-                    cls=HelpAction.__name__,
-                    input=_Ensure.name(type(helper)),
-                )
-            )
-        self._show_header(builder, True)
-        self._show_task_description(builder, identity)
-        builder.append("\nActions:\n")
-        for action in helper.actions():
-            self._show_task_actions(builder, action, action.creator())
-            pass
+    def _show_help_grouped(self, builder: SB, grouped: Dict[str, List[TaskIdentity]]):
+        for group, identities in grouped.items():
+            builder.append("\n")
+            self._show_help_by_group(builder, group, identities)
         pass
 
-    def _show_task_actions(self, builder: SB, identity: TaskIdentity, task: Task):
-        self._show_task_name_description(builder, identity)
-        options: List[Option] = _Iterable.flatten(
-            map(
-                lambda r_identity: r_identity.options,
-                TaskResolver.resolve(task),
-            )
-        )
-        self._show_task_options(builder, options)
+    def _show_help_by_group(
+        self,
+        builder: SB,
+        group: str,
+        identities: List[TaskIdentity],
+    ):
+        builder.append("  Tasks for ").append(group, SB.Color.CYAN).append(":\n")
+        for identity in identities:
+            self._show_task_identity_description(builder, identity)
         pass
 
     @staticmethod
@@ -221,3 +233,15 @@ class Help(Task):
         filtered = filter(lambda it: not it[0].startswith("-"), tasks.items())
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)
+
+    def _grouped_tasks(self, root: Subtask) -> Dict[str, List[TaskIdentity]]:
+        output: Dict[str, List[TaskIdentity]] = {}
+        for id, identity in root.subtasks.items():
+            if not identity.group in output:
+                output[identity.group] = []
+            output[identity.group].append(identity)
+        for group, identities in output.copy().items():
+            output[group] = list(filter(lambda x: not x.id.startswith("-"), identities))
+            if len(output[group]) == 0:
+                output.pop(group)
+        return output
