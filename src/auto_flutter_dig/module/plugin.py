@@ -18,7 +18,11 @@ class AflutterModulePlugin(ABC):
     def initialize(self):
         pass
 
-    def register_setup(self, setup: Subtask, check: Callable[[TaskIdentity], None]):
+    def register_setup(
+        self,
+        setup: Subtask,
+        check: Callable[[str, TaskIdentity], None],
+    ):
         pass
 
     def register_config(self, config: Subtask):

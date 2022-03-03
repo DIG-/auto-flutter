@@ -11,5 +11,9 @@ class FirebaseModulePlugin(AflutterModulePlugin):
     def name(self) -> str:
         return "Firebase"
 
-    def register_setup(self, setup: Subtask, check: Callable[[TaskIdentity], None]):
-        check(FirebaseCheck.identity)
+    def register_setup(
+        self,
+        setup: Subtask,
+        check: Callable[[str, TaskIdentity], None],
+    ):
+        check("firebase", FirebaseCheck.identity)
