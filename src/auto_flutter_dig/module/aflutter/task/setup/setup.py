@@ -1,6 +1,7 @@
 from .....model.task.subtask import Subtask
 from .....module.aflutter.identity import AflutterTaskIdentity
 from .....task.base.subtask_parent_task import BaseSubtaskParentTask
+from .check import AflutterSetupCheckTask
 from .save import AflutterSetupSaveTask
 from .show import AflutterSetupShow
 from .stack_trace import AflutterSetupStackTraceTask
@@ -23,6 +24,7 @@ class __AflutterSetupIdentity(AflutterTaskIdentity, Subtask):
                 AflutterSetupShow.identity,
                 AflutterSetupSaveTask.identity,
                 AflutterSetupStackTraceTask.identity,
+                AflutterSetupCheckTask.identity,
             ],
         )
 
