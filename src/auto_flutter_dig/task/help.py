@@ -7,7 +7,7 @@ from ..core.task import TaskResolver
 from ..core.utils import _Iterable
 from ..model.argument.option import (
     LongOption,
-    LongShortOptionWithValue,
+    LongPositionalOption,
     Option,
     OptionWithValue,
     ShortOption,
@@ -33,9 +33,7 @@ class Help(Task):
                 Help.identity.allow_more,
             )
 
-    option_task = LongShortOptionWithValue(
-        "t", "task", "Show help details about given task"
-    )
+    option_task = LongPositionalOption("task", 0, "Show help details about given task")
 
     identity = AflutterTaskIdentity(
         "help",
