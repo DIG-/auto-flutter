@@ -28,7 +28,7 @@ class _SetupCheckTaskIdentity(AflutterTaskIdentity):
 class AflutterSetupCheckTask(Task):
     __opt_all = LongShortOption("a", "all", "Run all checks (default)")
 
-    identity = _SetupCheckTaskIdentity([__opt_all])
+    identity: _SetupCheckTaskIdentity = _SetupCheckTaskIdentity([__opt_all])
 
     def describe(self, args: Args) -> str:
         return ""
