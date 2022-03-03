@@ -10,7 +10,7 @@ from ...module.firebase.model._const import (
     FIREBASE_DISABLE_INTERACTIVE_MODE,
     FIREBASE_ENV,
 )
-from ...task.firebase.check import FirebaseCheck
+from ...module.firebase.task.setup.check import FirebaseCheck
 from ...task.firebase.validate import FirebaseBuildValidate
 from ...task.flutter.build.stub import FlutterBuildStub
 from ...task.identity import FirebaseTaskIdentity

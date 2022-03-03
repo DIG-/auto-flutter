@@ -3,7 +3,7 @@ from typing import Dict
 from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
 from .config.dispatcher import ConfigDispatcher
-from .firebase.check import FirebaseCheck
+from ..module.firebase.task.setup.check import FirebaseCheck
 from .firebase.upload import FirebaseBuildUpload
 from .firebase.validate import FirebaseBuildValidate
 from .flutter import Flutter

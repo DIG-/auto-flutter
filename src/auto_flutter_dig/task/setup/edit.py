@@ -6,7 +6,7 @@ from ...core.string import SB
 from ...model.argument.option import LongOption, LongOptionWithValue
 from ...model.task import *
 from ...task.identity import AflutterTaskIdentity
-from ..firebase.check import FirebaseCheck
+from ...module.firebase.task.setup.check import FirebaseCheck
 from ..flutter import FlutterCheck
 
 
