@@ -38,7 +38,7 @@ class AflutterSetupStackTraceTask(Task):
             Config.remove(AFLUTTER_CONFIG_ENABLE_STACK_STRACE)
         else:
             return TaskResultHelp(
-                args, error=ValueError("This task require one action")
+                args, error=ValueError("This task require one option")
             )
         self._append_task(AflutterSetupSaveTask.identity)
         return TaskResult(args)
