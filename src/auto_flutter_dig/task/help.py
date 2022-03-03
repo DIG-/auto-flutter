@@ -164,6 +164,9 @@ class Help(Task):
 
     def _show_task_help(self, builder: SB, identity: TaskIdentity, root: Subtask):
         self._show_task_description(builder, identity)
+        if isinstance(identity, Subtask):
+            self._show_help_grouped(builder, self._grouped_tasks(identity))
+
         options_mapped = map(
             lambda r_identity: r_identity.options,
             TaskResolver.resolve(identity, origin=root),
