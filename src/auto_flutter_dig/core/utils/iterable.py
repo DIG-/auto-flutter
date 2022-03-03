@@ -1,7 +1,17 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Callable, Generic, Iterable, Iterator, List, Optional, Tuple, TypeVar
+from typing import (
+    Callable,
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+)
 
 
 class _Iterable(ABC):
@@ -105,3 +115,17 @@ class _Iterable(ABC):
             item = next(self.__iterator)
             self.__apply(item)
             return item
+
+    class is_instance(Iterator[T_co]):
+        def __init__(
+            self, iterable: Iterable[_Iterable.T], cls: Type[_Iterable.T_co]
+        ) -> None:
+            super().__init__()
+            self.__iterator = iterable.__iter__()
+            self.__cls = cls
+
+        def __next__(self) -> _Iterable.T_co:
+            while True:
+                out = next(self.__iterator)
+                if isinstance(out, self.__cls):
+                    return out
