@@ -9,7 +9,7 @@ from ...model.task import *
 from ...task.identity import FirebaseTaskIdentity
 from ..flutter.build.config import FlutterBuildConfig
 from ..project.read import ProjectRead
-from ._const import FIREBASE_PROJECT_APP_ID_KEY
+from ...module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):

@@ -5,7 +5,7 @@ from ...core.os import OS
 from ...core.utils import _Dict, _If
 from ...model.argument.option import LongOptionWithValue
 from ...task.base.process import *
-from ...task.firebase._const import (
+from ...module.firebase.model._const import (
     FIREBASE_CONFIG_KEY_PATH,
     FIREBASE_DISABLE_INTERACTIVE_MODE,
     FIREBASE_ENV,

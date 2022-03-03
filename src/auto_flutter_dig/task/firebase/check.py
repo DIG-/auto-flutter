@@ -4,7 +4,7 @@ from ...core.config import Config
 from ...core.string import SB
 from ..base.process.timeout import *
 from ...task.identity import FirebaseTaskIdentity
-from ._const import (
+from ...module.firebase.model._const import (
     FIREBASE_CONFIG_KEY_PATH,
     FIREBASE_DISABLE_INTERACTIVE_MODE,
     FIREBASE_ENV,
