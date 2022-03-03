@@ -9,7 +9,7 @@ __all__ = ["AflutterSetupCheckTask", "AflutterLaunchTaskOption"]
 class AflutterLaunchTaskOption(LongOption):
     def __init__(self, long: str, identity: TaskIdentity) -> None:
         super().__init__(long, identity.name)
-        self.identity = identity
+        self.identity = _Ensure.instance(identity, TaskIdentity, "identity")
 
 
 class _SetupCheckTaskIdentity(AflutterTaskIdentity):
@@ -21,10 +21,8 @@ class _SetupCheckTaskIdentity(AflutterTaskIdentity):
             lambda: AflutterSetupCheckTask(),
         )
 
-    def add(self, option: AflutterLaunchTaskOption):
-        self.options.append(
-            _Ensure.instance(option, AflutterLaunchTaskOption, "option")
-        )
+    def add(self, name: str, identity: TaskIdentity):
+        self.options.append(AflutterLaunchTaskOption(name, identity))
 
 
 class AflutterSetupCheckTask(Task):
