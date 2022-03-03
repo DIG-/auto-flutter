@@ -1,6 +1,6 @@
 from pathlib import Path
 from sys import argv as sys_argv
-from typing import Dict, List, Optional, Union
+from typing import Dict, Iterable, List, Optional, Union
 
 from ..core.string import SB
 from ..core.task import TaskResolver
@@ -10,6 +10,7 @@ from ..model.argument.option import (
     LongPositionalOption,
     Option,
     OptionWithValue,
+    PositionalOption,
     ShortOption,
 )
 from ..model.error import E, TaskNotFound
@@ -83,6 +84,8 @@ class Help(Task):
             self._task_parent = Root
 
         assert not self._task_parent is None
+        positional_options: Iterable[PositionalOption] = []
+        options: Iterable[Option] = []
 
         if (
             self._task_identity is None
@@ -107,13 +110,27 @@ class Help(Task):
                 )
             pass
 
-        self._show_header(builder, self._task_identity)
+        if not self._task_identity is None:
+            task_parent = self._task_identity.parent
+            if task_parent is None:
+                task_parent = self._task_parent
+            options_mapped = map(
+                lambda r_identity: r_identity.options,
+                TaskResolver.resolve(self._task_identity, origin=task_parent),
+            )
+            options = _Iterable.flatten(options_mapped)
+            positional_options = sorted(
+                _Iterable.is_instance(options, PositionalOption),
+                key=lambda x: x.position,
+            )
+
+        self._show_header(builder, self._task_identity, positional_options)
 
         if not self._task_identity is None:
             task_parent = self._task_identity.parent
             if task_parent is None:
                 task_parent = self._task_parent
-            self._show_task_help(builder, self._task_identity, task_parent)
+            self._show_task_help(builder, self._task_identity, task_parent, options)
         elif not self._task_id is None:
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(
                 self._task_id, SB.Color.CYAN, True
@@ -128,7 +145,12 @@ class Help(Task):
     def _show_help_default(self, builder: SB, root: Subtask):
         self._show_help_grouped(builder, self._grouped_tasks(root))
 
-    def _show_header(self, builder: SB, identity: Optional[TaskIdentity]):
+    def _show_header(
+        self,
+        builder: SB,
+        identity: Optional[TaskIdentity],
+        positional: Iterable[PositionalOption],
+    ):
         from ..module.aflutter.task.root import Root
 
         program = Path(sys_argv[0]).name
@@ -152,6 +174,11 @@ class Help(Task):
 
         if isinstance(identity, Subtask) or identity is None:
             builder.append("TASK ", SB.Color.CYAN, True)
+
+        for pos in positional:
+            builder.append("{", SB.Color.MAGENTA, True).append(
+                pos.name, SB.Color.MAGENTA, True
+            ).append("} ", SB.Color.MAGENTA, True)
         builder.append("[options]\n", SB.Color.MAGENTA)
 
     def _show_task_description(self, builder: SB, identity: TaskIdentity):
@@ -160,16 +187,17 @@ class Help(Task):
         ).append(identity.name, end="\n")
         pass
 
-    def _show_task_help(self, builder: SB, identity: TaskIdentity, root: Subtask):
+    def _show_task_help(
+        self,
+        builder: SB,
+        identity: TaskIdentity,
+        root: Subtask,
+        options: Iterable[Option],
+    ):
         self._show_task_description(builder, identity)
         if isinstance(identity, Subtask):
             self._show_help_grouped(builder, self._grouped_tasks(identity))
 
-        options_mapped = map(
-            lambda r_identity: r_identity.options,
-            TaskResolver.resolve(identity, origin=root),
-        )
-        options = _Iterable.flatten(options_mapped)
         builder.append("\nOptions:\n")
         self._show_task_options(builder, options)
 
@@ -179,16 +207,10 @@ class Help(Task):
             builder.append(" " * (8 - len(identity.id)))
         builder.append("\t").append(identity.name, end="\n")
 
-    def _show_task_options(
-        self, builder: SB, options: List[Option], is_action: bool = False
-    ):
-        if len(options) <= 0:
-            if is_action:
-                builder.append("This action does not have options")
-            else:
-                builder.append("This task does not have options")
-            return
+    def _show_task_options(self, builder: SB, options: Iterable[Option]):
+        count = 0
         for option in options:
+            count += 1
             length = 0
             if isinstance(option, ShortOption):
                 builder.append("-" + option.short, SB.Color.MAGENTA)
@@ -208,7 +230,9 @@ class Help(Task):
             if length < 20:
                 builder.append(" " * (20 - length))
             builder.append("\t").append(option.description, end="\n")
-        pass
+
+        if count == 0:
+            builder.append("This task does not have options")
 
     def _show_help_grouped(self, builder: SB, grouped: Dict[str, List[TaskIdentity]]):
         for group, identities in grouped.items():
