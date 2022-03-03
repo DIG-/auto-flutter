@@ -4,6 +4,7 @@ from ...model.task.identity import TaskIdentity
 from ...model.task.subtask import Subtask
 from ..plugin import AflutterModulePlugin
 from .task.setup.check import FirebaseCheck
+from .task.setup.setup import FirebaseSetupTask
 
 
 class FirebaseModulePlugin(AflutterModulePlugin):
@@ -16,4 +17,5 @@ class FirebaseModulePlugin(AflutterModulePlugin):
         setup: Subtask,
         check: Callable[[str, TaskIdentity], None],
     ):
+        setup.register_subtask(FirebaseSetupTask.identity)
         check("firebase", FirebaseCheck.identity)
