@@ -55,7 +55,7 @@ class AflutterInitTask(Task):
                 error=E(RuntimeError("Failed to create task tree")).caused_by(error),
             )
 
-        parse_options = ParseOptions(sys_argv[offset:])
+        parse_options = ParseOptions(task, sys_argv[offset:])
         self._uptade_description(parse_options.describe(args))
         parse_options_result = parse_options.execute(args)
         return parse_options_result

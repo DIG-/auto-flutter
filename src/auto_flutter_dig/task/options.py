@@ -64,8 +64,9 @@ class ParseOptions(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
     __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
 
-    def __init__(self, input: List[str] = sys_argv[2:]) -> None:
+    def __init__(self, identity: TaskIdentity, input: List[str] = sys_argv[2:]) -> None:
         super().__init__()
+        self._task_identity: TaskIdentity = identity
         self._input = input
 
     def describe(self, args: Args) -> str:
@@ -272,7 +273,7 @@ class ParseOptions(Task):
 
         if args.group_contains("aflutter", ParseOptions.__option_help):
             TaskManager._task_stack.clear()
-            self._append_task(Help.Stub(sys_argv[1]))
+            self._append_task(Help.Stub(self._task_identity))
 
         if args.group_contains("aflutter", ParseOptions.__option_stack_trace):
             Config.put_bool(
