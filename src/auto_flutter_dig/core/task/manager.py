@@ -6,6 +6,7 @@ from ...core.utils import _Ensure
 from ...model.error import TaskNotFound
 from ...model.result import Result
 from ...model.task import *
+from ...model.task.result import TaskResultHelp
 from ...model.task.subtask import Subtask
 from .printer import *
 from .resolver import TaskResolver
@@ -79,7 +80,7 @@ class __TaskManager:
 
     def execute(self) -> bool:
         args = Args()
-
+        had_failure = False
         while len(self._task_stack) > 0:
             identity = self._task_stack.pop()
             task = identity.creator()
@@ -104,10 +105,17 @@ class __TaskManager:
             self._printer.append(OpResult(output))
 
             if not output.success:
+                if isinstance(output, TaskResultHelp):
+                    from ...task.help import Help
+
+                    self._task_stack.clear()
+                    self.add(Help.Stub(identity))
+                    had_failure = True
+                    continue
                 return False
             args = output.args
 
-        return True
+        return not had_failure
 
     def __repr__(self) -> str:
         return "TaskManager(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(

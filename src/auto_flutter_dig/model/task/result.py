@@ -30,3 +30,7 @@ class TaskResult(Result):
             message=self.message,
             args=self.args,
         )
+
+
+class TaskResultHelp(TaskResult):  # Will be handled as error, but append Help at end
+    ...
