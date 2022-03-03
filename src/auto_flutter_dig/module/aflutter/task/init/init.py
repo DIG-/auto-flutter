@@ -1,10 +1,14 @@
 from sys import argv as sys_argv
-from typing import Optional, Tuple
+from typing import Iterable, Optional, Tuple
 
 from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task import *
 from .....model.task.subtask import Subtask
 from .....module.aflutter.task.root import Root
+from .....module.aflutter.task.setup import AflutterSetupIdentity
+from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
+from .....module.firebase.firebase import FirebaseModulePlugin
+from .....module.plugin import AflutterModulePlugin
 from .....task.help import Help
 from .....task.options import ParseOptions
 from .....task.project import ProjectRead
@@ -32,9 +36,36 @@ class AflutterInitTask(Task):
             return read_project_result
 
         self._uptade_description(
-            "Finding task",
+            "Loading modules",
             read_project_result if read_project_result.is_warning else None,
         )
+
+        modules: Iterable[AflutterModulePlugin] = [FirebaseModulePlugin()]
+
+        if read_config_result.is_warning:
+            for module in modules:
+                module.initialize_config()
+
+        for module in modules:
+            self._uptade_description("Initialize module {}".format(module.name))
+            try:
+                module.initialize()
+                module.register_setup(
+                    AflutterSetupIdentity,
+                    AflutterSetupCheckTask.identity.add,
+                )
+                module.register_tasks(Root)
+            except BaseException as error:
+                return TaskResult(
+                    args,
+                    E(
+                        RuntimeError(
+                            "Failed to initialize module {}".format(module.name)
+                        )
+                    ).caused_by(error),
+                )
+
+        self._uptade_description("Finding task")
 
         try:
             task, offset = self.__find_task(Root)
