@@ -155,5 +155,8 @@ class __Config:
     def put_path(self, key: str, value: PurePath) -> None:
         self._put_value(key, str(OS.machine_to_posix_path(value)))
 
+    def __repr__(self) -> str:
+        return "Config(" + self.__content.__repr__() + ")"
+
 
 Config = __Config()
