@@ -274,10 +274,11 @@ class ParseOptions(Task):
             TaskManager._task_stack.clear()
             self._append_task(Help.Stub(sys_argv[1]))
 
-        Config.put_bool(
-            AFLUTTER_CONFIG_ENABLE_STACK_STRACE,
-            args.group_contains("aflutter", ParseOptions.__option_stack_trace),
-        )
+        if args.group_contains("aflutter", ParseOptions.__option_stack_trace):
+            Config.put_bool(
+                AFLUTTER_CONFIG_ENABLE_STACK_STRACE,
+                True,
+            )
 
         return TaskResult(args)
 
