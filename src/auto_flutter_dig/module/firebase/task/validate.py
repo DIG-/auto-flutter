@@ -6,10 +6,10 @@ from ....model.platform import Platform
 from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import *
-from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
-from ....task.identity import FirebaseTaskIdentity
 from ....task.flutter.build.config import FlutterBuildConfig
 from ....task.project.read import ProjectRead
+from ..identity import FirebaseTaskIdentity
+from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
