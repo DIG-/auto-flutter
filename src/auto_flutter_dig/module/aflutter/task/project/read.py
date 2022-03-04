@@ -1,10 +1,10 @@
 from json import load as json_load
 
-from ...core.string import SB
-from ...model.error import E, SilentWarning
-from ...model.project import Project
-from ...model.task import *
-from ...task.identity import AflutterTaskIdentity
+from .....core.string import SB
+from .....model.error import E, SilentWarning
+from .....model.project import Project
+from .....model.task import *
+from .....task.identity import AflutterTaskIdentity
 from .inport import ProjectTaskImport
 
 

@@ -1,8 +1,8 @@
-from ...core.string.builder import SB
-from ...model.project import Project
-from ...model.project.custom_task import CustomTask, CustomTaskType
-from ...model.task import *
-from ...model.task.custom import *
+from .....core.string.builder import SB
+from .....model.project import Project
+from .....model.project.custom_task import CustomTask, CustomTaskType
+from .....model.task import *
+from .....model.task.custom import *
 
 
 class ProjectTaskImport(Task):
@@ -32,7 +32,7 @@ class ProjectTaskImport(Task):
         return TaskResult(args)
 
     def __add_custom_task(self, identity: TaskIdentity):
-        from .._list import task_list, user_task
+        from .....task._list import task_list, user_task
 
         if identity.id in task_list:
             raise KeyError("CustomTask can not override internal task")

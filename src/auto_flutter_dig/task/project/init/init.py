@@ -6,7 +6,7 @@ from ....model.argument.option import LongOption, LongShortOptionWithValue
 from ....model.project import Project
 from ....model.task import *
 from ....task.identity import AflutterTaskIdentity
-from ..save import ProjectSave
+from ....module.aflutter.task.project.save import ProjectSave
 from .common_config import CommonConfig
 from .find_flavor import FindFlavor
 from .find_platform import FindPlatform

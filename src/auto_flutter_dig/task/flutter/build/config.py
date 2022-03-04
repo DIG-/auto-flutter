@@ -12,7 +12,7 @@ from ....model.platform import Platform
 from ....model.project import Project
 from ....model.task import *
 from ....task.identity import FlutterTaskIdentity
-from ...project.read import ProjectRead
+from ....module.aflutter.task.project.read import ProjectRead
 
 
 class FlutterBuildConfig(Task):

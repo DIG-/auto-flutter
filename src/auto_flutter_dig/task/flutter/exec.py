@@ -6,7 +6,7 @@ from ...core.string import SB
 from ...model.argument.option import OptionAll
 from ...model.task import *
 from ...task.identity import FlutterTaskIdentity
-from ..project.read import ProjectRead
+from ...module.aflutter.task.project.read import ProjectRead
 from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 

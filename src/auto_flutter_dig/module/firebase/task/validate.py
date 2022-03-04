@@ -7,7 +7,7 @@ from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.project import Project
 from ....model.task import *
 from ....task.flutter.build.config import FlutterBuildConfig
-from ....task.project.read import ProjectRead
+from ...aflutter.task.project.read import ProjectRead
 from ..identity import FirebaseTaskIdentity
 from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
 
