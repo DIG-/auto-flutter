@@ -3,13 +3,14 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable, List, Optional, Union
 
+from ...model.error.chain import E
 from ...model.result import Result
 from ..argument import Args
 from .id import TaskId
 from .identity import TaskIdentity
 from .result import TaskResult
 
-__all__ = ["Task", "List"]
+__all__ = ["Task", "List", "E"]
 
 
 class Task(ABC):
@@ -53,4 +54,4 @@ class Task(ABC):
     def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args
-        raise NotImplementedError
+        raise NotImplementedError()
