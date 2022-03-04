@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Generic, TypeVar
+from typing import Callable, Generic, Optional, TypeVar
 
 from .....model.argument.arguments import Args
 from .....model.argument.option.option import Option
@@ -14,6 +14,18 @@ class _DecodedOption(Option, Generic[T_co]):
         value = args.get(self)
         if value is None:
             raise ValueError("Check if option exists before getting")
+        return self._convert(value)
+
+    def get_or_default(self, args: Args, default: Callable[[], T_co]) -> T_co:
+        value = args.get(self)
+        if value is None:
+            return default()
+        return self._convert(value)
+
+    def get_or_none(self, args: Args) -> Optional[T_co]:
+        value = args.get(self)
+        if value is None:
+            return None
         return self._convert(value)
 
     @abstractmethod
