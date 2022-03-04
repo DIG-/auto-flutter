@@ -5,6 +5,7 @@ from .....core.string import SB
 from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task import *
 from .....model.task.subtask import Subtask
+from .....module.aflutter.task.config.config import AflutterConfigIdentity
 from .....module.aflutter.task.root import Root
 from .....module.aflutter.task.setup import AflutterSetupIdentity
 from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
@@ -59,6 +60,7 @@ class AflutterInitTask(Task):
                     AflutterSetupIdentity,
                     AflutterSetupCheckTask.identity.add,
                 )
+                module.register_config(AflutterConfigIdentity)
                 module.register_tasks(Root)
             except BaseException as error:
                 return TaskResult(
