@@ -5,16 +5,4 @@
         "--line-length=120"
     ],
     "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": [
-        "--max-line-length=120",
-        "--enable=W0611",
-        "--disable=W0614",
-        "--disable=W0401",
-        "--disable=C0114",
-        "--disable=C0115",
-        "--disable=C0116",
-        "--disable=W0703",
-        "--disable=C0103",
-        "--disable=R0903"
-    ],
 }
