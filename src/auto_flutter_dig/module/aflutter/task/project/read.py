@@ -1,10 +1,9 @@
 from json import load as json_load
 
-from .....core.string import SB
 from .....model.error import E, SilentWarning
 from .....model.project import Project
 from .....model.task import *
-from .....task.identity import AflutterTaskIdentity
+from ...identity import AflutterTaskIdentity
 from .inport import ProjectTaskImport
 
 
@@ -50,7 +49,7 @@ class ProjectRead(Task):
 
         if file is None:
             return self.__return_error(
-                args, FileNotFoundError("Can not open project file for read")
+                args, E(FileNotFoundError("Can not open project file for read")).error
             )
 
         try:
