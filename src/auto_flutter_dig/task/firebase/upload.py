@@ -4,13 +4,13 @@ from ...core.config import Config
 from ...core.os import OS
 from ...core.utils import _Dict, _If
 from ...model.argument.option import LongOptionWithValue
-from ...task.base.process import *
 from ...module.firebase.model._const import (
     FIREBASE_CONFIG_KEY_PATH,
     FIREBASE_DISABLE_INTERACTIVE_MODE,
     FIREBASE_ENV,
 )
 from ...module.firebase.task.setup.check import FirebaseCheck
+from ...task.base.process import *
 from ...task.firebase.validate import FirebaseBuildValidate
 from ...task.flutter.build.stub import FlutterBuildStub
 from ...task.identity import FirebaseTaskIdentity
@@ -44,19 +44,20 @@ class FirebaseBuildUpload(BaseProcessTask):
         filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
             return TaskResult(
-                args, AssertionError("Previous task does not have output")
+                args, E(AssertionError("Previous task does not have output")).error
             )
 
         file: Path = Path(OS.posix_to_machine_path(PurePosixPath(filename)))
         if not file.exists():
             return TaskResult(
-                args, FileNotFoundError("Output not found: {}".format(str(file)))
+                args,
+                E(FileNotFoundError("Output not found: {}".format(str(file)))).error,
             )
 
         file = file.absolute()
         google_id = args.get(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID)
         if google_id is None or len(google_id) <= 0:
-            return TaskResult(args, AssertionError("Google app id not found"))
+            return TaskResult(args, E(AssertionError("Google app id not found")).error)
 
         arguments: List[str] = [
             FIREBASE_DISABLE_INTERACTIVE_MODE.value,

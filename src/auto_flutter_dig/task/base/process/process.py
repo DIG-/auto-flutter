@@ -19,6 +19,7 @@ __all__ = [
     "Process",
     "BaseProcessTask",
     "ProcessOrResult",
+    "E",
 ]
 
 ProcessOrResult = Union[Process, TaskResult]

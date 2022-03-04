@@ -6,10 +6,10 @@ from ...model.platform import Platform
 from ...model.platform.merge_config import MergePlatformConfigFlavored
 from ...model.project import Project
 from ...model.task import *
+from ...module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 from ...task.identity import FirebaseTaskIdentity
 from ..flutter.build.config import FlutterBuildConfig
 from ..project.read import ProjectRead
-from ...module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
@@ -43,7 +43,7 @@ class FirebaseBuildValidate(Task):
         if id is None or len(id) <= 0:
             return TaskResult(
                 args,
-                error=ValueError("App id not found in aflutter.json"),
+                error=E(ValueError("App id not found in aflutter.json")).error,
                 success=False,
             )
 
