@@ -3,6 +3,7 @@ from typing import Callable
 from ...model.task.identity import TaskIdentity
 from ...model.task.subtask import Subtask
 from ..plugin import AflutterModulePlugin
+from .task.config import FirebaseConfigTask
 from .task.setup.check import FirebaseCheck
 from .task.setup.setup import FirebaseSetupTask
 from .task.upload import FirebaseBuildUpload
@@ -21,6 +22,9 @@ class FirebaseModulePlugin(AflutterModulePlugin):
     ):
         setup.register_subtask(FirebaseSetupTask.identity)
         check("firebase", FirebaseCheck.identity)
+
+    def register_config(self, config: Subtask):
+        config.register_subtask(FirebaseConfigTask.identity)
 
     def register_tasks(self, root: Subtask):
         root.register_subtask(
