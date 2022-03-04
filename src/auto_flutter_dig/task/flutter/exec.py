@@ -5,9 +5,12 @@ from ...core.process.process import Process
 from ...core.string import SB
 from ...model.argument.option import OptionAll
 from ...model.task import *
-from ...task.identity import FlutterTaskIdentity
 from ...module.aflutter.task.project.read import ProjectRead
-from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
+from ...module.flutter.model._const import (
+    FLUTTER_CONFIG_KEY_PATH,
+    FLUTTER_DISABLE_VERSION_CHECK,
+)
+from ...task.identity import FlutterTaskIdentity
 
 
 class Flutter(Task):
