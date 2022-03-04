@@ -4,6 +4,8 @@ from typing import Callable
 from ..model.task.identity import TaskIdentity
 from ..model.task.subtask import Subtask
 
+__all__ = ["AflutterModulePlugin", "TaskIdentity", "Subtask", "Callable"]
+
 
 class AflutterModulePlugin(ABC):
     @property
