@@ -92,7 +92,7 @@ class FlutterBuildTask(FlutterCommand):
         if output_file is None:
             return TaskResult(
                 args,
-                error=Warning("Build success, but file output not defined"),
+                error=E(Warning("Build success, but file output not defined")).error,
                 success=True,
             )
         output_file = SF.format(
@@ -106,13 +106,13 @@ class FlutterBuildTask(FlutterCommand):
         )
 
         if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
-            self._print(
+            self._print_content(
                 SB().append("Build output found successfully", SB.Color.GREEN).str()
             )
         else:
             return TaskResult(
                 args,
-                FileNotFoundError('Output "{}" not found'.format(output_file)),
+                E(FileNotFoundError('Output "{}" not found'.format(output_file))).error,
                 success=False,
             )
 
@@ -125,9 +125,9 @@ class FlutterBuildTask(FlutterCommand):
             self._clear_output(args)
             return TaskResult(
                 args,
-                error=SilentWarning(
-                    "Build failed. Maybe there is more flavors to build"
-                ),
+                error=E(
+                    SilentWarning("Build failed. Maybe there is more flavors to build")
+                ).error,
                 success=True,
             )
 
@@ -177,18 +177,13 @@ class FlutterBuildTask(FlutterCommand):
                 )
             )
 
-        self._print(
-            SB()
-            .append(
-                "Flutter issue #58247 detected, building others flavors to fix",
-                SB.Color.BLUE,
-                True,
-            )
-            .str()
-        )
         return TaskResult(
             args,
-            error=SilentWarning("Build others flavor, than rebuild current flavor"),
+            error=E(
+                Warning(
+                    "Flutter issue #58247 detected, building others flavors to fix..."
+                )
+            ).error,
             success=True,
         )
 
