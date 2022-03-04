@@ -16,8 +16,6 @@ class ProjectRead(Task):
         "-project-read-skip", "Reading project file", [], lambda: ProjectRead(True)
     )
 
-    _warn_if_fail: bool
-
     def __init__(self, warn_if_fail: bool) -> None:
         super().__init__()
         self._warn_if_fail = warn_if_fail
