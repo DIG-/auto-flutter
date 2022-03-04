@@ -133,11 +133,7 @@ class Args:
             elif isinstance(option, PositionalOption):
                 key = str(option.position)
             else:
-                raise TypeError(
-                    "Can not get correct type of Option: {}".format(
-                        type(option).__name__
-                    )
-                )
+                raise TypeError("Can not get correct type of Option: {}".format(type(option).__name__))
         if key is None:
             raise KeyError("Can not extract key from `{}`".format(type(option)))
         return key.lower()

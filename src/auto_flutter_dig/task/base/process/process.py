@@ -26,9 +26,7 @@ ProcessOrResult = Union[Process, TaskResult]
 
 
 class BaseProcessTask(Task):
-    def __init__(
-        self, ignore_failure: bool = False, show_output_at_end: bool = False
-    ) -> None:
+    def __init__(self, ignore_failure: bool = False, show_output_at_end: bool = False) -> None:
         super().__init__()
         self._process: Process
         self._ignore_failure: bool = ignore_failure
@@ -76,32 +74,21 @@ class BaseProcessTask(Task):
     def _create_process(self, args: Args) -> ProcessOrResult:
         ## Use self._sanitize_arguments() before passing to Process
         ## Use self._print_content() as process write
-        raise NotImplementedError(
-            "{} requires to implement _create_process".format(type(self).__name__)
-        )
+        raise NotImplementedError("{} requires to implement _create_process".format(type(self).__name__))
 
-    def _handle_process_output(
-        self, args: Args, process: Process, output: Union[bool, BaseException]
-    ) -> TaskResult:
+    def _handle_process_output(self, args: Args, process: Process, output: Union[bool, BaseException]) -> TaskResult:
         if isinstance(output, bool):
             return self._handle_process_finished(args, process, output)
         elif isinstance(output, BaseException):
             return self._handle_process_exception(args, process, output)
-        raise ValueError(
-            "Expected `bool` or `BaseException`, but process returned `{}`".format(
-                type(output).__name__
-            )
-        )
+        raise ValueError("Expected `bool` or `BaseException`, but process returned `{}`".format(type(output).__name__))
 
     def _handle_process_finished(
         self, args: Args, process: Process, output: bool, message: Optional[str] = None
     ) -> TaskResult:
         if (
             message is None
-            and (
-                (output and self._show_output_at_end)
-                or (not output and not self.__print_content)
-            )
+            and ((output and self._show_output_at_end) or (not output and not self.__print_content))
             and not process.output is None
             and len(process.output) > 0
         ):
@@ -115,6 +102,4 @@ class BaseProcessTask(Task):
         output: BaseException,
         message: Optional[str] = None,
     ) -> TaskResult:
-        return TaskResult(
-            args, error=output, message=message, success=self._ignore_failure
-        )
+        return TaskResult(args, error=output, message=message, success=self._ignore_failure)

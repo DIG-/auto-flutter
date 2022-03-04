@@ -63,11 +63,7 @@ class TaskPrinter:
         elif isinstance(op, OpResult):
             self.__handle_operation_result(op)
         else:
-            print(
-                format_exception(
-                    TypeError("Unknown Operation type: {}".format(type(op).__name__))
-                )
-            )
+            print(format_exception(TypeError("Unknown Operation type: {}".format(type(op).__name__))))
             pass
 
     def __handle_operation_result(self, op: OpResult):
@@ -90,9 +86,7 @@ class TaskPrinter:
                 print("")
         else:
             has_warning = not result.error is None
-            print_warning = not result.error is None and not isinstance(
-                result.error, SilentWarning
-            )
+            print_warning = not result.error is None and not isinstance(result.error, SilentWarning)
             if has_description:
                 TaskPrinter.__print_description(
                     self._current_description,

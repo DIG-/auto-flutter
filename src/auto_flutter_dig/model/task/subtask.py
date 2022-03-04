@@ -34,9 +34,7 @@ class Subtask(ABC):
         if isinstance(task, TaskIdentity):
             self.__register_subtask_tuple([task.to_map()])
         elif isinstance(task, Iterable):
-            self.__register_subtask_tuple(
-                _Ensure.instance(x, TaskIdentity, "task").to_map() for x in task
-            )
+            self.__register_subtask_tuple(_Ensure.instance(x, TaskIdentity, "task").to_map() for x in task)
         else:
             raise TypeError("Unexpected type received `{}`".format(type(task).__name__))
 

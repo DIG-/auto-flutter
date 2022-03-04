@@ -36,23 +36,17 @@ class AflutterSetupCheckTask(Task):
     def execute(self, args: Args) -> TaskResult:
         to_run: List[AflutterLaunchTaskOption] = []
         if args.contains(self.__opt_all):
-            to_run = list(
-                _Iterable.is_instance(self.identity.options, AflutterLaunchTaskOption)
-            )
+            to_run = list(_Iterable.is_instance(self.identity.options, AflutterLaunchTaskOption))
         else:
             for option in self.identity.options:
                 if option == self.__opt_all:
                     continue
-                if args.contains(option) and isinstance(
-                    option, AflutterLaunchTaskOption
-                ):
+                if args.contains(option) and isinstance(option, AflutterLaunchTaskOption):
                     to_run.append(option)
 
         if len(to_run) <= 0:
             self._uptade_description(self.identity.name)
-            return TaskResult(
-                args, error=LookupError("No environment check are available")
-            )
+            return TaskResult(args, error=LookupError("No environment check are available"))
 
         for opt in to_run:
             self._append_task(opt.identity)

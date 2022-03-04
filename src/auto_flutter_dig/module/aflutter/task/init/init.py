@@ -65,28 +65,20 @@ class AflutterInitTask(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    E(
-                        RuntimeError(
-                            "Failed to initialize module {}".format(module.name)
-                        )
-                    ).caused_by(error),
+                    E(RuntimeError("Failed to initialize module {}".format(module.name))).caused_by(error),
                 )
 
         self._uptade_description("Finding task")
 
         if len(sys_argv) <= 1:
-            task: TaskIdentity = Help.Stub(
-                message=SB().append("Require one task to run", SB.Color.RED).str()
-            )
+            task: TaskIdentity = Help.Stub(message=SB().append("Require one task to run", SB.Color.RED).str())
             offset = 1
         else:
             try:
                 task, offset = self.__find_task(Root)
             except TaskNotFound as error:
                 self._append_task(Help.Stub(error.task_id))
-                return TaskResult(
-                    args, E(SilentWarning()).caused_by(error), success=True
-                )
+                return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
             except BaseException as error:
                 return TaskResult(
                     args,

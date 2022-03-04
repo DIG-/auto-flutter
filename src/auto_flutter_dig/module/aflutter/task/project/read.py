@@ -8,13 +8,9 @@ from .inport import ProjectTaskImport
 
 
 class ProjectRead(Task):
-    identity = AflutterTaskIdentity(
-        "-project-read", "Reading project file", [], lambda: ProjectRead(False)
-    )
+    identity = AflutterTaskIdentity("-project-read", "Reading project file", [], lambda: ProjectRead(False))
 
-    identity_skip = AflutterTaskIdentity(
-        "-project-read-skip", "Reading project file", [], lambda: ProjectRead(True)
-    )
+    identity_skip = AflutterTaskIdentity("-project-read-skip", "Reading project file", [], lambda: ProjectRead(True))
 
     def __init__(self, warn_if_fail: bool) -> None:
         super().__init__()
@@ -34,21 +30,15 @@ class ProjectRead(Task):
             if self._warn_if_fail:
                 return self.__return_error(
                     args,
-                    E(SilentWarning('Failed to open file "aflutter.json"')).caused_by(
-                        error
-                    ),
+                    E(SilentWarning('Failed to open file "aflutter.json"')).caused_by(error),
                 )
             return self.__return_error(
                 args,
-                E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(
-                    error
-                ),
+                E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(error),
             )
 
         if file is None:
-            return self.__return_error(
-                args, E(FileNotFoundError("Can not open project file for read")).error
-            )
+            return self.__return_error(args, E(FileNotFoundError("Can not open project file for read")).error)
 
         try:
             json = json_load(file)
@@ -63,9 +53,7 @@ class ProjectRead(Task):
         except BaseException as error:
             return self.__return_error(
                 args,
-                E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(
-                    error
-                ),
+                E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(error),
             )
 
         if not Project.current.tasks is None:

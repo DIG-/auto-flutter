@@ -94,19 +94,13 @@ class Help(Task):
             and (not self._task_id.startswith("-"))
         ):
             try:
-                self._task_identity = TaskResolver.find_task(
-                    self._task_id, self._task_parent
-                )
+                self._task_identity = TaskResolver.find_task(self._task_id, self._task_parent)
             except TaskNotFound:
                 pass
             except BaseException as error:
                 return TaskResult(
                     args,
-                    error=E(
-                        LookupError(
-                            "Failed to search for task {}.".format(self._task_id)
-                        )
-                    ).caused_by(error),
+                    error=E(LookupError("Failed to search for task {}.".format(self._task_id))).caused_by(error),
                 )
             pass
 
@@ -135,9 +129,9 @@ class Help(Task):
                 task_parent = self._task_parent
             self._show_task_help(builder, self._task_identity, task_parent, options)
         elif not self._task_id is None:
-            builder.append(" !!! ", SB.Color.RED).append("Task ").append(
-                self._task_id, SB.Color.CYAN, True
-            ).append(" not found\n")
+            builder.append(" !!! ", SB.Color.RED).append("Task ").append(self._task_id, SB.Color.CYAN, True).append(
+                " not found\n"
+            )
             self._show_help_default(builder, self._task_parent)
         else:
             self._show_help_default(builder, self._task_parent)
@@ -179,15 +173,13 @@ class Help(Task):
             builder.append("TASK ", SB.Color.CYAN, True)
 
         for pos in positional:
-            builder.append("{", SB.Color.MAGENTA, True).append(
-                pos.name, SB.Color.MAGENTA, True
-            ).append("} ", SB.Color.MAGENTA, True)
+            builder.append("{", SB.Color.MAGENTA, True).append(pos.name, SB.Color.MAGENTA, True).append(
+                "} ", SB.Color.MAGENTA, True
+            )
         builder.append("[options]\n", SB.Color.MAGENTA)
 
     def _show_task_description(self, builder: SB, identity: TaskIdentity):
-        builder.append("\nTask:\t").append(
-            identity.id, SB.Color.CYAN, True, end="\n"
-        ).append(identity.name, end="\n")
+        builder.append("\nTask:\t").append(identity.id, SB.Color.CYAN, True, end="\n").append(identity.name, end="\n")
         pass
 
     def _show_task_help(
@@ -255,9 +247,7 @@ class Help(Task):
         pass
 
     @staticmethod
-    def reduce_indexed_task_into_list(
-        tasks: Dict[str, TaskIdentity]
-    ) -> List[TaskIdentity]:
+    def reduce_indexed_task_into_list(tasks: Dict[str, TaskIdentity]) -> List[TaskIdentity]:
         filtered = filter(lambda it: not it[0].startswith("-"), tasks.items())
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)

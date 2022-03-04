@@ -17,9 +17,7 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
         self.command: str = _Ensure.instance(command, str, "command")
         self.args: Optional[List[str]] = args
         self.__output: Optional[bool] = _Ensure.type(output, bool, "output")
-        self.__skip_failure: Optional[bool] = _Ensure.type(
-            skip_failure, bool, "skip_failure"
-        )
+        self.__skip_failure: Optional[bool] = _Ensure.type(skip_failure, bool, "skip_failure")
 
     @property
     def output(self) -> bool:
@@ -40,9 +38,7 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
     def to_json(self) -> Json:
         return {
             "command": self.command,
-            "args": None
-            if self.args is None
-            else _JsonEncode.encode_list(self.args, lambda x: x),
+            "args": None if self.args is None else _JsonEncode.encode_list(self.args, lambda x: x),
             "output": _JsonEncode.encode_optional(self.__output),
             "skip_failure": _JsonEncode.encode_optional(self.__skip_failure),
         }

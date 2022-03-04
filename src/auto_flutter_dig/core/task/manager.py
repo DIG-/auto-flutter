@@ -24,11 +24,7 @@ class __TaskManager:
         self,
         tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
     ):
-        if (
-            not isinstance(tasks, Task)
-            and not isinstance(tasks, TaskIdentity)
-            and not isinstance(tasks, Iterable)
-        ):
+        if not isinstance(tasks, Task) and not isinstance(tasks, TaskIdentity) and not isinstance(tasks, Iterable):
             raise TypeError(
                 "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, but `{}` was received".format(
                     type(tasks).__name__
@@ -96,9 +92,7 @@ class __TaskManager:
             if not isinstance(output, TaskResult):
                 output = TaskResult(
                     args,
-                    AssertionError(
-                        "Task {} returned without result".format(type(task).__name__)
-                    ),
+                    AssertionError("Task {} returned without result".format(type(task).__name__)),
                     success=False,
                 )
 

@@ -43,24 +43,18 @@ class FlutterBuildTask(FlutterCommand):
         if (
             android_rebuild_fix_other or android_rebuild_fix_desired
         ) and android_rebuild_fix_other == android_rebuild_fix_desired:
-            raise AssertionError(
-                "Trying rebuild android fix for other and desired at same time"
-            )
+            raise AssertionError("Trying rebuild android fix for other and desired at same time")
 
     def require(self) -> List[TaskId]:
         return self._config.get_run_before(RunType.BUILD, self._flavor)
 
     def describe(self, args: Args) -> str:
         if self._android_rebuild_fix_desired:
-            return "Rebuild flutter {}, flavor {}".format(
-                self._type.platform.value, self._flavor
-            )
+            return "Rebuild flutter {}, flavor {}".format(self._type.platform.value, self._flavor)
         if self._flavor is None:
             return "Building flutter {}".format(self._type.platform.value)
         else:
-            return "Building flutter {}, flavor {}".format(
-                self._type.platform.value, self._flavor
-            )
+            return "Building flutter {}, flavor {}".format(self._type.platform.value, self._flavor)
 
     def execute(self, args: Args) -> TaskResult:
         self._command = ["build", self._type.flutter]
@@ -106,9 +100,7 @@ class FlutterBuildTask(FlutterCommand):
         )
 
         if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
-            self._print_content(
-                SB().append("Build output found successfully", SB.Color.GREEN).str()
-            )
+            self._print_content(SB().append("Build output found successfully", SB.Color.GREEN).str())
         else:
             return TaskResult(
                 args,
@@ -125,9 +117,7 @@ class FlutterBuildTask(FlutterCommand):
             self._clear_output(args)
             return TaskResult(
                 args,
-                error=E(
-                    SilentWarning("Build failed. Maybe there is more flavors to build")
-                ).error,
+                error=E(SilentWarning("Build failed. Maybe there is more flavors to build")).error,
                 success=True,
             )
 
@@ -140,10 +130,7 @@ class FlutterBuildTask(FlutterCommand):
         self._clear_output(args)
         if (
             output is None
-            or output.find(
-                "This issue appears to be https://github.com/flutter/flutter/issues/58247"
-            )
-            < 0
+            or output.find("This issue appears to be https://github.com/flutter/flutter/issues/58247") < 0
         ):
             # This error is not the issue we handle
             return result
@@ -179,11 +166,7 @@ class FlutterBuildTask(FlutterCommand):
 
         return TaskResult(
             args,
-            error=E(
-                Warning(
-                    "Flutter issue #58247 detected, building others flavors to fix..."
-                )
-            ).error,
+            error=E(Warning("Flutter issue #58247 detected, building others flavors to fix...")).error,
             success=True,
         )
 

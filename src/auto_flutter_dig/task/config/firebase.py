@@ -9,12 +9,8 @@ from ._base import *
 
 class ConfigFirebase(_BaseConfigTask):
     __options = {
-        "add": LongOptionWithValue(
-            "set-app-id", "Set app id for platform and/or flavor"
-        ),
-        "remove": LongOption(
-            "remove-app-id", "Remove app id from platform and/or flavor"
-        ),
+        "add": LongOptionWithValue("set-app-id", "Set app id for platform and/or flavor"),
+        "remove": LongOption("remove-app-id", "Remove app id from platform and/or flavor"),
         "platform": LongOptionWithValue("platform", "Select platform to apply change"),
         "flavor": LongOptionWithValue("flavor", "Select flavor to apply change"),
     }
@@ -35,9 +31,7 @@ class ConfigFirebase(_BaseConfigTask):
             _Enum.parse(Platform),
         )
         if platform != Platform.DEFAULT and platform not in project.platforms:
-            raise ValueError(
-                "Project does not support platform {}".format(str(platform))
-            )
+            raise ValueError("Project does not support platform {}".format(str(platform)))
 
         flavor = args.get(self.__options["flavor"])
         if not flavor is None:
@@ -57,26 +51,20 @@ class ConfigFirebase(_BaseConfigTask):
         if remove_app_id:
             platform_config = project.get_platform_config(platform)
             if platform_config is None:
-                raise KeyError(
-                    "Project does not have config for platform {}".format(str(platform))
-                )
+                raise KeyError("Project does not have config for platform {}".format(str(platform)))
             config = platform_config.get_config_by_flavor(flavor)
             if config is None:
                 raise KeyError(
-                    "Project does not have config for platform {} and flavor {}".format(
-                        str(platform), flavor
-                    )
+                    "Project does not have config for platform {} and flavor {}".format(str(platform), flavor)
                 )
             if not config._remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
-                has_warning = Warning(
-                    "Selected platform and flavor does not have app id"
-                )
+                has_warning = Warning("Selected platform and flavor does not have app id")
 
         ## Set app id section
         if not add_app_id is None:
-            project.obtain_platform_cofig(platform).obtain_config_by_flavor(
-                flavor
-            )._add_extra(FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id)
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)._add_extra(
+                FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id
+            )
 
         self._add_save_project()
         return TaskResult(args, error=has_warning, success=True)

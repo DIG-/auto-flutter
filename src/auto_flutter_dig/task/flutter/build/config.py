@@ -44,14 +44,10 @@ class FlutterBuildConfig(Task):
     def execute(self, args: Args) -> TaskResult:
         build_type_arg = args.get(self.__options["build-type"])
         if build_type_arg is None or len(build_type_arg) <= 0:
-            raise FlutterBuildConfig.Error(
-                "Build type not found. Usage is similar to pure flutter."
-            )
+            raise FlutterBuildConfig.Error("Build type not found. Usage is similar to pure flutter.")
         build_type: BuildType = BuildType.from_flutter(build_type_arg)
         if build_type is None:
-            raise FlutterBuildConfig.Error(
-                "Unknown build type `{}`.".format(build_type_arg)
-            )
+            raise FlutterBuildConfig.Error("Unknown build type `{}`.".format(build_type_arg))
         args.add("build-type", build_type.flutter)
         platform: Platform = build_type.platform
         project = Project.current
@@ -72,13 +68,9 @@ class FlutterBuildConfig(Task):
                     )
                     flavor = project.flavors[0]
             if flavor is None:
-                raise FlutterBuildConfig.Error(
-                    "Build require flavor, nothing was passed."
-                )
+                raise FlutterBuildConfig.Error("Build require flavor, nothing was passed.")
             if not flavor in project.flavors:
-                raise FlutterBuildConfig.Error(
-                    "Flavor {} was not found in project.".format(flavor)
-                )
+                raise FlutterBuildConfig.Error("Flavor {} was not found in project.".format(flavor))
 
         config_default = _Dict.get_or_none(project.platform_config, Platform.DEFAULT)
         config_platform = _Dict.get_or_none(project.platform_config, platform)
@@ -86,9 +78,7 @@ class FlutterBuildConfig(Task):
             self._print(
                 SB()
                 .append(
-                    "Project does nos have platform config default and not for {}".format(
-                        platform
-                    ),
+                    "Project does nos have platform config default and not for {}".format(platform),
                     SB.Color.YELLOW,
                 )
                 .str()

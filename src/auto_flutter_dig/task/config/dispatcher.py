@@ -12,9 +12,7 @@ from .refresh import ConfigRefresh
 
 
 class ConfigDispatcher(Task, HelpAction):
-    identity = AflutterTaskIdentity(
-        "config", "Configure project", [], lambda: ConfigDispatcher()
-    )
+    identity = AflutterTaskIdentity("config", "Configure project", [], lambda: ConfigDispatcher())
 
     def actions(self) -> List[TaskIdentity]:
         return sorted(
@@ -34,9 +32,7 @@ class ConfigDispatcher(Task, HelpAction):
 
         if len(sys_argv) < 3 or len(sys_argv[2]) <= 0 or sys_argv[2].startswith("-"):
             manager.add(self.__help_task())
-            return TaskResult(
-                args, error=Warning(" Config task require one action"), success=True
-            )
+            return TaskResult(args, error=Warning(" Config task require one action"), success=True)
 
         action = sys_argv[2]
         identity = _Iterable.first_or_none(self.actions(), lambda x: x.id == action)

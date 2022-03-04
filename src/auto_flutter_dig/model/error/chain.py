@@ -20,7 +20,5 @@ class E(Generic[T]):
     def __with_traceback(self, error: T) -> T:
         if error.__traceback__ is None:
             frame = sys_getframe(2)
-            error.__traceback__ = TracebackType(
-                None, frame, frame.f_lasti, frame.f_lineno
-            )
+            error.__traceback__ = TracebackType(None, frame, frame.f_lasti, frame.f_lineno)
         return error

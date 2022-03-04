@@ -16,9 +16,7 @@ def __log_creator() -> Logger:
     if not filepath.parent.exists():
         filepath.parent.mkdir(parents=True, exist_ok=True)
     ch = FileHandler(filepath, "wt", "utf-8")
-    ch.setFormatter(
-        Formatter("%(asctime)s %(filename)10s@%(lineno)03d %(levelname)8s: %(message)s")
-    )
+    ch.setFormatter(Formatter("%(asctime)s %(filename)10s@%(lineno)03d %(levelname)8s: %(message)s"))
     log.addHandler(ch)
     log.setLevel(INFO)
     return log

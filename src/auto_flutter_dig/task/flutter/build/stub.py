@@ -12,9 +12,7 @@ from .config import FlutterBuildConfig
 
 
 class FlutterBuildStub(Task):
-    identity = FlutterTaskIdentity(
-        "build", "Build flutter app", [], lambda: FlutterBuildStub()
-    )
+    identity = FlutterTaskIdentity("build", "Build flutter app", [], lambda: FlutterBuildStub())
 
     def require(self) -> List[TaskId]:
         return [FlutterBuildConfig.identity.id]
@@ -24,9 +22,7 @@ class FlutterBuildStub(Task):
 
     def execute(self, args: Args) -> TaskResult:
         flavor = args.get(FlutterBuildConfig.ARG_FLAVOR)
-        build_type = BuildType.from_flutter(
-            _Ensure.not_none(args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type")
-        )
+        build_type = BuildType.from_flutter(_Ensure.not_none(args.get(FlutterBuildConfig.ARG_BUILD_TYPE), "build-type"))
         debug = args.contains(FlutterBuildConfig.ARG_DEBUG)
         project = Project.current
         platform = build_type.platform

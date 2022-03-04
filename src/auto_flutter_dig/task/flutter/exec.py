@@ -14,9 +14,7 @@ from ...task.identity import FlutterTaskIdentity
 
 
 class Flutter(Task):
-    identity: TaskIdentity = FlutterTaskIdentity(
-        "exec", "Run flutter command", [OptionAll()], lambda: Flutter()
-    )
+    identity: TaskIdentity = FlutterTaskIdentity("exec", "Run flutter command", [OptionAll()], lambda: Flutter())
 
     class Error(ChildProcessError):
         ...
@@ -48,11 +46,7 @@ class Flutter(Task):
         writer = None if not self._output_running else lambda x: self._print(x)
 
         if self._output_end and self._output_running:
-            self._print(
-                SB()
-                .append("[!] Running command will show output twice", SB.Color.YELLOW)
-                .str()
-            )
+            self._print(SB().append("[!] Running command will show output twice", SB.Color.YELLOW).str())
 
         if not self._command is None and len(self._command) > 0:
             if self._command_args:

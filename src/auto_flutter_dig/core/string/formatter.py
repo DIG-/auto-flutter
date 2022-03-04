@@ -11,9 +11,7 @@ class StringFormatter:
     REGEX = re_compile("\$\{(\w+):(\w+\.)?(\w+)(\|\w+)?}")
     EXTRAS = Dict[str, str]
 
-    def format(
-        self, input: str, args: Args, args_extra: Optional[EXTRAS] = None
-    ) -> str:
+    def format(self, input: str, args: Args, args_extra: Optional[EXTRAS] = None) -> str:
         if args_extra is None:
             args_extra = {}
         replaces: Dict[str, str] = {}
@@ -29,9 +27,7 @@ class StringFormatter:
             output = output.replace(key, value)
         return output
 
-    def __sub(
-        self, match: re_Match, args: Args, args_extras: EXTRAS
-    ) -> Tuple[str, str]:
+    def __sub(self, match: re_Match, args: Args, args_extras: EXTRAS) -> Tuple[str, str]:
         parsed: Optional[str] = None
 
         source: str = match.group(1)

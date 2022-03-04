@@ -18,17 +18,13 @@ class _Iterable(ABC):
     T = TypeVar("T")
     T_co = TypeVar("T_co", covariant=True)
 
-    def first_or_none(
-        iterable: Iterable[T], condition: Callable[[T], bool]
-    ) -> Optional[T]:
+    def first_or_none(iterable: Iterable[T], condition: Callable[[T], bool]) -> Optional[T]:
         for it in iterable:
             if condition(it):
                 return it
         return None
 
-    def first_or_default(
-        iterable: Iterable[T], condition: Callable[[T], bool], fallback: Callable[[], T]
-    ) -> T:
+    def first_or_default(iterable: Iterable[T], condition: Callable[[T], bool], fallback: Callable[[], T]) -> T:
         for it in iterable:
             if condition(it):
                 return it
@@ -65,9 +61,7 @@ class _Iterable(ABC):
     K = TypeVar("K")
 
     class tuple_not_none(Iterator[Tuple[K, T]]):
-        def __init__(
-            self, iter: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]
-        ) -> None:
+        def __init__(self, iter: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]) -> None:
             super().__init__()
             self._iter = iter.__iter__()
 
@@ -83,9 +77,7 @@ class _Iterable(ABC):
     class join(Iterator[T]):
         def __init__(self, *iterables: Iterable[_Iterable.T]) -> None:
             super().__init__()
-            self.__iterators: List[Iterator[_Iterable.T]] = list(
-                map(lambda x: x.__iter__(), iterables)
-            )
+            self.__iterators: List[Iterator[_Iterable.T]] = list(map(lambda x: x.__iter__(), iterables))
             self.__current = 0
 
         def __iter__(self) -> Iterator[_Iterable.T]:
@@ -117,9 +109,7 @@ class _Iterable(ABC):
             return item
 
     class is_instance(Iterator[T_co]):
-        def __init__(
-            self, iterable: Iterable[_Iterable.T], cls: Type[_Iterable.T_co]
-        ) -> None:
+        def __init__(self, iterable: Iterable[_Iterable.T], cls: Type[_Iterable.T_co]) -> None:
             super().__init__()
             self.__iterator = iterable.__iter__()
             self.__cls = cls

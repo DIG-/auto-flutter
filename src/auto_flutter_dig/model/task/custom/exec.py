@@ -8,6 +8,4 @@ class CustomExecIdentity(TaskIdentity):
             raise TypeError("Require CustomTask EXEC, but found " + str(custom.type))
         from ....task.custom.exec import CustomTaskExec
 
-        super().__init__(
-            "-#-#-", custom.id, custom.name, [], lambda: CustomTaskExec(self, custom)
-        )
+        super().__init__("-#-#-", custom.id, custom.name, [], lambda: CustomTaskExec(self, custom))

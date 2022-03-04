@@ -34,9 +34,7 @@ class Project(Serializable["Project"]):
         )
         self.tasks: Optional[List[CustomTask]] = tasks
 
-    def get_platform_config(
-        self, platform: Platform
-    ) -> Optional[PlatformConfigFlavored]:
+    def get_platform_config(self, platform: Platform) -> Optional[PlatformConfigFlavored]:
         if self.platform_config is None or not platform in self.platform_config:
             return None
         return self.platform_config[platform]
@@ -93,9 +91,7 @@ class Project(Serializable["Project"]):
             elif key == "flavors":
                 flavors = _JsonDecode.decode_list(value, Flavor)
             elif key == "platform-config":
-                platform_config = _JsonDecode.decode_dict(
-                    value, Platform, PlatformConfigFlavored
-                )
+                platform_config = _JsonDecode.decode_dict(value, Platform, PlatformConfigFlavored)
             elif key == "tasks":
                 tasks = _JsonDecode.decode_list(value, CustomTask)
 

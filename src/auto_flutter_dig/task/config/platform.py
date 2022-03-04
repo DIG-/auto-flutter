@@ -34,9 +34,7 @@ class ConfigPlatform(_BaseConfigTask):
             if parsed_add in project.platforms:
                 return TaskResult(
                     args,
-                    error=Warning(
-                        "Project already had platform `{}`".format(platform_add)
-                    ),
+                    error=Warning("Project already had platform `{}`".format(platform_add)),
                     success=True,
                 )
             project.platforms.append(parsed_add)
@@ -57,17 +55,12 @@ class ConfigPlatform(_BaseConfigTask):
             if not parsed_rem in project.platforms:
                 return TaskResult(
                     args,
-                    error=Warning(
-                        "Project do not have platform `{}`".format(platform_rem)
-                    ),
+                    error=Warning("Project do not have platform `{}`".format(platform_rem)),
                     success=True,
                 )
             project.platforms.remove(parsed_rem)
             had_change = True
-            if (
-                not project.platform_config is None
-                and parsed_rem in project.platform_config
-            ):
+            if not project.platform_config is None and parsed_rem in project.platform_config:
                 project.platform_config.pop(parsed_rem)
 
         if not had_change:

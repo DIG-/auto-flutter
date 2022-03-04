@@ -11,9 +11,7 @@ from .check import FlutterSetupCheckTask
 
 
 class FlutterSetupTask(Task):
-    __opt_executable = LongPositionalOption(
-        "command", 0, "Set flutter command, will be absolute if not in PATH"
-    )
+    __opt_executable = LongPositionalOption("command", 0, "Set flutter command, will be absolute if not in PATH")
     identity = FlutterTaskIdentity(
         "flutter",
         "Configure flutter environment",
@@ -30,16 +28,9 @@ class FlutterSetupTask(Task):
             flutter_path = PathConverter.from_path(flutter_cmd).to_posix()
             flutter_exec = ExecutableResolver.resolve_executable(flutter_path)
             if flutter_exec is None:
-                error = E(
-                    FileNotFoundError(
-                        'Can not find flutter command as "{}"'.format(flutter_cmd)
-                    )
-                ).error
+                error = E(FileNotFoundError('Can not find flutter command as "{}"'.format(flutter_cmd))).error
                 message = (
-                    SB()
-                    .append("Resolved as: ", SB.Color.YELLOW)
-                    .append(str(flutter_path), SB.Color.YELLOW, True)
-                    .str()
+                    SB().append("Resolved as: ", SB.Color.YELLOW).append(str(flutter_path), SB.Color.YELLOW, True).str()
                 )
                 return TaskResult(
                     args,
@@ -53,7 +44,5 @@ class FlutterSetupTask(Task):
         if not had_change:
             return TaskResult(args, Warning("Nothing was changed"), success=True)
 
-        self._append_task(
-            [AflutterSetupSaveTask.identity, FlutterSetupCheckTask.identity]
-        )
+        self._append_task([AflutterSetupSaveTask.identity, FlutterSetupCheckTask.identity])
         return TaskResult(args)

@@ -46,9 +46,7 @@ class Task(ABC):
 
         TaskManager.update_description(description, result)
 
-    def _append_task(
-        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
-    ) -> None:
+    def _append_task(self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
         from ...core.task.manager import TaskManager
 
         TaskManager.add(tasks)

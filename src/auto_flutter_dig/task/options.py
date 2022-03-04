@@ -22,9 +22,7 @@ T = TypeVar("T", bound=Option)
 
 
 class _Helper(Generic[T]):
-    def __init__(
-        self, option: T, group: Union[Group, TaskIdentity], cls: Type[T]
-    ) -> None:
+    def __init__(self, option: T, group: Union[Group, TaskIdentity], cls: Type[T]) -> None:
         self.option: T = option
         self.group: Group = ""
         if isinstance(group, Group):
@@ -79,9 +77,7 @@ class ParseOptions(Task):
         option_all: List[_Helper[OptionAll]] = []
 
         # Separate and identify options by type
-        for (
-            identity
-        ) in TaskManager._task_stack.copy():  # pylint: disable=protected-access
+        for identity in TaskManager._task_stack.copy():  # pylint: disable=protected-access
             for option in identity.options:
                 if isinstance(option, OptionAll):
                     option_all.append(_Helper(option, identity, OptionAll))
@@ -95,9 +91,7 @@ class ParseOptions(Task):
 
         _Helper(ParseOptions.__option_help, "aflutter", ShortOption).into(short_options)
         _Helper(ParseOptions.__option_help, "aflutter", LongOption).into(long_options)
-        _Helper(ParseOptions.__option_stack_trace, "aflutter", LongOption).into(
-            long_options
-        )
+        _Helper(ParseOptions.__option_stack_trace, "aflutter", LongOption).into(long_options)
 
         has_param: List[_Helper] = []
         maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
@@ -173,9 +167,7 @@ class ParseOptions(Task):
                     self.__append_argument_all(args, option_all, argument)  # OptionAll
                     continue
                 else:
-                    raise OptionInvalidFormat(
-                        "Invalid argument group structure for command line option {argument}"
-                    )
+                    raise OptionInvalidFormat("Invalid argument group structure for command line option {argument}")
 
                 ###########
                 # OptionAll
@@ -205,16 +197,12 @@ class ParseOptions(Task):
                                 self.__append_argument(args, helper_short, None)
                         continue
                     elif not group is None:
-                        maybe_has_param = _Helper(
-                            _ShortOptionMaybeWithValue(sub, ""), group, ShortOption
-                        )
+                        maybe_has_param = _Helper(_ShortOptionMaybeWithValue(sub, ""), group, ShortOption)
                         continue
                     elif has_option_all:
                         continue
                     else:
-                        raise OptionNotFound(
-                            "Unrecognized command line option {argument}"
-                        )
+                        raise OptionNotFound("Unrecognized command line option {argument}")
 
                 # Long argument
                 if sub in long_options:
@@ -233,15 +221,11 @@ class ParseOptions(Task):
                             self.__append_argument(args, helper_long, None)
                         continue
                     # unregistered group
-                    maybe_has_param = _Helper(
-                        _LongOptionMaybeWithValue(sub, ""), group, LongOption
-                    )
+                    maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
                     continue
                 elif not group is None:
                     # unregistered option with group
-                    maybe_has_param = _Helper(
-                        _LongOptionMaybeWithValue(sub, ""), group, LongOption
-                    )
+                    maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
                     continue
                 elif has_option_all:
                     continue
@@ -257,9 +241,7 @@ class ParseOptions(Task):
                     if has_option_all:
                         continue
                     else:
-                        raise OptionNotFound(
-                            'Unrecognized positional command line "{argument}"'
-                        )
+                        raise OptionNotFound('Unrecognized positional command line "{argument}"')
                 for group, helper_positional in positional_options[pos].items():
                     self.__append_argument(args, helper_positional, argument)
 
@@ -279,17 +261,13 @@ class ParseOptions(Task):
         option: Option = helper.option
         group: Group = helper.group
         if helper.has_value and value is None:
-            raise OptionRequireValue(
-                "Command line {} requires value, but nothing found"
-            )
+            raise OptionRequireValue("Command line {} requires value, but nothing found")
         if isinstance(option, OptionAll):
             assert not value is None
             args.group_add_all(group, option, value)
             return
         args.group_add(group, option, value)
 
-    def __append_argument_all(
-        self, args: Args, helper: Iterable[_Helper], argument: Argument
-    ):
+    def __append_argument_all(self, args: Args, helper: Iterable[_Helper], argument: Argument):
         for helper_all in helper:
             self.__append_argument(args, helper_all, argument)

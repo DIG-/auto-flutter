@@ -19,12 +19,8 @@ from .validate import FirebaseBuildValidate
 class FirebaseBuildUpload(BaseProcessTask):
     __options = {
         "notes": LongOptionWithValue("notes", "Release notes to include"),
-        "testers": LongOptionWithValue(
-            "testers", "A comma separated list of tester emails to distribute to"
-        ),
-        "groups": LongOptionWithValue(
-            "groups", "A comma separated list of group aliases to distribute to"
-        ),
+        "testers": LongOptionWithValue("testers", "A comma separated list of tester emails to distribute to"),
+        "groups": LongOptionWithValue("groups", "A comma separated list of group aliases to distribute to"),
     }
     identity = FirebaseTaskIdentity(
         "firebase",
@@ -43,9 +39,7 @@ class FirebaseBuildUpload(BaseProcessTask):
     def _create_process(self, args: Args) -> ProcessOrResult:
         filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
-            return TaskResult(
-                args, E(AssertionError("Previous task does not have output")).error
-            )
+            return TaskResult(args, E(AssertionError("Previous task does not have output")).error)
 
         file: Path = Path(OS.posix_to_machine_path(PurePosixPath(filename)))
         if not file.exists():

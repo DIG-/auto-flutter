@@ -22,9 +22,7 @@ class _SubProcess(Process):
         writer: Optional[Callable[[str], None]] = None,
         inherit_environment: bool = True,
     ) -> None:
-        super().__init__(
-            executable, arguments, environment, writer, inherit_environment
-        )
+        super().__init__(executable, arguments, environment, writer, inherit_environment)
         self.__process: Optional[Popen] = None
         self.__stopped: bool = False
         self.__killed: bool = False
@@ -32,13 +30,9 @@ class _SubProcess(Process):
     def run(self):
         if self._executable.is_absolute():
             if not Path(self._executable).exists():
-                raise FileNotFoundError(
-                    0, "Executable `{}` not found".format(self._executable)
-                )
+                raise FileNotFoundError(0, "Executable `{}` not found".format(self._executable))
         output = SB()
-        command = " ".join(
-            map(self.__escape_arg, [str(self._executable)] + self._arguments)
-        )
+        command = " ".join(map(self.__escape_arg, [str(self._executable)] + self._arguments))
         if Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND):
             self._write_output(command)
             self._write_output("\n")
@@ -66,17 +60,11 @@ class _SubProcess(Process):
             self._write_output("\n")
             self.output = output.str()
             if self.exit_code == 127:
-                raise FileNotFoundError(
-                    0, "Command `{}` not found".format(self._executable)
-                )
+                raise FileNotFoundError(0, "Command `{}` not found".format(self._executable))
             if self.__killed:
-                raise Process.ChildProcessKilled(
-                    "Command `{}` was killed".format(self._executable)
-                )
+                raise Process.ChildProcessKilled("Command `{}` was killed".format(self._executable))
             if self.__stopped:
-                raise Process.ChildProcessStopped(
-                    "Command `{}` was stopped".format(self._executable)
-                )
+                raise Process.ChildProcessStopped("Command `{}` was stopped".format(self._executable))
 
     def stop(self):
         process = self.__process
@@ -110,9 +98,7 @@ class _SubProcess(Process):
                         error,
                     )
                 if result.returncode != 0:
-                    raise SystemError(
-                        'Failed to kill process "{}"'.format(self._executable.name)
-                    )
+                    raise SystemError('Failed to kill process "{}"'.format(self._executable.name))
 
     def __read_output(self, decoder: IncrementalDecoder, output: SB, value: bytes):
         decoded = decoder.decode(value)
@@ -150,9 +136,7 @@ class _SubProcess(Process):
         from winreg import HKEY_LOCAL_MACHINE, REG_SZ, CloseKey, OpenKey, QueryValueEx
 
         try:  # Get windows default charset for console
-            key = OpenKey(
-                HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage"
-            )
+            key = OpenKey(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage")
             read: Tuple[Any, int] = QueryValueEx(key, "OEMCP")
             CloseKey(key)
             if read[1] == REG_SZ and isinstance(read[0], str):

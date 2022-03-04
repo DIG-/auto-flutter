@@ -5,9 +5,7 @@ from ._base import *
 class ConfigFlavor(_BaseConfigTask):
     option_add = LongOptionWithValue("add", "Add flavor to project")
     option_remove = LongOptionWithValue("remove", "Remove flavor from project")
-    option_rename = LongOptionWithValue(
-        "rename", "Rename flavor from project. Use with --to-name"
-    )
+    option_rename = LongOptionWithValue("rename", "Rename flavor from project. Use with --to-name")
     option_toname = LongOptionWithValue("to-name", "New flavor name from --rename")
     identity = AflutterTaskIdentity(
         "flavor",
@@ -32,9 +30,7 @@ class ConfigFlavor(_BaseConfigTask):
             if add_flavor in project.flavors:
                 return TaskResult(
                     args,
-                    error=AssertionError(
-                        "Flavor `{}` already exist in project".format(add_flavor)
-                    ),
+                    error=AssertionError("Flavor `{}` already exist in project".format(add_flavor)),
                 )
             project.flavors.append(add_flavor)
             has_change = True
@@ -45,9 +41,7 @@ class ConfigFlavor(_BaseConfigTask):
             if not rem_flavor in project.flavors:
                 return TaskResult(
                     args,
-                    error=AssertionError(
-                        "Flavor `{}` do not exist in project".format(rem_flavor)
-                    ),
+                    error=AssertionError("Flavor `{}` do not exist in project".format(rem_flavor)),
                 )
             project.flavors.remove(rem_flavor)
             has_change = True
@@ -67,24 +61,16 @@ class ConfigFlavor(_BaseConfigTask):
                         args,
                         error=ValueError("Trying to rename without destination name"),
                     )
-                return TaskResult(
-                    args, error=ValueError("Trying to rename without origin name")
-                )
+                return TaskResult(args, error=ValueError("Trying to rename without origin name"))
             assert not ren_flavor is None
             assert not to_flavor is None
             self._print("    Renaming flavor " + ren_flavor + " to " + to_flavor)
             if ren_flavor == to_flavor:
-                return TaskResult(
-                    args, error=ValueError("Trying to rename flavor to same name")
-                )
+                return TaskResult(args, error=ValueError("Trying to rename flavor to same name"))
             if to_flavor in project.flavors:
-                return TaskResult(
-                    args, error=AssertionError("Destination flavor name already exist")
-                )
+                return TaskResult(args, error=AssertionError("Destination flavor name already exist"))
             if not ren_flavor in project.flavors:
-                return TaskResult(
-                    args, error=AssertionError("Origin flavor name does not exist")
-                )
+                return TaskResult(args, error=AssertionError("Origin flavor name does not exist"))
             project.flavors.remove(ren_flavor)
             project.flavors.append(to_flavor)
             has_change = True
@@ -94,9 +80,7 @@ class ConfigFlavor(_BaseConfigTask):
                         config.flavored[to_flavor] = config.flavored.pop(ren_flavor)
 
         if not has_change:
-            return TaskResult(
-                args, error=AssertionError("No change was made"), success=True
-            )
+            return TaskResult(args, error=AssertionError("No change was made"), success=True)
         if len(project.flavors) <= 0:
             project.flavors = None
 

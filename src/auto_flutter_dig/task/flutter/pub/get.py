@@ -7,7 +7,5 @@ FlutterPubGet = FlutterTaskIdentity(
     "pub-get",
     "Runs flutter pub get",
     [],
-    lambda: FlutterCommand(
-        command=["pub", "get"], describe="Running pub get", require_project=True
-    ),
+    lambda: FlutterCommand(command=["pub", "get"], describe="Running pub get", require_project=True),
 )

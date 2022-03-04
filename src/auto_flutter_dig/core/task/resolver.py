@@ -36,13 +36,9 @@ class TaskResolver(ABC):
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
-                    raise TypeError(
-                        "Trying to resolve task, but received {}".format(type(task))
-                    )
+                    raise TypeError("Trying to resolve task, but received {}".format(type(task)))
         else:
-            raise TypeError(
-                "Trying to resolve task, but received {}".format(type(task))
-            )
+            raise TypeError("Trying to resolve task, but received {}".format(type(task)))
         temp = TaskResolver.__resolve_dependencies(temp, origin)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp, previous)
@@ -73,9 +69,7 @@ class TaskResolver(ABC):
         return items
 
     @staticmethod
-    def __clear_repeatable(
-        new: List[TaskIdentity], previous: List[TaskIdentity] = []
-    ) -> List[TaskIdentity]:
+    def __clear_repeatable(new: List[TaskIdentity], previous: List[TaskIdentity] = []) -> List[TaskIdentity]:
         items = previous.copy()
         items.extend(new)
         start = len(previous)

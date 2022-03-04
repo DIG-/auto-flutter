@@ -41,20 +41,14 @@ class FindFlavor(Task):
                     try:
                         self._extract_from_idea(project, filename)
                     except BaseException as error:
-                        self.print_error(
-                            'Failed to process "{}": '.format(str(filename)), error
-                        )
+                        self.print_error('Failed to process "{}": '.format(str(filename)), error)
                 if self._check_flavor_success(project):
                     return TaskResult(args)
 
         if not args.contains(FindFlavor.option_skip_android):
-            gradle = Path(
-                OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle"))
-            )
+            gradle = Path(OS.posix_to_machine_path(PurePosixPath("android/app/build.gradle")))
             if not Platform.ANDROID in project.platforms:
-                self._print(
-                    "    Skip android analysis, since project does not support android"
-                )
+                self._print("    Skip android analysis, since project does not support android")
             elif not gradle.exists():
                 self._print("    Android build.gradle not found")
             else:
@@ -82,19 +76,11 @@ class FindFlavor(Task):
 
         if project.flavors is None or len(project.flavors) == 0:
             project.flavors = None
-            self._print(
-                "  No flavors were found. Maybe this project does not have flavor 🙂"
-            )
+            self._print("  No flavors were found. Maybe this project does not have flavor 🙂")
         return TaskResult(args, success=True)
 
     def print_error(self, message: str, error: BaseException):
-        self._print(
-            SB()
-            .append("  ")
-            .append(message, SB.Color.RED)
-            .append(format_exception(error), SB.Color.RED)
-            .str()
-        )
+        self._print(SB().append("  ").append(message, SB.Color.RED).append(format_exception(error), SB.Color.RED).str())
 
     def _check_flavor_success(self, project: Project) -> bool:
         if not project.flavors is None and len(project.flavors) > 0:
@@ -119,9 +105,7 @@ class FindFlavor(Task):
         project.flavors.append(flavor)
 
         if not build_param is None and len(build_param) > 0:
-            project.obtain_platform_cofig(platform).obtain_config_by_flavor(
-                flavor
-            ).build_param = build_param
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).build_param = build_param
 
     def _extract_from_idea(self, project: Project, filename: Path):
         file = open(filename, "r")

@@ -20,9 +20,7 @@ class Process(ABC):
     ) -> Process:
         from .subprocess import _SubProcess
 
-        return _SubProcess(
-            executable, arguments, environment, writer, inherit_environment
-        )
+        return _SubProcess(executable, arguments, environment, writer, inherit_environment)
 
     def __init__(
         self,
@@ -41,9 +39,7 @@ class Process(ABC):
         self.output: Optional[str] = None
         self.exit_code: int = -1
         self._executable: PurePath = OS.posix_to_machine_path(
-            executable
-            if isinstance(executable, PurePath)
-            else PurePosixPath(executable)
+            executable if isinstance(executable, PurePath) else PurePosixPath(executable)
         )
         environment = {} if environment is None else environment
         if inherit_environment:

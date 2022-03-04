@@ -29,9 +29,7 @@ class FlutterCheck(Task):
         if output == False:
             return TaskResult(
                 args,
-                error=RuntimeError(
-                    "Flutter command return with code #" + str(process.exit_code)
-                ),
+                error=RuntimeError("Flutter command return with code #" + str(process.exit_code)),
                 success=self._skip,
             )
         return TaskResult(args)

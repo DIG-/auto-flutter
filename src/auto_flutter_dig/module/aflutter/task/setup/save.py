@@ -24,8 +24,6 @@ class AflutterSetupSaveTask(Task):
         except BaseException as error:
             return TaskResult(
                 args,
-                error=E(RuntimeError("Failed to save environment config")).caused_by(
-                    error
-                ),
+                error=E(RuntimeError("Failed to save environment config")).caused_by(error),
             )
         return TaskResult(args)

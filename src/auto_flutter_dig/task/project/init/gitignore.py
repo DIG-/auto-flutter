@@ -23,9 +23,7 @@ class InitGitIgnore(Task):
             if line == "*.log" or line.startswith(("*.log ", "*.log#")):
                 found = True
                 break
-            if line == "aflutter.log" or line.startswith(
-                ("aflutter.log ", "aflutter.log#")
-            ):
+            if line == "aflutter.log" or line.startswith(("aflutter.log ", "aflutter.log#")):
                 found = True
                 break
             pass
@@ -40,9 +38,7 @@ class InitGitIgnore(Task):
             file.close()
             return TaskResult(
                 args,
-                error=E(
-                    SilentWarning("Failed to insert aflutter.log in .gitignore")
-                ).caused_by(e),
+                error=E(SilentWarning("Failed to insert aflutter.log in .gitignore")).caused_by(e),
                 success=True,
             )
         file.close()

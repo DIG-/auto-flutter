@@ -11,15 +11,9 @@ from .check import FirebaseCheck
 
 
 class FirebaseSetupTask(Task):
-    __opt_executable = LongPositionalOption(
-        "command", 0, "Set firebase command, will be absolute if not in PATH"
-    )
-    __opt_standalone_on = LongOption(
-        "standalone", "Set flag to handle firebase as standalone build"
-    )
-    __opt_standalone_off = LongOption(
-        "no-standalone", "Remove flag of firebase standalone"
-    )
+    __opt_executable = LongPositionalOption("command", 0, "Set firebase command, will be absolute if not in PATH")
+    __opt_standalone_on = LongOption("standalone", "Set flag to handle firebase as standalone build")
+    __opt_standalone_off = LongOption("no-standalone", "Remove flag of firebase standalone")
     identity = FirebaseTaskIdentity(
         "firebase",
         "Configure firebase environment",
@@ -36,9 +30,7 @@ class FirebaseSetupTask(Task):
             firebase_path = PathConverter.from_path(firebase_cmd).to_posix()
             firebase_exec = ExecutableResolver.resolve_executable(firebase_path)
             if firebase_exec is None:
-                error = FileNotFoundError(
-                    'Can not find firebase command as "{}"'.format(firebase_cmd)
-                )
+                error = FileNotFoundError('Can not find firebase command as "{}"'.format(firebase_cmd))
                 message = (
                     SB()
                     .append("Resolved as: ", SB.Color.YELLOW)

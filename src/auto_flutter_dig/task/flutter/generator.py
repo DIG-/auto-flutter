@@ -15,12 +15,8 @@ class FlutterGeneratorTask(Task):
             "Delete conflicting output for code generation",
         ),
         "force2": LongOption("force", "Same as --delete-conflicting-outputs"),
-        "appicon": LongOption(
-            "appicon", "Generate app icon with package `flutter_launcher_icons`"
-        ),
-        "splash": LongOption(
-            "splash", "Generate splash screen with package `flutter_native_splash`"
-        ),
+        "appicon": LongOption("appicon", "Generate app icon with package `flutter_launcher_icons`"),
+        "splash": LongOption("splash", "Generate splash screen with package `flutter_native_splash`"),
     }
 
     identity = FlutterTaskIdentity(
@@ -49,11 +45,7 @@ class FlutterGeneratorTask(Task):
 
     def execute(self, args: Args) -> TaskResult:
         code = self.force or args.contains(self.__options["code"])
-        force = (
-            self.force
-            or args.contains(self.__options["force1"])
-            or args.contains(self.__options["force2"])
-        )
+        force = self.force or args.contains(self.__options["force1"]) or args.contains(self.__options["force2"])
         appicon = args.contains(self.__options["appicon"])
         splash = args.contains(self.__options["splash"])
         if not code and not appicon and not splash:

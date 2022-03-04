@@ -8,9 +8,7 @@ from ...model._const import *
 
 
 class FlutterSetupCheckTask(BaseProcessTimeoutTask):
-    identity = FlutterTaskIdentity(
-        "-flutter-check", "Checking flutter", [], lambda: FlutterSetupCheckTask()
-    )
+    identity = FlutterTaskIdentity("-flutter-check", "Checking flutter", [], lambda: FlutterSetupCheckTask())
 
     def __init__(self, skip_on_failure: bool = False) -> None:
         super().__init__(ignore_failure=skip_on_failure, interval=5, timeout=30)
@@ -25,9 +23,7 @@ class FlutterSetupCheckTask(BaseProcessTimeoutTask):
         if count == 1:
             self._print("  Skill wating...")
         elif count == 3:
-            self._print(
-                SB().append("  It is taking some time...", SB.Color.YELLOW).str()
-            )
+            self._print(SB().append("  It is taking some time...", SB.Color.YELLOW).str())
         return super()._on_interval(process, time, count)
 
     def _on_process_stop(self, process: Process, time: float, count: int) -> None:
@@ -49,9 +45,7 @@ class FlutterSetupCheckTask(BaseProcessTimeoutTask):
             builder = SB()
             if not message is None:
                 builder.append(message, end="\n")
-            builder.append(
-                "  Flutter take too much time to run. Re-configure with task "
-            )
+            builder.append("  Flutter take too much time to run. Re-configure with task ")
             builder.append("setup", SB.Color.CYAN, True)
             message = builder.str()
         return super()._handle_process_exception(args, process, output, message)
