@@ -1,7 +1,7 @@
 from logging import DEBUG, INFO, FileHandler, Formatter, Logger, getLogger
 from pathlib import Path
 
-from appdirs import user_log_dir
+from appdirs import user_log_dir  # type: ignore[import]
 
 __all__ = ["log", "log_task"]
 
@@ -30,7 +30,7 @@ def __log_task_creator() -> Logger:
     except BaseException as error:
         log.exception("Can not open aflutter.log for task", exc_info=error)
         ch = FileHandler(__log_path().joinpath("aflutter-task.log"), "wt", "utf-8")
-    ch.setFormatter(Formatter("%(asctime)s %(levelname)8s: %(message)s"))
+    ch.setFormatter(Formatter("%(asctime)s %(levelname)8s %(tag)12s: %(message)s"))
     ch.setLevel(DEBUG)
     _log.addHandler(ch)
     return _log
