@@ -47,6 +47,8 @@ class BaseProcessTask(Task):
             return
         if self.__print_content:
             self._print(message)
+        else:
+            self.log.debug(message)
 
     def _sanitize_arguments(
         self,
