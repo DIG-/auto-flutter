@@ -1,5 +1,6 @@
 from .....core.config import Config
 from .....model.argument.option import LongOption
+from .....model.error import E
 from .....model.task import *
 from .....model.task.result import TaskResultHelp
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
@@ -27,9 +28,11 @@ class AflutterSetupStackTraceTask(Task):
             if args.contains(self.__opt_off):
                 return TaskResult(
                     args,
-                    error=ValueError(
-                        "Can not enable and disable stack trace simultaneously"
-                    ),
+                    error=E(
+                        ValueError(
+                            "Can not enable and disable stack trace simultaneously"
+                        )
+                    ).error,
                 )
             Config.put_bool(AFLUTTER_CONFIG_ENABLE_STACK_STRACE, True)
         elif args.contains(self.__opt_off):
@@ -38,7 +41,7 @@ class AflutterSetupStackTraceTask(Task):
             Config.remove(AFLUTTER_CONFIG_ENABLE_STACK_STRACE)
         else:
             return TaskResultHelp(
-                args, error=ValueError("This task require one option")
+                args, error=E(ValueError("This task require one option")).error
             )
         self._append_task(AflutterSetupSaveTask.identity)
         return TaskResult(args)
