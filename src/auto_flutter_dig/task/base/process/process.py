@@ -2,10 +2,12 @@ from abc import abstractmethod
 from pathlib import Path, PurePath, PurePosixPath
 from typing import Dict, Iterable, Optional, Union
 
+from ....core.config import Config
 from ....core.os import OS
 from ....core.process import Process
 from ....core.string import SF
 from ....model.task import *
+from ....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
 
 __all__ = [
     "Task",
@@ -30,6 +32,7 @@ class BaseProcessTask(Task):
         self._process: Process
         self._ignore_failure: bool = ignore_failure
         self._show_output_at_end: bool = show_output_at_end
+        self.__print_content = Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT)
 
     def execute(self, args: Args) -> TaskResult:
         process = self._create_process(args)
@@ -38,6 +41,12 @@ class BaseProcessTask(Task):
         self._process = process
         output = self._process.try_run()
         return self._handle_process_output(args, self._process, output)
+
+    def _print_content(self, message: Optional[str]):
+        if message is None:
+            return
+        if self.__print_content:
+            self._print(message)
 
     def _sanitize_arguments(
         self,
@@ -63,6 +72,7 @@ class BaseProcessTask(Task):
     @abstractmethod
     def _create_process(self, args: Args) -> ProcessOrResult:
         ## Use self._sanitize_arguments() before passing to Process
+        ## Use self._print_content() as process write
         raise NotImplementedError(
             "{} requires to implement _create_process".format(type(self).__name__)
         )
@@ -85,8 +95,10 @@ class BaseProcessTask(Task):
     ) -> TaskResult:
         if (
             message is None
-            and output
-            and self._show_output_at_end
+            and (
+                (output and self._show_output_at_end)
+                or (not output and not self.__print_content)
+            )
             and not process.output is None
             and len(process.output) > 0
         ):
