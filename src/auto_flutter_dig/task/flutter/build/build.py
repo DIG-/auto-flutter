@@ -31,7 +31,6 @@ class FlutterBuildTask(FlutterCommand):
             ignore_failure=False,
             show_output_at_end=False,
             command=None,
-            show_output_running=True,
             put_output_args=True,
         )
         self._project: Project = project

@@ -88,5 +88,5 @@ class FirebaseBuildUpload(BaseProcessTask):
             Config.get_path(FIREBASE_CONFIG_KEY_PATH),
             arguments=arguments,
             environment=FIREBASE_ENV.value,
-            writer=self._print,
+            writer=self._print_content,
         )

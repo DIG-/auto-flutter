@@ -16,14 +16,12 @@ class FlutterCommand(BaseProcessTask):
         ignore_failure: bool = False,
         show_output_at_end: bool = False,
         command: Optional[List[str]] = None,
-        show_output_running: bool = True,
         put_output_args: bool = False,
         describe: Optional[str] = None,
         require_project: bool = False,
     ) -> None:
         super().__init__(ignore_failure, show_output_at_end)
         self._command: List[str] = _If.not_none(command, lambda x: x, lambda: [])
-        self._show_output_running: bool = show_output_running
         self._put_output_args: bool = put_output_args
         self._describe: str = _If.not_none(describe, lambda x: x, lambda: "")
         self._require_project: bool = require_project
@@ -49,7 +47,7 @@ class FlutterCommand(BaseProcessTask):
         return Process.create(
             executable=flutter,
             arguments=self._command,
-            writer=None if not self._show_output_running else self._print,
+            writer=self._print_content,
         )
 
     def _handle_process_finished(
