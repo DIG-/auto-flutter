@@ -5,28 +5,28 @@
             "name": "aflutter",
             "type": "python",
             "request": "launch",
-            "module": "auto_flutter"
+            "module": "auto_flutter_dig"
         },
         {
             "name": "aflutter doctor",
             "type": "python",
             "request": "launch",
-            "module": "auto_flutter",
+            "module": "auto_flutter_dig",
             "args": ["doctor"]
         },
         {
             "name": "aflutter help",
             "type": "python",
             "request": "launch",
-            "module": "auto_flutter",
+            "module": "auto_flutter_dig",
             "args": ["help"]
         },
         {
             "name": "temp",
             "type": "python",
             "request": "launch",
-            "module": "auto_flutter",
-            "args": ["doctor","--aflutter-stack-trace"]
+            "module": "auto_flutter_dig",
+            "args": ["setup","stack-trace","-h"]
         }
     ]
 }
