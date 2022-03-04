@@ -9,6 +9,7 @@ from .....module.aflutter.task.root import Root
 from .....module.aflutter.task.setup import AflutterSetupIdentity
 from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
 from .....module.firebase.firebase import FirebaseModulePlugin
+from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
 from .....task.help import Help
 from .....task.options import ParseOptions
@@ -41,7 +42,10 @@ class AflutterInitTask(Task):
             read_project_result if read_project_result.is_warning else None,
         )
 
-        modules: Iterable[AflutterModulePlugin] = [FirebaseModulePlugin()]
+        modules: Iterable[AflutterModulePlugin] = [
+            FlutterModulePlugin(),
+            FirebaseModulePlugin(),
+        ]
 
         if read_config_result.is_warning:
             for module in modules:
