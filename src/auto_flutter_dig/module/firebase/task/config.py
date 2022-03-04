@@ -1,6 +1,5 @@
 from typing import Optional
 
-from ....core.utils import _If
 from ....model.argument.option import LongOption, LongOptionWithValue
 from ....model.argument.option.common.flavor import FlavorOption
 from ....model.argument.option.common.platform import PlatformOption
@@ -28,17 +27,15 @@ class FirebaseConfigTask(BaseConfigTask):
     def execute(self, args: Args) -> TaskResult:
         project = Project.current
 
-        platform: Platform = _If.none(
-            args.get(self.__opt_platform),
-            lambda: Platform.DEFAULT,
-            self.__opt_platform._convert,
+        platform: Platform = self.__opt_platform.get_or_default(
+            args, lambda: Platform.DEFAULT
         )
         if platform != Platform.DEFAULT and platform not in project.platforms:
             raise ValueError(
                 "Project does not support platform {}".format(str(platform))
             )
 
-        flavor = args.get(self.__opt_flavor)
+        flavor = self.__opt_flavor.get_or_none(args)
         if not flavor is None:
             if project.flavors is None or not flavor in project.flavors:
                 raise ValueError("Project does not contains flavor {}".format(flavor))
