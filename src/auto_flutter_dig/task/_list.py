@@ -13,13 +13,11 @@ from .flutter.pub.get import FlutterPubGet
 from .project.init import ProjectInit
 from .project.read import ProjectRead
 from .project.save import ProjectSave
-from .setup import Setup, SetupEdit
 
 task_list: Dict[TaskId, TaskIdentity] = dict(
     sorted(
         [
             Help.identity.to_map(),
-            SetupEdit.identity.to_map(),
             AflutterSetupIdentity.to_map(),
             ProjectRead.identity.to_map(),
             ProjectRead.identity_skip.to_map(),
