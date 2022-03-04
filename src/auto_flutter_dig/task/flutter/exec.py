@@ -7,7 +7,7 @@ from ...model.argument.option import OptionAll
 from ...model.task import *
 from ...task.identity import FlutterTaskIdentity
 from ..project.read import ProjectRead
-from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
+from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class Flutter(Task):

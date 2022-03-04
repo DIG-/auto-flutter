@@ -3,7 +3,7 @@ from typing import Optional
 from ...core.config import Config
 from ...core.utils import _If
 from ...task.base.process import *
-from ...task.flutter._const import (
+from ...module.flutter.model._const import (
     FLUTTER_CONFIG_KEY_PATH,
     FLUTTER_DISABLE_VERSION_CHECK,
 )

@@ -1,6 +1,6 @@
 from ...model.project.custom_task import CustomTask, CustomTaskType
 from ...model.task import *
-from ..flutter._const import FLUTTER_DISABLE_VERSION_CHECK
+from ...module.flutter.model._const import FLUTTER_DISABLE_VERSION_CHECK
 from ..flutter.exec import Flutter
 
 

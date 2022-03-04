@@ -1,7 +1,7 @@
 from ...core.config import Config
 from ...core.process import Process
 from ...model.task import *
-from ._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
+from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterCheck(Task):
