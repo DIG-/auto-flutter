@@ -1,15 +1,15 @@
 from typing import List
 
-from ...core.utils import _Ensure
-from ...model.build import BuildType
-from ...model.platform import Platform
-from ...model.platform.merge_config import MergePlatformConfigFlavored
-from ...model.project import Project
-from ...model.task import *
-from ...module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
-from ...task.identity import FirebaseTaskIdentity
-from ..flutter.build.config import FlutterBuildConfig
-from ..project.read import ProjectRead
+from ....core.utils import _Ensure
+from ....model.build import BuildType
+from ....model.platform import Platform
+from ....model.platform.merge_config import MergePlatformConfigFlavored
+from ....model.project import Project
+from ....model.task import *
+from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
+from ....task.identity import FirebaseTaskIdentity
+from ....task.flutter.build.config import FlutterBuildConfig
+from ....task.project.read import ProjectRead
 
 
 class FirebaseBuildValidate(Task):

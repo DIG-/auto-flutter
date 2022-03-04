@@ -1,19 +1,19 @@
 from pathlib import Path, PurePosixPath
 
-from ...core.config import Config
-from ...core.os import OS
-from ...core.utils import _Dict, _If
-from ...model.argument.option import LongOptionWithValue
-from ...module.firebase.model._const import (
+from ....core.config import Config
+from ....core.os import OS
+from ....core.utils import _Dict, _If
+from ....model.argument.option import LongOptionWithValue
+from ..model._const import (
     FIREBASE_CONFIG_KEY_PATH,
     FIREBASE_DISABLE_INTERACTIVE_MODE,
     FIREBASE_ENV,
 )
-from ...module.firebase.task.setup.check import FirebaseCheck
-from ...task.base.process import *
-from ...task.firebase.validate import FirebaseBuildValidate
-from ...task.flutter.build.stub import FlutterBuildStub
-from ...task.identity import FirebaseTaskIdentity
+from .setup.check import FirebaseCheck
+from ....task.base.process import *
+from .validate import FirebaseBuildValidate
+from ....task.flutter.build.stub import FlutterBuildStub
+from ....task.identity import FirebaseTaskIdentity
 
 
 class FirebaseBuildUpload(BaseProcessTask):

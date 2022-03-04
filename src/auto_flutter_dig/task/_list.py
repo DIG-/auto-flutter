@@ -4,8 +4,8 @@ from ..model.task import TaskId, TaskIdentity
 from ..task.help import Help
 from .config.dispatcher import ConfigDispatcher
 from ..module.firebase.task.setup.check import FirebaseCheck
-from .firebase.upload import FirebaseBuildUpload
-from .firebase.validate import FirebaseBuildValidate
+from ..module.firebase.task.upload import FirebaseBuildUpload
+from ..module.firebase.task.validate import FirebaseBuildValidate
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
 from .flutter.build.stub import FlutterBuildStub
