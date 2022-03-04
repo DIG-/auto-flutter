@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from logging import LoggerAdapter
 from typing import Iterable, List, Optional, Union
 
 from ...model.error.chain import E
@@ -16,6 +17,12 @@ __all__ = ["Task", "List", "E"]
 class Task(ABC):
     identity: TaskIdentity
 
+    def __init__(self) -> None:
+        super().__init__()
+        from ...core.logger import log_task
+
+        self.log = LoggerAdapter(log_task, {"tag": self.__class__.__name__})
+
     def require(self) -> List[TaskId]:
         return []
 
@@ -28,6 +35,7 @@ class Task(ABC):
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
+        self.log.debug(message)
 
     def _uptade_description(
         self,
