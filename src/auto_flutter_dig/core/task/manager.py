@@ -85,6 +85,7 @@ class __TaskManager:
             identity = self._task_stack.pop()
             task = identity.creator()
             args.select_group(identity.group)
+            task.log.info("Starting task")
 
             self._printer.append(OpDescription(task.describe(args)))
 
@@ -103,6 +104,15 @@ class __TaskManager:
 
             self._task_done.append(identity)
             self._printer.append(OpResult(output))
+
+            if not output.message is None:
+                task.log.debug(output.message)
+            if output.is_success:
+                task.log.info("Finished successfully")
+            elif output.is_warning:
+                task.log.warning("Finished with warning", exc_info=output.error)
+            elif output.is_error:
+                task.log.error("Failed", exc_info=output.error)
 
             if not output.success:
                 if isinstance(output, TaskResultHelp):
