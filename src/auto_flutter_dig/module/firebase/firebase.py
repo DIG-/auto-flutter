@@ -5,6 +5,8 @@ from ...model.task.subtask import Subtask
 from ..plugin import AflutterModulePlugin
 from .task.setup.check import FirebaseCheck
 from .task.setup.setup import FirebaseSetupTask
+from .task.upload import FirebaseBuildUpload
+from .task.validate import FirebaseBuildValidate
 
 
 class FirebaseModulePlugin(AflutterModulePlugin):
@@ -19,3 +21,12 @@ class FirebaseModulePlugin(AflutterModulePlugin):
     ):
         setup.register_subtask(FirebaseSetupTask.identity)
         check("firebase", FirebaseCheck.identity)
+
+    def register_tasks(self, root: Subtask):
+        root.register_subtask(
+            [
+                FirebaseBuildUpload.identity,
+                FirebaseBuildValidate.identity,
+                FirebaseCheck.identity,
+            ]
+        )

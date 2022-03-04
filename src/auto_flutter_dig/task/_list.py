@@ -1,11 +1,9 @@
 from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
+from ..module.aflutter.task.setup import AflutterSetupIdentity
 from ..task.help import Help
 from .config.dispatcher import ConfigDispatcher
-from ..module.firebase.task.setup.check import FirebaseCheck
-from ..module.firebase.task.upload import FirebaseBuildUpload
-from ..module.firebase.task.validate import FirebaseBuildValidate
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
 from .flutter.build.stub import FlutterBuildStub
@@ -16,7 +14,6 @@ from .project.init import ProjectInit
 from .project.read import ProjectRead
 from .project.save import ProjectSave
 from .setup import Setup, SetupEdit
-from ..module.aflutter.task.setup import AflutterSetupIdentity
 
 task_list: Dict[TaskId, TaskIdentity] = dict(
     sorted(
@@ -32,9 +29,6 @@ task_list: Dict[TaskId, TaskIdentity] = dict(
             FlutterDoctor.to_map(),
             FlutterBuildConfig.identity.to_map(),
             FlutterBuildStub.identity.to_map(),
-            FirebaseCheck.identity.to_map(),
-            FirebaseBuildValidate.identity.to_map(),
-            FirebaseBuildUpload.identity.to_map(),
             ConfigDispatcher.identity.to_map(),
             FlutterGeneratorTask.identity.to_map(),
             FlutterGeneratorTask.identity_code.to_map(),
