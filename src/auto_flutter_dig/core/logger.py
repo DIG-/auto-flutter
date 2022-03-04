@@ -19,8 +19,8 @@ def __log_creator() -> Logger:
     ch.setFormatter(
         Formatter("%(asctime)s %(filename)10s@%(lineno)03d %(levelname)8s: %(message)s")
     )
-    ch.setLevel(INFO)
     log.addHandler(ch)
+    log.setLevel(INFO)
     return log
 
 
@@ -37,8 +37,8 @@ def __log_task_creator() -> Logger:
             filepath.parent.mkdir(parents=True, exist_ok=True)
         ch = FileHandler(filepath, "wt", "utf-8")
     ch.setFormatter(Formatter("%(asctime)s %(levelname)8s %(tag)12s: %(message)s"))
-    ch.setLevel(DEBUG)
     _log.addHandler(ch)
+    _log.setLevel(DEBUG)
     return _log
 
 
