@@ -1,9 +1,11 @@
 from typing import Dict
 
 from ..model.task import TaskId, TaskIdentity
+from ..module.aflutter.task.config.config import AflutterConfigIdentity
+from ..module.aflutter.task.project.read import ProjectRead
+from ..module.aflutter.task.project.save import ProjectSave
 from ..module.aflutter.task.setup import AflutterSetupIdentity
 from ..task.help import Help
-from .config.dispatcher import ConfigDispatcher
 from .flutter import Flutter
 from .flutter.build.config import FlutterBuildConfig
 from .flutter.build.stub import FlutterBuildStub
@@ -11,8 +13,6 @@ from .flutter.doctor import FlutterDoctor
 from .flutter.generator import FlutterGeneratorTask
 from .flutter.pub.get import FlutterPubGet
 from .project.init import ProjectInit
-from ..module.aflutter.task.project.read import ProjectRead
-from ..module.aflutter.task.project.save import ProjectSave
 
 task_list: Dict[TaskId, TaskIdentity] = dict(
     sorted(
@@ -27,7 +27,7 @@ task_list: Dict[TaskId, TaskIdentity] = dict(
             FlutterDoctor.to_map(),
             FlutterBuildConfig.identity.to_map(),
             FlutterBuildStub.identity.to_map(),
-            ConfigDispatcher.identity.to_map(),
+            AflutterConfigIdentity.to_map(),
             FlutterGeneratorTask.identity.to_map(),
             FlutterGeneratorTask.identity_code.to_map(),
             FlutterPubGet.to_map(),
