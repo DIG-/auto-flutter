@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from sys import argv as sys_argv
 from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
 from ..core.config import Config
@@ -44,7 +43,6 @@ class _Helper(Generic[T]):
         elif cls is PositionalOption:
             assert isinstance(option, PositionalOption)
             self.argument = str(option.position)
-        pass
 
     def into(self, target: Dict[Argument, Dict[Group, _Helper[T]]]):
         if not self.argument in target:
@@ -64,16 +62,16 @@ class ParseOptions(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
     __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
 
-    def __init__(self, identity: TaskIdentity, input: List[str] = sys_argv[2:]) -> None:
+    def __init__(self, identity: TaskIdentity, arguments: List[str]) -> None:
         super().__init__()
         self._task_identity: TaskIdentity = identity
-        self._input = input
+        self._input = arguments
 
     def describe(self, args: Args) -> str:
         return "Parsing arguments"
 
     def execute(self, args: Args) -> TaskResult:
-        from ..core.task import TaskManager
+        from ..core.task import TaskManager  # pylint: disable=import-outside-toplevel
 
         long_options: Dict[Argument, Dict[Group, _Helper[LongOption]]] = {}
         short_options: Dict[Argument, Dict[Group, _Helper[ShortOption]]] = {}
@@ -81,7 +79,9 @@ class ParseOptions(Task):
         option_all: List[_Helper[OptionAll]] = []
 
         # Separate and identify options by type
-        for identity in TaskManager._task_stack.copy():
+        for (
+            identity
+        ) in TaskManager._task_stack.copy():  # pylint: disable=protected-access
             for option in identity.options:
                 if isinstance(option, OptionAll):
                     option_all.append(_Helper(option, identity, OptionAll))
@@ -92,7 +92,7 @@ class ParseOptions(Task):
                     _Helper(option, identity, ShortOption).into(short_options)
                 if isinstance(option, PositionalOption):
                     _Helper(option, identity, PositionalOption).into(positional_options)
-            pass
+
         _Helper(ParseOptions.__option_help, "aflutter", ShortOption).into(short_options)
         _Helper(ParseOptions.__option_help, "aflutter", LongOption).into(long_options)
         _Helper(ParseOptions.__option_stack_trace, "aflutter", LongOption).into(
@@ -157,9 +157,7 @@ class ParseOptions(Task):
                 elif has_option_all:
                     continue
                 else:
-                    raise OptionNotFound(
-                        "Unrecognized command line option {}".format(argument)
-                    )
+                    raise OptionNotFound("Unrecognized command line option {argument}")
 
             elif size >= 4 and argument[0] == "-" and argument[1] == "-":
 
@@ -176,9 +174,7 @@ class ParseOptions(Task):
                     continue
                 else:
                     raise OptionInvalidFormat(
-                        "Invalid argument group structure for command line option {}".format(
-                            argument
-                        )
+                        "Invalid argument group structure for command line option {argument}"
                     )
 
                 ###########
@@ -186,6 +182,7 @@ class ParseOptions(Task):
                 if not group is None:
                     self.__append_argument_all(
                         args,
+                        # pylint: disable=cell-var-from-loop
                         filter(lambda x: x.group == group, option_all),
                         "-" + sub if len(sub) == 1 else "--" + sub,
                     )
@@ -216,32 +213,30 @@ class ParseOptions(Task):
                         continue
                     else:
                         raise OptionNotFound(
-                            "Unrecognized command line option {}".format(argument)
+                            "Unrecognized command line option {argument}"
                         )
 
                 # Long argument
                 if sub in long_options:
                     if group is None:
-                        for grp, helper_long in long_options[sub].items():
+                        for _, helper_long in long_options[sub].items():
                             if helper_long.has_value:
                                 has_param.append(helper_long)
                             else:
                                 self.__append_argument(args, helper_long, None)
                         continue
-                    else:
-                        if group in long_options[sub]:
-                            helper_long = long_options[sub][group]
-                            if helper_long.has_value:
-                                has_param.append(helper_long)
-                            else:
-                                self.__append_argument(args, helper_long, None)
-                            continue
+                    if group in long_options[sub]:
+                        helper_long = long_options[sub][group]
+                        if helper_long.has_value:
+                            has_param.append(helper_long)
                         else:
-                            # unregistered group
-                            maybe_has_param = _Helper(
-                                _LongOptionMaybeWithValue(sub, ""), group, LongOption
-                            )
-                            continue
+                            self.__append_argument(args, helper_long, None)
+                        continue
+                    # unregistered group
+                    maybe_has_param = _Helper(
+                        _LongOptionMaybeWithValue(sub, ""), group, LongOption
+                    )
+                    continue
                 elif not group is None:
                     # unregistered option with group
                     maybe_has_param = _Helper(
@@ -251,9 +246,7 @@ class ParseOptions(Task):
                 elif has_option_all:
                     continue
                 else:
-                    raise OptionNotFound(
-                        "Unrecognized command line option {}".format(argument)
-                    )
+                    raise OptionNotFound("Unrecognized command line option {argument}")
 
             else:
                 # Positional argument
@@ -265,14 +258,13 @@ class ParseOptions(Task):
                         continue
                     else:
                         raise OptionNotFound(
-                            'Unrecognized positional command line "{}"'.format(argument)
+                            'Unrecognized positional command line "{argument}"'
                         )
                 for group, helper_positional in positional_options[pos].items():
                     self.__append_argument(args, helper_positional, argument)
-            pass
 
         if args.group_contains("aflutter", ParseOptions.__option_help):
-            TaskManager._task_stack.clear()
+            TaskManager._task_stack.clear()  # pylint: disable=protected-access
             self._append_task(Help.Stub(self._task_identity))
 
         if args.group_contains("aflutter", ParseOptions.__option_stack_trace):

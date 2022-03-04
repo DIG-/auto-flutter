@@ -1,0 +1,14 @@
+{
+    "formatFiles.extensionsToInclude": "py",
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--enable=W0611",
+        "--disable=W0614",
+        "--disable=W0401",
+        "--disable=C0114",
+        "--disable=C0115",
+        "--disable=C0116",
+        "--disable=W0703",
+        "--disable=R0903"
+    ],
+}
