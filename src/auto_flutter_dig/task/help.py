@@ -124,6 +124,9 @@ class Help(Task):
                 key=lambda x: x.position,
             )
 
+        if not self._message is None:
+            builder.append(self._message, end="\n")
+
         self._show_header(builder, self._task_identity, positional_options)
 
         if not self._task_identity is None:
