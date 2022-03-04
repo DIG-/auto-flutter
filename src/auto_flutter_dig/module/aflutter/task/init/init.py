@@ -1,9 +1,9 @@
 from sys import argv as sys_argv
 from typing import Iterable, Optional, Tuple
 
+from .....core.string import SB
 from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task import *
-from .....model.task.result import TaskResultHelp
 from .....model.task.subtask import Subtask
 from .....module.aflutter.task.root import Root
 from .....module.aflutter.task.setup import AflutterSetupIdentity
@@ -67,20 +67,25 @@ class AflutterInitTask(Task):
                 )
 
         self._uptade_description("Finding task")
-        if len(sys_argv) <= 1:
-            self._append_task(Help.Stub())
-            return TaskResult(args, error=ValueError("Require task"), success=True)
 
-        try:
-            task, offset = self.__find_task(Root)
-        except TaskNotFound as error:
-            self._append_task(Help.Stub(error.task_id))
-            return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
-        except BaseException as error:
-            return TaskResult(
-                args,
-                error=E(LookupError("Failed to find task")).caused_by(error),
+        if len(sys_argv) <= 1:
+            task: TaskIdentity = Help.Stub(
+                message=SB().append("Require one task to run", SB.Color.RED).str()
             )
+            offset = 1
+        else:
+            try:
+                task, offset = self.__find_task(Root)
+            except TaskNotFound as error:
+                self._append_task(Help.Stub(error.task_id))
+                return TaskResult(
+                    args, E(SilentWarning()).caused_by(error), success=True
+                )
+            except BaseException as error:
+                return TaskResult(
+                    args,
+                    error=E(LookupError("Failed to find task")).caused_by(error),
+                )
 
         try:
             self._append_task(task)
