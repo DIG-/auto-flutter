@@ -4,6 +4,7 @@ from .....core.string import SB
 from .....model.argument.option import LongOptionWithValue, LongShortOption
 from .....model.argument.option.common.flavor import Flavor, FlavorOption
 from .....model.argument.option.common.platform import Platform, PlatformOption
+from .....model.platform.merge_config import MergePlatformConfigFlavored, PlatformConfigFlavored
 from .....model.result import Result
 from .....model.task import *
 from .....module.aflutter.task.config.base import *
@@ -196,4 +197,32 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         platform: Platform,
         flavor: Optional[Flavor],
     ) -> TaskResult:
-        return TaskResult(args)
+        if flavor is None:
+            self._uptade_description(f"Showing all build params for {platform}")
+        else:
+            self._uptade_description(f"Showing all build params for {platform} and flavor {flavor}")
+
+        invalid = self._validate_platform(project, platform)
+        if not invalid is None:
+            return TaskResult(args, error=invalid.error, success=invalid.success)
+
+        invalid = self._validate_flavor(project, flavor)
+        if not invalid is None:
+            return TaskResult(args, error=invalid.error, success=invalid.success)
+
+        if not project.flavors is None and len(project.flavors) > 0 and flavor is None:
+            return TaskResult(args, error=E(ValueError("Flavor is required")).error)
+
+        config: PlatformConfigFlavored
+        if platform == Platform.DEFAULT:
+            config = project.obtain_platform_cofig(platform)
+        else:
+            config = MergePlatformConfigFlavored(
+                project.get_platform_config(Platform.DEFAULT),
+                project.get_platform_config(platform),
+            )
+
+        builder = SB().append(" All build params:")
+        for param in config.get_build_param(flavor):
+            builder.append("\n  ").append(param, SB.Color.GREEN)
+        return TaskResult(args, message=builder.str(), success=True)
