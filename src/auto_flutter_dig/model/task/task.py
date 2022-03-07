@@ -46,6 +46,9 @@ class Task(ABC):
 
         TaskManager.update_description(description, result)
 
+    def _reset_description(self, args: Args, result: Optional[Result] = None):
+        self._uptade_description(self.describe(args), result)
+
     def _append_task(self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
         from ...core.task.manager import TaskManager
 
