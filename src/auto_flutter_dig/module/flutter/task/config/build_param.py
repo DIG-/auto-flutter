@@ -1,5 +1,6 @@
 from typing import Optional
 
+from .....core.string import SB
 from .....model.argument.option import LongOptionWithValue, LongShortOption
 from .....model.argument.option.common.flavor import Flavor, FlavorOption
 from .....model.argument.option.common.platform import Platform, PlatformOption
@@ -69,9 +70,15 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         if len(add_param) <= 0:
             self._reset_description(args, Result(E(ValueError("Can not add empty build param")).error))
             return False
-        if not self._validate_platform(args, project, platform):
+
+        invalid = self._validate_platform(project, platform)
+        if not invalid is None:
+            self._reset_description(args, invalid)
             return False
-        if not self._validate_flavor(args, project, flavor):
+
+        invalid = self._validate_flavor(project, flavor)
+        if not invalid is None:
+            self._reset_description(args, invalid)
             return False
 
         config = project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)
@@ -91,9 +98,15 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         if len(rem_param) <= 0:
             self._reset_description(args, Result(E(ValueError("Can not remove empty build param")).error))
             return False
-        if not self._validate_platform(args, project, platform):
+
+        invalid = self._validate_platform(project, platform)
+        if not invalid is None:
+            self._reset_description(args, invalid)
             return False
-        if not self._validate_flavor(args, project, flavor):
+
+        invalid = self._validate_flavor(project, flavor)
+        if not invalid is None:
+            self._reset_description(args, invalid)
             return False
 
         p_config = project.get_platform_config(platform)
@@ -118,24 +131,21 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         self._reset_description(args, Result(success=True))
         return True
 
-    def _validate_platform(self, args: Args, project: Project, platform: Platform) -> bool:
+    def _validate_platform(self, project: Project, platform: Platform) -> Optional[Result]:
         if platform != Platform.DEFAULT and not platform in project.platforms:
-            self._reset_description(args, Result(E(ValueError(f"Project does not have support to {platform}")).error))
-            return False
-        return True
+            return Result(E(ValueError(f"Project does not have support to {platform}")).error)
+        return None
 
-    def _validate_flavor(self, args: Args, project: Project, flavor: Optional[Flavor]) -> bool:
+    def _validate_flavor(self, project: Project, flavor: Optional[Flavor]) -> Optional[Result]:
         if project.flavors is None or len(project.flavors) <= 0:
             if not flavor is None:
-                self._reset_description(args, Result(E(ValueError("Project does not have flavors")).error))
-                return False
-            return True
+                return Result(E(ValueError("Project does not have flavors")).error)
+            return None
         if flavor is None:
-            return True
+            return None
         if not flavor in project.flavors:
-            self._reset_description(args, Result(E(ValueError(f"Project does not have flavor {flavor}")).error))
-            return False
-        return True
+            return Result(E(ValueError(f"Project does not have flavor {flavor}")).error)
+        return None
 
     def _show_build_params(
         self,
