@@ -64,7 +64,10 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         add_param = args.get(self.__opt_add)
         if add_param is None or len(add_param) <= 0:
             return False
-        self._uptade_description(f"Add build param to {platform} {flavor}")
+        if flavor is None:
+            self._uptade_description(f"Add build param to {platform}")
+        else:
+            self._uptade_description(f"Add build param to {platform} and flavor {flavor}")
 
         add_param = add_param.strip()
         if len(add_param) <= 0:
@@ -92,7 +95,10 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         rem_param = args.get(self.__opt_rem)
         if rem_param is None or len(rem_param) <= 0:
             return False
-        self._uptade_description(f"Remove build param from {platform} {flavor}")
+        if flavor is None:
+            self._uptade_description(f"Remove build param from {platform}")
+        else:
+            self._uptade_description(f"Remove build param from {platform} and flavor {flavor}")
 
         rem_param = rem_param.strip()
         if len(rem_param) <= 0:
@@ -154,7 +160,34 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         platform: Platform,
         flavor: Optional[Flavor],
     ) -> TaskResult:
-        return TaskResult(args)
+        if flavor is None:
+            self._uptade_description(f"Showing build params for {platform}")
+        else:
+            self._uptade_description(f"Showing build params for {platform} and flavor {flavor}")
+
+        invalid = self._validate_platform(project, platform)
+        if not invalid is None:
+            return TaskResult(args, error=invalid.error, success=invalid.success)
+
+        invalid = self._validate_flavor(project, flavor)
+        if not invalid is None:
+            return TaskResult(args, error=invalid.error, success=invalid.success)
+
+        p_config = project.get_platform_config(platform)
+        if p_config is None:
+            return TaskResult(args, error=Warning(f"Project has no config for {platform}"), success=True)
+
+        f_config = p_config.get_config_by_flavor(flavor)
+        if f_config is None:
+            return TaskResult(args, error=Warning(f"Project has no config for {platform} {flavor}"), success=True)
+
+        if f_config.build_param is None or len(f_config.build_param) <= 0:
+            return TaskResult(args, message=SB().append("  No build params found", SB.Color.YELLOW).str(), success=True)
+
+        builder = SB().append(" Build params:")
+        for param in f_config.build_param:
+            builder.append("\n  ").append(param, SB.Color.GREEN)
+        return TaskResult(args, message=builder.str())
 
     def _show_recursive_build_params(
         self,
