@@ -92,6 +92,7 @@ disable=raw-checker-failed,
         unused-wildcard-import,
         broad-except,
         too-few-public-methods,
+        too-many-return-statements,
         use-symbolic-message-instead
 
 # Enable the message, report, category or checker with the given id(s). You can
