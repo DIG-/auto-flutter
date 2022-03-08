@@ -32,11 +32,11 @@ class ProjectTaskImport(Task):
         return TaskResult(args)
 
     def __add_custom_task(self, identity: TaskIdentity):
-        from .....task._list import task_list, user_task
+        from .....module.aflutter.task.root import Root
 
-        if identity.id in task_list:
+        if identity.id in Root.subtasks:
             raise KeyError("CustomTask can not override internal task")
-        user_task[identity.id] = identity
+        Root.register_subtask(identity)
 
     def __sort_custom_task(self):
         pass
