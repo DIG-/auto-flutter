@@ -1,16 +1,15 @@
-from ......model.argument.option import LongOptionWithValue, LongShortOption
 from ......model.task import *
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ....identity import AflutterTaskIdentity
+from .create import ProjectInitCreateTask
 
 
 class ProjectInitRunnerTask(Task):
-    __opt_name = LongOptionWithValue("name", "Name of project")
-    __opt_force = LongShortOption("f", "force", "Ignore existing project file")
+
     identity = AflutterTaskIdentity(
         "init",
         "Initialize Auto-Flutter project",
-        [__opt_name, __opt_force],
+        [ProjectInitCreateTask.opt_name, ProjectInitCreateTask.opt_force],
         lambda: ProjectInitRunnerTask(),  # pylint: disable=unnecessary-lambda
     )
     external_tasks: List[InitProjectTaskIdentity] = []
@@ -19,4 +18,6 @@ class ProjectInitRunnerTask(Task):
         return "Prepare to init project"
 
     def execute(self, args: Args) -> TaskResult:
-        raise NotImplementedError("Not implemented yet")
+        tasks: List[TaskIdentity] = [ProjectInitCreateTask.identity]
+        self._append_task(tasks)
+        return TaskResult(args)
