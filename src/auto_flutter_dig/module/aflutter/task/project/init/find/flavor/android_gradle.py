@@ -12,7 +12,7 @@ from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTa
 
 class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
     identity = BaseProjectInitFindFlavorIdentity(
-        "-project-init-find-flavor-android-gradle",
+        "-project-init-find-flavor-1-android-gradle",
         "",
         [],
         lambda: ProjectInitFindFlavorAndroidGradleTask(),  # pylint: disable=unnecessary-lambda

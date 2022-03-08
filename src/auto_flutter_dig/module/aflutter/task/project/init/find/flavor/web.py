@@ -7,7 +7,7 @@ from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTa
 
 class ProjectInitFindFlavorWebTask(BaseProjectInitFindFlavorTask):
     identity = BaseProjectInitFindFlavorIdentity(
-        "-project-init-find-flavor-web",
+        "-project-init-find-flavor-1-web",
         "",
         [],
         lambda: ProjectInitFindFlavorWebTask(),  # pylint: disable=unnecessary-lambda

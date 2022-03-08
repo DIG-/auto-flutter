@@ -7,7 +7,7 @@ from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTa
 
 class ProjectInitFindFlavorIosTask(BaseProjectInitFindFlavorTask):
     identity = BaseProjectInitFindFlavorIdentity(
-        "-project-init-find-flavor-ios",
+        "-project-init-find-flavor-1-ios",
         "",
         [],
         lambda: ProjectInitFindFlavorIosTask(),  # pylint: disable=unnecessary-lambda

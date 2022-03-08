@@ -11,7 +11,7 @@ from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTa
 
 class ProjectInitFindFlavorIntellijTask(BaseProjectInitFindFlavorTask):
     identity = BaseProjectInitFindFlavorIdentity(
-        "-project-init-find-flavor-intellij",
+        "-project-init-find-flavor-0-intellij",
         "",
         [],
         lambda: ProjectInitFindFlavorIntellijTask(),  # pylint: disable=unnecessary-lambda
