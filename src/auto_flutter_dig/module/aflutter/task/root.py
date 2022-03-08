@@ -6,7 +6,7 @@ from ..identity import AflutterTaskIdentity
 __all__ = ["Root"]
 
 
-class __AflutterRoot(AflutterTaskIdentity, Subtask):
+class _AflutterRoot(AflutterTaskIdentity, Subtask):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -22,4 +22,4 @@ class __AflutterRoot(AflutterTaskIdentity, Subtask):
         return "AflutterRoot"
 
 
-Root = __AflutterRoot()
+Root = _AflutterRoot()
