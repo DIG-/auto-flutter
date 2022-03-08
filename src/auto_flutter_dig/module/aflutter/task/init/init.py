@@ -53,7 +53,7 @@ class AflutterInitTask(Task):
                 module.initialize_config()
 
         for module in modules:
-            self._uptade_description("Initialize module {}".format(module.name))
+            self._uptade_description(f"Initialize module {module.name}")
             try:
                 module.initialize()
                 module.register_setup(
@@ -65,7 +65,7 @@ class AflutterInitTask(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    E(RuntimeError("Failed to initialize module {}".format(module.name))).caused_by(error),
+                    E(RuntimeError(f"Failed to initialize module {module.name}")).caused_by(error),
                 )
 
         self._uptade_description("Finding task")
@@ -98,7 +98,8 @@ class AflutterInitTask(Task):
         parse_options_result = parse_options.execute(args)
         return parse_options_result
 
-    def __find_task(self, root: Subtask) -> Tuple[TaskIdentity, int]:
+    @staticmethod
+    def __find_task(root: Subtask) -> Tuple[TaskIdentity, int]:
         task: Optional[TaskIdentity] = None
         offset = 1
         limit = len(sys_argv)
@@ -114,7 +115,6 @@ class AflutterInitTask(Task):
                 root = task
             else:
                 break
-            pass
 
         if not task is None:
             return (task, offset)
