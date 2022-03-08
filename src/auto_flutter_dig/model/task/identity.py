@@ -8,7 +8,6 @@ from .id import TaskId
 
 __all__ = ["TaskIdentity", "TaskId", "List", "Callable", "Option"]
 
-
 class TaskIdentity:
     def __init__(
         self,
@@ -19,8 +18,8 @@ class TaskIdentity:
         creator: Callable[[], "Task"],  # type: ignore[name-defined]
         allow_more: bool = False,  # Allow more tasks with same id
     ) -> None:
-        from .subtask import Subtask
-        from .task import Task
+        from .subtask import Subtask  # pylint: disable=import-outside-toplevel
+        from .task import Task  # pylint: disable=import-outside-toplevel
 
         self.group: str = _Ensure.instance(group, str, "group")
         self.id: TaskId = _Ensure.instance(id, TaskId, "id")
@@ -36,13 +35,8 @@ class TaskIdentity:
         return (self.id, self)
 
     def __repr__(self) -> str:
-        return "{cls}(id={id}, group={group}, name={name}, options={options}, creator={creator}, parent={parent}, allow_more={allow_more})".format(
-            cls=type(self).__name__,
-            group=self.group,
-            id=self.id,
-            name=self.name,
-            options=self.options,
-            creator=self.creator,
-            parent=type(self.parent).__name__,
-            allow_more=self.allow_more,
+        return (
+            f"{type(self).__name__}(id={self.id}, group={self.group}, "
+            + f"name={self.name}, options={self.options}, creator={self.creator}, "
+            + f"parent={self.parent}, allow_more={self.allow_more})"
         )

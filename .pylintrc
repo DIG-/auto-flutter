@@ -93,6 +93,7 @@ disable=raw-checker-failed,
         broad-except,
         too-few-public-methods,
         too-many-return-statements,
+        too-many-arguments,
         use-symbolic-message-instead
 
 # Enable the message, report, category or checker with the given id(s). You can
