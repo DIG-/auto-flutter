@@ -5,6 +5,9 @@ from .......model.task.init.project_identity import InitProjectTaskIdentity
 from .......model.task.subtask import Subtask
 from .....identity import AflutterTaskIdentity
 from ..find.flavor.flavor import ProjectInitFindFlavorTask
+from .android import ProjectInitConfigAndroidTask
+from .ios import ProjectInitConfigIosTask
+from .web import ProjectInitConfigWebTask
 
 
 class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, Subtask):
@@ -13,7 +16,11 @@ class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, S
         AflutterTaskIdentity.__init__(self, "-project-init-config", "", [], creator)
         Subtask.__init__(
             self,
-            [],
+            [
+                ProjectInitConfigAndroidTask.identity,
+                ProjectInitConfigIosTask.identity,
+                ProjectInitConfigWebTask.identity,
+            ],
         )
 
     @property
