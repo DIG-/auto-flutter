@@ -74,14 +74,14 @@ class BaseProcessTask(Task):
     def _create_process(self, args: Args) -> ProcessOrResult:
         ## Use self._sanitize_arguments() before passing to Process
         ## Use self._print_content() as process write
-        raise NotImplementedError("{} requires to implement _create_process".format(type(self).__name__))
+        raise NotImplementedError(f"{type(self).__name__} requires to implement _create_process")
 
     def _handle_process_output(self, args: Args, process: Process, output: Union[bool, BaseException]) -> TaskResult:
         if isinstance(output, bool):
             return self._handle_process_finished(args, process, output)
         elif isinstance(output, BaseException):
             return self._handle_process_exception(args, process, output)
-        raise ValueError("Expected `bool` or `BaseException`, but process returned `{}`".format(type(output).__name__))
+        raise ValueError(f"Expected `bool` or `BaseException`, but process returned `{type(output).__name__}`")
 
     def _handle_process_finished(
         self, args: Args, process: Process, output: bool, message: Optional[str] = None
@@ -98,7 +98,7 @@ class BaseProcessTask(Task):
     def _handle_process_exception(
         self,
         args: Args,
-        process: Process,
+        process: Process,  # pylint:disable=unused-argument
         output: BaseException,
         message: Optional[str] = None,
     ) -> TaskResult:
