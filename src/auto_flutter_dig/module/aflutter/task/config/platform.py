@@ -66,7 +66,8 @@ class AflutterPlatformConfigTask(BaseConfigTask):
                 )
             else:
                 project.platforms.remove(rem_platform)
-                project.platform_config.pop(rem_platform)
+                if rem_platform in project.platform_config:
+                    project.platform_config.pop(rem_platform)
                 had_change = True
                 self._uptade_description(
                     self.describe(args),
