@@ -14,6 +14,33 @@ from .....task.identity import FlutterTaskIdentity
 from ..command import FlutterCommandTask
 
 
+class FlutterBuildTaskIdentity(FlutterTaskIdentity):
+    def __init__(
+        self,
+        project: Project,
+        build_type: BuildType,
+        flavor: Optional[Flavor],
+        config: PlatformConfigFlavored,
+        build_mode: BuildMode = BuildMode.RELEASE,
+        android_rebuild_fix_other: bool = False,
+        android_rebuild_fix_desired: bool = False,
+    ) -> None:
+        super().__init__(
+            "--flutter-build-task--",
+            "",
+            [],
+            lambda: FlutterBuildTask(
+                project=project,
+                build_type=build_type,
+                flavor=flavor,
+                config=config,
+                build_mode=build_mode,
+                android_rebuild_fix_other=android_rebuild_fix_other,
+                android_rebuild_fix_desired=android_rebuild_fix_desired,
+            ),
+        )
+
+
 class FlutterBuildTask(FlutterCommandTask):
     identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
 
@@ -136,7 +163,7 @@ class FlutterBuildTask(FlutterCommandTask):
             return result
 
         self._append_task(
-            FlutterBuildTask(
+            FlutterBuildTaskIdentity(
                 self._project,
                 self._build_type,
                 self._flavor,
@@ -148,7 +175,7 @@ class FlutterBuildTask(FlutterCommandTask):
         )
         for flavor in filter(lambda x: x != self._flavor, flavors):
             self._append_task(
-                FlutterBuildTask(
+                FlutterBuildTaskIdentity(
                     self._project,
                     self._build_type,
                     flavor,

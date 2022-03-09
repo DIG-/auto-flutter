@@ -9,7 +9,7 @@ from .....model.platform.merge_config import MergePlatformConfigFlavored
 from .....model.project import Project
 from .....model.task import *
 from .....task.identity import FlutterTaskIdentity
-from .build import FlutterBuildTask
+from .build import FlutterBuildTaskIdentity
 
 
 class _BuildTypeFlutterPositionalOption(BuildTypeFlutterOption, LongPositionalOption):
@@ -78,5 +78,5 @@ class FlutterBuildStub(Task):
         config_platform = project.get_platform_config(build_type.platform)
         config = MergePlatformConfigFlavored(config_default, config_platform)
 
-        self._append_task(FlutterBuildTask(project, build_type, flavor, config, build_mode))
+        self._append_task(FlutterBuildTaskIdentity(project, build_type, flavor, config, build_mode))
         return TaskResult(args)
