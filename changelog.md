@@ -1,3 +1,8 @@
+## Version 0.5.0
+- Refactor Task structure with TaskGroup concept
+- Mostly of tasks were refactored to new structure of sub-tasks
+- Basically, one TaskIdentity can be TaskGroup, is that way, allow to use subtask
+
 ## Version 0.4.0
 - Refactor TaskPrinter and created new Result class (without Args used in TaskResult)
 - Changed entire `Option` structure to allow new style of parsing commands
