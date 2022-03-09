@@ -25,6 +25,7 @@ class FlutterModulePlugin(AflutterModulePlugin):
             [
                 FlutterSetupCheckTask.identity,
                 FlutterExecTask.identity,
+                FlutterExecTask.doctor,
                 FlutterGeneratorTask.identity,
                 FlutterGeneratorTask.identity_code,
                 FlutterPubGetIdentity,

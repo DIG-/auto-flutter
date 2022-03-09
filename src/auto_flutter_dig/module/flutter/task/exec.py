@@ -10,14 +10,22 @@ class FlutterExecTask(FlutterCommandTask):
         "exec",
         "Execute flutter command",
         [__opt_all],
-        lambda: FlutterExecTask(),  # pylint: disable=unnecessary-lambda
+        lambda: FlutterExecTask([]),
         allow_more=True,
     )
 
-    def __init__(self) -> None:
-        super().__init__(describe="Executing flutter command", require_project=False)
+    doctor = FlutterTaskIdentity(
+        "doctor",
+        "Execute flutter doctor",
+        [__opt_all],
+        lambda: FlutterExecTask(["doctor"]),
+        allow_more=True,
+    )
+
+    def __init__(self, command: List[str]) -> None:
+        super().__init__(command=command, describe="Executing flutter command", require_project=False)
         self._can_print_content = True  # Always print flutter exec
 
     def _create_process(self, args: Args) -> ProcessOrResult:
-        self._command = list(args.get_all(self.__opt_all))
+        self._command += args.get_all(self.__opt_all)
         return super()._create_process(args)
