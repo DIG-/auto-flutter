@@ -1,5 +1,6 @@
 from typing import Callable
 
+from .......core.utils import _Dict
 from .......model.task import *
 from .......model.task.init.project_identity import InitProjectTaskIdentity
 from .......model.task.subtask import Subtask
@@ -41,5 +42,7 @@ class ProjectInitConfigTask(Task):
         return ""
 
     def execute(self, args: Args) -> TaskResult:
-        self._append_task(map(lambda x: x[1], self._subtask.subtasks.items()))
+        tasks = _Dict.flatten(self._subtask.subtasks)
+        tasks.reverse()
+        self._append_task(tasks)
         return TaskResult(args)
