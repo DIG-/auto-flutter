@@ -2,9 +2,9 @@ from ...core.string import SB
 from ...core.utils import _Dict
 from ...model.argument.option import LongOption
 from ...model.task import *
+from ...module.flutter.identity import FlutterTaskIdentity
 from ...module.flutter.task.command import FlutterCommandTask
-from ...task.flutter.pub import FlutterPubGet
-from ...task.identity import FlutterTaskIdentity
+from ...module.flutter.task.pub_get import FlutterPubGetIdentity
 
 
 class FlutterGeneratorTask(Task):
@@ -38,7 +38,7 @@ class FlutterGeneratorTask(Task):
         self.force = force
 
     def require(self) -> List[TaskId]:
-        return [FlutterPubGet.id]
+        return [FlutterPubGetIdentity.id]
 
     def describe(self, args: Args) -> str:
         return ""
