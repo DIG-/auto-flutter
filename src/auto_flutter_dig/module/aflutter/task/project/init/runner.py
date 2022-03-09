@@ -9,6 +9,7 @@ from .config.config import ProjectInitConfigTask
 from .create import ProjectInitCreateTask
 from .find.flavor.flavor import ProjectInitFindFlavorTask
 from .find.platform import ProjectInitFindPlatformTask
+from .gitignore import ProjectInitGitIgnoreTask
 
 
 class _ExtendedInitProjectTaskIdentity:
@@ -34,6 +35,7 @@ class ProjectInitRunnerTask(Task):
         ProjectInitFindPlatformTask.identity,
         ProjectInitFindFlavorTask.identity,
         ProjectInitConfigTask.identity,
+        ProjectInitGitIgnoreTask.identity,
     ]
 
     def describe(self, args: Args) -> str:
