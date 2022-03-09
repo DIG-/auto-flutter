@@ -1,8 +1,9 @@
 from .....core.string.builder import SB
 from .....model.project import Project
-from .....model.project.custom_task import CustomTask, CustomTaskType
+from .....model.project.custom_task import CustomTaskType
+from .....model.result import Result
 from .....model.task import *
-from .....model.task.custom import *
+from .....module.user.task.exec import UserExecTaskIdentity
 
 
 class ProjectTaskImport(Task):
@@ -17,9 +18,18 @@ class ProjectTaskImport(Task):
                 AssertionError("Unexpected run while project has no custom task"),
                 success=True,
             )
+        tasks: List[TaskIdentity] = []
         for custom in project.tasks:
             if custom.type == CustomTaskType.EXEC:
-                self.__add_custom_task(CustomExecIdentity(custom))
+                if custom.content is None:
+                    self._reset_description(args, Result(E(ValueError("User task type EXEC require content")).error))
+                    continue
+                if custom.content.args is None or len(custom.content.args) <= 0:
+                    self._reset_description(
+                        args, Result(E(ValueError("User task type EXEC require content arguments")).error)
+                    )
+                    continue
+                tasks.append(UserExecTaskIdentity(custom.id, custom.name, custom.content.args))
             else:
                 self._print(
                     SB()
@@ -27,16 +37,12 @@ class ProjectTaskImport(Task):
                     .append(str(custom.type), SB.Color.CYAN)
                     .str()
                 )
+        if len(tasks) > 0:
+            from .....module.aflutter.task.root import Root  # pylint:disable=import-outside-toplevel
 
-        self.__sort_custom_task()
+            for identity in tasks:
+                if identity.id in Root.subtasks:
+                    raise KeyError("UserTask can not override internal task")
+            Root.register_subtask(tasks)
+
         return TaskResult(args)
-
-    def __add_custom_task(self, identity: TaskIdentity):
-        from .....module.aflutter.task.root import Root
-
-        if identity.id in Root.subtasks:
-            raise KeyError("CustomTask can not override internal task")
-        Root.register_subtask(identity)
-
-    def __sort_custom_task(self):
-        pass
