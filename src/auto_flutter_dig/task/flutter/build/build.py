@@ -10,11 +10,11 @@ from ....model.platform.flavored_config import PlatformConfigFlavored
 from ....model.platform.run_type import RunType
 from ....model.project import *
 from ....model.task import *
-from ....task.flutter.command import FlutterCommand
+from ....module.flutter.task.command import FlutterCommandTask
 from ....task.identity import FlutterTaskIdentity
 
 
-class FlutterBuildTask(FlutterCommand):
+class FlutterBuildTask(FlutterCommandTask):
     identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
 
     def __init__(
@@ -30,7 +30,6 @@ class FlutterBuildTask(FlutterCommand):
         super().__init__(
             ignore_failure=False,
             show_output_at_end=False,
-            command=None,
             put_output_args=True,
         )
         self._project: Project = project

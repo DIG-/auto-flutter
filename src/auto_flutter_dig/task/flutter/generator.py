@@ -2,7 +2,7 @@ from ...core.string import SB
 from ...core.utils import _Dict
 from ...model.argument.option import LongOption
 from ...model.task import *
-from ...task.flutter.command import FlutterCommand
+from ...module.flutter.task.command import FlutterCommandTask
 from ...task.flutter.pub import FlutterPubGet
 from ...task.identity import FlutterTaskIdentity
 
@@ -61,7 +61,7 @@ class FlutterGeneratorTask(Task):
 
         if splash:
             self._append_task(
-                FlutterCommand(
+                FlutterCommandTask(
                     command=["pub", "run", "flutter_native_splash:create"],
                     describe="Generate splash screen",
                 )
@@ -69,7 +69,7 @@ class FlutterGeneratorTask(Task):
 
         if appicon:
             self._append_task(
-                FlutterCommand(
+                FlutterCommandTask(
                     command=["pub", "run", "flutter_launcher_icons:main"],
                     describe="Generate app icon",
                 )
@@ -79,5 +79,5 @@ class FlutterGeneratorTask(Task):
             command = ["pub", "run", "build_runner", "build"]
             if force:
                 command.append("--delete-conflicting-outputs")
-            self._append_task(FlutterCommand(command=command, describe="Generate code"))
+            self._append_task(FlutterCommandTask(command=command, describe="Generate code"))
         return TaskResult(args)

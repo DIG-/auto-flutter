@@ -1,26 +1,25 @@
 from typing import Optional
 
-from ...core.config import Config
-from ...core.utils import _If
-from ...module.aflutter.task.project.read import ProjectRead
-from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
-from ...task.base.process import *
+from ....core.config import Config
+from ....module.aflutter.task.project.read import ProjectRead
+from ....task.base.process import *
+from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
-class FlutterCommand(BaseProcessTask):
+class FlutterCommandTask(BaseProcessTask):
     def __init__(
         self,
+        command: List[str] = [],
+        describe: str = "",
         ignore_failure: bool = False,
         show_output_at_end: bool = False,
-        command: Optional[List[str]] = None,
         put_output_args: bool = False,
-        describe: Optional[str] = None,
-        require_project: bool = False,
+        require_project: bool = True,
     ) -> None:
         super().__init__(ignore_failure, show_output_at_end)
-        self._command: List[str] = _If.not_none(command, lambda x: x, lambda: [])
+        self._command: List[str] = command
         self._put_output_args: bool = put_output_args
-        self._describe: str = _If.not_none(describe, lambda x: x, lambda: "")
+        self._describe: str = describe
         self._require_project: bool = require_project
 
     def describe(self, args: Args) -> str:

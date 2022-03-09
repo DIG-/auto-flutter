@@ -1,4 +1,4 @@
-from ....task.flutter.command import FlutterCommand
+from ....module.flutter.task.command import FlutterCommandTask
 from ....task.identity import FlutterTaskIdentity
 
 __all__ = ["FlutterPubGet"]
@@ -7,5 +7,5 @@ FlutterPubGet = FlutterTaskIdentity(
     "pub-get",
     "Runs flutter pub get",
     [],
-    lambda: FlutterCommand(command=["pub", "get"], describe="Running pub get", require_project=True),
+    lambda: FlutterCommandTask(command=["pub", "get"], describe="Running pub get", require_project=True),
 )
