@@ -62,10 +62,7 @@ class FlutterBuildTask(FlutterCommandTask):
         if not self._flavor is None:
             self._command.extend(("--flavor", self._flavor))
 
-        if self._build_mode:
-            self._command.append("--debug")
-        else:
-            self._command.append("--release")
+        self._command.append("--" + self._build_mode.name)
 
         self._command.extend(self._config.get_build_param(self._flavor))
 
