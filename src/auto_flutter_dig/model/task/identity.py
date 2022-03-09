@@ -8,6 +8,7 @@ from .id import TaskId
 
 __all__ = ["TaskIdentity", "TaskId", "List", "Callable", "Option"]
 
+
 class TaskIdentity:
     def __init__(
         self,
@@ -18,7 +19,7 @@ class TaskIdentity:
         creator: Callable[[], "Task"],  # type: ignore[name-defined]
         allow_more: bool = False,  # Allow more tasks with same id
     ) -> None:
-        from .subtask import Subtask  # pylint: disable=import-outside-toplevel
+        from .group import TaskGroup  # pylint: disable=import-outside-toplevel
         from .task import Task  # pylint: disable=import-outside-toplevel
 
         self.group: str = _Ensure.instance(group, str, "group")
@@ -29,7 +30,7 @@ class TaskIdentity:
         self.options: List[Option] = _Ensure.not_none(options, "options")
         self.creator: Callable[[], Task] = _EnsureCallable.instance(creator, "creator")
         self.allow_more: bool = _Ensure.instance(allow_more, bool, "allow_more")
-        self.parent: Optional[Subtask] = None
+        self.parent: Optional[TaskGroup] = None
 
     def to_map(self) -> Tuple[TaskId, TaskIdentity]:
         return (self.id, self)

@@ -1,5 +1,5 @@
 from ....core.utils import _Raise
-from ....model.task.subtask import Subtask
+from ....model.task.group import TaskGroup
 from ....module.aflutter.task.config.config import AflutterConfigIdentity
 from ....module.aflutter.task.project.init.runner import ProjectInitRunnerTask
 from ....module.aflutter.task.project.read import ProjectRead
@@ -11,7 +11,7 @@ from .help import HelpTask
 __all__ = ["Root"]
 
 
-class _AflutterRoot(AflutterTaskIdentity, Subtask):
+class _AflutterRoot(AflutterTaskIdentity, TaskGroup):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -21,7 +21,7 @@ class _AflutterRoot(AflutterTaskIdentity, Subtask):
             _Raise(AssertionError("Root does not have task")).throw,
             False,
         )
-        Subtask.__init__(
+        TaskGroup.__init__(
             self,
             [
                 HelpTask.identity,

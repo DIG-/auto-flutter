@@ -2,17 +2,17 @@ from ...core.string import SB
 from ...core.utils import _Ensure
 from ...model.error import SilentWarning
 from ...model.task import *
-from ...model.task.subtask import Subtask
+from ...model.task.group import TaskGroup
 from ...module.aflutter.task.help import HelpTask
 
 __all__ = ["BaseSubtaskParentTask"]
 
 
 class BaseSubtaskParentTask(Task):
-    def __init__(self, identity: TaskIdentity, subtask: Subtask) -> None:
+    def __init__(self, identity: TaskIdentity, subtask: TaskGroup) -> None:
         super().__init__()
         self.identity = _Ensure.instance(identity, TaskIdentity, "identity")
-        self._subtask: Subtask = _Ensure.instance(subtask, Subtask, "subtask")
+        self._subtask: TaskGroup = _Ensure.instance(subtask, TaskGroup, "subtask")
 
     def describe(self, args: Args) -> str:
         # Basically will show help for subtasks

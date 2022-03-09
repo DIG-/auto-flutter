@@ -1,4 +1,4 @@
-from .....model.task.subtask import Subtask
+from .....model.task.group import TaskGroup
 from .....module.aflutter.identity import AflutterTaskIdentity
 from .....task.base.subtask_parent_task import BaseSubtaskParentTask
 from .check import AflutterSetupCheckTask
@@ -9,7 +9,7 @@ from .stack_trace import AflutterSetupStackTraceTask
 __all__ = ["AflutterSetupIdentity"]
 
 
-class __AflutterSetupIdentity(AflutterTaskIdentity, Subtask):
+class __AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -18,7 +18,7 @@ class __AflutterSetupIdentity(AflutterTaskIdentity, Subtask):
             [],
             lambda: BaseSubtaskParentTask(self, self),
         )
-        Subtask.__init__(
+        TaskGroup.__init__(
             self,
             [
                 AflutterSetupShow.identity,

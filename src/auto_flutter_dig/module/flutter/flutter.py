@@ -15,13 +15,13 @@ class FlutterModulePlugin(AflutterModulePlugin):
 
     def register_setup(
         self,
-        setup: Subtask,
+        setup: TaskGroup,
         check: Callable[[str, TaskIdentity], None],
     ):
         setup.register_subtask(FlutterSetupTask.identity)
         check("flutter", FlutterSetupCheckTask.identity)
 
-    def register_tasks(self, root: Subtask):
+    def register_tasks(self, root: TaskGroup):
         root.register_subtask(
             [
                 FlutterSetupCheckTask.identity,
@@ -34,7 +34,7 @@ class FlutterModulePlugin(AflutterModulePlugin):
             ]
         )
 
-    def register_config(self, config: Subtask):
+    def register_config(self, config: TaskGroup):
         config.register_subtask(
             [
                 FlutterBuildParamConfigTask.identity,

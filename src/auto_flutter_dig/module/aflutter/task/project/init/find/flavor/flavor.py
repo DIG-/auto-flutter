@@ -3,7 +3,7 @@ from typing import Callable
 from ........core.utils import _Dict
 from ........model.task import *
 from ........model.task.init.project_identity import InitProjectTaskIdentity
-from ........model.task.subtask import Subtask
+from ........model.task.group import TaskGroup
 from ......identity import AflutterTaskIdentity
 from ..platform import ProjectInitFindPlatformTask
 from .android_gradle import ProjectInitFindFlavorAndroidGradleTask
@@ -12,11 +12,11 @@ from .ios import ProjectInitFindFlavorIosTask
 from .web import ProjectInitFindFlavorWebTask
 
 
-class ProjectInitFindFlavorIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, Subtask):
+class ProjectInitFindFlavorIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, TaskGroup):
     def __init__(self, creator: Callable[[], Task]) -> None:
         InitProjectTaskIdentity.__init__(self, "", "", "", [], creator)
         AflutterTaskIdentity.__init__(self, "-project-init-find-flavor", "", [], creator)
-        Subtask.__init__(
+        TaskGroup.__init__(
             self,
             [
                 ProjectInitFindFlavorIntellijTask.identity,
@@ -36,7 +36,7 @@ class ProjectInitFindFlavorTask(Task):
         lambda: ProjectInitFindFlavorTask(ProjectInitFindFlavorTask.identity)
     )
 
-    def __init__(self, subtask: Subtask) -> None:
+    def __init__(self, subtask: TaskGroup) -> None:
         super().__init__()
         self._subtask = subtask
 

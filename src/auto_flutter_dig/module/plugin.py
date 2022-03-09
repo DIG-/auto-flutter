@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 from ..model.task.identity import TaskIdentity
-from ..model.task.subtask import Subtask
+from ..model.task.group import TaskGroup
 
-__all__ = ["AflutterModulePlugin", "TaskIdentity", "Subtask", "Callable"]
+__all__ = ["AflutterModulePlugin", "TaskIdentity", "TaskGroup", "Callable"]
 
 
 class AflutterModulePlugin(ABC):
@@ -22,13 +22,13 @@ class AflutterModulePlugin(ABC):
 
     def register_setup(
         self,
-        setup: Subtask,
+        setup: TaskGroup,
         check: Callable[[str, TaskIdentity], None],
     ):
         pass
 
-    def register_config(self, config: Subtask):
+    def register_config(self, config: TaskGroup):
         pass
 
-    def register_tasks(self, root: Subtask):
+    def register_tasks(self, root: TaskGroup):
         pass

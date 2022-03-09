@@ -4,7 +4,7 @@ from typing import Iterable, Optional, Tuple
 from .....core.string import SB
 from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task import *
-from .....model.task.subtask import Subtask
+from .....model.task.group import TaskGroup
 from .....module.aflutter.task.config.config import AflutterConfigIdentity
 from .....module.aflutter.task.root import Root
 from .....module.aflutter.task.setup import AflutterSetupIdentity
@@ -99,7 +99,7 @@ class AflutterInitTask(Task):
         return parse_options_result
 
     @staticmethod
-    def __find_task(root: Subtask) -> Tuple[TaskIdentity, int]:
+    def __find_task(root: TaskGroup) -> Tuple[TaskIdentity, int]:
         task: Optional[TaskIdentity] = None
         offset = 1
         limit = len(sys_argv)
@@ -111,7 +111,7 @@ class AflutterInitTask(Task):
                 break
             task = root.subtasks[task_id]
             offset += 1
-            if isinstance(task, Subtask):
+            if isinstance(task, TaskGroup):
                 root = task
             else:
                 break

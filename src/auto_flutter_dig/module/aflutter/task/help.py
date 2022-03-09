@@ -8,7 +8,7 @@ from ....core.utils import _Iterable
 from ....model.argument.option import *
 from ....model.error import E, TaskNotFound
 from ....model.task import *
-from ....model.task.subtask import Subtask
+from ....model.task.group import TaskGroup
 from ..identity import AflutterTaskIdentity
 
 
@@ -44,7 +44,7 @@ class HelpTask(Task):
         super().__init__()
         self._task_id: Optional[TaskId] = None
         self._task_identity: Optional[TaskIdentity] = None
-        self._task_parent: Optional[Subtask] = None
+        self._task_parent: Optional[TaskGroup] = None
         self._message: Optional[str] = message
         if isinstance(task_id, TaskIdentity):
             self._task_identity = task_id
@@ -131,7 +131,7 @@ class HelpTask(Task):
         self._uptade_description("Showing help page")
         return TaskResult(args, message=builder.str())
 
-    def _show_help_default(self, builder: SB, root: Subtask):
+    def _show_help_default(self, builder: SB, root: TaskGroup):
         self._show_help_grouped(builder, self._grouped_tasks(root))
 
     def _show_header(
@@ -161,7 +161,7 @@ class HelpTask(Task):
             tasks.reverse()
             builder.append(" ".join(tasks), SB.Color.CYAN, True, end=" ")
 
-        if isinstance(identity, Subtask) or identity is None:
+        if isinstance(identity, TaskGroup) or identity is None:
             builder.append("TASK ", SB.Color.CYAN, True)
 
         for pos in positional:
@@ -178,11 +178,11 @@ class HelpTask(Task):
         self,
         builder: SB,
         identity: TaskIdentity,
-        root: Subtask,
+        root: TaskGroup,
         options: Iterable[Option],
     ):
         self._show_task_description(builder, identity)
-        if isinstance(identity, Subtask):
+        if isinstance(identity, TaskGroup):
             self._show_help_grouped(builder, self._grouped_tasks(identity))
 
         builder.append("\nOptions:\n")
@@ -244,7 +244,7 @@ class HelpTask(Task):
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)
 
-    def _grouped_tasks(self, root: Subtask) -> Dict[str, List[TaskIdentity]]:
+    def _grouped_tasks(self, root: TaskGroup) -> Dict[str, List[TaskIdentity]]:
         output: Dict[str, List[TaskIdentity]] = {}
         for group in sorted(map(lambda x: x[1].group, root.subtasks.items())):
             if not group in output:

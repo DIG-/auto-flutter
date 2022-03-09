@@ -1,5 +1,5 @@
 from .....model.task import *
-from .....model.task.subtask import Subtask
+from .....model.task.group import TaskGroup
 from .....task.base.subtask_parent_task import BaseSubtaskParentTask
 from ...identity import AflutterTaskIdentity
 from .flavor import AflutterFlavorConfigTask
@@ -9,7 +9,7 @@ from .refresh import AflutterConfigRefreshTask
 __all__ = ["AflutterConfigIdentity"]
 
 
-class _AflutterConfigIdentity(AflutterTaskIdentity, Subtask):
+class _AflutterConfigIdentity(AflutterTaskIdentity, TaskGroup):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -18,7 +18,7 @@ class _AflutterConfigIdentity(AflutterTaskIdentity, Subtask):
             [],
             lambda: BaseSubtaskParentTask(self, self),
         )
-        Subtask.__init__(
+        TaskGroup.__init__(
             self,
             [
                 AflutterConfigRefreshTask.identity,

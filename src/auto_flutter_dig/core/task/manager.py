@@ -7,7 +7,7 @@ from ...model.error import TaskNotFound
 from ...model.result import Result
 from ...model.task import *
 from ...model.task.result import TaskResultHelp
-from ...model.task.subtask import Subtask
+from ...model.task.group import TaskGroup
 from .printer import *
 from .resolver import TaskResolver
 
@@ -35,7 +35,7 @@ class __TaskManager:
     def add_id(
         self,
         ids: Union[TaskId, Iterable[TaskId]],
-        origin: Optional[Subtask] = None,
+        origin: Optional[TaskGroup] = None,
     ):
         if isinstance(ids, TaskId):
             self.add(self.__find_task(ids, origin))
@@ -57,7 +57,7 @@ class __TaskManager:
     def __find_task(
         self,
         id: TaskId,
-        origin: Optional[Subtask] = None,
+        origin: Optional[TaskGroup] = None,
     ) -> TaskIdentity:
         _Ensure.type(id, TaskId, "id")
         return TaskResolver.find_task(id, origin)

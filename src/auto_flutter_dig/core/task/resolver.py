@@ -7,7 +7,7 @@ from typing import Deque, Iterable, List, Optional, Union
 from ...core.utils import _If
 from ...model.error import TaskNotFound
 from ...model.task import *
-from ...model.task.subtask import Subtask
+from ...model.task.group import TaskGroup
 from ._unique_identity import _TaskUniqueIdentity
 
 
@@ -16,7 +16,7 @@ class TaskResolver(ABC):
     def resolve(
         task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
         previous: List[TaskIdentity] = [],
-        origin: Optional[Subtask] = None,
+        origin: Optional[TaskGroup] = None,
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
@@ -50,7 +50,7 @@ class TaskResolver(ABC):
     @staticmethod
     def __resolve_dependencies(
         items: List[TaskIdentity],
-        origin: Optional[Subtask] = None,
+        origin: Optional[TaskGroup] = None,
     ) -> List[TaskIdentity]:
         if len(items) <= 0:
             raise IndexError("Require at least one TaskIdentity")
@@ -91,7 +91,7 @@ class TaskResolver(ABC):
         return items[start:]
 
     @staticmethod
-    def find_task(id: TaskId, origin: Optional[Subtask] = None) -> TaskIdentity:
+    def find_task(id: TaskId, origin: Optional[TaskGroup] = None) -> TaskIdentity:
         if origin is None:
             from ...module.aflutter.task.root import Root
 

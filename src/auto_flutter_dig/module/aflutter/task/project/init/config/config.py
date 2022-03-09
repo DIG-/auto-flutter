@@ -3,7 +3,7 @@ from typing import Callable
 from .......core.utils import _Dict
 from .......model.task import *
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .......model.task.subtask import Subtask
+from .......model.task.group import TaskGroup
 from .....identity import AflutterTaskIdentity
 from ..find.flavor.flavor import ProjectInitFindFlavorTask
 from .android import ProjectInitConfigAndroidTask
@@ -11,11 +11,11 @@ from .ios import ProjectInitConfigIosTask
 from .web import ProjectInitConfigWebTask
 
 
-class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, Subtask):
+class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, TaskGroup):
     def __init__(self, creator: Callable[[], Task]) -> None:
         InitProjectTaskIdentity.__init__(self, "", "", "", [], creator)
         AflutterTaskIdentity.__init__(self, "-project-init-config", "", [], creator)
-        Subtask.__init__(
+        TaskGroup.__init__(
             self,
             [
                 ProjectInitConfigAndroidTask.identity,
@@ -34,7 +34,7 @@ class ProjectInitConfigTask(Task):
         lambda: ProjectInitConfigTask(ProjectInitConfigTask.identity)
     )
 
-    def __init__(self, subtask: Subtask) -> None:
+    def __init__(self, subtask: TaskGroup) -> None:
         super().__init__()
         self._subtask = subtask
 
