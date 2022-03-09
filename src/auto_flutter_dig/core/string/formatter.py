@@ -8,7 +8,7 @@ from ..utils import _Dict
 
 
 class StringFormatter:
-    REGEX = re_compile(r"\$\{(\w+):(\w+\.)?(\w+)(\|\w+)?}")
+    REGEX = re_compile(r"\$\{(\w+):([\w\_\-]+\.)?([\w\_\-]+)(\|\w+)?}")
     EXTRAS = Dict[str, str]
 
     def format(self, input: str, args: Args, args_extra: Optional[EXTRAS] = None) -> str:
