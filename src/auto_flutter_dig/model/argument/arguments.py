@@ -26,7 +26,7 @@ class Args:
             self.select_group(group)
 
     def __repr__(self) -> str:
-        return self.__content.__repr__()
+        return f"Args(group={self.__selected_group}, content={self.__content.__repr__()})"
 
     def select_group(self, group: Group) -> Args:
         self.__selected_group = group
