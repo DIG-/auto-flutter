@@ -2,12 +2,12 @@ from abc import abstractmethod
 from pathlib import Path, PurePath, PurePosixPath
 from typing import Dict, Iterable, Optional, Union
 
-from ....core.config import Config
-from ....core.os import OS
-from ....core.process import Process
-from ....core.string import SF
-from ....model.task import *
-from ....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
+from .....core.config import Config
+from .....core.os import OS
+from .....core.process import Process
+from .....core.string import SF
+from .....model.task import *
+from .....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
 
 __all__ = [
     "Task",

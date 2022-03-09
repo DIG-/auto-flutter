@@ -2,7 +2,7 @@ from typing import Optional
 
 from ....core.config import Config
 from ....module.aflutter.task.project.read import ProjectRead
-from ....task.base.process import *
+from ....core.utils.task.process import *
 from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 

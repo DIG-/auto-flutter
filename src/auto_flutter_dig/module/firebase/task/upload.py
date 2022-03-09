@@ -5,7 +5,7 @@ from ....core.os import OS
 from ....core.utils import _Dict, _If
 from ....model.argument.option import LongOptionWithValue
 from ....module.flutter.task.build.stub import FlutterBuildStub
-from ....task.base.process import *
+from ....core.utils.task.process import *
 from ..identity import FirebaseTaskIdentity
 from ..model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
 from .setup.check import FirebaseCheck
