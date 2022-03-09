@@ -1,6 +1,6 @@
+from .....core.utils.task.subtask_parent_task import BaseSubtaskParentTask
 from .....model.task.group import TaskGroup
 from .....module.aflutter.identity import AflutterTaskIdentity
-from .....task.base.subtask_parent_task import BaseSubtaskParentTask
 from .check import AflutterSetupCheckTask
 from .save import AflutterSetupSaveTask
 from .show import AflutterSetupShow

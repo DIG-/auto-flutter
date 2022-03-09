@@ -1,6 +1,6 @@
+from .....core.utils.task.subtask_parent_task import BaseSubtaskParentTask
 from .....model.task import *
 from .....model.task.group import TaskGroup
-from .....task.base.subtask_parent_task import BaseSubtaskParentTask
 from ...identity import AflutterTaskIdentity
 from .flavor import AflutterFlavorConfigTask
 from .platform import AflutterPlatformConfigTask
