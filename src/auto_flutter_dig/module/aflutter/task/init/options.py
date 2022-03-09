@@ -4,14 +4,10 @@ from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
 from .....core.config import Config
 from .....model.argument.option import *
-from .....model.argument.option.error import (
-    OptionInvalidFormat,
-    OptionNotFound,
-    OptionRequireValue,
-)
+from .....model.argument.option.error import OptionInvalidFormat, OptionNotFound, OptionRequireValue
 from .....model.task import *
 from ...config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
-from .....task.help import Help
+from ..help import HelpTask
 
 Argument = str
 Group = str
@@ -247,7 +243,7 @@ class ParseOptionsTask(Task):
 
         if args.group_contains("aflutter", ParseOptionsTask.__option_help):
             TaskManager._task_stack.clear()  # pylint: disable=protected-access
-            self._append_task(Help.Stub(self._task_identity))
+            self._append_task(HelpTask.Stub(self._task_identity))
 
         if args.group_contains("aflutter", ParseOptionsTask.__option_stack_trace):
             Config.put_bool(

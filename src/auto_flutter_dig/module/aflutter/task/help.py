@@ -2,24 +2,17 @@ from pathlib import Path
 from sys import argv as sys_argv
 from typing import Dict, Iterable, List, Optional, Union
 
-from ..core.string import SB
-from ..core.task import TaskResolver
-from ..core.utils import _Iterable
-from ..model.argument.option import (
-    LongOption,
-    LongPositionalOption,
-    Option,
-    OptionWithValue,
-    PositionalOption,
-    ShortOption,
-)
-from ..model.error import E, TaskNotFound
-from ..model.task import *
-from ..model.task.subtask import Subtask
-from ..module.aflutter.identity import AflutterTaskIdentity
+from ....core.string import SB
+from ....core.task import TaskResolver
+from ....core.utils import _Iterable
+from ....model.argument.option import *
+from ....model.error import E, TaskNotFound
+from ....model.task import *
+from ....model.task.subtask import Subtask
+from ..identity import AflutterTaskIdentity
 
 
-class Help(Task):
+class HelpTask(Task):
     class Stub(AflutterTaskIdentity):
         def __init__(
             self,
@@ -27,11 +20,11 @@ class Help(Task):
             message: Optional[str] = None,
         ) -> None:
             super().__init__(
-                Help.identity.id,
-                Help.identity.name,
-                Help.identity.options,
-                lambda: Help(task_id, message),
-                Help.identity.allow_more,
+                HelpTask.identity.id,
+                HelpTask.identity.name,
+                HelpTask.identity.options,
+                lambda: HelpTask(task_id, message),
+                HelpTask.identity.allow_more,
             )
 
     option_task = LongPositionalOption("task", 0, "Show help details about given task")
@@ -40,7 +33,7 @@ class Help(Task):
         "help",
         "Show help",
         [option_task],
-        lambda: Help(),
+        lambda: HelpTask(None, None),
     )
 
     def __init__(
@@ -63,9 +56,8 @@ class Help(Task):
             self._task_parent = task_id.parent
         elif not task_id is None:
             raise TypeError(
-                "Field `task_id` must be instance of `TaskId`, `TaskIdentity` or `TaskNotFound`, but `{input}` was used".format(
-                    input=type(task_id)
-                )
+                "Field `task_id` must be instance of `TaskId`, `TaskIdentity` or `TaskNotFound`,"
+                + f" but `{type(task_id)}` was used"
             )
 
     def describe(self, args: Args) -> str:
@@ -79,7 +71,7 @@ class Help(Task):
             self._task_parent = None
 
         if self._task_parent is None:
-            from ..module.aflutter.task.root import Root
+            from .root import Root
 
             self._task_parent = Root
 
@@ -100,7 +92,7 @@ class Help(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    error=E(LookupError("Failed to search for task {}.".format(self._task_id))).caused_by(error),
+                    error=E(LookupError(f"Failed to search for task {self._task_id}.")).caused_by(error),
                 )
             pass
 
@@ -148,7 +140,7 @@ class Help(Task):
         identity: Optional[TaskIdentity],
         positional: Iterable[PositionalOption],
     ):
-        from ..module.aflutter.task.root import Root
+        from .root import Root
 
         program = Path(sys_argv[0]).name
         if program == "__main__.py":

@@ -5,8 +5,8 @@ from ....module.aflutter.task.project.init.runner import ProjectInitRunnerTask
 from ....module.aflutter.task.project.read import ProjectRead
 from ....module.aflutter.task.project.save import ProjectSave
 from ....module.aflutter.task.setup import AflutterSetupIdentity
-from ....task.help import Help
 from ..identity import AflutterTaskIdentity
+from .help import HelpTask
 
 __all__ = ["Root"]
 
@@ -24,7 +24,7 @@ class _AflutterRoot(AflutterTaskIdentity, Subtask):
         Subtask.__init__(
             self,
             [
-                Help.identity,
+                HelpTask.identity,
                 ProjectInitRunnerTask.identity,
                 AflutterConfigIdentity,
                 AflutterSetupIdentity,

@@ -110,10 +110,10 @@ class __TaskManager:
 
             if not output.success:
                 if isinstance(output, TaskResultHelp):
-                    from ...task.help import Help
+                    from ...module.aflutter.task.help import HelpTask
 
                     self._task_stack.clear()
-                    self.add(Help.Stub(identity))
+                    self.add(HelpTask.Stub(identity))
                     had_failure = True
                     continue
                 return False

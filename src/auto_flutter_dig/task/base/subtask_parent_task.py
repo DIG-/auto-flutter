@@ -3,7 +3,7 @@ from ...core.utils import _Ensure
 from ...model.error import SilentWarning
 from ...model.task import *
 from ...model.task.subtask import Subtask
-from ...task.help import Help
+from ...module.aflutter.task.help import HelpTask
 
 __all__ = ["BaseSubtaskParentTask"]
 
@@ -20,7 +20,7 @@ class BaseSubtaskParentTask(Task):
 
     def execute(self, args: Args) -> TaskResult:
         self._append_task(
-            Help.Stub(
+            HelpTask.Stub(
                 self.identity,
                 SB()
                 .append("Task ", SB.Color.YELLOW)

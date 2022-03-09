@@ -12,7 +12,7 @@ from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
 from .....module.firebase.firebase import FirebaseModulePlugin
 from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
-from .....task.help import Help
+from ..help import HelpTask
 from ..project.read import ProjectRead
 from .options import ParseOptionsTask
 from .read_config import ReadConfigTask
@@ -71,13 +71,13 @@ class AflutterInitTask(Task):
         self._uptade_description("Finding task")
 
         if len(sys_argv) <= 1:
-            task: TaskIdentity = Help.Stub(message=SB().append("Require one task to run", SB.Color.RED).str())
+            task: TaskIdentity = HelpTask.Stub(message=SB().append("Require one task to run", SB.Color.RED).str())
             offset = 1
         else:
             try:
                 task, offset = self.__find_task(Root)
             except TaskNotFound as error:
-                self._append_task(Help.Stub(error.task_id))
+                self._append_task(HelpTask.Stub(error.task_id))
                 return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
             except BaseException as error:
                 return TaskResult(
