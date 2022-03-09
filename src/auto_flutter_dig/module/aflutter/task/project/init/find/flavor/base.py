@@ -24,7 +24,8 @@ class BaseProjectInitFindFlavorTask(Task):
     ):
         if project.flavors is None:
             project.flavors = []
-        project.flavors.append(flavor)
+        if not flavor in project.flavors:
+            project.flavors.append(flavor)
 
         if not build_param is None and len(build_param) > 0:
             project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).build_param = build_param
