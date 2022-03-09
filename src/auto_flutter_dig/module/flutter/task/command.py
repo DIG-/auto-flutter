@@ -35,7 +35,7 @@ class FlutterCommandTask(BaseProcessTask):
         if len(self._command) <= 0:
             return TaskResult(
                 args,
-                error=AssertionError("Flutter command require at least one command"),
+                error=E(AssertionError("Flutter command require at least one command")).error,
             )
         flutter = Config.get_path(FLUTTER_CONFIG_KEY_PATH)
         self._command.insert(0, FLUTTER_DISABLE_VERSION_CHECK)
