@@ -2,12 +2,9 @@ from typing import Optional
 
 from ...core.config import Config
 from ...core.utils import _If
+from ...module.aflutter.task.project.read import ProjectRead
+from ...module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 from ...task.base.process import *
-from ...module.flutter.model._const import (
-    FLUTTER_CONFIG_KEY_PATH,
-    FLUTTER_DISABLE_VERSION_CHECK,
-)
-from ...task.project import ProjectRead
 
 
 class FlutterCommand(BaseProcessTask):

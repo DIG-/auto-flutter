@@ -14,7 +14,7 @@ from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
 from .....task.help import Help
 from .....task.options import ParseOptions
-from .....task.project import ProjectRead
+from ..project.read import ProjectRead
 from .read_config import ReadConfigTask
 
 
