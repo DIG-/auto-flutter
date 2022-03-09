@@ -2,21 +2,21 @@ from typing import List
 
 from .....core.string import SB
 from .....core.utils import _Dict
-from .....model.argument.option import (LongOption, LongPositionalOption,
-                                       LongShortOptionWithValue)
+from .....model.argument.option import LongOption, LongPositionalOption, LongShortOptionWithValue
 from .....model.argument.option.common.build_type import BuildTypeFlutterOption
 from .....model.build import BuildType
 from .....model.platform import Platform
 from .....model.project import Project
 from .....model.task import *
-from ....aflutter.task.project.read import ProjectRead
 from .....task.identity import FlutterTaskIdentity
+from ....aflutter.task.project.read import ProjectRead
 
 
 class _BuildTypeFlutterPositionalOption(BuildTypeFlutterOption, LongPositionalOption):
     def __init__(self, description: str) -> None:
-        BuildTypeFlutterOption.__init__(self,description)
-        LongPositionalOption.__init__(self,self.long,0,description)
+        BuildTypeFlutterOption.__init__(self, description)
+        LongPositionalOption.__init__(self, self.long, 0, description)
+
 
 class FlutterBuildConfig(Task):
     __options = {

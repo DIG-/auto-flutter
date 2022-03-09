@@ -8,7 +8,8 @@ __all__ = ["PlatformOption"]
 
 class PlatformOption(LongOptionWithValue, _DecodedOption[Platform]):
     def __init__(self, description: str) -> None:
-        super().__init__("platform", description)
+        LongOptionWithValue.__init__(self, "platform", description)
+        _DecodedOption.__init__(self, description)
 
     def _convert(self, input: str) -> Platform:
         return _Enum.parse_value(Platform, input)

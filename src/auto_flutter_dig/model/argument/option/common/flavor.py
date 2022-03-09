@@ -7,7 +7,8 @@ __all__ = ["FlavorOption"]
 
 class FlavorOption(LongShortOptionWithValue, _DecodedOption[Flavor]):
     def __init__(self, description: str) -> None:
-        super().__init__("f", "flavor", description)
+        LongShortOptionWithValue.__init__(self, "f", "flavor", description)
+        _DecodedOption.__init__(self, description)
 
     def _convert(self, input: str) -> Flavor:
         return input
