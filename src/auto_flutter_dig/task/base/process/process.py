@@ -31,7 +31,7 @@ class BaseProcessTask(Task):
         self._process: Process
         self._ignore_failure: bool = ignore_failure
         self._show_output_at_end: bool = show_output_at_end
-        self.__print_content = Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT)
+        self._can_print_content = Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT)
 
     def execute(self, args: Args) -> TaskResult:
         process = self._create_process(args)
@@ -44,7 +44,7 @@ class BaseProcessTask(Task):
     def _print_content(self, message: Optional[str]):
         if message is None:
             return
-        if self.__print_content:
+        if self._can_print_content:
             self._print(message)
         else:
             self.log.debug(message)
@@ -88,7 +88,7 @@ class BaseProcessTask(Task):
     ) -> TaskResult:
         if (
             message is None
-            and ((output and self._show_output_at_end) or (not output and not self.__print_content))
+            and ((output and self._show_output_at_end) or (not output and not self._can_print_content))
             and not process.output is None
             and len(process.output) > 0
         ):
