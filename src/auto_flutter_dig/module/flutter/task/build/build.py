@@ -1,17 +1,17 @@
 from pathlib import Path, PurePosixPath
 from typing import Optional
 
-from ....core.os import OS
-from ....core.string import SB, SF
-from ....model.build import *
-from ....model.error import SilentWarning
-from ....model.platform import Platform
-from ....model.platform.flavored_config import PlatformConfigFlavored
-from ....model.platform.run_type import RunType
-from ....model.project import *
-from ....model.task import *
-from ....module.flutter.task.command import FlutterCommandTask
-from ....task.identity import FlutterTaskIdentity
+from .....core.os import OS
+from .....core.string import SB, SF
+from .....model.build import *
+from .....model.error import SilentWarning
+from .....model.platform import Platform
+from .....model.platform.flavored_config import PlatformConfigFlavored
+from .....model.platform.run_type import RunType
+from .....model.project import *
+from .....model.task import *
+from ..command import FlutterCommandTask
+from .....task.identity import FlutterTaskIdentity
 
 
 class FlutterBuildTask(FlutterCommandTask):

@@ -1,12 +1,12 @@
 from typing import List
 
-from ....core.utils import _Dict, _Ensure
-from ....model.build import BuildType
-from ....model.platform import Platform
-from ....model.platform.merge_config import MergePlatformConfigFlavored
-from ....model.project import Project
-from ....model.task import *
-from ....task.identity import FlutterTaskIdentity
+from .....core.utils import _Dict, _Ensure
+from .....model.build import BuildType
+from .....model.platform import Platform
+from .....model.platform.merge_config import MergePlatformConfigFlavored
+from .....model.project import Project
+from .....model.task import *
+from .....task.identity import FlutterTaskIdentity
 from .build import FlutterBuildTask
 from .config import FlutterBuildConfig
 
