@@ -28,6 +28,7 @@ class FlutterBuildTask(FlutterCommandTask):
         android_rebuild_fix_desired: bool = False,
     ) -> None:
         super().__init__(
+            command=[],
             ignore_failure=False,
             show_output_at_end=False,
             put_output_args=True,

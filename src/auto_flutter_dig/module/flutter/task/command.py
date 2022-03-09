@@ -9,7 +9,7 @@ from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHEC
 class FlutterCommandTask(BaseProcessTask):
     def __init__(
         self,
-        command: List[str] = [],
+        command: List[str],
         describe: str = "",
         ignore_failure: bool = False,
         show_output_at_end: bool = False,
