@@ -10,8 +10,8 @@ from .....model.platform.flavored_config import PlatformConfigFlavored
 from .....model.platform.run_type import RunType
 from .....model.project import *
 from .....model.task import *
-from ..command import FlutterCommandTask
 from .....task.identity import FlutterTaskIdentity
+from ..command import FlutterCommandTask
 
 
 class FlutterBuildTask(FlutterCommandTask):
@@ -20,10 +20,10 @@ class FlutterBuildTask(FlutterCommandTask):
     def __init__(
         self,
         project: Project,
-        type: BuildType,
+        build_type: BuildType,
         flavor: Optional[Flavor],
         config: PlatformConfigFlavored,
-        debug: bool = False,
+        build_mode: BuildMode = BuildMode.RELEASE,
         android_rebuild_fix_other: bool = False,
         android_rebuild_fix_desired: bool = False,
     ) -> None:
@@ -34,10 +34,10 @@ class FlutterBuildTask(FlutterCommandTask):
             put_output_args=True,
         )
         self._project: Project = project
-        self._type: BuildType = type
+        self._build_type: BuildType = build_type
         self._flavor: Optional[Flavor] = flavor
         self._config: PlatformConfigFlavored = config
-        self._debug: bool = debug
+        self._build_mode: BuildMode = build_mode
         self._android_rebuild_fix_other: bool = android_rebuild_fix_other
         self._android_rebuild_fix_desired: bool = android_rebuild_fix_desired
         if (
@@ -50,19 +50,19 @@ class FlutterBuildTask(FlutterCommandTask):
 
     def describe(self, args: Args) -> str:
         if self._android_rebuild_fix_desired:
-            return "Rebuild flutter {}, flavor {}".format(self._type.platform.value, self._flavor)
+            return f"Rebuild flutter {self._build_type.platform.value}, flavor {self._flavor}"
         if self._flavor is None:
-            return "Building flutter {}".format(self._type.platform.value)
+            return f"Building flutter {self._build_type.platform.value}"
         else:
-            return "Building flutter {}, flavor {}".format(self._type.platform.value, self._flavor)
+            return f"Building flutter {self._build_type.platform.value}, flavor {self._flavor}"
 
     def execute(self, args: Args) -> TaskResult:
-        self._command = ["build", self._type.flutter]
+        self._command = ["build", self._build_type.flutter]
 
         if not self._flavor is None:
             self._command.extend(("--flavor", self._flavor))
 
-        if self._debug:
+        if self._build_mode:
             self._command.append("--debug")
         else:
             self._command.append("--release")
@@ -75,14 +75,14 @@ class FlutterBuildTask(FlutterCommandTask):
             self._clear_output(args)
             return self._check_output_file(args)
 
-        if self._type.platform == Platform.ANDROID:
+        if self._build_type.platform == Platform.ANDROID:
             return self._handle_android_error(args, result)
 
         self._clear_output(args)
         return result
 
     def _check_output_file(self, args: Args) -> TaskResult:
-        output_file = self._config.get_output(self._flavor, self._type)
+        output_file = self._config.get_output(self._flavor, self._build_type)
         if output_file is None:
             return TaskResult(
                 args,
@@ -93,9 +93,7 @@ class FlutterBuildTask(FlutterCommandTask):
             output_file,
             args,
             {
-                "flavor": "" if self._flavor is None else self._flavor,
-                "build_type": "debug" if self._debug else "release",
-                "platform": self._type.platform.value,
+                "platform": self._build_type.platform.value,
             },
         )
 
@@ -104,7 +102,7 @@ class FlutterBuildTask(FlutterCommandTask):
         else:
             return TaskResult(
                 args,
-                E(FileNotFoundError('Output "{}" not found'.format(output_file))).error,
+                E(FileNotFoundError(f'Output "{output_file}" not found')).error,
                 success=False,
             )
 
@@ -143,10 +141,10 @@ class FlutterBuildTask(FlutterCommandTask):
         self._append_task(
             FlutterBuildTask(
                 self._project,
-                self._type,
+                self._build_type,
                 self._flavor,
                 self._config,
-                self._debug,
+                self._build_mode,
                 android_rebuild_fix_other=False,
                 android_rebuild_fix_desired=True,
             )
@@ -155,10 +153,10 @@ class FlutterBuildTask(FlutterCommandTask):
             self._append_task(
                 FlutterBuildTask(
                     self._project,
-                    self._type,
+                    self._build_type,
                     flavor,
                     self._config,
-                    self._debug,
+                    self._build_mode,
                     android_rebuild_fix_other=True,
                     android_rebuild_fix_desired=False,
                 )
