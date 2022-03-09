@@ -4,6 +4,7 @@ from ......core.task.resolver import TaskNotFound, TaskResolver
 from ......model.task import *
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ....identity import AflutterTaskIdentity
+from ...project.save import ProjectSave
 from .config.config import ProjectInitConfigTask
 from .create import ProjectInitCreateTask
 from .find.flavor.flavor import ProjectInitFindFlavorTask
@@ -44,10 +45,32 @@ class ProjectInitRunnerTask(Task):
         while len(resolved) > 0:
             possible = filter(lambda x: self._all_in(x.require_before, tasks), resolved)
             ordered = sorted(possible, key=lambda x: len(x.require_after), reverse=True)
+            if len(ordered) <= 0:
+                self.log.warning(" === DUMP START ===")
+                self.log.info(str(tasks))
+                self.log.warning(" --- RESOLVED ---")
+                self.log.info(str(resolved))
+                return TaskResult(
+                    args, E(LookupError("Has task to include, but all require_before are not available")).error
+                )
+            found = False
             for item in ordered:
                 if not self._any_in(item.require_after, tasks):
+                    found = True
                     tasks.append(item.identity)
                     resolved.remove(item)
+            if not found:
+                self.log.warning(" === DUMP START ===")
+                self.log.info(str(tasks))
+                self.log.warning(" --- RESOLVED ---")
+                self.log.info(str(resolved))
+                self.log.warning(" --- FILTERED ---")
+                self.log.info(str(ordered))
+                return TaskResult(
+                    args, E(LookupError("Has task to include, but all require_after does not apply")).error
+                )
+
+        tasks.append(ProjectSave.identity)
         tasks.reverse()
         self._append_task(tasks)
         return TaskResult(args)
