@@ -16,7 +16,7 @@ from ..model.argument.option import (
 from ..model.error import E, TaskNotFound
 from ..model.task import *
 from ..model.task.subtask import Subtask
-from ..task.identity import AflutterTaskIdentity
+from ..module.aflutter.identity import AflutterTaskIdentity
 
 
 class Help(Task):

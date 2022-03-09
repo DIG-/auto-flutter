@@ -8,7 +8,7 @@ from .....model.platform import Platform
 from .....model.platform.merge_config import MergePlatformConfigFlavored
 from .....model.project import Project
 from .....model.task import *
-from .....task.identity import FlutterTaskIdentity
+from ...identity import FlutterTaskIdentity
 from .build import FlutterBuildTaskIdentity
 
 

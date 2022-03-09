@@ -10,7 +10,7 @@ from .....model.platform.flavored_config import PlatformConfigFlavored
 from .....model.platform.run_type import RunType
 from .....model.project import *
 from .....model.task import *
-from .....task.identity import FlutterTaskIdentity
+from ...identity import FlutterTaskIdentity
 from ..command import FlutterCommandTask
 
 
