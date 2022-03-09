@@ -13,8 +13,8 @@ from .....module.firebase.firebase import FirebaseModulePlugin
 from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
 from .....task.help import Help
-from .....task.options import ParseOptions
 from ..project.read import ProjectRead
+from .options import ParseOptionsTask
 from .read_config import ReadConfigTask
 
 
@@ -93,7 +93,7 @@ class AflutterInitTask(Task):
                 error=E(RuntimeError("Failed to create task tree")).caused_by(error),
             )
 
-        parse_options = ParseOptions(task, sys_argv[offset:])
+        parse_options = ParseOptionsTask(task, sys_argv[offset:])
         self._uptade_description(parse_options.describe(args))
         parse_options_result = parse_options.execute(args)
         return parse_options_result

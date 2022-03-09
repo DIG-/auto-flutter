@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
-from ..core.config import Config
-from ..model.argument.option import *
-from ..model.argument.option.error import (
+from .....core.config import Config
+from .....model.argument.option import *
+from .....model.argument.option.error import (
     OptionInvalidFormat,
     OptionNotFound,
     OptionRequireValue,
 )
-from ..model.task import *
-from ..module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
-from ..task.help import Help
+from .....model.task import *
+from ...config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
+from .....task.help import Help
 
 Argument = str
 Group = str
@@ -56,7 +56,7 @@ class _LongOptionMaybeWithValue(LongOptionWithValue):
     ...
 
 
-class ParseOptions(Task):
+class ParseOptionsTask(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
     __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
 
@@ -69,7 +69,7 @@ class ParseOptions(Task):
         return "Parsing arguments"
 
     def execute(self, args: Args) -> TaskResult:
-        from ..core.task import TaskManager  # pylint: disable=import-outside-toplevel
+        from .....core.task import TaskManager  # pylint: disable=import-outside-toplevel
 
         long_options: Dict[Argument, Dict[Group, _Helper[LongOption]]] = {}
         short_options: Dict[Argument, Dict[Group, _Helper[ShortOption]]] = {}
@@ -89,9 +89,9 @@ class ParseOptions(Task):
                 if isinstance(option, PositionalOption):
                     _Helper(option, identity, PositionalOption).into(positional_options)
 
-        _Helper(ParseOptions.__option_help, "aflutter", ShortOption).into(short_options)
-        _Helper(ParseOptions.__option_help, "aflutter", LongOption).into(long_options)
-        _Helper(ParseOptions.__option_stack_trace, "aflutter", LongOption).into(long_options)
+        _Helper(ParseOptionsTask.__option_help, "aflutter", ShortOption).into(short_options)
+        _Helper(ParseOptionsTask.__option_help, "aflutter", LongOption).into(long_options)
+        _Helper(ParseOptionsTask.__option_stack_trace, "aflutter", LongOption).into(long_options)
 
         has_param: List[_Helper] = []
         maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
@@ -245,11 +245,11 @@ class ParseOptions(Task):
                 for group, helper_positional in positional_options[pos].items():
                     self.__append_argument(args, helper_positional, argument)
 
-        if args.group_contains("aflutter", ParseOptions.__option_help):
+        if args.group_contains("aflutter", ParseOptionsTask.__option_help):
             TaskManager._task_stack.clear()  # pylint: disable=protected-access
             self._append_task(Help.Stub(self._task_identity))
 
-        if args.group_contains("aflutter", ParseOptions.__option_stack_trace):
+        if args.group_contains("aflutter", ParseOptionsTask.__option_stack_trace):
             Config.put_bool(
                 AFLUTTER_CONFIG_ENABLE_STACK_STRACE,
                 True,
