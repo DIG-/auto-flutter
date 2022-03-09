@@ -14,7 +14,7 @@ class ProjectInitConfigWebTask(Task):
     )
 
     def describe(self, args: Args) -> str:
-        return "Apply android base config"
+        return "Apply web base config"
 
     def execute(self, args: Args) -> TaskResult:
         project = Project.current
