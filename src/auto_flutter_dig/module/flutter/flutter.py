@@ -1,4 +1,5 @@
 from ..plugin import *
+from .task.build.stub import FlutterBuildStub
 from .task.config.build_param import FlutterBuildParamConfigTask
 from .task.exec import FlutterExecTask
 from .task.generator import FlutterGeneratorTask
@@ -29,6 +30,7 @@ class FlutterModulePlugin(AflutterModulePlugin):
                 FlutterGeneratorTask.identity,
                 FlutterGeneratorTask.identity_code,
                 FlutterPubGetIdentity,
+                FlutterBuildStub.identity,
             ]
         )
 
