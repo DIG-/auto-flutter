@@ -1,5 +1,8 @@
 from ..plugin import *
 from .task.config.build_param import FlutterBuildParamConfigTask
+from .task.exec import FlutterExecTask
+from .task.generator import FlutterGeneratorTask
+from .task.pub_get import FlutterPubGetIdentity
 from .task.setup.check import FlutterSetupCheckTask
 from .task.setup.setup import FlutterSetupTask
 
@@ -21,6 +24,10 @@ class FlutterModulePlugin(AflutterModulePlugin):
         root.register_subtask(
             [
                 FlutterSetupCheckTask.identity,
+                FlutterExecTask.identity,
+                FlutterGeneratorTask.identity,
+                FlutterGeneratorTask.identity_code,
+                FlutterPubGetIdentity,
             ]
         )
 
