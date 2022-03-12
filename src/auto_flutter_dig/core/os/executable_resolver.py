@@ -11,7 +11,8 @@ __all__ = ["ExecutableResolver"]
 
 class ExecutableResolver(ABC):
     @abstractmethod
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint: disable=unused-private-member
+        # Just prevent to someone try to instantiate this class directly
         pass
 
     @staticmethod
@@ -24,7 +25,7 @@ class ExecutableResolver(ABC):
     def get_executable(path: PurePath) -> Optional[Path]:
         try:
             _path = Path(path)
-        except:
+        except BaseException:
             return None
         ## Fast mode
         if ExecutableResolver.is_executable(_path):
@@ -69,7 +70,6 @@ class ExecutableResolver(ABC):
             if not _path is None:
                 # Executable is in path
                 return PurePath(_path.name)
-            pass
         # Not in path, try at current local
         _path = ExecutableResolver.get_executable(path)
         if not _path is None:
@@ -87,7 +87,7 @@ class ExecutableResolver(ABC):
     def __try_create_path(path: str) -> Optional[Path]:
         try:
             return Path(path)
-        except:
+        except BaseException:
             return None
 
     @staticmethod
