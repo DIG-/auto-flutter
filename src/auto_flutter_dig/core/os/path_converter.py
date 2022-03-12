@@ -83,10 +83,11 @@ class PathConverter(ABC):
         return output
 
     @abstractmethod
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint:disable=unused-private-member
+        # Used to avoid user instantiate class wthout creators
         pass
 
 
 class _PathConverter(PathConverter):
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint:disable=unused-private-member
         pass
