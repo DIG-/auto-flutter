@@ -7,9 +7,9 @@ class _Ensure(ABC):
     T = TypeVar("T")
 
     @staticmethod
-    def not_none(input: Optional[T], name: Optional[str] = None) -> T:
-        if not input is None:
-            return input
+    def not_none(value: Optional[T], name: Optional[str] = None) -> T:
+        if not value is None:
+            return value
         if name is None:
             raise AssertionError("Field require valid value")
         else:
@@ -17,77 +17,77 @@ class _Ensure(ABC):
 
     @staticmethod
     def type(
-        input: Optional[T],
+        value: Optional[T],
         cls: Union[Type[T], Tuple[Type, ...]],
         name: Optional[str] = None,
     ) -> Optional[T]:
-        if input is None:
+        if value is None:
             return None
-        if isinstance(input, cls):
-            return input
-        return _Ensure._raise_error_instance(name, cls, type(input))
+        if isinstance(value, cls):
+            return value
+        return _Ensure._raise_error_instance(name, cls, type(value))
 
     @staticmethod
     def type_returned(
-        input: Optional[T],
+        value: Optional[T],
         cls: Union[Type[T], Tuple[Type, ...]],
         name: Optional[str] = None,
     ) -> Optional[T]:
-        if input is None:
+        if value is None:
             return None
-        if isinstance(input, cls):
-            return input
-        return _Ensure._raise_error_value(name, cls, type(input))
+        if isinstance(value, cls):
+            return value
+        return _Ensure._raise_error_value(name, cls, type(value))
 
     @staticmethod
-    def instance(input: Any, cls: Type[T], name: Optional[str] = None) -> T:
-        if not input is None and isinstance(input, cls):
-            return input
-        return _Ensure._raise_error_instance(name, cls, type(input))
+    def instance(value: Any, cls: Type[T], name: Optional[str] = None) -> T:
+        if not value is None and isinstance(value, cls):
+            return value
+        return _Ensure._raise_error_instance(name, cls, type(value))
 
     @staticmethod
-    def _raise_error_value(name: Optional[str], cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
+    def _raise_error_value(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Value must be instance of `{cls}`, but `{input}` was returned",
                 "",
-                cls,
-                input,
+                expected,
+                received,
             )
         else:
             _Ensure._raise_error(
                 "`{name}` must be instance of `{cls}`, but `{input}` was returned",
                 name,
-                cls,
-                input,
+                expected,
+                received,
             )
 
     @staticmethod
-    def _raise_error_instance(name: Optional[str], cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
+    def _raise_error_instance(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Field must be instance of `{cls}`, but `{input}` was used",
                 "",
-                cls,
-                input,
+                expected,
+                received,
             )
         else:
             _Ensure._raise_error(
                 "Field `{name}` must be instance of `{cls}`, but `{input}` was used",
                 name,
-                cls,
-                input,
+                expected,
+                received,
             )
 
     @staticmethod
-    def _raise_error(message: str, name: str, cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
-        raise TypeError(message.format(name=name, cls=_Ensure.name(cls), input=_Ensure.name(input)))
+    def _raise_error(message: str, name: str, expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
+        raise TypeError(message.format(name=name, cls=_Ensure.name(expected), input=_Ensure.name(received)))
 
     @staticmethod
-    def name(cls: Union[T, Type[T], Type]) -> str:
-        if hasattr(cls, "__name__"):
-            return cls.__name__  # type: ignore
-        return str(cls)
+    def name(clazz: Union[T, Type[T], Type]) -> str:
+        if hasattr(clazz, "__name__"):
+            return clazz.__name__  # type: ignore
+        return str(clazz)
 
 
 class _EnsureCallable(ABC):
@@ -95,28 +95,28 @@ class _EnsureCallable(ABC):
 
     @staticmethod
     def type(
-        input: Optional[T],
+        value: Optional[T],
         name: Optional[str] = None,
     ) -> Optional[T]:
-        if input is None:
+        if value is None:
             return None
-        if isinstance(input, (FunctionType, MethodType)):
-            return input  # type: ignore
-        return _Ensure._raise_error_instance(name, Callable, type(input))
+        if isinstance(value, (FunctionType, MethodType)):
+            return value  # type: ignore
+        return _Ensure._raise_error_instance(name, Callable, type(value))
 
     @staticmethod
     def type_returned(
-        input: Optional[T],
+        value: Optional[T],
         name: Optional[str] = None,
     ) -> Optional[T]:
-        if input is None:
+        if value is None:
             return None
-        if isinstance(input, (FunctionType, MethodType)):
-            return input  # type: ignore
-        return _Ensure._raise_error_value(name, Callable, type(input))
+        if isinstance(value, (FunctionType, MethodType)):
+            return value  # type: ignore
+        return _Ensure._raise_error_value(name, Callable, type(value))
 
     @staticmethod
-    def instance(input: Optional[T], name: Optional[str] = None) -> T:
-        if not input is None and isinstance(input, (FunctionType, MethodType)):
-            return input  # type: ignore
-        return _Ensure._raise_error_instance(name, Callable, type(input))
+    def instance(value: Optional[T], name: Optional[str] = None) -> T:
+        if not value is None and isinstance(value, (FunctionType, MethodType)):
+            return value  # type: ignore
+        return _Ensure._raise_error_instance(name, Callable, type(value))
