@@ -86,7 +86,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         if not isinstance(parent, Dict):
             raise AssertionError("PlatformConfig must return Dict as json")
         if not self.flavored is None:
-            flavored = {"flavored": _JsonEncode.encode(self.flavored)}
+            flavored = {"flavored": JsonEncode.encode(self.flavored)}
             return {**parent, **flavored}
         return parent
 
@@ -102,7 +102,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             output.extras = other.extras
         if isinstance(json, Dict):
             if "flavored" in json:
-                output.flavored = _JsonDecode.decode_optional_dict(json["flavored"], Flavor, PlatformConfig)
+                output.flavored = JsonDecode.decode_optional_dict(json["flavored"], Flavor, PlatformConfig)
         return output
 
     def get_config_by_flavor(self, flavor: Optional[Flavor]) -> Optional[PlatformConfig]:

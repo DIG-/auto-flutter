@@ -29,9 +29,9 @@ class CustomTask(Serializable["CustomTask"]):
         return {
             "id": self.id,
             "name": self.name,
-            "type": _JsonEncode.encode(self.type),
-            "require": _JsonEncode.encode_optional(self.require),
-            "content": _JsonEncode.encode_optional(self.content),
+            "type": JsonEncode.encode(self.type),
+            "require": JsonEncode.encode_optional(self.require),
+            "content": JsonEncode.encode_optional(self.content),
         }
 
     @staticmethod
@@ -53,9 +53,9 @@ class CustomTask(Serializable["CustomTask"]):
             elif key == "name" and isinstance(value, str):
                 name = value
             elif key == "type":
-                type = _JsonDecode.decode(value, CustomTaskType)
+                type = JsonDecode.decode(value, CustomTaskType)
             elif key == "require":
-                require = _JsonDecode.decode_list(value, str)
+                require = JsonDecode.decode_list(value, str)
             elif key == "content":
-                content = _JsonDecode.decode(value, CustomTaskContent)
+                content = JsonDecode.decode(value, CustomTaskContent)
         return CustomTask(id, name, type, require, content)  # type: ignore[arg-type]

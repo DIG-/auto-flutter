@@ -7,7 +7,7 @@ from .serializable import Serializable
 from .type import Json
 
 
-class _JsonDecode(ABC):
+class JsonDecode(ABC):
     T = TypeVar("T", bound=Union[str, Serializable, Enum, bool])
     K = TypeVar("K", bound=Union[str, Enum])
     Decoder = Callable[[Json], Optional[T]]
@@ -38,7 +38,7 @@ class _JsonDecode(ABC):
     def decode_optional(json: Optional[Json], cls: Type[T], decoder: Optional[Decoder] = None) -> Optional[T]:
         if json is None:
             return None
-        return _JsonDecode.decode(json, cls, decoder)
+        return JsonDecode.decode(json, cls, decoder)
 
     @staticmethod
     def __decode_list(
@@ -46,17 +46,17 @@ class _JsonDecode(ABC):
     ) -> Iterable[Optional[T]]:
         if not isinstance(json, List):
             return _Ensure.raise_error_instance("json", List, type(json))
-        return map(lambda x: _JsonDecode.decode(x, cls, decoder), json)
+        return map(lambda x: JsonDecode.decode(x, cls, decoder), json)
 
     @staticmethod
     def decode_list(json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None) -> List[T]:
-        return list(_Iterable.FilterOptional(_JsonDecode.__decode_list(json, cls, decoder)))
+        return list(_Iterable.FilterOptional(JsonDecode.__decode_list(json, cls, decoder)))
 
     @staticmethod
     def decode_list_optional(
         json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None
     ) -> List[Optional[T]]:
-        return list(_JsonDecode.__decode_list(json, cls, decoder))
+        return list(JsonDecode.__decode_list(json, cls, decoder))
 
     @staticmethod
     def decode_optional_list(
@@ -66,7 +66,7 @@ class _JsonDecode(ABC):
     ) -> Optional[List[T]]:
         if json is None:
             return None
-        return _JsonDecode.decode_list(json, cls, decoder)
+        return JsonDecode.decode_list(json, cls, decoder)
 
     @staticmethod
     def decode_optional_list_optional(
@@ -76,7 +76,7 @@ class _JsonDecode(ABC):
     ) -> Optional[List[Optional[T]]]:
         if json is None:
             return None
-        return _JsonDecode.decode_list_optional(json, cls, decoder)
+        return JsonDecode.decode_list_optional(json, cls, decoder)
 
     @staticmethod
     def decode_dict(
@@ -86,7 +86,7 @@ class _JsonDecode(ABC):
         k_decoder: Optional[KDecoder] = None,
         t_decoder: Optional[Decoder] = None,
     ) -> Dict[K, T]:
-        mapped = _JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder)
+        mapped = JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder)
         filtered = _Iterable.FilterTupleOptional(mapped)
         return dict(filtered)
 
@@ -98,7 +98,7 @@ class _JsonDecode(ABC):
         k_decoder: Optional[KDecoder] = None,
         t_decoder: Optional[Decoder] = None,
     ) -> Dict[K, Optional[T]]:
-        return dict(_JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder))
+        return dict(JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder))
 
     @staticmethod
     def decode_optional_dict(
@@ -110,7 +110,7 @@ class _JsonDecode(ABC):
     ) -> Optional[Dict[K, T]]:
         if json is None:
             return None
-        return _JsonDecode.decode_dict(json, k_cls, t_cls, k_decoder, t_decoder)
+        return JsonDecode.decode_dict(json, k_cls, t_cls, k_decoder, t_decoder)
 
     @staticmethod
     def decode_optional_dict_optional(
@@ -122,7 +122,7 @@ class _JsonDecode(ABC):
     ) -> Optional[Dict[K, Optional[T]]]:
         if json is None:
             return None
-        return _JsonDecode.decode_dict_optional(json, k_cls, t_cls, k_decoder, t_decoder)
+        return JsonDecode.decode_dict_optional(json, k_cls, t_cls, k_decoder, t_decoder)
 
     @staticmethod
     def __decode_dict_to_map(
@@ -135,7 +135,7 @@ class _JsonDecode(ABC):
         if not isinstance(json, Dict):
             return _Ensure.raise_error_instance("json", Dict, type(json))
         return map(
-            lambda x: _JsonDecode.__decode_dict_tuple(x, k_cls, t_cls, k_decoder, t_decoder),
+            lambda x: JsonDecode.__decode_dict_tuple(x, k_cls, t_cls, k_decoder, t_decoder),
             json.items(),
         )
 
@@ -148,14 +148,14 @@ class _JsonDecode(ABC):
         t_decoder: Optional[Decoder] = None,
     ) -> Tuple[K, Optional[T]]:
         return (
-            _JsonDecode.__decode_dict_key(value[0], k_cls, k_decoder),
-            _JsonDecode.decode(value[1], t_cls, t_decoder),
+            JsonDecode.__decode_dict_key(value[0], k_cls, k_decoder),
+            JsonDecode.decode(value[1], t_cls, t_decoder),
         )
 
     @staticmethod
     def __decode_dict_key(key: str, k_cls: Type[K], k_decoder: Optional[KDecoder] = None) -> K:
         if k_decoder is None:
-            decoded = _JsonDecode.decode(key, k_cls, None)
+            decoded = JsonDecode.decode(key, k_cls, None)
         else:
             decoded = k_decoder(key)
         if decoded is None:

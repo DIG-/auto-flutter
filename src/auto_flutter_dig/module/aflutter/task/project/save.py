@@ -1,6 +1,6 @@
 from json import dump as json_dump
 
-from .....core.json import _JsonEncode
+from .....core.json import JsonEncode
 from .....model.project import Project
 from .....model.task import *
 from ...identity import AflutterTaskIdentity
@@ -19,7 +19,7 @@ class ProjectSave(Task):
             return TaskResult(args, error=error)
 
         try:
-            json = _JsonEncode.clear_nones(project.to_json())
+            json = JsonEncode.clear_nones(project.to_json())
         except BaseException as error:
             raise RuntimeError("Failed to serialize project", error)
 

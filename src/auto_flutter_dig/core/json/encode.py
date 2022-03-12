@@ -6,7 +6,7 @@ from .serializable import Serializable
 from .type import Json
 
 
-class _JsonEncode(ABC):
+class JsonEncode(ABC):
     Input = TypeVar("Input", bound=Union[Serializable, Enum, Json])
     kInput = TypeVar("kInput", bound=Union[Enum, str])
     Encoder = Callable[[Input], Json]
@@ -16,7 +16,7 @@ class _JsonEncode(ABC):
     def encode_optional(value: Optional[Input], encoder: Optional[Encoder] = None) -> Optional[Json]:
         if value is None:
             return None
-        return _JsonEncode.encode(value, encoder)
+        return JsonEncode.encode(value, encoder)
 
     @staticmethod
     def encode(value: Input, encoder: Optional[Encoder] = None) -> Json:
@@ -28,16 +28,16 @@ class _JsonEncode(ABC):
             if isinstance(value, Enum):
                 return value.value
             if isinstance(value, List):
-                return _JsonEncode.encode_list(value, _JsonEncode.encode)
+                return JsonEncode.encode_list(value, JsonEncode.encode)
             if isinstance(value, Dict):
-                return _JsonEncode.encode_dict(
+                return JsonEncode.encode_dict(
                     value,
-                    _JsonEncode.encode,
-                    _JsonEncode.encode,
+                    JsonEncode.encode,
+                    JsonEncode.encode,
                 )
             raise TypeError(f"Unknown encoder for {type(value).__name__}")
         if isinstance(value, List):
-            return _JsonEncode.encode_list(value, encoder)
+            return JsonEncode.encode_list(value, encoder)
         if isinstance(value, Dict):
             raise TypeError("Can not encode Dict with only one encoder. Use encode_dict")
 
@@ -45,7 +45,7 @@ class _JsonEncode(ABC):
 
     @staticmethod
     def encode_list(value: List[Input], encoder: Optional[Encoder] = None) -> List[Json]:
-        return list(map(lambda x: _JsonEncode.encode(x, encoder), value))
+        return list(map(lambda x: JsonEncode.encode(x, encoder), value))
 
     @staticmethod
     def encode_dict(
@@ -55,7 +55,7 @@ class _JsonEncode(ABC):
     ) -> Dict[str, Json]:
         return dict(
             map(
-                lambda x: _JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
+                lambda x: JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
                 value.items(),
             )
         )
@@ -67,8 +67,8 @@ class _JsonEncode(ABC):
         enoder_value: Encoder,
     ) -> Tuple[str, Json]:
         return (
-            _JsonEncode.__encode_dict_key(value[0], encoder_key),
-            _JsonEncode.encode(value[1], enoder_value),
+            JsonEncode.__encode_dict_key(value[0], encoder_key),
+            JsonEncode.encode(value[1], enoder_value),
         )
 
     @staticmethod
@@ -81,7 +81,7 @@ class _JsonEncode(ABC):
     @staticmethod
     def clear_nones(json: Json) -> Json:
         if isinstance(json, List):
-            return [_JsonEncode.clear_nones(x) for x in json if x is not None]
+            return [JsonEncode.clear_nones(x) for x in json if x is not None]
         if isinstance(json, Dict):
-            return {key: _JsonEncode.clear_nones(val) for key, val in json.items() if val is not None}
+            return {key: JsonEncode.clear_nones(val) for key, val in json.items() if val is not None}
         return json

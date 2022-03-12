@@ -86,12 +86,12 @@ class PlatformConfig(Serializable["PlatformConfig"]):
     def to_json(self) -> Json:
         extras = self.extras
         output = {
-            "build-param": _JsonEncode.encode_optional(self.build_param),
-            "run-before": _JsonEncode.encode_optional(self.run_before),
-            "output": _JsonEncode.encode_optional(self.output),
+            "build-param": JsonEncode.encode_optional(self.build_param),
+            "run-before": JsonEncode.encode_optional(self.run_before),
+            "output": JsonEncode.encode_optional(self.output),
             "outputs": None
             if self.outputs is None
-            else _JsonEncode.encode_dict(self.outputs, lambda x: x.output, lambda x: x),
+            else JsonEncode.encode_dict(self.outputs, lambda x: x.output, lambda x: x),
         }
         if extras is None:
             return output
@@ -106,14 +106,14 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             if not isinstance(key, str):
                 continue
             if key == "build-param" and isinstance(value, List):
-                output.build_param = _JsonDecode.decode_list(value, str)
+                output.build_param = JsonDecode.decode_list(value, str)
             elif key == "run-before" and isinstance(value, Dict):
-                output.run_before = _JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
+                output.run_before = JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
                 pass
             elif key == "output" and isinstance(value, str):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
-                output.outputs = _JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
+                output.outputs = JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
                 pass
             elif isinstance(value, str):
                 if output.extras is None:

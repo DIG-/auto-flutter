@@ -66,10 +66,10 @@ class Project(Serializable["Project"]):
         return {
             "_creator": "Auto-Flutter " + VERSION,
             "name": self.name,
-            "platforms": _JsonEncode.encode(self.platforms),
-            "flavors": _JsonEncode.encode_optional(self.flavors),
-            "platform-config": _JsonEncode.encode(self.platform_config),
-            "tasks": _JsonEncode.encode_optional(self.tasks),
+            "platforms": JsonEncode.encode(self.platforms),
+            "flavors": JsonEncode.encode_optional(self.flavors),
+            "platform-config": JsonEncode.encode(self.platform_config),
+            "tasks": JsonEncode.encode_optional(self.tasks),
         }
 
     @staticmethod
@@ -85,14 +85,14 @@ class Project(Serializable["Project"]):
             if not isinstance(key, str):
                 continue
             if key == "name":
-                name = _JsonDecode.decode(value, str)
+                name = JsonDecode.decode(value, str)
             elif key == "platforms":
-                platforms = _JsonDecode.decode_list(value, Platform)
+                platforms = JsonDecode.decode_list(value, Platform)
             elif key == "flavors":
-                flavors = _JsonDecode.decode_list(value, Flavor)
+                flavors = JsonDecode.decode_list(value, Flavor)
             elif key == "platform-config":
-                platform_config = _JsonDecode.decode_dict(value, Platform, PlatformConfigFlavored)
+                platform_config = JsonDecode.decode_dict(value, Platform, PlatformConfigFlavored)
             elif key == "tasks":
-                tasks = _JsonDecode.decode_list(value, CustomTask)
+                tasks = JsonDecode.decode_list(value, CustomTask)
 
         return Project(name, platforms, flavors, platform_config, tasks)  # type: ignore[arg-type]
