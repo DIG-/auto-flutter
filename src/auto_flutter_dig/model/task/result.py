@@ -23,12 +23,9 @@ class TaskResult(Result):
         )
 
     def __repr__(self) -> str:
-        return "{cls}(error={error}, success={success}, message={message}, args={args})".format(
-            cls=type(self).__name__,
-            error=self.error,
-            success=self.success,
-            message=self.message,
-            args=self.args,
+        return (
+            f"{type(self).__name__}(error={self.error}, "
+            + f"success={self.success}, message={self.message}, args={self.args})"
         )
 
 

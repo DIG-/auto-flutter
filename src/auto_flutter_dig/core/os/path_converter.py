@@ -66,11 +66,11 @@ class PathConverter(ABC):
                 if segment == "/":
                     pass
                 if len(segment) > 2:
-                    raise AssertionError('Can not find driver letter from path "{}"'.format(self._path))
+                    raise AssertionError(f'Can not find driver letter from path "{self._path}"')
                 if len(segment) == 1:
                     output = PureWindowsPath(segment + ":")
                 elif segment[1] != ":":
-                    raise AssertionError('Unrecognized driver letter from path "{}"'.format(self._path))
+                    raise AssertionError(f'Unrecognized driver letter from path "{self._path}"')
                 else:
                     output = PureWindowsPath(segment)
                 continue

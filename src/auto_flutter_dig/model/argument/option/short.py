@@ -12,7 +12,7 @@ class ShortOption(Option):
         Option.__init__(self, description)
         self.short: str = _Ensure.instance(short, str, "short").lower().strip()
         if len(self.short) != 1:
-            raise ValueError("Short option must have one character. Received: {}".format(short))
+            raise ValueError(f"Short option must have one character. Received: {short}")
 
     def describe(self) -> Tuple[str, str]:
         return ("-" + self.short, self.description)

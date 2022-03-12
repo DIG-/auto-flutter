@@ -3,9 +3,9 @@ from pathlib import Path, PurePosixPath
 from ....core.config import Config
 from ....core.os import OS
 from ....core.utils import _Dict, _If
+from ....core.utils.task.process import *
 from ....model.argument.option import LongOptionWithValue
 from ....module.flutter.task.build.stub import FlutterBuildStub
-from ....core.utils.task.process import *
 from ..identity import FirebaseTaskIdentity
 from ..model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
 from .setup.check import FirebaseCheck
@@ -22,7 +22,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         "firebase",
         "Upload build to firebase",
         _Dict.flatten(__options),
-        lambda: FirebaseBuildUpload(),
+        lambda: FirebaseBuildUpload(),  # pylint: disable=unnecessary-lambda
     )
 
     def require(self) -> List[TaskId]:
@@ -41,7 +41,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         if not file.exists():
             return TaskResult(
                 args,
-                E(FileNotFoundError("Output not found: {}".format(str(file)))).error,
+                E(FileNotFoundError(f"Output not found: {file}")).error,
             )
 
         file = file.absolute()

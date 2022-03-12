@@ -18,9 +18,7 @@ class __Config:
 
     def __value_error(self, key: str, expect: type, received: type) -> NoReturn:
         raise ValueError(
-            'Unexpected value for key "{}". Expected `{}` but received `{}`'.format(
-                key, expect.__name__, received.__name__
-            )
+            f'Unexpected value for key "{key}". Expected `{expect.__name__}` but received `{received.__name__}`'
         )
 
     @staticmethod
@@ -39,7 +37,7 @@ class __Config:
             return
         if not isinstance(value, (str, bool, int)):
             raise ValueError(
-                "Value must be instance of `str`, `bool` or `int`, but `{}` was used".format(type(value).__name__)
+                "Value must be instance of `str`, `bool` or `int`, " + f"but `{type(value).__name__}` was used"
             )
         self.__content[key] = value
 
@@ -54,7 +52,7 @@ class __Config:
         parsed = json_load(file)
         file.close()
         if not isinstance(parsed, Dict):
-            raise SyntaxError("Config file is in incorrect format.\n{}".format(str(filepath)))
+            raise SyntaxError(f"Config file is in incorrect format.\n{filepath}")
         self.__content = parsed
         return True
 
@@ -140,7 +138,7 @@ class __Config:
         value = self._get_value(key)
         if value is None:
             if default is None:
-                raise ValueError('Key "{}" not found and no default value informed'.format(key))
+                raise ValueError(f'Key "{key}" not found and no default value informed')
             return OS.machine_to_posix_path(default)
         if isinstance(value, str):
             return PurePosixPath(value)

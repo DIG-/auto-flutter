@@ -30,7 +30,7 @@ class _SubProcess(Process):
     def run(self):
         if self._executable.is_absolute():
             if not Path(self._executable).exists():
-                raise FileNotFoundError(0, "Executable `{}` not found".format(self._executable))
+                raise FileNotFoundError(0, f"Executable `{self._executable}` not found")
         output = SB()
         command = " ".join(map(self.__escape_arg, [str(self._executable)] + self._arguments))
         if Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND):
@@ -60,11 +60,11 @@ class _SubProcess(Process):
             self._write_output("\n")
             self.output = output.str()
             if self.exit_code == 127:
-                raise FileNotFoundError(0, "Command `{}` not found".format(self._executable))
+                raise FileNotFoundError(0, f"Command `{self._executable}` not found")
             if self.__killed:
-                raise Process.ChildProcessKilled("Command `{}` was killed".format(self._executable))
+                raise Process.ChildProcessKilled(f"Command `{self._executable}` was killed")
             if self.__stopped:
-                raise Process.ChildProcessStopped("Command `{}` was stopped".format(self._executable))
+                raise Process.ChildProcessStopped(f"Command `{self._executable}` was stopped")
 
     def stop(self):
         process = self.__process
@@ -94,11 +94,11 @@ class _SubProcess(Process):
                         )
                 except BaseException as error:
                     raise SystemError(
-                        'Failed to kill process "{}"'.format(self._executable.name),
+                        f'Failed to kill process "{self._executable.name}"',
                         error,
                     )
                 if result.returncode != 0:
-                    raise SystemError('Failed to kill process "{}"'.format(self._executable.name))
+                    raise SystemError(f'Failed to kill process "{self._executable.name}"')
 
     def __read_output(self, decoder: IncrementalDecoder, output: SB, value: bytes):
         decoded = decoder.decode(value)
@@ -118,8 +118,8 @@ class _SubProcess(Process):
         if st_single and arg.endswith("'"):
             return arg  # Already escaped
         if st_double:
-            return "'{}'".format(arg)
-        return '"{}"'.format(arg)
+            return f"'{arg}'"
+        return f'"{arg}"'
 
     @staticmethod
     def __get_default_decoder() -> IncrementalDecoder:

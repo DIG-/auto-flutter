@@ -36,9 +36,9 @@ class TaskResolver(ABC):
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
-                    raise TypeError("Trying to resolve task, but received {}".format(type(task)))
+                    raise TypeError(f"Trying to resolve task, but received {type(task).__name__}")
         else:
-            raise TypeError("Trying to resolve task, but received {}".format(type(task)))
+            raise TypeError(f"Trying to resolve task, but received {type(task).__name__}")
         temp = TaskResolver.__resolve_dependencies(temp, origin)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp, previous)

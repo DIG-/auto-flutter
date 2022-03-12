@@ -35,7 +35,7 @@ class _JsonEncode(metaclass=ABCMeta):
                     lambda x: _JsonEncode.encode(x),
                     lambda x: _JsonEncode.encode(x),
                 )
-            raise TypeError("Unknown encoder for {}".format(type(input)))
+            raise TypeError(f"Unknown encoder for {type(input).__name__}")
         if isinstance(input, List):
             return _JsonEncode.encode_list(input, encoder)
         if isinstance(input, Dict):
@@ -76,7 +76,7 @@ class _JsonEncode(metaclass=ABCMeta):
         output = encoder(key)
         if isinstance(output, str):
             return output
-        raise ValueError('Can not accept "{}" as dictionary key'.format(type(output)))
+        raise ValueError(f'Can not accept "{type(output).__name__}" as dictionary key')
 
     @staticmethod
     def clear_nones(input: Json) -> Json:

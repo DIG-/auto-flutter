@@ -32,7 +32,7 @@ class _JsonDecode(ABC):
             return result  # type: ignore
         elif issubclass(cls, Enum):
             return _Enum.parse_value(cls, json)  # type:ignore
-        raise ValueError("Unknown type to handle `{}`".format(type(json)))
+        raise ValueError(f"Unknown type to handle `{type(json).__name__}`")
 
     @staticmethod
     def decode_optional(json: Optional[Json], cls: Type[T], decoder: Optional[Decoder] = None) -> Optional[T]:
@@ -159,7 +159,7 @@ class _JsonDecode(ABC):
         else:
             decoded = kDecoder(key)
         if decoded is None:
-            raise ValueError('Unexpected dict key decode "{}" to `{}`'.format(key, kcls.__name__))
+            raise ValueError(f'Unexpected dict key decode "{key}" to `{kcls.__name__}`')
         if isinstance(decoded, kcls):
             return decoded
-        raise ValueError('Invalid decoded key "{}" as `{}`'.format(key, type(key)))
+        raise ValueError(f'Invalid decoded key "{key}" as `{type(key).__format__}`')

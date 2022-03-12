@@ -9,12 +9,8 @@ class _TaskUniqueIdentity(TaskIdentity):
         self.__task = task
 
     def __repr__(self) -> str:
-        return "{cls}(group={group}, id={id}, name={name}, options={options}, creator={creator}, allow_more={allow_more})".format(
-            cls=type(self).__name__,
-            group=self.group,
-            id=self.id,
-            name=self.name,
-            options=self.options,
-            creator=self.__task,
-            allow_more=self.allow_more,
+        return (
+            f"{type(self).__name__}(id={self.id}, group={self.group}, "
+            + f"name={self.name}, options={self.options}, creator={self.__task}, "
+            + f"parent={self.parent}, allow_more={self.allow_more})"
         )

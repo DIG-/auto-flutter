@@ -3,11 +3,10 @@ from __future__ import annotations
 from typing import Deque, Iterable, Optional, Union
 
 from ...core.utils import _Ensure
-from ...model.error import TaskNotFound
 from ...model.result import Result
 from ...model.task import *
-from ...model.task.result import TaskResultHelp
 from ...model.task.group import TaskGroup
+from ...model.task.result import TaskResultHelp
 from .printer import *
 from .resolver import TaskResolver
 
@@ -26,9 +25,8 @@ class __TaskManager:
     ):
         if not isinstance(tasks, Task) and not isinstance(tasks, TaskIdentity) and not isinstance(tasks, Iterable):
             raise TypeError(
-                "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, but `{}` was received".format(
-                    type(tasks).__name__
-                )
+                "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, "
+                + f"but `{type(tasks).__name__}` was received"
             )
         self._task_stack.extend(TaskResolver.resolve(tasks, self._task_done))
 
@@ -43,9 +41,8 @@ class __TaskManager:
             self.add(map(lambda id: self.__find_task(id, origin), ids))
         else:
             raise TypeError(
-                "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, but `{}` was received".format(
-                    type(ids).__name__
-                )
+                "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, "
+                + f"but `{type(ids).__name__}` was received"
             )
 
     def start_printer(self):
@@ -92,7 +89,7 @@ class __TaskManager:
             if not isinstance(output, TaskResult):
                 output = TaskResult(
                     args,
-                    AssertionError("Task {} returned without result".format(type(task).__name__)),
+                    AssertionError(f"Task {type(task).__name__} returned without result"),
                     success=False,
                 )
 
@@ -122,11 +119,9 @@ class __TaskManager:
         return not had_failure
 
     def __repr__(self) -> str:
-        return "TaskManager(stack_size={stack_size}, done_size={done_size}, stack={stack}, done={done})".format(
-            stack_size=len(self._task_stack),
-            done_size=len(self._task_done),
-            stack=self._task_stack,
-            done=self._task_done,
+        return (
+            f"TaskManager(stack_size={len(self._task_stack)}, done_size={len(self._task_done)}, "
+            + f"stack={self._task_stack}, done={self._task_done})"
         )
 
 

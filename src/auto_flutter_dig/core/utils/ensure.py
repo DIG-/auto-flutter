@@ -13,7 +13,7 @@ class _Ensure(ABC):
         if name is None:
             raise AssertionError("Field require valid value")
         else:
-            raise AssertionError("Field `{}` require valid value".format(name))
+            raise AssertionError(f"Field `{name}` require valid value")
 
     @staticmethod
     def type(

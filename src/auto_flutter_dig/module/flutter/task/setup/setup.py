@@ -16,7 +16,7 @@ class FlutterSetupTask(Task):
         "flutter",
         "Configure flutter environment",
         [__opt_executable],
-        lambda: FlutterSetupTask(),
+        lambda: FlutterSetupTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def execute(self, args: Args) -> TaskResult:
@@ -28,7 +28,7 @@ class FlutterSetupTask(Task):
             flutter_path = PathConverter.from_path(flutter_cmd).to_posix()
             flutter_exec = ExecutableResolver.resolve_executable(flutter_path)
             if flutter_exec is None:
-                error = E(FileNotFoundError('Can not find flutter command as "{}"'.format(flutter_cmd))).error
+                error = E(FileNotFoundError(f'Can not find flutter command as "{flutter_cmd}"')).error
                 message = (
                     SB().append("Resolved as: ", SB.Color.YELLOW).append(str(flutter_path), SB.Color.YELLOW, True).str()
                 )

@@ -12,7 +12,7 @@ class LongShortOption(LongOption, ShortOption):
         ShortOption.__init__(self, short, description)
 
     def describe(self) -> Tuple[str, str]:
-        return ("-{}, --{}".format(self.short, self.long), self.description)
+        return (f"-{self.short}, --{self.long}", self.description)
 
 
 class LongShortOptionWithValue(LongOptionWithValue, ShortOptionWithValue):

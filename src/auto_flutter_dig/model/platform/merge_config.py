@@ -23,29 +23,29 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         self.platform = platform
 
     def append_build_param(self, flavor: Optional[Flavor], param: str):
-        raise AssertionError("Can not append build param using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not append build param using {type(self).__name__}")
 
     def _append_build_param(self, param: str):
-        raise AssertionError("Can not append build param using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not append build param using {type(self).__name__}")
 
     def add_extra(self, flavor: Optional[Flavor], key: str, value: str):
-        raise AssertionError("Can not add extra using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not add extra using {type(self).__name__}")
 
     def _add_extra(self, key: str, value: str):
-        raise AssertionError("Can not add extra using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not add extra using {type(self).__name__}")
 
     def remove_extra(self, flavor: Optional[Flavor], key: str) -> bool:
-        raise AssertionError("Can not remove extra using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not remove extra using {type(self).__name__}")
 
     def _remove_extra(self, key: str) -> bool:
-        raise AssertionError("Can not remove extra using {}".format(type(self).__name__))
+        raise AssertionError(f"Can not remove extra using {type(self).__name__}")
 
     def to_json(self) -> Json:
-        raise AssertionError("Can not serialize {}".format(type(self).__name__))
+        raise AssertionError(f"Can not serialize {type(self).__name__}")
 
     @staticmethod
     def from_json(json: Json) -> Optional[Any]:
-        raise AssertionError("Can not parse {}".format(MergePlatformConfigFlavored.__name__))
+        raise AssertionError(f"Can not parse {MergePlatformConfigFlavored.__name__}")
 
     def get_build_param(self, flavor: Optional[Flavor]) -> List[TaskId]:
         output: List[TaskId] = []

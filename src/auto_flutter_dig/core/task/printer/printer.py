@@ -63,7 +63,7 @@ class TaskPrinter:
         elif isinstance(op, OpResult):
             self.__handle_operation_result(op)
         else:
-            print(format_exception(TypeError("Unknown Operation type: {}".format(type(op).__name__))))
+            print(format_exception(TypeError(f"Unknown Operation type: {type(op).__name__}")))
             pass
 
     def __handle_operation_result(self, op: OpResult):

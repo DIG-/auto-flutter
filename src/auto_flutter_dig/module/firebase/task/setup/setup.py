@@ -18,7 +18,7 @@ class FirebaseSetupTask(Task):
         "firebase",
         "Configure firebase environment",
         [__opt_executable, __opt_standalone_on, __opt_standalone_off],
-        lambda: FirebaseSetupTask(),
+        lambda: FirebaseSetupTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def execute(self, args: Args) -> TaskResult:
@@ -30,7 +30,7 @@ class FirebaseSetupTask(Task):
             firebase_path = PathConverter.from_path(firebase_cmd).to_posix()
             firebase_exec = ExecutableResolver.resolve_executable(firebase_path)
             if firebase_exec is None:
-                error = FileNotFoundError('Can not find firebase command as "{}"'.format(firebase_cmd))
+                error = FileNotFoundError(f'Can not find firebase command as "{firebase_cmd}"')
                 message = (
                     SB()
                     .append("Resolved as: ", SB.Color.YELLOW)

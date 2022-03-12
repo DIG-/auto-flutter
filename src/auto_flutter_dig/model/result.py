@@ -23,8 +23,4 @@ class Result:
         return self.success and self.error is None
 
     def __repr__(self) -> str:
-        return "{cls}(error={error}, success={success})".format(
-            cls=type(self).__name__,
-            error=self.error,
-            success=self.success,
-        )
+        return f"{type(self).__name__}(error={self.error}, success={self.success})"
