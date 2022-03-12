@@ -10,16 +10,16 @@ class _Iterable(ABC):
 
     @staticmethod
     def first_or_none(iterable: Iterable[T], condition: Callable[[T], bool]) -> Optional[T]:
-        for it in iterable:
-            if condition(it):
-                return it
+        for item in iterable:
+            if condition(item):
+                return item
         return None
 
     @staticmethod
     def first_or_default(iterable: Iterable[T], condition: Callable[[T], bool], fallback: Callable[[], T]) -> T:
-        for it in iterable:
-            if condition(it):
-                return it
+        for item in iterable:
+            if condition(item):
+                return item
         return fallback()
 
     @staticmethod
@@ -29,13 +29,13 @@ class _Iterable(ABC):
     @staticmethod
     def count(iterable: Iterable[T]) -> int:
         out = 0
-        for it in iterable:
+        for _ in iterable:
             out += 1
         return out
 
     @staticmethod
     def is_empty(iterable: Iterable[T]) -> bool:
-        for it in iterable:
+        for _ in iterable:
             return False
         return True
 
