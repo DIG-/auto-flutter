@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Deque, Iterable, Optional, Union
 
-from ...core.utils import _Ensure
 from ...model.result import Result
 from ...model.task import *
 from ...model.task.group import TaskGroup
@@ -36,9 +35,9 @@ class _TaskManager:
         origin: Optional[TaskGroup] = None,
     ):
         if isinstance(ids, TaskId):
-            self.add(self.__find_task(ids, origin))
+            self.add(TaskResolver.find_task(ids, origin))
         elif isinstance(ids, Iterable):
-            self.add(map(lambda id: self.__find_task(id, origin), ids))
+            self.add(map(lambda task_id: TaskResolver.find_task(task_id, origin), ids))
         else:
             raise TypeError(
                 "Field `ids` must be instance of `TaskId` or `Iterable[TaskId]`, "
@@ -50,14 +49,6 @@ class _TaskManager:
 
     def stop_printer(self):
         self._printer.stop()
-
-    def __find_task(
-        self,
-        id: TaskId,
-        origin: Optional[TaskGroup] = None,
-    ) -> TaskIdentity:
-        _Ensure.type(id, TaskId, "id")
-        return TaskResolver.find_task(id, origin)
 
     def print(self, message: str):
         self._printer.append(OpMessage(message))
@@ -107,7 +98,7 @@ class _TaskManager:
 
             if not output.success:
                 if isinstance(output, TaskResultHelp):
-                    from ...module.aflutter.task.help import HelpTask
+                    from ...module.aflutter.task.help import HelpTask  # pylint:disable=import-outside-toplevel
 
                     self._task_stack.clear()
                     self.add(HelpTask.Stub(identity))
