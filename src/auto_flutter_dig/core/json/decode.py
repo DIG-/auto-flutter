@@ -81,85 +81,85 @@ class _JsonDecode(ABC):
     @staticmethod
     def decode_dict(
         json: Union[Json, Dict[str, Json]],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Dict[K, T]:
-        m = _JsonDecode.__decode_dict_to_map(json, kcls, tcls, kDecoder, tDecoder)
-        f = _Iterable.FilterTupleOptional(m)
-        return dict(f)
+        mapped = _JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder)
+        filtered = _Iterable.FilterTupleOptional(mapped)
+        return dict(filtered)
 
     @staticmethod
     def decode_dict_optional(
         json: Union[Json, Dict[str, Json]],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Dict[K, Optional[T]]:
-        return dict(_JsonDecode.__decode_dict_to_map(json, kcls, tcls, kDecoder, tDecoder))
+        return dict(_JsonDecode.__decode_dict_to_map(json, k_cls, t_cls, k_decoder, t_decoder))
 
     @staticmethod
     def decode_optional_dict(
         json: Optional[Union[Json, Dict[str, Json]]],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Optional[Dict[K, T]]:
         if json is None:
             return None
-        return _JsonDecode.decode_dict(json, kcls, tcls, kDecoder, tDecoder)
+        return _JsonDecode.decode_dict(json, k_cls, t_cls, k_decoder, t_decoder)
 
     @staticmethod
     def decode_optional_dict_optional(
         json: Optional[Union[Json, Dict[str, Json]]],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Optional[Dict[K, Optional[T]]]:
         if json is None:
             return None
-        return _JsonDecode.decode_dict_optional(json, kcls, tcls, kDecoder, tDecoder)
+        return _JsonDecode.decode_dict_optional(json, k_cls, t_cls, k_decoder, t_decoder)
 
     @staticmethod
     def __decode_dict_to_map(
         json: Union[Json, Dict[str, Json]],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Iterable[Tuple[K, Optional[T]]]:
         if not isinstance(json, Dict):
             return _Ensure.raise_error_instance("json", Dict, type(json))
         return map(
-            lambda x: _JsonDecode.__decode_dict_tuple(x, kcls, tcls, kDecoder, tDecoder),
+            lambda x: _JsonDecode.__decode_dict_tuple(x, k_cls, t_cls, k_decoder, t_decoder),
             json.items(),
         )
 
     @staticmethod
     def __decode_dict_tuple(
-        input: Tuple[str, Json],
-        kcls: Type[K],
-        tcls: Type[T],
-        kDecoder: Optional[KDecoder] = None,
-        tDecoder: Optional[Decoder] = None,
+        value: Tuple[str, Json],
+        k_cls: Type[K],
+        t_cls: Type[T],
+        k_decoder: Optional[KDecoder] = None,
+        t_decoder: Optional[Decoder] = None,
     ) -> Tuple[K, Optional[T]]:
         return (
-            _JsonDecode.__decode_dict_key(input[0], kcls, kDecoder),
-            _JsonDecode.decode(input[1], tcls, tDecoder),
+            _JsonDecode.__decode_dict_key(value[0], k_cls, k_decoder),
+            _JsonDecode.decode(value[1], t_cls, t_decoder),
         )
 
     @staticmethod
-    def __decode_dict_key(key: str, kcls: Type[K], kDecoder: Optional[KDecoder] = None) -> K:
-        if kDecoder is None:
-            decoded = _JsonDecode.decode(key, kcls, None)
+    def __decode_dict_key(key: str, k_cls: Type[K], k_decoder: Optional[KDecoder] = None) -> K:
+        if k_decoder is None:
+            decoded = _JsonDecode.decode(key, k_cls, None)
         else:
-            decoded = kDecoder(key)
+            decoded = k_decoder(key)
         if decoded is None:
-            raise ValueError(f'Unexpected dict key decode "{key}" to `{kcls.__name__}`')
-        if isinstance(decoded, kcls):
+            raise ValueError(f'Unexpected dict key decode "{key}" to `{k_cls.__name__}`')
+        if isinstance(decoded, k_cls):
             return decoded
         raise ValueError(f'Invalid decoded key "{key}" as `{type(key).__format__}`')
