@@ -106,7 +106,7 @@ class HelpTask(Task):
             )
             options = _Iterable.flatten(options_mapped)
             positional_options = sorted(
-                _Iterable.is_instance(options, PositionalOption),
+                _Iterable.FilterInstance(options, PositionalOption),
                 key=lambda x: x.position,
             )
 

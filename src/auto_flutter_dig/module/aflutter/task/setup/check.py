@@ -36,7 +36,7 @@ class AflutterSetupCheckTask(Task):
     def execute(self, args: Args) -> TaskResult:
         to_run: List[AflutterLaunchTaskOption] = []
         if args.contains(self.__opt_all):
-            to_run = list(_Iterable.is_instance(self.identity.options, AflutterLaunchTaskOption))
+            to_run = list(_Iterable.FilterInstance(self.identity.options, AflutterLaunchTaskOption))
         else:
             for option in self.identity.options:
                 if option == self.__opt_all:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Callable, Generic, Iterable, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Callable, Iterable, Iterator, List, Optional, Tuple, Type, TypeVar
 
 
 class _Iterable(ABC):
@@ -102,7 +102,7 @@ class _Iterable(ABC):
             self.__apply(item)
             return item
 
-    class is_instance(Iterator[T_co]):
+    class FilterInstance(Iterator[T_co]):
         def __init__(self, iterable: Iterable[_Iterable.T], cls: Type[_Iterable.T_co]) -> None:
             super().__init__()
             self.__iterator = iterable.__iter__()
