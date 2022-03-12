@@ -14,7 +14,7 @@ Group = str
 GroupedOptions = Dict[Group, Option]
 OptionsByArgument = Dict[Argument, GroupedOptions]
 
-T = TypeVar("T", bound=Option)
+T = TypeVar("T", bound=Option)  # pylint:disable=invalid-name
 
 
 class _Helper(Generic[T]):
@@ -93,7 +93,7 @@ class ParseOptionsTask(Task):
         maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
         position_count = 0
         has_option_all = len(option_all) > 0
-        for argument in self._input:
+        for argument in self._input:  # pylint: disable=too-many-nested-blocks
             # Last iteration require param
             if len(has_param) > 0:
                 self.__append_argument_all(args, option_all, argument)  # OptionAll
