@@ -1,14 +1,16 @@
+import sys
+from platform import system as platform_system
+
+from .core.string import SB
+from .core.task import TaskManager
+from .model.error.formater import format_exception
+from .module.aflutter.task.init import AflutterInitTask
+
+
 def _main():
-    import sys
-    from platform import system as platform_system
-
-    from .core.string import SB
-    from .core.task import TaskManager
-    from .model.error.formater import format_exception
-    from .module.aflutter.task.init import AflutterInitTask
-
     # Enable color support on windows
     if platform_system() == "Windows":
+        # pylint: disable=import-outside-toplevel
         is_cp1252 = sys.stdout.encoding == "cp1252"
         # Bash from GIT does not use UTF-8 as default and colorama has conflit with them
         if is_cp1252:
@@ -42,4 +44,4 @@ def _main():
         )
 
     TaskManager.stop_printer()
-    exit(0 if not has_error else 3)
+    sys.exit(0 if not has_error else 3)
