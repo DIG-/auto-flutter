@@ -13,7 +13,7 @@ from .resolver import TaskResolver
 __all__ = ["TaskManager"]
 
 
-class __TaskManager:
+class _TaskManager:
     def __init__(self) -> None:
         self._task_stack: Deque[TaskIdentity] = Deque()
         self._task_done: List[TaskIdentity] = []
@@ -125,4 +125,4 @@ class __TaskManager:
         )
 
 
-TaskManager = __TaskManager()
+TaskManager = _TaskManager()

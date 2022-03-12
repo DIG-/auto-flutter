@@ -11,7 +11,7 @@ from ..core.os import OS
 __all__ = ["Config"]
 
 
-class __Config:
+class _Config:
     def __init__(self) -> None:
         self.__is_loaded: bool = False
         self.__content: Dict[str, Union[str, bool, int]] = {}
@@ -151,4 +151,4 @@ class __Config:
         return "Config(" + self.__content.__repr__() + ")"
 
 
-Config = __Config()
+Config = _Config()

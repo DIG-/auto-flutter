@@ -9,7 +9,7 @@ from .stack_trace import AflutterSetupStackTraceTask
 __all__ = ["AflutterSetupIdentity"]
 
 
-class __AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
+class _AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -29,4 +29,4 @@ class __AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
         )
 
 
-AflutterSetupIdentity = __AflutterSetupIdentity()
+AflutterSetupIdentity = _AflutterSetupIdentity()
