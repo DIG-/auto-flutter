@@ -50,7 +50,7 @@ class _JsonDecode(ABC):
 
     @staticmethod
     def decode_list(json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None) -> List[T]:
-        return list(_Iterable.not_none(_JsonDecode.__decode_list(json, cls, decoder)))
+        return list(_Iterable.FilterOptional(_JsonDecode.__decode_list(json, cls, decoder)))
 
     @staticmethod
     def decode_list_optional(

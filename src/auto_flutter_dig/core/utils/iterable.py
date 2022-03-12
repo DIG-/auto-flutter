@@ -55,13 +55,10 @@ class _Iterable(ABC):
                     self.__current = None
                     continue
 
-    class not_none(Iterator[T], Generic[T]):
-        def __init__(self, iter: Iterable[Optional[_Iterable.T]]) -> None:
+    class FilterOptional(Iterator[T]):
+        def __init__(self, iterable: Iterable[Optional[_Iterable.T]]) -> None:
             super().__init__()
-            self._iter = iter.__iter__()
-
-        def __iter__(self) -> _Iterable.not_none[_Iterable.T]:
-            return self
+            self._iter = iterable.__iter__()
 
         def __next__(self) -> _Iterable.T:
             while True:
