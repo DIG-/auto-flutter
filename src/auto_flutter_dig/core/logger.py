@@ -11,15 +11,15 @@ def __log_path() -> Path:
 
 
 def __log_creator() -> Logger:
-    log = getLogger(__name__)
+    _log = getLogger(__name__)
     filepath = __log_path().joinpath("aflutter.log")
     if not filepath.parent.exists():
         filepath.parent.mkdir(parents=True, exist_ok=True)
-    ch = FileHandler(filepath, "wt", "utf-8")
-    ch.setFormatter(Formatter("%(asctime)s %(filename)10s@%(lineno)03d %(levelname)8s: %(message)s"))
-    log.addHandler(ch)
-    log.setLevel(INFO)
-    return log
+    handler = FileHandler(filepath, "wt", "utf-8")
+    handler.setFormatter(Formatter("%(asctime)s %(filename)10s@%(lineno)03d %(levelname)8s: %(message)s"))
+    _log.addHandler(handler)
+    _log.setLevel(INFO)
+    return _log
 
 
 def __log_task_creator() -> Logger:
@@ -27,15 +27,15 @@ def __log_task_creator() -> Logger:
     _log.propagate = False
     _log.handlers = []
     try:
-        ch = FileHandler("aflutter.log", "wt", "utf-8")
+        handler = FileHandler("aflutter.log", "wt", "utf-8")
     except BaseException as error:
         log.warning("Can not open aflutter.log for task", exc_info=error)
         filepath = __log_path().joinpath("aflutter-task.log")
         if not filepath.parent.exists():
             filepath.parent.mkdir(parents=True, exist_ok=True)
-        ch = FileHandler(filepath, "wt", "utf-8")
-    ch.setFormatter(Formatter("%(asctime)s %(levelname)8s %(tag)12s: %(message)s"))
-    _log.addHandler(ch)
+        handler = FileHandler(filepath, "wt", "utf-8")
+    handler.setFormatter(Formatter("%(asctime)s %(levelname)8s %(tag)12s: %(message)s"))
+    _log.addHandler(handler)
     _log.setLevel(DEBUG)
     return _log
 
