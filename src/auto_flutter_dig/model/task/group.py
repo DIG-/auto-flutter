@@ -42,7 +42,7 @@ class TaskGroup(ABC):
         pass
 
     def __insert_sorted(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
-        w_parent = _Iterable.modify(tasks, _SetParent(self).apply)
+        w_parent = _Iterable.Apply(tasks, _SetParent(self).apply)
         w_order = sorted(w_parent, key=lambda x: x[0])
         self.subtasks = dict(w_order)
 

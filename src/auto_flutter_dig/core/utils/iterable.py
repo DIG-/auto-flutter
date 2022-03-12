@@ -87,7 +87,7 @@ class _Iterable(ABC):
         def __iter__(self) -> Iterator[_Iterable.T]:
             return self.__flatten
 
-    class modify(Iterator[T_co]):
+    class Apply(Iterator[T_co]):
         def __init__(
             self,
             iterable: Iterable[_Iterable.T_co],
