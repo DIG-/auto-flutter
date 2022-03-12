@@ -28,7 +28,7 @@ class _JsonDecode(ABC):
         elif issubclass(cls, Serializable):
             result = cls.from_json(json)
             if not result is None and not isinstance(result, cls):
-                return _Ensure._raise_error_value(None, cls, type(result))
+                return _Ensure.raise_error_value(None, cls, type(result))
             return result  # type: ignore
         elif issubclass(cls, Enum):
             return _Enum.parse_value(cls, json)  # type:ignore
@@ -45,7 +45,7 @@ class _JsonDecode(ABC):
         json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None
     ) -> Iterable[Optional[T]]:
         if not isinstance(json, List):
-            return _Ensure._raise_error_instance("json", List, type(json))
+            return _Ensure.raise_error_instance("json", List, type(json))
         return map(lambda x: _JsonDecode.decode(x, cls, decoder), json)
 
     @staticmethod
@@ -133,7 +133,7 @@ class _JsonDecode(ABC):
         tDecoder: Optional[Decoder] = None,
     ) -> Iterable[Tuple[K, Optional[T]]]:
         if not isinstance(json, Dict):
-            return _Ensure._raise_error_instance("json", Dict, type(json))
+            return _Ensure.raise_error_instance("json", Dict, type(json))
         return map(
             lambda x: _JsonDecode.__decode_dict_tuple(x, kcls, tcls, kDecoder, tDecoder),
             json.items(),

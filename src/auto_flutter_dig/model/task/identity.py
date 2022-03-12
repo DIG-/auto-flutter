@@ -26,7 +26,7 @@ class TaskIdentity:
         self.id: TaskId = _Ensure.instance(id, TaskId, "id")
         self.name: str = _Ensure.instance(name, str, "name")
         if not isinstance(options, List):
-            _Ensure._raise_error_instance("options", List, type(options))
+            _Ensure.raise_error_instance("options", List, type(options))
         self.options: List[Option] = _Ensure.not_none(options, "options")
         self.creator: Callable[[], Task] = _EnsureCallable.instance(creator, "creator")
         self.allow_more: bool = _Ensure.instance(allow_more, bool, "allow_more")

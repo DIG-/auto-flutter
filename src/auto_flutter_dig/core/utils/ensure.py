@@ -25,7 +25,7 @@ class _Ensure(ABC):
             return None
         if isinstance(value, cls):
             return value
-        return _Ensure._raise_error_instance(name, cls, type(value))
+        return _Ensure.raise_error_instance(name, cls, type(value))
 
     @staticmethod
     def type_returned(
@@ -37,16 +37,16 @@ class _Ensure(ABC):
             return None
         if isinstance(value, cls):
             return value
-        return _Ensure._raise_error_value(name, cls, type(value))
+        return _Ensure.raise_error_value(name, cls, type(value))
 
     @staticmethod
     def instance(value: Any, cls: Type[T], name: Optional[str] = None) -> T:
         if not value is None and isinstance(value, cls):
             return value
-        return _Ensure._raise_error_instance(name, cls, type(value))
+        return _Ensure.raise_error_instance(name, cls, type(value))
 
     @staticmethod
-    def _raise_error_value(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
+    def raise_error_value(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Value must be instance of `{cls}`, but `{input}` was returned",
@@ -63,7 +63,7 @@ class _Ensure(ABC):
             )
 
     @staticmethod
-    def _raise_error_instance(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
+    def raise_error_instance(name: Optional[str], expected: Union[T, Type[T], Type], received: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Field must be instance of `{cls}`, but `{input}` was used",
@@ -102,7 +102,7 @@ class _EnsureCallable(ABC):
             return None
         if isinstance(value, (FunctionType, MethodType)):
             return value  # type: ignore
-        return _Ensure._raise_error_instance(name, Callable, type(value))
+        return _Ensure.raise_error_instance(name, Callable, type(value))
 
     @staticmethod
     def type_returned(
@@ -113,10 +113,10 @@ class _EnsureCallable(ABC):
             return None
         if isinstance(value, (FunctionType, MethodType)):
             return value  # type: ignore
-        return _Ensure._raise_error_value(name, Callable, type(value))
+        return _Ensure.raise_error_value(name, Callable, type(value))
 
     @staticmethod
     def instance(value: Optional[T], name: Optional[str] = None) -> T:
         if not value is None and isinstance(value, (FunctionType, MethodType)):
             return value  # type: ignore
-        return _Ensure._raise_error_instance(name, Callable, type(value))
+        return _Ensure.raise_error_instance(name, Callable, type(value))
