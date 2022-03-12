@@ -11,23 +11,24 @@ class StringFormatter:
     REGEX = re_compile(r"\$\{(\w+):([\w\_\-]+\.)?([\w\_\-]+)(\|\w+)?}")
     EXTRAS = Dict[str, str]
 
-    def format(self, input: str, args: Args, args_extra: Optional[EXTRAS] = None) -> str:
+    def format(self, string: str, args: Args, args_extra: Optional[EXTRAS] = None) -> str:
         if args_extra is None:
             args_extra = {}
         replaces: Dict[str, str] = {}
-        for match in StringFormatter.REGEX.finditer(input):
+        for match in StringFormatter.REGEX.finditer(string):
             try:
                 processed = self.__sub(match, args, args_extra)
                 replaces[processed[0]] = processed[1]
             except ValueError as error:
                 raise ValueError(f'Error formatting "{match.group(0)}"') from error
 
-        output: str = input
+        output: str = string
         for key, value in replaces.items():
             output = output.replace(key, value)
         return output
 
-    def __sub(self, match: re_Match, args: Args, args_extras: EXTRAS) -> Tuple[str, str]:
+    @staticmethod
+    def __sub(match: re_Match, args: Args, args_extras: EXTRAS) -> Tuple[str, str]:
         parsed: Optional[str] = None
 
         source: str = match.group(1)
