@@ -98,7 +98,7 @@ class ExecutableResolver(ABC):
             return os.environ["path"]
         if "Path" in os.environ:
             return os.environ["Path"]
-        for k, v in os.environ.items():
-            if k.lower() == "path":
-                return v
+        for key, value in os.environ.items():
+            if key.lower() == "path":
+                return value
         return ""
