@@ -38,7 +38,7 @@ class TaskGroup(ABC):
             raise TypeError(f"Unexpected type received `{type(task).__name__}`")
 
     def __register_subtask_tuple(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
-        self.__insert_sorted(_Iterable.join(self.subtasks.items(), tasks))
+        self.__insert_sorted(_Iterable.Merge(self.subtasks.items(), tasks))
         pass
 
     def __insert_sorted(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
