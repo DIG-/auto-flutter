@@ -24,9 +24,7 @@ class _Dict(ABC):
         return c
 
     @staticmethod
-    def merge_append(
-        a: Dict[K, List[V]], b: Optional[Dict[K, List[V]]]
-    ) -> Dict[K, List[V]]:
+    def merge_append(a: Dict[K, List[V]], b: Optional[Dict[K, List[V]]]) -> Dict[K, List[V]]:
         if b is None:
             return a
         c = a.copy()

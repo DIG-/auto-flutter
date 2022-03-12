@@ -13,9 +13,7 @@ class _JsonEncode(metaclass=ABCMeta):
     kEncoder = Callable[[kInput], Json]
 
     @staticmethod
-    def encode_optional(
-        input: Optional[Input], encoder: Optional[Encoder] = None
-    ) -> Optional[Json]:
+    def encode_optional(input: Optional[Input], encoder: Optional[Encoder] = None) -> Optional[Json]:
         if input is None:
             return None
         return _JsonEncode.encode(input, encoder)
@@ -41,16 +39,12 @@ class _JsonEncode(metaclass=ABCMeta):
         if isinstance(input, List):
             return _JsonEncode.encode_list(input, encoder)
         if isinstance(input, Dict):
-            raise TypeError(
-                "Can not encode Dict with only one encoder. Use encode_dict"
-            )
+            raise TypeError("Can not encode Dict with only one encoder. Use encode_dict")
 
         return encoder(input)
 
     @staticmethod
-    def encode_list(
-        input: List[Input], encoder: Optional[Encoder] = None
-    ) -> List[Json]:
+    def encode_list(input: List[Input], encoder: Optional[Encoder] = None) -> List[Json]:
         return list(map(lambda x: _JsonEncode.encode(x, encoder), input))
 
     @staticmethod
@@ -89,9 +83,5 @@ class _JsonEncode(metaclass=ABCMeta):
         if isinstance(input, List):
             return [_JsonEncode.clear_nones(x) for x in input if x is not None]
         elif isinstance(input, Dict):
-            return {
-                key: _JsonEncode.clear_nones(val)
-                for key, val in input.items()
-                if val is not None
-            }
+            return {key: _JsonEncode.clear_nones(val) for key, val in input.items() if val is not None}
         return input

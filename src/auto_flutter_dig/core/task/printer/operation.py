@@ -20,9 +20,7 @@ class OpMessage(Operation):
 class OpDescription(Operation):
     def __init__(self, description: Optional[str]) -> None:
         super().__init__()
-        self.description: str = _If.not_none(
-            _Ensure.type(description, str, "description"), lambda x: x, lambda: ""
-        )
+        self.description: str = _If.not_none(_Ensure.type(description, str, "description"), lambda x: x, lambda: "")
 
 
 class OpResult(Operation):

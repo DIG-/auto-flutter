@@ -4,12 +4,8 @@ from ..core.utils import _Ensure
 
 
 class Result:
-    def __init__(
-        self, error: Optional[BaseException] = None, success: Optional[bool] = None
-    ) -> None:
-        self.error: Optional[BaseException] = _Ensure.type(
-            error, BaseException, "error"
-        )
+    def __init__(self, error: Optional[BaseException] = None, success: Optional[bool] = None) -> None:
+        self.error: Optional[BaseException] = _Ensure.type(error, BaseException, "error")
         _Ensure.type(success, bool, "success")
         self.success: bool = success if not success is None else error is None
         pass

@@ -4,8 +4,10 @@ from abc import ABC
 from collections import deque
 from typing import Deque, Iterable, List, Optional, Union
 
+from ...core.utils import _If
 from ...model.error import TaskNotFound
 from ...model.task import *
+from ...model.task.group import TaskGroup
 from ._unique_identity import _TaskUniqueIdentity
 
 
@@ -14,27 +16,30 @@ class TaskResolver(ABC):
     def resolve(
         task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
         previous: List[TaskIdentity] = [],
+        origin: Optional[TaskGroup] = None,
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
         if isinstance(task, Task):
-            temp = [_TaskUniqueIdentity(task)]
+            t_identity = _TaskUniqueIdentity(task)
+            if hasattr(task, "identity") and not task.identity is None:
+                t_identity.parent = task.identity.parent
+            temp = [t_identity]
         elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
             for it in task:
                 if isinstance(it, Task):
-                    temp.append(_TaskUniqueIdentity(it))
+                    it_identity = _TaskUniqueIdentity(it)
+                    if hasattr(it, "identity") and not it.identity is None:
+                        it_identity.parent = it.identity.parent
+                    temp.append(it_identity)
                 elif isinstance(it, TaskIdentity):
                     temp.append(it)
                 else:
-                    raise TypeError(
-                        "Trying to resolve task, but received {}".format(type(task))
-                    )
+                    raise TypeError("Trying to resolve task, but received {}".format(type(task)))
         else:
-            raise TypeError(
-                "Trying to resolve task, but received {}".format(type(task))
-            )
-        temp = TaskResolver.__resolve_dependencies(temp)
+            raise TypeError("Trying to resolve task, but received {}".format(type(task)))
+        temp = TaskResolver.__resolve_dependencies(temp, origin)
         temp.reverse()
         temp = TaskResolver.__clear_repeatable(temp, previous)
         output: Deque[TaskIdentity] = deque()
@@ -43,7 +48,10 @@ class TaskResolver(ABC):
         return output
 
     @staticmethod
-    def __resolve_dependencies(items: List[TaskIdentity]) -> List[TaskIdentity]:
+    def __resolve_dependencies(
+        items: List[TaskIdentity],
+        origin: Optional[TaskGroup] = None,
+    ) -> List[TaskIdentity]:
         if len(items) <= 0:
             raise IndexError("Require at least one TaskIdentity")
         i = 0
@@ -51,18 +59,17 @@ class TaskResolver(ABC):
             current = items[i]
             _task: Task = current.creator()
             for id in _task.require():
-                identity = TaskResolver.find_task(id)
-                if identity is None:
-                    raise TaskNotFound(id)
+                identity = TaskResolver.find_task(
+                    id,
+                    _If.not_none(origin, lambda x: x, lambda: current.parent),
+                )
                 j = i + 1
                 items[j:j] = [identity]
             i += 1
         return items
 
     @staticmethod
-    def __clear_repeatable(
-        new: List[TaskIdentity], previous: List[TaskIdentity] = []
-    ) -> List[TaskIdentity]:
+    def __clear_repeatable(new: List[TaskIdentity], previous: List[TaskIdentity] = []) -> List[TaskIdentity]:
         items = previous.copy()
         items.extend(new)
         start = len(previous)
@@ -84,11 +91,14 @@ class TaskResolver(ABC):
         return items[start:]
 
     @staticmethod
-    def find_task(id: TaskId) -> Optional[TaskIdentity]:
-        from ...task._list import task_list, user_task
+    def find_task(id: TaskId, origin: Optional[TaskGroup] = None) -> TaskIdentity:
+        if origin is None:
+            from ...module.aflutter.task.root import Root
 
-        if id in task_list:
-            return task_list[id]
-        if id in user_task:
-            return user_task[id]
-        return None
+            origin = Root
+        if id in origin.subtasks:
+            return origin.subtasks[id]
+        if not origin.parent is None:
+            # Recursive, not good, but not expexct to have more than 3 level
+            return TaskResolver.find_task(id, origin.parent)
+        raise TaskNotFound(id, origin)

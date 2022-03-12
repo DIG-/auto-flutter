@@ -4,10 +4,23 @@ _command.command(
     [
         "aflutter",
         "setup",
-        "--flutter",
+        "stack-trace",
+        "--on",
+    ]
+)
+_command.command(
+    [
+        "aflutter",
+        "setup",
+        "flutter",
         "tests/dummy/flutter",
-        "--firebase-cli",
+    ]
+)
+_command.command(
+    [
+        "aflutter",
+        "setup",
+        "firebase",
         "tests/dummy/firebase",
-        "--aflutter:stack-trace",
     ]
 )

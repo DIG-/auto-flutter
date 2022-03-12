@@ -2,10 +2,10 @@ def _main():
     import sys
     from platform import system as platform_system
 
-    from .core.session import Session
     from .core.string import SB
     from .core.task import TaskManager
-    from .task.main import MainTask, ReadConfigTask
+    from .model.error.formater import format_exception
+    from .module.aflutter.task.init import AflutterInitTask
 
     # Enable color support on windows
     if platform_system() == "Windows":
@@ -28,7 +28,7 @@ def _main():
             init()
 
     TaskManager.start_printer()
-    TaskManager.add((MainTask(), ReadConfigTask()))
+    TaskManager.add(AflutterInitTask())
 
     try:
         has_error = not TaskManager.execute()
@@ -37,7 +37,7 @@ def _main():
         TaskManager.print(
             SB()
             .append("Unhandled error caught\n\n", SB.Color.RED)
-            .append(Session.format_exception(error), SB.Color.RED, True)
+            .append(format_exception(error), SB.Color.RED, True)
             .str()
         )
 
