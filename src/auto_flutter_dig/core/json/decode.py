@@ -87,7 +87,7 @@ class _JsonDecode(ABC):
         tDecoder: Optional[Decoder] = None,
     ) -> Dict[K, T]:
         m = _JsonDecode.__decode_dict_to_map(json, kcls, tcls, kDecoder, tDecoder)
-        f = _Iterable.tuple_not_none(m)
+        f = _Iterable.FilterTupleOptional(m)
         return dict(f)
 
     @staticmethod

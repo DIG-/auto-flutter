@@ -68,13 +68,10 @@ class _Iterable(ABC):
 
     K = TypeVar("K")
 
-    class tuple_not_none(Iterator[Tuple[K, T]]):
-        def __init__(self, iter: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]) -> None:
+    class FilterTupleOptional(Iterator[Tuple[K, T]]):
+        def __init__(self, iterable: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]) -> None:
             super().__init__()
-            self._iter = iter.__iter__()
-
-        def __iter__(self) -> _Iterable.tuple_not_none:
-            return self
+            self._iter = iterable.__iter__()
 
         def __next__(self) -> Tuple[_Iterable.K, _Iterable.T]:
             while True:
