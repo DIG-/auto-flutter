@@ -25,12 +25,12 @@ class _JsonDecode(ABC):
             if isinstance(json, cls):
                 return json
             return None
-        elif issubclass(cls, Serializable):
+        if issubclass(cls, Serializable):
             result = cls.from_json(json)
             if not result is None and not isinstance(result, cls):
                 return _Ensure.raise_error_value(None, cls, type(result))
             return result  # type: ignore
-        elif issubclass(cls, Enum):
+        if issubclass(cls, Enum):
             return _Enum.parse_value(cls, json)  # type:ignore
         raise ValueError(f"Unknown type to handle `{type(json).__name__}`")
 
