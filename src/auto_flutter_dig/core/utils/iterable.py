@@ -1,44 +1,39 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import (
-    Callable,
-    Generic,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-)
+from typing import Callable, Generic, Iterable, Iterator, List, Optional, Tuple, Type, TypeVar
 
 
 class _Iterable(ABC):
     T = TypeVar("T")
     T_co = TypeVar("T_co", covariant=True)
 
+    @staticmethod
     def first_or_none(iterable: Iterable[T], condition: Callable[[T], bool]) -> Optional[T]:
         for it in iterable:
             if condition(it):
                 return it
         return None
 
+    @staticmethod
     def first_or_default(iterable: Iterable[T], condition: Callable[[T], bool], fallback: Callable[[], T]) -> T:
         for it in iterable:
             if condition(it):
                 return it
         return fallback()
 
+    @staticmethod
     def flatten(iterable: Iterable[Iterable[T]]) -> List[T]:
         return [item for sublist in iterable for item in sublist]
 
+    @staticmethod
     def count(iterable: Iterable[T]) -> int:
         out = 0
         for it in iterable:
             out += 1
         return out
 
+    @staticmethod
     def is_empty(iterable: Iterable[T]) -> bool:
         for it in iterable:
             return False
