@@ -9,9 +9,7 @@ class _If(ABC):
     V = TypeVar("V")
 
     @staticmethod
-    def none(
-        input: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]
-    ) -> V:
+    def none(input: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]) -> V:
         _EnsureCallable.instance(positive, "positive")
         _EnsureCallable.instance(negative, "negative")
 
@@ -20,9 +18,7 @@ class _If(ABC):
         return negative(input)
 
     @staticmethod
-    def not_none(
-        input: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]
-    ) -> V:
+    def not_none(input: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]) -> V:
         _EnsureCallable.instance(positive, "positive")
         _EnsureCallable.instance(negative, "negative")
 

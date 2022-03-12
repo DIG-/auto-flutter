@@ -108,16 +108,12 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             if key == "build-param" and isinstance(value, List):
                 output.build_param = _JsonDecode.decode_list(value, str)
             elif key == "run-before" and isinstance(value, Dict):
-                output.run_before = _JsonDecode.decode_optional_dict(
-                    value, RunType, TaskIdList
-                )
+                output.run_before = _JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
                 pass
             elif key == "output" and isinstance(value, str):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
-                output.outputs = _JsonDecode.decode_optional_dict(
-                    value, BuildType, str, BuildType.from_output
-                )
+                output.outputs = _JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
                 pass
             elif isinstance(value, str):
                 if output.extras is None:

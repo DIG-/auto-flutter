@@ -35,9 +35,7 @@ class _JsonDecode(ABC):
         raise ValueError("Unknown type to handle `{}`".format(type(json)))
 
     @staticmethod
-    def decode_optional(
-        json: Optional[Json], cls: Type[T], decoder: Optional[Decoder] = None
-    ) -> Optional[T]:
+    def decode_optional(json: Optional[Json], cls: Type[T], decoder: Optional[Decoder] = None) -> Optional[T]:
         if json is None:
             return None
         return _JsonDecode.decode(json, cls, decoder)
@@ -51,9 +49,7 @@ class _JsonDecode(ABC):
         return map(lambda x: _JsonDecode.decode(x, cls, decoder), json)
 
     @staticmethod
-    def decode_list(
-        json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None
-    ) -> List[T]:
+    def decode_list(json: Union[Json, List[Json]], cls: Type[T], decoder: Optional[Decoder] = None) -> List[T]:
         return list(_Iterable.not_none(_JsonDecode.__decode_list(json, cls, decoder)))
 
     @staticmethod
@@ -102,9 +98,7 @@ class _JsonDecode(ABC):
         kDecoder: Optional[KDecoder] = None,
         tDecoder: Optional[Decoder] = None,
     ) -> Dict[K, Optional[T]]:
-        return dict(
-            _JsonDecode.__decode_dict_to_map(json, kcls, tcls, kDecoder, tDecoder)
-        )
+        return dict(_JsonDecode.__decode_dict_to_map(json, kcls, tcls, kDecoder, tDecoder))
 
     @staticmethod
     def decode_optional_dict(
@@ -141,9 +135,7 @@ class _JsonDecode(ABC):
         if not isinstance(json, Dict):
             return _Ensure._raise_error_instance("json", Dict, type(json))
         return map(
-            lambda x: _JsonDecode.__decode_dict_tuple(
-                x, kcls, tcls, kDecoder, tDecoder
-            ),
+            lambda x: _JsonDecode.__decode_dict_tuple(x, kcls, tcls, kDecoder, tDecoder),
             json.items(),
         )
 
@@ -161,17 +153,13 @@ class _JsonDecode(ABC):
         )
 
     @staticmethod
-    def __decode_dict_key(
-        key: str, kcls: Type[K], kDecoder: Optional[KDecoder] = None
-    ) -> K:
+    def __decode_dict_key(key: str, kcls: Type[K], kDecoder: Optional[KDecoder] = None) -> K:
         if kDecoder is None:
             decoded = _JsonDecode.decode(key, kcls, None)
         else:
             decoded = kDecoder(key)
         if decoded is None:
-            raise ValueError(
-                'Unexpected dict key decode "{}" to `{}`'.format(key, kcls.__name__)
-            )
+            raise ValueError('Unexpected dict key decode "{}" to `{}`'.format(key, kcls.__name__))
         if isinstance(decoded, kcls):
             return decoded
         raise ValueError('Invalid decoded key "{}" as `{}`'.format(key, type(key)))

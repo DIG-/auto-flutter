@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from tokenize import group
 from typing import Dict, Iterable, Optional, Union
 
 from .option import LongOption, Option, OptionAll, PositionalOption, ShortOption
@@ -14,6 +13,7 @@ Key = Union[Argument, Option]
 class Args:
     GLOBAL = "--"
 
+    # pylint: disable=dangerous-default-value
     def __init__(
         self,
         initial: Dict[Group, Dict[Argument, Value]] = {},
@@ -26,7 +26,7 @@ class Args:
             self.select_group(group)
 
     def __repr__(self) -> str:
-        return self.__content.__repr__()
+        return f"Args(group={self.__selected_group}, content={self.__content.__repr__()})"
 
     def select_group(self, group: Group) -> Args:
         self.__selected_group = group
@@ -34,6 +34,9 @@ class Args:
             self.__content[group] = {}
         self.__selected_content = self.__content[group]
         return self
+
+    def with_group(self, group: Group) -> Args:
+        return Args(self.__content, group)
 
     ###############
     ## Methods for a selected group
@@ -91,12 +94,14 @@ class Args:
         if key in self.__content[group]:
             self.__content[group].pop(key)
 
+    # pylint: disable=unused-argument
     def group_get_all(self, group: Group, option: OptionAll) -> Iterable[Argument]:
         group += "#all"
         if not group in self.__content:
             return []
         return map(lambda x: x[0], self.__content[group].items())
 
+    # pylint: disable=unused-argument
     def group_add_all(self, group: Group, option: OptionAll, argument: Argument):
         group += "#all"
         if not group in self.__content:
@@ -133,11 +138,7 @@ class Args:
             elif isinstance(option, PositionalOption):
                 key = str(option.position)
             else:
-                raise TypeError(
-                    "Can not get correct type of Option: {}".format(
-                        type(option).__name__
-                    )
-                )
+                raise TypeError(f"Can not get correct type of Option: {type(option).__name__}")
         if key is None:
-            raise KeyError("Can not extract key from `{}`".format(type(option)))
+            raise KeyError(f"Can not extract key from `{type(option)}`")
         return key.lower()

@@ -1,19 +1,27 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from logging import LoggerAdapter
 from typing import Iterable, List, Optional, Union
 
+from ...model.error.chain import E
 from ...model.result import Result
 from ..argument import Args
 from .id import TaskId
 from .identity import TaskIdentity
 from .result import TaskResult
 
-__all__ = ["Task", "List"]
+__all__ = ["Task", "List", "E"]
 
 
 class Task(ABC):
     identity: TaskIdentity
+
+    def __init__(self) -> None:
+        super().__init__()
+        from ...core.logger import log_task
+
+        self.log = LoggerAdapter(log_task, {"tag": self.__class__.__name__})
 
     def require(self) -> List[TaskId]:
         return []
@@ -27,6 +35,7 @@ class Task(ABC):
         from ...core.task.manager import TaskManager
 
         TaskManager.print(message)
+        self.log.debug(message)
 
     def _uptade_description(
         self,
@@ -37,9 +46,10 @@ class Task(ABC):
 
         TaskManager.update_description(description, result)
 
-    def _append_task(
-        self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]
-    ) -> None:
+    def _reset_description(self, args: Args, result: Optional[Result] = None):
+        self._uptade_description(self.describe(args), result)
+
+    def _append_task(self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
         from ...core.task.manager import TaskManager
 
         TaskManager.add(tasks)
@@ -53,4 +63,4 @@ class Task(ABC):
     def execute(self, args: Args) -> TaskResult:
         # Return None when fail
         # Otherwise return given Args with extra args
-        raise NotImplementedError
+        raise NotImplementedError()

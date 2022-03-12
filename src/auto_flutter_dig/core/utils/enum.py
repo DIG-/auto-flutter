@@ -12,18 +12,12 @@ class _Enum(ABC):
     V = TypeVar("V")
 
     @staticmethod
-    def parse_value(
-        enum: Type[E], value: V, field: Callable[[E], V] = lambda x: x.value
-    ) -> E:
+    def parse_value(enum: Type[E], value: V, field: Callable[[E], V] = lambda x: x.value) -> E:
         output = _Iterable.first_or_none(enum.__iter__(), lambda x: field(x) == value)
         if output is None:
-            raise ValueError(
-                "Value `{}` not found in enum `{}`".format(value, enum.__name__)
-            )
+            raise ValueError("Value `{}` not found in enum `{}`".format(value, enum.__name__))
         return output
 
     @staticmethod
-    def parse(
-        enum: Type[E], field: Callable[[E], V] = lambda x: x.value
-    ) -> Callable[[V], E]:
+    def parse(enum: Type[E], field: Callable[[E], V] = lambda x: x.value) -> Callable[[V], E]:
         return lambda value: _Enum.parse_value(enum, value, field)

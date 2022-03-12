@@ -46,9 +46,7 @@ class _Ensure(ABC):
         return _Ensure._raise_error_instance(name, cls, type(input))
 
     @staticmethod
-    def _raise_error_value(
-        name: Optional[str], cls: Union[T, Type[T], Type], input: Type
-    ) -> NoReturn:
+    def _raise_error_value(name: Optional[str], cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Value must be instance of `{cls}`, but `{input}` was returned",
@@ -65,9 +63,7 @@ class _Ensure(ABC):
             )
 
     @staticmethod
-    def _raise_error_instance(
-        name: Optional[str], cls: Union[T, Type[T], Type], input: Type
-    ) -> NoReturn:
+    def _raise_error_instance(name: Optional[str], cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
         if name is None:
             _Ensure._raise_error(
                 "Field must be instance of `{cls}`, but `{input}` was used",
@@ -84,12 +80,8 @@ class _Ensure(ABC):
             )
 
     @staticmethod
-    def _raise_error(
-        message: str, name: str, cls: Union[T, Type[T], Type], input: Type
-    ) -> NoReturn:
-        raise TypeError(
-            message.format(name=name, cls=_Ensure.name(cls), input=_Ensure.name(input))
-        )
+    def _raise_error(message: str, name: str, cls: Union[T, Type[T], Type], input: Type) -> NoReturn:
+        raise TypeError(message.format(name=name, cls=_Ensure.name(cls), input=_Ensure.name(input)))
 
     @staticmethod
     def name(cls: Union[T, Type[T], Type]) -> str:

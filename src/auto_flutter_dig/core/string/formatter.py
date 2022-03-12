@@ -8,12 +8,10 @@ from ..utils import _Dict
 
 
 class StringFormatter:
-    REGEX = re_compile("\$\{(\w+):(\w+\.)?(\w+)(\|\w+)?}")
+    REGEX = re_compile(r"\$\{(\w+):([\w\_\-]+\.)?([\w\_\-]+)(\|\w+)?}")
     EXTRAS = Dict[str, str]
 
-    def format(
-        self, input: str, args: Args, args_extra: Optional[EXTRAS] = None
-    ) -> str:
+    def format(self, input: str, args: Args, args_extra: Optional[EXTRAS] = None) -> str:
         if args_extra is None:
             args_extra = {}
         replaces: Dict[str, str] = {}
@@ -22,16 +20,14 @@ class StringFormatter:
                 processed = self.__sub(match, args, args_extra)
                 replaces[processed[0]] = processed[1]
             except ValueError as error:
-                raise ValueError('Error in "{}": {}'.format(match.group(0), str(error)))
+                raise ValueError(f'Error formatting "{match.group(0)}"') from error
 
         output: str = input
         for key, value in replaces.items():
             output = output.replace(key, value)
         return output
 
-    def __sub(
-        self, match: re_Match, args: Args, args_extras: EXTRAS
-    ) -> Tuple[str, str]:
+    def __sub(self, match: re_Match, args: Args, args_extras: EXTRAS) -> Tuple[str, str]:
         parsed: Optional[str] = None
 
         source: str = match.group(1)
@@ -61,10 +57,10 @@ class StringFormatter:
                     parsed = value
                     break
         else:
-            raise ValueError('Unknown source "{}"'.format(source))
+            raise ValueError(f'Unknown source "{source}"')
 
         if parsed is None:
-            raise ValueError('Value not found for "{}"'.format(argument))
+            raise ValueError(f'Value not found for "{argument}"')
 
         if operation is None or len(operation) <= 0:
             pass
@@ -75,7 +71,7 @@ class StringFormatter:
         elif operation in ("lower", "lowercase"):
             parsed = parsed.lower()
         else:
-            raise ValueError('Unknown operation "{}"'.format(operation))
+            raise ValueError(f'Unknown operation "{operation}"')
 
         return (match.group(0), parsed)
 

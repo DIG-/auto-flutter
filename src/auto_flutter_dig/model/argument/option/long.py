@@ -12,11 +12,7 @@ class LongOption(Option):
         Option.__init__(self, description)
         self.long: str = _Ensure.instance(long, str, "long").lower().strip()
         if len(self.long) <= 1:
-            raise ValueError(
-                "Long option must have more than one character. Received: {}".format(
-                    long
-                )
-            )
+            raise ValueError("Long option must have more than one character. Received: {}".format(long))
 
     def describe(self) -> Tuple[str, str]:
         return ("--" + self.long, self.description)

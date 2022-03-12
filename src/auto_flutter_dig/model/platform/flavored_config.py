@@ -102,14 +102,10 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
             output.extras = other.extras
         if isinstance(json, Dict):
             if "flavored" in json:
-                output.flavored = _JsonDecode.decode_optional_dict(
-                    json["flavored"], Flavor, PlatformConfig
-                )
+                output.flavored = _JsonDecode.decode_optional_dict(json["flavored"], Flavor, PlatformConfig)
         return output
 
-    def get_config_by_flavor(
-        self, flavor: Optional[Flavor]
-    ) -> Optional[PlatformConfig]:
+    def get_config_by_flavor(self, flavor: Optional[Flavor]) -> Optional[PlatformConfig]:
         if flavor is None:
             return self
         if self.flavored is None:
