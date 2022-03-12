@@ -15,7 +15,7 @@ class TaskResolver(ABC):
     @staticmethod
     def resolve(
         task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
-        previous: List[TaskIdentity] = [],
+        previous: Optional[List[TaskIdentity]] = None,
         origin: Optional[TaskGroup] = None,
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
@@ -27,14 +27,14 @@ class TaskResolver(ABC):
         elif isinstance(task, TaskIdentity):
             temp = [task]
         elif isinstance(task, Iterable):
-            for it in task:
-                if isinstance(it, Task):
-                    it_identity = _TaskUniqueIdentity(it)
-                    if hasattr(it, "identity") and not it.identity is None:
-                        it_identity.parent = it.identity.parent
+            for item in task:
+                if isinstance(item, Task):
+                    it_identity = _TaskUniqueIdentity(item)
+                    if hasattr(item, "identity") and not item.identity is None:
+                        it_identity.parent = item.identity.parent
                     temp.append(it_identity)
-                elif isinstance(it, TaskIdentity):
-                    temp.append(it)
+                elif isinstance(item, TaskIdentity):
+                    temp.append(item)
                 else:
                     raise TypeError(f"Trying to resolve task, but received {type(task).__name__}")
         else:
@@ -58,9 +58,9 @@ class TaskResolver(ABC):
         while i < len(items):
             current = items[i]
             _task: Task = current.creator()
-            for id in _task.require():
+            for task_id in _task.require():
                 identity = TaskResolver.find_task(
-                    id,
+                    task_id,
                     _If.not_none(origin, lambda x: x, lambda: current.parent),
                 )
                 j = i + 1
@@ -69,7 +69,12 @@ class TaskResolver(ABC):
         return items
 
     @staticmethod
-    def __clear_repeatable(new: List[TaskIdentity], previous: List[TaskIdentity] = []) -> List[TaskIdentity]:
+    def __clear_repeatable(
+        new: List[TaskIdentity],
+        previous: Optional[List[TaskIdentity]] = None,
+    ) -> List[TaskIdentity]:
+        if previous is None:
+            previous = []
         items = previous.copy()
         items.extend(new)
         start = len(previous)
@@ -91,14 +96,14 @@ class TaskResolver(ABC):
         return items[start:]
 
     @staticmethod
-    def find_task(id: TaskId, origin: Optional[TaskGroup] = None) -> TaskIdentity:
+    def find_task(task_id: TaskId, origin: Optional[TaskGroup] = None) -> TaskIdentity:
         if origin is None:
-            from ...module.aflutter.task.root import Root
+            from ...module.aflutter.task.root import Root  # pylint: disable=import-outside-toplevel
 
             origin = Root
-        if id in origin.subtasks:
-            return origin.subtasks[id]
+        if task_id in origin.subtasks:
+            return origin.subtasks[task_id]
         if not origin.parent is None:
             # Recursive, not good, but not expexct to have more than 3 level
-            return TaskResolver.find_task(id, origin.parent)
-        raise TaskNotFound(id, origin)
+            return TaskResolver.find_task(task_id, origin.parent)
+        raise TaskNotFound(task_id, origin)
