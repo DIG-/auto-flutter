@@ -1,5 +1,7 @@
+PACKAGE_NAME = "auto_flutter_dig"
+
+# pylint: disable=import-outside-toplevel
 def __get_version() -> str:
-    PACKAGE_NAME = "auto_flutter_dig"
     try:
         from importlib.metadata import version
 
