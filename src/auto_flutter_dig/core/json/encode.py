@@ -82,6 +82,6 @@ class _JsonEncode(ABC):
     def clear_nones(json: Json) -> Json:
         if isinstance(json, List):
             return [_JsonEncode.clear_nones(x) for x in json if x is not None]
-        elif isinstance(json, Dict):
+        if isinstance(json, Dict):
             return {key: _JsonEncode.clear_nones(val) for key, val in json.items() if val is not None}
         return json
