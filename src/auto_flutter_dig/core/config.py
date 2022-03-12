@@ -6,7 +6,7 @@ from typing import Dict, NoReturn, Optional, Union
 
 from appdirs import user_config_dir  # type: ignore[import]
 
-from ..core.os import OS
+from ..core.os.path_converter import PathConverter
 
 __all__ = ["Config"]
 
@@ -139,13 +139,13 @@ class _Config:
         if value is None:
             if default is None:
                 raise ValueError(f'Key "{key}" not found and no default value informed')
-            return OS.machine_to_posix_path(default)
+            return PathConverter.from_path(default).to_posix()
         if isinstance(value, str):
             return PurePosixPath(value)
         return self.__value_error(key, int, type(value))
 
     def put_path(self, key: str, value: PurePath) -> None:
-        self._put_value(key, str(OS.machine_to_posix_path(value)))
+        self._put_value(key, str(PathConverter.from_path(value).to_posix()))
 
     def __repr__(self) -> str:
         return "Config(" + self.__content.__repr__() + ")"

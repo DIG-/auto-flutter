@@ -3,7 +3,7 @@ from pathlib import Path, PurePath, PurePosixPath
 from typing import Dict, Iterable, Optional, Union
 
 from .....core.config import Config
-from .....core.os import OS
+from .....core.os.path_converter import PathConverter
 from .....core.process import Process
 from .....core.string import SF
 from .....model.task import *
@@ -63,7 +63,7 @@ class BaseProcessTask(Task):
                 argument = SF.format(argument, args, extras)
             if argument.startswith("./"):
                 path: PurePath = PurePosixPath(argument)
-                path = OS.posix_to_machine_path(path)
+                path = PathConverter.from_path(path).to_machine()
                 if expand_path:
                     path = Path(path).absolute()
                 argument = str(path)

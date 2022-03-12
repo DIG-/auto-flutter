@@ -1,7 +1,7 @@
 from pathlib import Path, PurePosixPath
 from typing import Optional
 
-from .....core.os import OS
+from .....core.os.path_converter import PathConverter
 from .....core.string import SB, SF
 from .....model.build import *
 from .....model.error import SilentWarning
@@ -121,7 +121,7 @@ class FlutterBuildTask(FlutterCommandTask):
             },
         )
 
-        if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
+        if Path(PathConverter.from_posix(PurePosixPath(output_file)).to_machine()).exists():
             self._print_content(SB().append("Build output found successfully", SB.Color.GREEN).str())
         else:
             return TaskResult(

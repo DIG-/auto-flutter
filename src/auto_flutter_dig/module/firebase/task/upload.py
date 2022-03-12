@@ -1,7 +1,7 @@
 from pathlib import Path, PurePosixPath
 
 from ....core.config import Config
-from ....core.os import OS
+from ....core.os.path_converter import PathConverter
 from ....core.utils import _Dict, _If
 from ....core.utils.task.process import *
 from ....model.argument.option import LongOptionWithValue
@@ -37,7 +37,7 @@ class FirebaseBuildUpload(BaseProcessTask):
         if filename is None or len(filename) <= 0:
             return TaskResult(args, E(AssertionError("Previous task does not have output")).error)
 
-        file: Path = Path(OS.posix_to_machine_path(PurePosixPath(filename)))
+        file: Path = Path(PathConverter.from_posix(PurePosixPath(filename)).to_machine())
         if not file.exists():
             return TaskResult(
                 args,
