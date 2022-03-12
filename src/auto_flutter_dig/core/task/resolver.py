@@ -82,7 +82,7 @@ class TaskResolver(ABC):
                 j = i - 1
                 while j >= 0:
                     p_item = items[j]
-                    if p_item.id == n_item.id:
+                    if p_item.task_id == n_item.task_id:
                         del items[i]
                         i -= 1
                         break

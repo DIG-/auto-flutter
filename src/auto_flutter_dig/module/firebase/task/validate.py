@@ -21,7 +21,7 @@ class FirebaseBuildValidate(Task):
     ARG_FIREBASE_GOOGLE_ID = "FIREBASE_CONFIG_GOOGLE_ID"
 
     def require(self) -> List[TaskId]:
-        return [ProjectRead.identity.id]
+        return [ProjectRead.identity.task_id]
 
     def execute(self, args: Args) -> TaskResult:
         flutter_args = args.with_group(FlutterBuildStub.identity.group)

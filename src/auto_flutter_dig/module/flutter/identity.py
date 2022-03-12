@@ -1,4 +1,5 @@
 from ...model.task.identity import *
+from ...model.task.task import Task
 
 GROUP_FLUTTER = "flutter"
 
@@ -6,10 +7,10 @@ GROUP_FLUTTER = "flutter"
 class FlutterTaskIdentity(TaskIdentity):
     def __init__(
         self,
-        id: TaskId,
+        task_id: TaskId,
         name: str,
         options: List[Option],
-        creator: Callable[[], "Task"],  # type: ignore[name-defined]
+        creator: Callable[[], Task],
         allow_more: bool = False,
     ) -> None:
-        super().__init__(GROUP_FLUTTER, id, name, options, creator, allow_more)
+        super().__init__(GROUP_FLUTTER, task_id, name, options, creator, allow_more)

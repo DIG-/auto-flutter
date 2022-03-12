@@ -24,7 +24,7 @@ class BaseSubtaskParentTask(Task):
                 self.identity,
                 SB()
                 .append("Task ", SB.Color.YELLOW)
-                .append(self.identity.id, SB.Color.CYAN)
+                .append(self.identity.task_id, SB.Color.CYAN)
                 .append(" require subtask!", SB.Color.YELLOW)
                 .str(),
             )

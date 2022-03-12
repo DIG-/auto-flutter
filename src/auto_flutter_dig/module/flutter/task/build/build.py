@@ -10,6 +10,7 @@ from .....model.platform.flavored_config import PlatformConfigFlavored
 from .....model.platform.run_type import RunType
 from .....model.project import *
 from .....model.task import *
+from ....aflutter.task.help import HelpTask
 from ...identity import FlutterTaskIdentity
 from ..command import FlutterCommandTask
 
@@ -42,7 +43,13 @@ class FlutterBuildTaskIdentity(FlutterTaskIdentity):
 
 
 class FlutterBuildTask(FlutterCommandTask):
-    identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
+    identity = FlutterTaskIdentity(
+        "--flutter-build-task--",
+        "",
+        [],
+        lambda: HelpTask(None, None),
+        True,
+    )
 
     def __init__(
         self,

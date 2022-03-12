@@ -41,7 +41,7 @@ class ProjectTaskImport(Task):
             from .....module.aflutter.task.root import Root  # pylint:disable=import-outside-toplevel
 
             for identity in tasks:
-                if identity.id in Root.subtasks:
+                if identity.task_id in Root.subtasks:
                     raise KeyError("UserTask can not override internal task")
             Root.register_subtask(tasks)
 

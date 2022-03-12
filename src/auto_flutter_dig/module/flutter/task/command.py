@@ -28,7 +28,7 @@ class FlutterCommandTask(BaseProcessTask):
         from ....module.aflutter.task.project.read import ProjectRead # pylint: disable=import-outside-toplevel
         parent = super().require()
         if self._require_project:
-            parent.append(ProjectRead.identity.id)
+            parent.append(ProjectRead.identity.task_id)
         return parent
 
     def _create_process(self, args: Args) -> ProcessOrResult:

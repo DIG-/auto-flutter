@@ -27,9 +27,9 @@ class FirebaseBuildUpload(BaseProcessTask):
 
     def require(self) -> List[TaskId]:
         return [
-            FirebaseBuildValidate.identity.id,
-            FirebaseCheck.identity.id,
-            FlutterBuildStub.identity.id,
+            FirebaseBuildValidate.identity.task_id,
+            FirebaseCheck.identity.task_id,
+            FlutterBuildStub.identity.task_id,
         ]
 
     def _create_process(self, args: Args) -> ProcessOrResult:

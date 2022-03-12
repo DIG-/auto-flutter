@@ -18,7 +18,7 @@ __all__ = [
 
 class BaseConfigTask(Task):
     def require(self) -> List[TaskId]:
-        return [ProjectRead.identity.id]
+        return [ProjectRead.identity.task_id]
 
     def _add_save_project(self):
         self._append_task(ProjectSave.identity)

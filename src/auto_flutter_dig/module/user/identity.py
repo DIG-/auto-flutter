@@ -1,7 +1,7 @@
 from typing import Callable
 
-from ...model.argument.option import Option
-from ...model.task import *
+from ...model.task.identity import *
+from ...model.task.task import Task
 
 
 class UserTaskIdentity(TaskIdentity):

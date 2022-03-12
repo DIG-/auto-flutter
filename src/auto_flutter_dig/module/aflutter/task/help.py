@@ -20,7 +20,7 @@ class HelpTask(Task):
             message: Optional[str] = None,
         ) -> None:
             super().__init__(
-                HelpTask.identity.id,
+                HelpTask.identity.task_id,
                 HelpTask.identity.name,
                 HelpTask.identity.options,
                 lambda: HelpTask(task_id, message),
@@ -151,7 +151,7 @@ class HelpTask(Task):
         t_identity = identity
         while not t_identity is None:
             if t_identity != Root:
-                tasks.append(t_identity.id)
+                tasks.append(t_identity.task_id)
             parent = t_identity.parent
             if isinstance(parent, TaskIdentity):
                 t_identity = parent
@@ -171,7 +171,7 @@ class HelpTask(Task):
         builder.append("[options]\n", SB.Color.MAGENTA)
 
     def _show_task_description(self, builder: SB, identity: TaskIdentity):
-        builder.append("\nTask:\t").append(identity.id, SB.Color.CYAN, True, end="\n").append(identity.name, end="\n")
+        builder.append("\nTask:\t").append(identity.task_id, SB.Color.CYAN, True, end="\n").append(identity.name, end="\n")
         pass
 
     def _show_task_help(
@@ -189,9 +189,9 @@ class HelpTask(Task):
         self._show_task_options(builder, options)
 
     def _show_task_identity_description(self, builder: SB, identity: TaskIdentity):
-        builder.append("  ").append(identity.id, SB.Color.CYAN, True)
-        if len(identity.id) < 8:
-            builder.append(" " * (8 - len(identity.id)))
+        builder.append("  ").append(identity.task_id, SB.Color.CYAN, True)
+        if len(identity.task_id) < 8:
+            builder.append(" " * (8 - len(identity.task_id)))
         builder.append("\t").append(identity.name, end="\n")
 
     def _show_task_options(self, builder: SB, options: Iterable[Option]):
@@ -254,7 +254,7 @@ class HelpTask(Task):
                 output[identity.group] = []
             output[identity.group].append(identity)
         for group, identities in output.copy().items():
-            output[group] = list(filter(lambda x: not x.id.startswith("-"), identities))
+            output[group] = list(filter(lambda x: not x.task_id.startswith("-"), identities))
             if len(output[group]) == 0:
                 output.pop(group)
         return output

@@ -13,7 +13,7 @@ class TaskIdentity:
     def __init__(
         self,
         group: str,
-        id: TaskId,
+        task_id: TaskId,
         name: str,
         options: List[Option],
         creator: Callable[[], "Task"],  # type: ignore[name-defined]
@@ -23,7 +23,7 @@ class TaskIdentity:
         from .task import Task  # pylint: disable=import-outside-toplevel
 
         self.group: str = _Ensure.instance(group, str, "group")
-        self.id: TaskId = _Ensure.instance(id, TaskId, "id")
+        self.task_id: TaskId = _Ensure.instance(task_id, TaskId, "id")
         self.name: str = _Ensure.instance(name, str, "name")
         if not isinstance(options, List):
             _Ensure.raise_error_instance("options", List, type(options))
@@ -33,11 +33,11 @@ class TaskIdentity:
         self.parent: Optional[TaskGroup] = None
 
     def to_map(self) -> Tuple[TaskId, TaskIdentity]:
-        return (self.id, self)
+        return (self.task_id, self)
 
     def __repr__(self) -> str:
         return (
-            f"{type(self).__name__}(id={self.id}, group={self.group}, "
+            f"{type(self).__name__}(id={self.task_id}, group={self.group}, "
             + f"name={self.name}, options={self.options}, creator={self.creator}, "
             + f"parent={self.parent}, allow_more={self.allow_more})"
         )

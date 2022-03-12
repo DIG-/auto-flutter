@@ -38,7 +38,7 @@ class FlutterGeneratorTask(Task):
         self.force = force
 
     def require(self) -> List[TaskId]:
-        return [FlutterPubGetIdentity.id]
+        return [FlutterPubGetIdentity.task_id]
 
     def describe(self, args: Args) -> str:
         return ""
