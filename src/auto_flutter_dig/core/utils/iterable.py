@@ -39,6 +39,22 @@ class _Iterable(ABC):
             return False
         return True
 
+    class Flatten(Iterator[T]):
+        def __init__(self, iterable: Iterable[Iterable[_Iterable.T]]) -> None:
+            super().__init__()
+            self.__iterables = iterable.__iter__()
+            self.__current: Optional[Iterator[_Iterable.T]] = None
+
+        def __next__(self) -> _Iterable.T:
+            while True:
+                if self.__current is None:
+                    self.__current = next(self.__iterables).__iter__()
+                try:
+                    return next(self.__current)
+                except StopIteration:
+                    self.__current = None
+                    continue
+
     class not_none(Iterator[T], Generic[T]):
         def __init__(self, iter: Iterable[Optional[_Iterable.T]]) -> None:
             super().__init__()
