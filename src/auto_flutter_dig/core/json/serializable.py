@@ -5,7 +5,7 @@ from typing import Generic, Optional, TypeVar
 
 from .type import Json
 
-T = TypeVar("T")
+T = TypeVar("T")  # pylint: disable=invalid-name
 
 __all__ = ["Json", "Serializable"]
 
