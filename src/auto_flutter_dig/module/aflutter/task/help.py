@@ -94,7 +94,6 @@ class HelpTask(Task):
                     args,
                     error=E(LookupError(f"Failed to search for task {self._task_id}.")).caused_by(error),
                 )
-            pass
 
         if not self._task_identity is None:
             task_parent = self._task_identity.parent
@@ -171,8 +170,9 @@ class HelpTask(Task):
         builder.append("[options]\n", SB.Color.MAGENTA)
 
     def _show_task_description(self, builder: SB, identity: TaskIdentity):
-        builder.append("\nTask:\t").append(identity.task_id, SB.Color.CYAN, True, end="\n").append(identity.name, end="\n")
-        pass
+        builder.append("\nTask:\t").append(identity.task_id, SB.Color.CYAN, True, end="\n").append(
+            identity.name, end="\n"
+        )
 
     def _show_task_help(
         self,
@@ -225,7 +225,6 @@ class HelpTask(Task):
         for group, identities in grouped.items():
             builder.append("\n")
             self._show_help_by_group(builder, group, identities)
-        pass
 
     def _show_help_by_group(
         self,
@@ -236,7 +235,6 @@ class HelpTask(Task):
         builder.append("Tasks for ").append(group, SB.Color.CYAN).append(":\n")
         for identity in identities:
             self._show_task_identity_description(builder, identity)
-        pass
 
     @staticmethod
     def reduce_indexed_task_into_list(tasks: Dict[str, TaskIdentity]) -> List[TaskIdentity]:

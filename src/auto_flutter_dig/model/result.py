@@ -8,7 +8,6 @@ class Result:
         self.error: Optional[BaseException] = _Ensure.type(error, BaseException, "error")
         _Ensure.type(success, bool, "success")
         self.success: bool = success if not success is None else error is None
-        pass
 
     @property
     def is_error(self) -> bool:
