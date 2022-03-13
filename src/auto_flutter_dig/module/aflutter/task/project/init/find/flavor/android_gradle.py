@@ -33,9 +33,8 @@ class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
             return TaskResult(args)
         found = False
         try:
-            file = open(gradle, "r", encoding="utf-8")
-            content = "".join(file.readlines())
-            file.close()
+            with open(gradle, "r", encoding="utf-8") as file:
+                content = "".join(file.readlines())
             try:
                 start = content.index("productFlavors")
                 start = content.index("{", start)
