@@ -49,8 +49,8 @@ class BaseProcessTask(Task):
         else:
             self.log.debug(message)
 
+    @staticmethod
     def _sanitize_arguments(
-        self,
         arguments: Iterable[str],
         args: Args,
         extras: Optional[Dict[str, str]] = None,
@@ -79,13 +79,18 @@ class BaseProcessTask(Task):
     def _handle_process_output(self, args: Args, process: Process, output: Union[bool, BaseException]) -> TaskResult:
         if isinstance(output, bool):
             return self._handle_process_finished(args, process, output)
-        elif isinstance(output, BaseException):
+        if isinstance(output, BaseException):
             return self._handle_process_exception(args, process, output)
         raise ValueError(f"Expected `bool` or `BaseException`, but process returned `{type(output).__name__}`")
 
     def _handle_process_finished(
-        self, args: Args, process: Process, output: bool, message: Optional[str] = None
+        self,
+        args: Args,
+        process: Process,
+        output: bool,
+        message: Optional[str] = None,
     ) -> TaskResult:
+        # pylint: disable=too-many-boolean-expressions
         if (
             message is None
             and ((output and self._show_output_at_end) or (not output and not self._can_print_content))
