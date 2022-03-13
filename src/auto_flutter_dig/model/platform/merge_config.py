@@ -37,6 +37,9 @@ class _MergedPlatformConfig(PlatformConfig):
     def append_build_param(self, param: str):
         raise AssertionError(f"{type(self).__name__} is read only")
 
+    def remove_build_param(self, param: str) -> bool:
+        raise AssertionError(f"{type(self).__name__} is read only")
+
     def add_extra(self, key: str, value: str):
         raise AssertionError(f"{type(self).__name__} is read only")
 
@@ -63,6 +66,9 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         self.__cached: Dict[Flavor, _MergedPlatformConfig] = {}
 
     def append_build_param(self, param: str):
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    def remove_build_param(self, param: str) -> bool:
         raise AssertionError(f"{type(self).__name__} is read only")
 
     def add_extra(self, key: str, value: str):

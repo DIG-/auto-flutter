@@ -86,9 +86,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             return False
 
         config = project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)
-        if config._build_param is None:
-            config._build_param = []
-        config._build_param.append(add_param)
+        config.append_build_param(add_param)
         self._reset_description(args, Result(success=True))
         return True
 
@@ -131,10 +129,9 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             )
             return False
 
-        if f_config._build_param is None or not rem_param in f_config._build_param:
+        if not f_config.remove_build_param(rem_param):
             self._reset_description(args, Result(E(ValueError("Build param not found to be removed")).error))
             return False
-        f_config._build_param.remove(rem_param)
         self._reset_description(args, Result(success=True))
         return True
 
@@ -182,11 +179,11 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         if f_config is None:
             return TaskResult(args, error=Warning(f"Project has no config for {platform} {flavor}"), success=True)
 
-        if f_config._build_param is None or len(f_config._build_param) <= 0:
+        if len(f_config.get_build_param()) <= 0:
             return TaskResult(args, message=SB().append("  No build params found", SB.Color.YELLOW).str(), success=True)
 
         builder = SB().append(" Build params:")
-        for param in f_config._build_param:
+        for param in f_config.get_build_param():
             builder.append("\n  ").append(param, SB.Color.GREEN)
         return TaskResult(args, message=builder.str())
 

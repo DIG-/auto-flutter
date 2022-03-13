@@ -54,6 +54,14 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self._build_param = []
         self._build_param.append(_Ensure.instance(param, str, "build-param"))
 
+    def remove_build_param(self, param: str) -> bool:
+        if self._build_param is None:
+            return False
+        if param not in self._build_param:
+            return False
+        self._build_param.remove(param)
+        return True
+
     def get_output(self, build_type: Optional[BuildType]) -> Optional[str]:
         if build_type is None:
             return self._output
