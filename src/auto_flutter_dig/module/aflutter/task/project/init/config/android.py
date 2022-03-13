@@ -33,6 +33,7 @@ class ProjectInitConfigAndroidTask(Task):
         else:
             config.outputs = {
                 BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build-mode}.apk",
-                BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build-mode|capitalize}/app-${arg:flavor}-${arg:build-mode}.aab",
+                BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build-mode|capitalize}"
+                + "/app-${arg:flavor}-${arg:build-mode}.aab",
             }
         return TaskResult(args)
