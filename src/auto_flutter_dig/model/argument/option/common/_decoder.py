@@ -4,7 +4,7 @@ from typing import Callable, Generic, Optional, TypeVar
 from .....model.argument.arguments import Args
 from .....model.argument.option.option import Option
 
-T_co = TypeVar("T_co", covariant=True)
+T_co = TypeVar("T_co", covariant=True)  # pylint: disable=invalid-name
 
 __all__ = ["_DecodedOption"]
 
