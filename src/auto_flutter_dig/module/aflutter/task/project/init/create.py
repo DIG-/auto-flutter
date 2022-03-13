@@ -61,15 +61,13 @@ class ProjectInitCreateTask(Task):
     @staticmethod
     def _project_name_from_pubspec(pubspec: Path) -> Optional[str]:
         try:
-            # type: ignore
             # pylint: disable=import-outside-toplevel
-            from yaml import safe_load as yaml_load
+            from yaml import safe_load as yaml_load  # type: ignore
         except ImportError:
             return None
         try:
-            file = open(pubspec, "r", encoding="utf-8")
-            content = yaml_load(file)
-            file.close()
+            with open(pubspec, "r", encoding="utf-8") as file:
+                content = yaml_load(file)
             name = content["name"]
             if isinstance(name, str):
                 return name
