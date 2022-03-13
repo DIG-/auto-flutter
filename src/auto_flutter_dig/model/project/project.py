@@ -51,10 +51,10 @@ class Project(Serializable["Project"]):
             self.tasks = []
         self.tasks.append(task)
 
-    def remove_task_id(self, id: TaskId) -> bool:
+    def remove_task_id(self, task_id: TaskId) -> bool:
         if self.tasks is None:
             return False
-        found = _Iterable.first_or_none(self.tasks, lambda x: x.id == id)
+        found = _Iterable.first_or_none(self.tasks, lambda x: x.task_id == task_id)
         if found is None:
             return False
         self.tasks.remove(found)

@@ -52,7 +52,7 @@ class BaseProcessIntervalTask(BaseProcessTask):
         return self._handle_process_output(args, self._process, output)
 
     @abstractmethod
-    def _on_interval(self, process: Process, time: float, count: int) -> None:
+    def _on_interval(self, process: Process, elapsed: float, count: int) -> None:
         ## Be carefull, `process` content are in other thread, but it is safe to call `stop` or `kill`
         pass
 

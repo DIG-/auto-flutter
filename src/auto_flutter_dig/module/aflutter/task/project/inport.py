@@ -20,7 +20,7 @@ class ProjectTaskImport(Task):
             )
         tasks: List[TaskIdentity] = []
         for custom in project.tasks:
-            if custom.type == CustomTaskType.EXEC:
+            if custom.custom_type == CustomTaskType.EXEC:
                 if custom.content is None:
                     self._reset_description(args, Result(E(ValueError("User task type EXEC require content")).error))
                     continue
@@ -29,12 +29,12 @@ class ProjectTaskImport(Task):
                         args, Result(E(ValueError("User task type EXEC require content arguments")).error)
                     )
                     continue
-                tasks.append(UserExecTaskIdentity(custom.id, custom.name, custom.content.args))
+                tasks.append(UserExecTaskIdentity(custom.task_id, custom.name, custom.content.args))
             else:
                 self._print(
                     SB()
                     .append("Not implemented custom task type ", SB.Color.YELLOW)
-                    .append(str(custom.type), SB.Color.CYAN)
+                    .append(str(custom.custom_type), SB.Color.CYAN)
                     .str()
                 )
         if len(tasks) > 0:

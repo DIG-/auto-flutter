@@ -44,29 +44,29 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
     def append_build_param(self, flavor: Optional[Flavor], param: str):
         self.obtain_config_by_flavor(flavor)._append_build_param(param)
 
-    def get_run_before(self, type: RunType, flavor: Optional[Flavor]) -> List[TaskId]:
+    def get_run_before(self, run_type: RunType, flavor: Optional[Flavor]) -> List[TaskId]:
         output: List[TaskId] = list()
         _If.not_none(
-            super()._get_run_before(type),
-            lambda x: output.extend(x),
+            super()._get_run_before(run_type),
+            output.extend,
             lambda: None,
         )
         if not flavor is None:
             flavored = self.get_config_by_flavor(flavor)
             if not flavored is None:
                 _If.not_none(
-                    flavored._get_run_before(type),
-                    lambda x: output.extend(x),
+                    flavored._get_run_before(run_type),
+                    output.extend,
                     lambda: None,
                 )
         return output
 
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
+    def get_output(self, flavor: Optional[Flavor], build_type: BuildType) -> Optional[str]:
         if not flavor is None and not self.flavored is None and flavor in self.flavored:
-            from_flavor = self.flavored[flavor]._get_output(type)
+            from_flavor = self.flavored[flavor]._get_output(build_type)
             if not from_flavor is None:
                 return from_flavor
-        return self._get_output(type)
+        return self._get_output(build_type)
 
     def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
         if not flavor is None and not self.flavored is None and flavor in self.flavored:

@@ -49,10 +49,10 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self.build_param = []
         self.build_param.append(_Ensure.instance(param, str, "build-param"))
 
-    def _get_output(self, type: BuildType) -> Optional[str]:
+    def _get_output(self, build_type: BuildType) -> Optional[str]:
         if not self.outputs is None:
-            if type in self.outputs:
-                return self.outputs[type]
+            if build_type in self.outputs:
+                return self.outputs[build_type]
         return self.output
 
     def _get_extra(self, key: str) -> Optional[str]:
@@ -77,11 +77,11 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             self.extras = None
         return True
 
-    def _get_run_before(self, type: RunType) -> Optional[List[TaskId]]:
-        _Ensure.type(type, RunType, "type")
-        if self.run_before is None or type not in self.run_before:
+    def _get_run_before(self, run_type: RunType) -> Optional[List[TaskId]]:
+        _Ensure.type(run_type, RunType, "type")
+        if self.run_before is None or run_type not in self.run_before:
             return None
-        return self.run_before[type]
+        return self.run_before[run_type]
 
     def to_json(self) -> Json:
         extras = self.extras
@@ -109,16 +109,13 @@ class PlatformConfig(Serializable["PlatformConfig"]):
                 output.build_param = JsonDecode.decode_list(value, str)
             elif key == "run-before" and isinstance(value, Dict):
                 output.run_before = JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
-                pass
             elif key == "output" and isinstance(value, str):
                 output.output = value
             elif key == "outputs" and isinstance(value, Dict):
                 output.outputs = JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
-                pass
             elif isinstance(value, str):
                 if output.extras is None:
                     output.extras = {key: value}
                 else:
                     output.extras[key] = value
-            pass
         return output

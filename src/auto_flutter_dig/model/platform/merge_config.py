@@ -55,13 +55,13 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
             output.extend(self.platform.get_build_param(flavor))
         return output
 
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
+    def get_output(self, flavor: Optional[Flavor], build_type: BuildType) -> Optional[str]:
         if not self.platform is None:
-            output = self.platform.get_output(flavor, type)
+            output = self.platform.get_output(flavor, build_type)
             if not output is None:
                 return output
         if not self.default is None:
-            return self.default.get_output(flavor, type)
+            return self.default.get_output(flavor, build_type)
         return None
 
     def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
@@ -73,10 +73,10 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
             return self.default.get_extra(flavor, key)
         return None
 
-    def get_run_before(self, type: RunType, flavor: Optional[Flavor]) -> List[str]:
+    def get_run_before(self, run_type: RunType, flavor: Optional[Flavor]) -> List[str]:
         output: List[str] = []
         if not self.default is None:
-            output.extend(self.default.get_run_before(type, flavor))
+            output.extend(self.default.get_run_before(run_type, flavor))
         if not self.platform is None:
-            output.extend(self.platform.get_run_before(type, flavor))
+            output.extend(self.platform.get_run_before(run_type, flavor))
         return output
