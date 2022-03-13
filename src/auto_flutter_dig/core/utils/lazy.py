@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Callable, Generic, Optional, TypeVar
 
-T = TypeVar("T")
+T = TypeVar("T")  # pylint: disable=invalid-name
 
 __all__ = ["_Gettable", "_Static", "_Lazy", "_Dynamically"]
 
