@@ -126,7 +126,8 @@ class Args:
     ###############
     ## Internal help method
 
-    def __get_key(self, option: Key) -> Argument:
+    @staticmethod
+    def __get_key(option: Key) -> Argument:
         key: Optional[Argument] = None
         if isinstance(option, Argument):
             key = option
