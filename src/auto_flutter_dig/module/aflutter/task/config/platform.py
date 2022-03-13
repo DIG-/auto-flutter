@@ -21,7 +21,7 @@ class AflutterPlatformConfigTask(BaseConfigTask):
         "platform",
         "Manage platform support for project",
         [__opt_add, __opt_rem, __opt_lst],
-        lambda: AflutterPlatformConfigTask(),
+        lambda: AflutterPlatformConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:

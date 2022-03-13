@@ -18,7 +18,7 @@ class _SetupCheckTaskIdentity(AflutterTaskIdentity):
             "check",
             "Check if environment is correctly configured",
             options,
-            lambda: AflutterSetupCheckTask(),
+            lambda: AflutterSetupCheckTask(),  # pylint: disable=unnecessary-lambda
         )
 
     def add(self, name: str, identity: TaskIdentity):

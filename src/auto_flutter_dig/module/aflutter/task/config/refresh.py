@@ -8,7 +8,7 @@ class AflutterConfigRefreshTask(BaseConfigTask):
         "refresh",
         "Update aflutter.json with aflutter style. Usefully after manually editing aflutter.json",
         [],
-        lambda: AflutterConfigRefreshTask(),
+        lambda: AflutterConfigRefreshTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:

@@ -17,7 +17,7 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         "flavor",
         "Handle project flavors in general",
         [option_add, option_remove, option_rename, option_toname, option_list],
-        lambda: AflutterFlavorConfigTask(),
+        lambda: AflutterFlavorConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:

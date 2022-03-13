@@ -17,7 +17,7 @@ class AflutterSetupStackTraceTask(Task):
         "stack-trace",
         "Configure if errors are displayed with stack trace",
         [__opt_on, __opt_off, __opt_default],
-        lambda: AflutterSetupStackTraceTask(),
+        lambda: AflutterSetupStackTraceTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:

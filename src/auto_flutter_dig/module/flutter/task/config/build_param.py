@@ -33,7 +33,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             __opt_list,
             __opt_list_recursive,
         ],
-        lambda: FlutterBuildParamConfigTask(),
+        lambda: FlutterBuildParamConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def execute(self, args: Args) -> TaskResult:

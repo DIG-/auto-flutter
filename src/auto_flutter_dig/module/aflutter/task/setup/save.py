@@ -1,4 +1,5 @@
 from pprint import pprint
+
 from .....core.config import Config
 from .....model.error import E
 from .....model.task import *
@@ -12,7 +13,7 @@ class AflutterSetupSaveTask(Task):
         "-aflutter-setup-save",
         "Save current environment config",
         [],
-        lambda: AflutterSetupSaveTask(),
+        lambda: AflutterSetupSaveTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:

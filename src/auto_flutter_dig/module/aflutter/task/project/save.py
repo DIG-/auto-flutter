@@ -7,7 +7,12 @@ from ...identity import AflutterTaskIdentity
 
 
 class ProjectSave(Task):
-    identity = AflutterTaskIdentity("-project-save", "Saving project file", [], lambda: ProjectSave())
+    identity = AflutterTaskIdentity(
+        "-project-save",
+        "Saving project file",
+        [],
+        lambda: ProjectSave(),  # pylint: disable=unnecessary-lambda
+    )
 
     def execute(self, args: Args) -> TaskResult:
         project = Project.current
