@@ -19,15 +19,12 @@ class ProjectSave(Task):
         if project is None:
             raise ValueError("There is no project to save")
         try:
-            file = open("aflutter.json", "wt")
+            with open("aflutter.json", "wt", encoding="utf-8") as file:
+                try:
+                    json = JsonEncode.clear_nones(project.to_json())
+                except BaseException as error:
+                    raise RuntimeError("Failed to serialize project") from error
+                json_dump(json, file, indent=2)
         except BaseException as error:
             return TaskResult(args, error=error)
-
-        try:
-            json = JsonEncode.clear_nones(project.to_json())
-        except BaseException as error:
-            raise RuntimeError("Failed to serialize project", error)
-
-        json_dump(json, file, indent=2)
-        file.close()
         return TaskResult(args)
