@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from ..task import TaskId
 from ..task.group import TaskGroup
 
