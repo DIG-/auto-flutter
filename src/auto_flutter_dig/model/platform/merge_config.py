@@ -15,60 +15,11 @@ __all__ = [
 
 class _MergedPlatformConfig(PlatformConfig):
     def __init__(self, default: Optional[PlatformConfig], platform: Optional[PlatformConfig]) -> None:
+        super().__init__(None, None, None, None, None)
         if not default is None:
-            super().__init__(
-                default._build_param,
-                default._run_before,
-                default._output,
-                default._outputs,
-                default._extras,
-            )
-            if not platform is None:
-                # Platform build_param = merge
-                if not platform._build_param is None and len(platform._build_param) > 0:
-                    if self._build_param is None:
-                        self._build_param = platform._build_param
-                    else:
-                        self._build_param.extend(platform._build_param)
-
-                # Platform run_before = merge
-                if not platform._run_before is None:
-                    if self._run_before is None:
-                        self._run_before = {}
-                    for run_type, values in platform._run_before.items():
-                        if run_type not in self._run_before:
-                            self._run_before[run_type] = values
-                        else:
-                            self._run_before[run_type].extend(values)
-
-                # Platform output = override
-                if not platform._output is None and len(platform._output) > 0:
-                    self._output = platform._output
-
-                # Platform outputs = override
-                if not platform._outputs is None:
-                    if self._outputs is None:
-                        self._outputs = {}
-                    for build_type, output in platform._outputs.items():
-                        self._outputs[build_type] = output
-
-                # Platform extra = override
-                if not platform._extras is None:
-                    if self._extras is None:
-                        self._extras = {}
-                    for key, extra in platform._extras.items():
-                        self._extras[key] = extra
-
-        elif not platform is None:
-            super().__init__(
-                platform._build_param,
-                platform._run_before,
-                platform._output,
-                platform._outputs,
-                platform._extras,
-            )
-        else:
-            super().__init__(None, None, None, None, None)
+            self._merge(default)
+        if not platform is None:
+            self._merge(platform)
 
     def append_build_param(self, param: str):
         raise AssertionError(f"{type(self).__name__} is read only")

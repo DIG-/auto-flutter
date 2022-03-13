@@ -44,11 +44,7 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         output = PlatformConfigFlavored()
         other = PlatformConfig.from_json(json)
         if not other is None:
-            output._build_param = other._build_param
-            output._run_before = other._run_before
-            output._output = other._output
-            output._outputs = other._outputs
-            output._extras = other._extras
+            output._merge(other)  # pylint:  disable=protected-access
         if isinstance(json, Dict):
             if "flavored" in json:
                 output.flavored = JsonDecode.decode_optional_dict(json["flavored"], Flavor, PlatformConfig)

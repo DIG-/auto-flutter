@@ -110,6 +110,43 @@ class PlatformConfig(Serializable["PlatformConfig"]):
             + f"output:{self._output}, outputs:{self._outputs}, extras:{self._extras})"
         )
 
+    # pylint: disable=protected-access
+    def _merge(self, other: PlatformConfig):
+        # Platform build_param = merge
+        if not other._build_param is None:
+            if self._build_param is None:
+                self._build_param = other._build_param
+            else:
+                self._build_param.extend(other._build_param)
+
+        # Platform run_before = merge
+        if not other._run_before is None:
+            if self._run_before is None:
+                self._run_before = {}
+            for run_type, values in other._run_before.items():
+                if run_type not in self._run_before:
+                    self._run_before[run_type] = values
+                else:
+                    self._run_before[run_type].extend(values)
+
+        # Platform output = override
+        if not other._output is None and len(other._output) > 0:
+            self._output = other._output
+
+        # Platform outputs = merge-override
+        if not other._outputs is None:
+            if self._outputs is None:
+                self._outputs = {}
+            for build_type, output in other._outputs.items():
+                self._outputs[build_type] = output
+
+        # Platform extra = merge-override
+        if not other._extras is None:
+            if self._extras is None:
+                self._extras = {}
+            for key, extra in other._extras.items():
+                self._extras[key] = extra
+
     @staticmethod
     def from_json(json: Json) -> Optional[PlatformConfig]:
         if not isinstance(json, Dict):
