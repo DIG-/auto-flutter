@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 from ...core.json import *
-from ...core.utils import _If
 from ..project import Flavor
 from .config import *
 
@@ -31,56 +30,6 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         super().__init__(build_param, run_before, output, outputs, extras)
         self.flavored: Optional[Dict[Flavor, PlatformConfig]] = flavored
 
-    def get_build_param(self, flavor: Optional[Flavor]) -> List[str]:
-        output = []
-        if not self.build_param is None:
-            output.extend(self.build_param)
-        if not flavor is None:
-            flavored = self.get_config_by_flavor(flavor)
-            if (not flavored is None) and (not flavored.build_param is None):
-                output.extend(flavored.build_param)
-        return output
-
-    def append_build_param(self, flavor: Optional[Flavor], param: str):
-        self.obtain_config_by_flavor(flavor)._append_build_param(param)
-
-    def get_run_before(self, run_type: RunType, flavor: Optional[Flavor]) -> List[TaskId]:
-        output: List[TaskId] = list()
-        _If.not_none(
-            super()._get_run_before(run_type),
-            output.extend,
-            lambda: None,
-        )
-        if not flavor is None:
-            flavored = self.get_config_by_flavor(flavor)
-            if not flavored is None:
-                _If.not_none(
-                    flavored._get_run_before(run_type),
-                    output.extend,
-                    lambda: None,
-                )
-        return output
-
-    def get_output(self, flavor: Optional[Flavor], build_type: BuildType) -> Optional[str]:
-        if not flavor is None and not self.flavored is None and flavor in self.flavored:
-            from_flavor = self.flavored[flavor]._get_output(build_type)
-            if not from_flavor is None:
-                return from_flavor
-        return self._get_output(build_type)
-
-    def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
-        if not flavor is None and not self.flavored is None and flavor in self.flavored:
-            from_flavor = self.flavored[flavor]._get_extra(key)
-            if not from_flavor is None:
-                return from_flavor
-        return self._get_extra(key)
-
-    def add_extra(self, flavor: Optional[Flavor], key: str, value: str):
-        self.obtain_config_by_flavor(flavor)._add_extra(key, value)
-
-    def remove_extra(self, flavor: Optional[Flavor], key: str) -> bool:
-        return self.obtain_config_by_flavor(flavor)._remove_extra(key)
-
     def to_json(self) -> Json:
         parent = super().to_json()
         if not isinstance(parent, Dict):
@@ -95,11 +44,11 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         output = PlatformConfigFlavored()
         other = PlatformConfig.from_json(json)
         if not other is None:
-            output.build_param = other.build_param
-            output.run_before = other.run_before
-            output.output = other.output
-            output.outputs = other.outputs
-            output.extras = other.extras
+            output._build_param = other._build_param
+            output._run_before = other._run_before
+            output._output = other._output
+            output._outputs = other._outputs
+            output._extras = other._extras
         if isinstance(json, Dict):
             if "flavored" in json:
                 output.flavored = JsonDecode.decode_optional_dict(json["flavored"], Flavor, PlatformConfig)
@@ -122,3 +71,6 @@ class PlatformConfigFlavored(PlatformConfig, Serializable["PlatformConfigFlavore
         if not flavor in self.flavored:
             self.flavored[flavor] = PlatformConfig()
         return self.flavored[flavor]
+
+    def __repr__(self) -> str:
+        return super().__repr__()[:-1] + f", flavored={self.flavored})"

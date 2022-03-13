@@ -32,7 +32,7 @@ class FirebaseBuildValidate(Task):
             project.get_platform_config(Platform.DEFAULT),
             project.get_platform_config(build_type.platform),
         )
-        app_id = config.get_extra(flavor, FIREBASE_PROJECT_APP_ID_KEY.value)
+        app_id = config.get_config_by_flavor(flavor).get_extra(FIREBASE_PROJECT_APP_ID_KEY.value)
         if app_id is None or len(app_id) <= 0:
             return TaskResult(
                 args,

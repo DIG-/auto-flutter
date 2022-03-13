@@ -51,12 +51,12 @@ class FirebaseConfigTask(BaseConfigTask):
             config = platform_config.get_config_by_flavor(flavor)
             if config is None:
                 raise KeyError(f"Project does not have config for platform {platform} and flavor {flavor}")
-            if not config._remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
+            if not config.remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
                 has_warning = E(Warning("Selected platform and flavor does not have app id")).error
 
         ## Set app id section
         if not add_app_id is None:
-            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)._add_extra(
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).add_extra(
                 FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id
             )
 

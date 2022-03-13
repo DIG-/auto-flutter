@@ -81,7 +81,13 @@ class FlutterBuildTask(FlutterCommandTask):
             raise AssertionError("Trying rebuild android fix for other and desired at same time")
 
     def require(self) -> List[TaskId]:
-        return self._config.get_run_before(RunType.BUILD, self._flavor)
+        config = self._config.get_config_by_flavor(self._flavor)
+        if config is None:
+            return []
+        run_before = config.get_run_before(RunType.BUILD)
+        if run_before is None:
+            return []
+        return run_before
 
     def describe(self, args: Args) -> str:
         if self._android_rebuild_fix_desired:
@@ -98,7 +104,7 @@ class FlutterBuildTask(FlutterCommandTask):
 
         self._command.append("--" + self._build_mode.value)
 
-        self._command.extend(self._config.get_build_param(self._flavor))
+        self._command.extend(self._config.obtain_config_by_flavor(self._flavor).get_build_param())
 
         result = super().execute(args)
 
@@ -113,7 +119,10 @@ class FlutterBuildTask(FlutterCommandTask):
         return result
 
     def _check_output_file(self, args: Args) -> TaskResult:
-        output_file = self._config.get_output(self._flavor, self._build_type)
+        config = self._config.get_config_by_flavor(self._flavor)
+        output_file: Optional[str] = None
+        if not config is None:
+            output_file = config.get_output(self._build_type)
         if output_file is None:
             return TaskResult(
                 args,

@@ -38,84 +38,98 @@ class PlatformConfig(Serializable["PlatformConfig"]):
         extras: Optional[Dict[str, str]] = None,
     ) -> None:
         super().__init__()
-        self.build_param: Optional[List[str]] = build_param
-        self.run_before: Optional[Dict[RunType, TaskIdList]] = run_before
-        self.output: Optional[str] = output
-        self.outputs: Optional[Dict[BuildType, str]] = outputs
-        self.extras: Optional[Dict[str, str]] = extras
+        self._build_param: Optional[List[str]] = build_param
+        self._run_before: Optional[Dict[RunType, TaskIdList]] = run_before
+        self._output: Optional[str] = output
+        self._outputs: Optional[Dict[BuildType, str]] = outputs
+        self._extras: Optional[Dict[str, str]] = extras
 
-    def _append_build_param(self, param: str):
-        if self.build_param is None:
-            self.build_param = []
-        self.build_param.append(_Ensure.instance(param, str, "build-param"))
+    def get_build_param(self) -> List[str]:
+        if self._build_param is None:
+            return []
+        return self._build_param
 
-    def _get_output(self, build_type: BuildType) -> Optional[str]:
-        if not self.outputs is None:
-            if build_type in self.outputs:
-                return self.outputs[build_type]
-        return self.output
+    def append_build_param(self, param: str):
+        if self._build_param is None:
+            self._build_param = []
+        self._build_param.append(_Ensure.instance(param, str, "build-param"))
 
-    def _get_extra(self, key: str) -> Optional[str]:
-        if self.extras is None:
+    def get_output(self, build_type: Optional[BuildType]) -> Optional[str]:
+        if build_type is None:
+            return self._output
+        if not self._outputs is None:
+            if build_type in self._outputs:
+                return self._outputs[build_type]
+        return self._output
+
+    def get_extra(self, key: str) -> Optional[str]:
+        if self._extras is None:
             return None
-        if key in self.extras:
-            return self.extras[key]
+        if key in self._extras:
+            return self._extras[key]
         return None
 
-    def _add_extra(self, key: str, value: str):
-        if self.extras is None:
-            self.extras = {}
-        self.extras[key] = value
+    def add_extra(self, key: str, value: str):
+        if self._extras is None:
+            self._extras = {}
+        self._extras[key] = value
 
-    def _remove_extra(self, key: str) -> bool:
-        if self.extras is None:
+    def remove_extra(self, key: str) -> bool:
+        if self._extras is None:
             return False
-        if not key in self.extras:
+        if not key in self._extras:
             return False
-        self.extras.pop(key)
-        if len(self.extras) <= 0:
-            self.extras = None
+        self._extras.pop(key)
+        if len(self._extras) <= 0:
+            self._extras = None
         return True
 
-    def _get_run_before(self, run_type: RunType) -> Optional[List[TaskId]]:
+    def get_run_before(self, run_type: RunType) -> Optional[List[TaskId]]:
         _Ensure.type(run_type, RunType, "type")
-        if self.run_before is None or run_type not in self.run_before:
+        if self._run_before is None or run_type not in self._run_before:
             return None
-        return self.run_before[run_type]
+        return self._run_before[run_type]
 
     def to_json(self) -> Json:
-        extras = self.extras
+        extras = self._extras
         output = {
-            "build-param": JsonEncode.encode_optional(self.build_param),
-            "run-before": JsonEncode.encode_optional(self.run_before),
-            "output": JsonEncode.encode_optional(self.output),
+            "build-param": JsonEncode.encode_optional(self._build_param),
+            "run-before": JsonEncode.encode_optional(self._run_before),
+            "output": JsonEncode.encode_optional(self._output),
             "outputs": None
-            if self.outputs is None
-            else JsonEncode.encode_dict(self.outputs, lambda x: x.output, lambda x: x),
+            if self._outputs is None
+            else JsonEncode.encode_dict(self._outputs, lambda x: x.output, lambda x: x),
         }
         if extras is None:
             return output
         return {**output, **extras}
 
+    def __repr__(self) -> str:
+        return (
+            f"{type(self).__name__}(build_param={self._build_param}, run_before:{self._run_before}, "
+            + f"output:{self._output}, outputs:{self._outputs}, extras:{self._extras})"
+        )
+
     @staticmethod
     def from_json(json: Json) -> Optional[PlatformConfig]:
         if not isinstance(json, Dict):
             return None
-        output = PlatformConfig()
+        build_param: Optional[List[str]] = None
+        run_before: Optional[Dict[RunType, TaskIdList]] = None
+        output: Optional[str] = None
+        outputs: Optional[Dict[BuildType, str]] = None
+        extras: Dict[str, str] = {}
         for key, value in json.items():
             if not isinstance(key, str):
                 continue
             if key == "build-param" and isinstance(value, List):
-                output.build_param = JsonDecode.decode_list(value, str)
+                build_param = JsonDecode.decode_list(value, str)
             elif key == "run-before" and isinstance(value, Dict):
-                output.run_before = JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
+                run_before = JsonDecode.decode_optional_dict(value, RunType, TaskIdList)
             elif key == "output" and isinstance(value, str):
-                output.output = value
+                output = value
             elif key == "outputs" and isinstance(value, Dict):
-                output.outputs = JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
+                outputs = JsonDecode.decode_optional_dict(value, BuildType, str, BuildType.from_output)
             elif isinstance(value, str):
-                if output.extras is None:
-                    output.extras = {key: value}
-                else:
-                    output.extras[key] = value
-        return output
+                extras[key] = value
+        return PlatformConfig(build_param, run_before, output, outputs, extras if len(extras) > 0 else None)

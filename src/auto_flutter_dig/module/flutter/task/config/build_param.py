@@ -86,9 +86,9 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             return False
 
         config = project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)
-        if config.build_param is None:
-            config.build_param = []
-        config.build_param.append(add_param)
+        if config._build_param is None:
+            config._build_param = []
+        config._build_param.append(add_param)
         self._reset_description(args, Result(success=True))
         return True
 
@@ -131,10 +131,10 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             )
             return False
 
-        if f_config.build_param is None or not rem_param in f_config.build_param:
+        if f_config._build_param is None or not rem_param in f_config._build_param:
             self._reset_description(args, Result(E(ValueError("Build param not found to be removed")).error))
             return False
-        f_config.build_param.remove(rem_param)
+        f_config._build_param.remove(rem_param)
         self._reset_description(args, Result(success=True))
         return True
 
@@ -182,11 +182,11 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         if f_config is None:
             return TaskResult(args, error=Warning(f"Project has no config for {platform} {flavor}"), success=True)
 
-        if f_config.build_param is None or len(f_config.build_param) <= 0:
+        if f_config._build_param is None or len(f_config._build_param) <= 0:
             return TaskResult(args, message=SB().append("  No build params found", SB.Color.YELLOW).str(), success=True)
 
         builder = SB().append(" Build params:")
-        for param in f_config.build_param:
+        for param in f_config._build_param:
             builder.append("\n  ").append(param, SB.Color.GREEN)
         return TaskResult(args, message=builder.str())
 
@@ -223,6 +223,6 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             )
 
         builder = SB().append(" All build params:")
-        for param in config.get_build_param(flavor):
+        for param in config.obtain_config_by_flavor(flavor).get_build_param():
             builder.append("\n  ").append(param, SB.Color.GREEN)
         return TaskResult(args, message=builder.str(), success=True)
