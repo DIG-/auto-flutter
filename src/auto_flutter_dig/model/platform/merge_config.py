@@ -14,12 +14,25 @@ __all__ = [
 
 
 class _MergedPlatformConfig(PlatformConfig):
-    def __init__(self, default: Optional[PlatformConfig], platform: Optional[PlatformConfig]) -> None:
+    def __init__(
+        self,
+        default: Optional[PlatformConfigFlavored],
+        platform: Optional[PlatformConfigFlavored],
+        flavor: Optional[Flavor],
+    ) -> None:
         super().__init__(None, None, None, None, None)
         if not default is None:
             self._merge(default)
+            if not flavor is None:
+                config = default.get_config_by_flavor(flavor)
+                if not config is None:
+                    self._merge(config)
         if not platform is None:
             self._merge(platform)
+            if not flavor is None:
+                config = platform.get_config_by_flavor(flavor)
+                if not config is None:
+                    self._merge(config)
 
     def append_build_param(self, param: str):
         raise AssertionError(f"{type(self).__name__} is read only")
@@ -69,14 +82,7 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         key = self.__get_cache_key(flavor)
         if key in self.__cached:
             return self.__cached[key]
-
-        config_default: Optional[PlatformConfig] = None
-        config_platform: Optional[PlatformConfig] = None
-        if not self.default is None:
-            config_default = self.default.get_config_by_flavor(flavor)
-        if not self.platform is None:
-            config_default = self.platform.get_config_by_flavor(flavor)
-        config = _MergedPlatformConfig(config_default, config_platform)
+        config = _MergedPlatformConfig(self.default, self.platform, flavor)
         self.__cached[key] = config
         return config
 
