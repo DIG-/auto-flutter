@@ -83,8 +83,7 @@ class AflutterPlatformConfigTask(BaseConfigTask):
             list_result = TaskResult(args, message=builder.str())
             if not had_change:
                 return list_result
-            else:
-                self._uptade_description(self.describe(args), list_result)
+            self._uptade_description(self.describe(args), list_result)
 
         if not had_change:
             return TaskResult(args, E(Warning("No change was made")).error, success=True)
