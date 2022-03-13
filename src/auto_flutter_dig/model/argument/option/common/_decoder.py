@@ -29,5 +29,5 @@ class _DecodedOption(Option, Generic[T_co]):
         return self._convert(value)
 
     @abstractmethod
-    def _convert(self, input: str) -> T_co:
+    def _convert(self, value: str) -> T_co:
         raise NotImplementedError()

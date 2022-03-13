@@ -39,7 +39,6 @@ class TaskGroup(ABC):
 
     def __register_subtask_tuple(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
         self.__insert_sorted(_Iterable.Merge(self.subtasks.items(), tasks))
-        pass
 
     def __insert_sorted(self, tasks: Iterable[Tuple[TaskId, TaskIdentity]]):
         w_parent = _Iterable.Apply(tasks, _SetParent(self).apply)
@@ -51,5 +50,5 @@ class _SetParent:
     def __init__(self, parent: TaskGroup) -> None:
         self.parent = parent
 
-    def apply(self, input: Tuple[TaskId, TaskIdentity]):
-        input[1].parent = self.parent
+    def apply(self, task: Tuple[TaskId, TaskIdentity]):
+        task[1].parent = self.parent

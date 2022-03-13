@@ -11,5 +11,5 @@ class PlatformOption(LongOptionWithValue, _DecodedOption[Platform]):
         LongOptionWithValue.__init__(self, "platform", description)
         _DecodedOption.__init__(self, description)
 
-    def _convert(self, input: str) -> Platform:
-        return _Enum.parse_value(Platform, input)
+    def _convert(self, value: str) -> Platform:
+        return _Enum.parse_value(Platform, value)

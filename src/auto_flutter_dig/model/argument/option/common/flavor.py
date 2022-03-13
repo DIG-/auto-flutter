@@ -10,5 +10,5 @@ class FlavorOption(LongShortOptionWithValue, _DecodedOption[Flavor]):
         LongShortOptionWithValue.__init__(self, "f", "flavor", description)
         _DecodedOption.__init__(self, description)
 
-    def _convert(self, input: str) -> Flavor:
-        return input
+    def _convert(self, value: str) -> Flavor:
+        return value
