@@ -31,9 +31,8 @@ class ProjectInitFindFlavorIntellijTask(BaseProjectInitFindFlavorTask):
             self._uptade_description(f'Detect flavor config in "{filename.name}"')
             success = False
             try:
-                file = open(filename, "r", encoding="utf-8")
-                content = xml_parse(file)
-                file.close()
+                with open(filename, "r", encoding="utf-8") as file:
+                    content = xml_parse(file)
                 xml_root = content.getroot()
                 if (
                     xml_root.tag != "component"
