@@ -4,12 +4,13 @@ from abc import ABC, abstractmethod
 from logging import LoggerAdapter
 from typing import Iterable, List, Optional, Union
 
+from ...core.logger import log_task
+from ...model.argument import Args
 from ...model.error.chain import E
 from ...model.result import Result
-from ..argument import Args
-from .id import TaskId
-from .identity import TaskIdentity
-from .result import TaskResult
+from ...model.task.id import TaskId
+from ...model.task.identity import TaskIdentity
+from ...model.task.result import TaskResult
 
 __all__ = ["Task", "List", "E"]
 
@@ -19,7 +20,6 @@ class Task(ABC):
 
     def __init__(self) -> None:
         super().__init__()
-        from ...core.logger import log_task
 
         self.log = LoggerAdapter(log_task, {"tag": self.__class__.__name__})
 
