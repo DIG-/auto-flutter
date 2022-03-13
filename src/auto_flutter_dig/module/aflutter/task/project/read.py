@@ -25,7 +25,23 @@ class ProjectRead(Task):
         if not Project.current is None:
             return TaskResult(args)
         try:
-            file = open("aflutter.json", "r")
+            with open("aflutter.json", "r", encoding="utf-8") as file:
+                try:
+                    json = json_load(file)
+                except BaseException as error:
+                    return self.__return_error(
+                        args,
+                        E(RuntimeError('Failed to read file "afutter.json"')).caused_by(error),
+                    )
+
+                try:
+                    Project.current = Project.from_json(json)
+                except BaseException as error:
+                    return self.__return_error(
+                        args,
+                        E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(error),
+                    )
+
         except BaseException as error:
             if self._warn_if_fail:
                 return self.__return_error(
@@ -35,25 +51,6 @@ class ProjectRead(Task):
             return self.__return_error(
                 args,
                 E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(error),
-            )
-
-        if file is None:
-            return self.__return_error(args, E(FileNotFoundError("Can not open project file for read")).error)
-
-        try:
-            json = json_load(file)
-        except BaseException as error:
-            return self.__return_error(
-                args,
-                E(RuntimeError('Failed to read file "afutter.json"')).caused_by(error),
-            )
-
-        try:
-            Project.current = Project.from_json(json)
-        except BaseException as error:
-            return self.__return_error(
-                args,
-                E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(error),
             )
 
         if not Project.current.tasks is None:
