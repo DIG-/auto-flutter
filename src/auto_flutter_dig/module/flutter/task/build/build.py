@@ -10,7 +10,7 @@ from .....model.platform.flavored_config import PlatformConfigFlavored
 from .....model.platform.run_type import RunType
 from .....model.project import *
 from .....model.task import *
-from ....aflutter.task.help import HelpTask
+from .....module.aflutter.task.help import HelpTask
 from ...identity import FlutterTaskIdentity
 from ..command import FlutterCommandTask
 
@@ -42,6 +42,7 @@ class FlutterBuildTaskIdentity(FlutterTaskIdentity):
         )
 
 
+# pylint: disable=too-many-instance-attributes
 class FlutterBuildTask(FlutterCommandTask):
     identity = FlutterTaskIdentity(
         "--flutter-build-task--",
@@ -87,8 +88,7 @@ class FlutterBuildTask(FlutterCommandTask):
             return f"Rebuild flutter {self._build_type.platform.value}, flavor {self._flavor}"
         if self._flavor is None:
             return f"Building flutter {self._build_type.platform.value}"
-        else:
-            return f"Building flutter {self._build_type.platform.value}, flavor {self._flavor}"
+        return f"Building flutter {self._build_type.platform.value}, flavor {self._flavor}"
 
     def execute(self, args: Args) -> TaskResult:
         self._command = ["build", self._build_type.flutter]
@@ -199,5 +199,6 @@ class FlutterBuildTask(FlutterCommandTask):
             success=True,
         )
 
-    def _clear_output(self, args: Args) -> None:
+    @staticmethod
+    def _clear_output(args: Args) -> None:
         args.global_remove("output")
