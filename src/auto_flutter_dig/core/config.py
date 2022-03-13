@@ -2,7 +2,7 @@ from json import dump as json_dump
 from json import dumps as json_dumps
 from json import load as json_load
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Dict, NoReturn, Optional, Union
+from typing import Dict, NoReturn, Optional, Type, Union
 
 from appdirs import user_config_dir  # type: ignore[import]
 
@@ -16,7 +16,8 @@ class _Config:
         self.__is_loaded: bool = False
         self.__content: Dict[str, Union[str, bool, int]] = {}
 
-    def __value_error(self, key: str, expect: type, received: type) -> NoReturn:
+    @staticmethod
+    def __value_error(key: str, expect: Type, received: Type) -> NoReturn:
         raise ValueError(
             f'Unexpected value for key "{key}". Expected `{expect.__name__}` but received `{received.__name__}`'
         )
@@ -48,9 +49,8 @@ class _Config:
         filepath = self.__config_file_path()
         if not filepath.exists():
             return False
-        file = open(filepath, mode="r", encoding="utf-8")
-        parsed = json_load(file)
-        file.close()
+        with open(filepath, mode="r", encoding="utf-8") as file:
+            parsed = json_load(file)
         if not isinstance(parsed, Dict):
             raise SyntaxError(f"Config file is in incorrect format.\n{filepath}")
         self.__content = parsed
@@ -65,9 +65,8 @@ class _Config:
         if not filepath.exists():
             filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        file = open(filepath, mode="wt", encoding="utf-8")
-        json_dump(self.__content, file, indent=2)
-        file.close()
+        with open(filepath, mode="wt", encoding="utf-8") as file:
+            json_dump(self.__content, file, indent=2)
 
     def contains(self, key: str) -> bool:
         return key in self.__content
@@ -87,7 +86,7 @@ class _Config:
         if isinstance(value, bool):
             return value
         if isinstance(value, str):
-            return not value.lower() in ("f", "n", "no", "false")
+            return not value.lower() in ("false", "f", "n", "no")
         if isinstance(value, int):
             return value != 0
         return self.__value_error(key, bool, type(value))
