@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import Deque, Iterable, Optional, Union
+from typing import Deque, Iterable, List, Optional, Union
 
+from ...model.argument.arguments import Args
 from ...model.result import Result
-from ...model.task import *
+from ...model.task.base_task import BaseTask
 from ...model.task.group import TaskGroup
-from ...model.task.result import TaskResultHelp
+from ...model.task.id import TaskId
+from ...model.task.identity import TaskIdentity
+from ...model.task.result import TaskResult, TaskResultHelp
 from .printer import *
 from .resolver import TaskResolver
 
@@ -20,11 +23,11 @@ class _TaskManager:
 
     def add(
         self,
-        tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
+        tasks: Union[BaseTask, Iterable[BaseTask], TaskIdentity, Iterable[TaskIdentity]],
     ):
-        if not isinstance(tasks, Task) and not isinstance(tasks, TaskIdentity) and not isinstance(tasks, Iterable):
+        if not isinstance(tasks, BaseTask) and not isinstance(tasks, TaskIdentity) and not isinstance(tasks, Iterable):
             raise TypeError(
-                "Field `tasks` must be instance of `Task` or `TaskIdentity` or `Iterable` of both, "
+                "Field `tasks` must be instance of `BaseTask` or `TaskIdentity` or `Iterable` of both, "
                 + f"but `{type(tasks).__name__}` was received"
             )
         self._task_stack.extend(TaskResolver.resolve(tasks, self._task_done))

@@ -1,10 +1,11 @@
-from ...model.task import Task, TaskIdentity
+from ...model.task.base_task import BaseTask
+from ...model.task.identity import TaskIdentity
 
 __all__ = ["_TaskUniqueIdentity"]
 
 
 class _TaskUniqueIdentity(TaskIdentity):
-    def __init__(self, task: Task) -> None:
+    def __init__(self, task: BaseTask) -> None:
         super().__init__("-#-#-", "-#-#-", "", [], lambda: task, True)
         self.__task = task
 

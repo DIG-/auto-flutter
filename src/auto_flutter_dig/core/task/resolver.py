@@ -6,20 +6,22 @@ from typing import Deque, Iterable, List, Optional, Union
 
 from ...core.utils import _If
 from ...model.error import TaskNotFound
-from ...model.task import *
+from ...model.task.base_task import BaseTask
 from ...model.task.group import TaskGroup
+from ...model.task.id import TaskId
+from ...model.task.identity import TaskIdentity
 from ._unique_identity import _TaskUniqueIdentity
 
 
 class TaskResolver(ABC):
     @staticmethod
     def resolve(
-        task: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]],
+        task: Union[BaseTask, Iterable[BaseTask], TaskIdentity, Iterable[TaskIdentity]],
         previous: Optional[List[TaskIdentity]] = None,
         origin: Optional[TaskGroup] = None,
     ) -> Deque[TaskIdentity]:
         temp: List[TaskIdentity] = []
-        if isinstance(task, Task):
+        if isinstance(task, BaseTask):
             t_identity = _TaskUniqueIdentity(task)
             if hasattr(task, "identity") and not task.identity is None:
                 t_identity.parent = task.identity.parent
@@ -28,7 +30,7 @@ class TaskResolver(ABC):
             temp = [task]
         elif isinstance(task, Iterable):
             for item in task:
-                if isinstance(item, Task):
+                if isinstance(item, BaseTask):
                     it_identity = _TaskUniqueIdentity(item)
                     if hasattr(item, "identity") and not item.identity is None:
                         it_identity.parent = item.identity.parent
@@ -57,7 +59,7 @@ class TaskResolver(ABC):
         i = 0
         while i < len(items):
             current = items[i]
-            _task: Task = current.creator()
+            _task = current.creator()
             for task_id in _task.require():
                 identity = TaskResolver.find_task(
                     task_id,

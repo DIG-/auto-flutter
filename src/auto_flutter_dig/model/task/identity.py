@@ -16,11 +16,11 @@ class TaskIdentity:
         task_id: TaskId,
         name: str,
         options: List[Option],
-        creator: Callable[[], "Task"],  # type: ignore[name-defined]
+        creator: Callable[[], "BaseTask"],  # type: ignore[name-defined]
         allow_more: bool = False,  # Allow more tasks with same id
     ) -> None:
         from .group import TaskGroup  # pylint: disable=import-outside-toplevel
-        from .task import Task  # pylint: disable=import-outside-toplevel
+        from .base_task import BaseTask  # pylint: disable=import-outside-toplevel
 
         self.group: str = _Ensure.instance(group, str, "group")
         self.task_id: TaskId = _Ensure.instance(task_id, TaskId, "id")
@@ -28,7 +28,7 @@ class TaskIdentity:
         if not isinstance(options, List):
             _Ensure.raise_error_instance("options", List, type(options))
         self.options: List[Option] = _Ensure.not_none(options, "options")
-        self.creator: Callable[[], Task] = _EnsureCallable.instance(creator, "creator")
+        self.creator: Callable[[], BaseTask] = _EnsureCallable.instance(creator, "creator")
         self.allow_more: bool = _Ensure.instance(allow_more, bool, "allow_more")
         self.parent: Optional[TaskGroup] = None
 

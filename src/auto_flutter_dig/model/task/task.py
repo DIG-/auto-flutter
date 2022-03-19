@@ -11,11 +11,12 @@ from ...model.result import Result
 from ...model.task.id import TaskId
 from ...model.task.identity import TaskIdentity
 from ...model.task.result import TaskResult
+from .base_task import BaseTask
 
 __all__ = ["Task", "List", "E"]
 
 
-class Task(ABC):
+class Task(BaseTask):
     identity: TaskIdentity
 
     def __init__(self) -> None:
