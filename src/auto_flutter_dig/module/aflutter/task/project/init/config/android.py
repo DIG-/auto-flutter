@@ -26,14 +26,13 @@ class ProjectInitConfigAndroidTask(Task):
         config = project.obtain_platform_cofig(Platform.ANDROID)
         config.append_build_param(None, "--no-android-gradle-daemon")
         if project.flavors is None or len(project.flavors) <= 0:
-            config._outputs = {
-                BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:build-mode}.apk",
-                BuildType.BUNDLE: "build/app/outputs/bundle/${arg:build-mode}/app-${arg:build-mode}.aab",
-            }
+            config.put_output(BuildType.APK, "build/app/outputs/flutter-apk/app-${arg:build-mode}.apk")
+            config.put_output(BuildType.BUNDLE, "build/app/outputs/bundle/${arg:build-mode}/app-${arg:build-mode}.aab")
         else:
-            config._outputs = {
-                BuildType.APK: "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build-mode}.apk",
-                BuildType.BUNDLE: "build/app/outputs/bundle/${arg:flavor}${arg:build-mode|capitalize}"
+            config.put_output(BuildType.APK, "build/app/outputs/flutter-apk/app-${arg:flavor}-${arg:build-mode}.apk")
+            config.put_output(
+                BuildType.BUNDLE,
+                "build/app/outputs/bundle/${arg:flavor}${arg:build-mode|capitalize}"
                 + "/app-${arg:flavor}-${arg:build-mode}.aab",
-            }
+            )
         return TaskResult(args)

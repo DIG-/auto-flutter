@@ -71,6 +71,23 @@ class PlatformConfig(Serializable["PlatformConfig"]):
                 return self._outputs[build_type]
         return self._output
 
+    def put_output(self, build_type: Optional[BuildType], value: str):
+        if build_type is None:
+            self._output = value
+        else:
+            if self._outputs is None:
+                self._outputs = {}
+            self._outputs[build_type] = value
+
+    def remove_output(self, build_type: Optional[BuildType]):
+        if build_type is None:
+            self._output = None
+        else:
+            if not self._outputs is None and build_type in self._outputs:
+                self._outputs.pop(build_type)
+                if len(self._outputs) <= 0:
+                    self._outputs = None
+
     def get_extra(self, key: str) -> Optional[str]:
         if self._extras is None:
             return None
