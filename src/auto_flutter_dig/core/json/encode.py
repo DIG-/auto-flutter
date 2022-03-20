@@ -2,7 +2,7 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
-from ....core.json.serializable import Json, Serializable
+from ...core.json.serializable import Json, Serializable
 
 
 class JsonEncode(ABC):
