@@ -15,6 +15,7 @@ Group = str
 GroupedOptions = Dict[Group, Option]
 OptionsByArgument = Dict[Argument, GroupedOptions]
 
+
 T = TypeVar("T", bound=Option)  # pylint:disable=invalid-name
 
 
@@ -53,6 +54,26 @@ class _LongOptionMaybeWithValue(LongOptionWithValue):
     ...
 
 
+OptionsLong = Dict[Argument, Dict[Group, _Helper[LongOption]]]
+OptionsShort = Dict[Argument, Dict[Group, _Helper[ShortOption]]]
+OptionsPositional = Dict[Argument, Dict[Group, _Helper[PositionalOption]]]
+OptionsAll = List[_Helper[OptionAll]]
+
+
+class _State:
+    def __init__(
+        self,
+        has_param: List[_Helper],
+        maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]],
+        position_count=0,
+        has_option_all=False,
+    ) -> None:
+        self.has_param: List[_Helper] = has_param
+        self.maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = maybe_has_param
+        self.position_count: int = position_count
+        self.has_option_all: bool = has_option_all
+
+
 class ParseOptionsTask(Task):
     __option_help = LongShortOption("h", "help", "Show help of task")
     __option_stack_trace = LongOption("stack-trace", "Enable stack trace of errors")
@@ -66,7 +87,6 @@ class ParseOptionsTask(Task):
         return "Parsing arguments"
 
     def execute(self, args: Args) -> TaskResult:
-        from .....core.task.manager import TaskManager  # pylint: disable=import-outside-toplevel
 
         long_options: Dict[Argument, Dict[Group, _Helper[LongOption]]] = {}
         short_options: Dict[Argument, Dict[Group, _Helper[ShortOption]]] = {}
@@ -74,7 +94,7 @@ class ParseOptionsTask(Task):
         option_all: List[_Helper[OptionAll]] = []
 
         # Separate and identify options by type
-        for identity in TaskManager._task_stack.copy():  # pylint: disable=protected-access
+        for identity in Task.manager()._task_stack.copy():  # pylint: disable=protected-access
             for option in identity.options:
                 if isinstance(option, OptionAll):
                     option_all.append(_Helper(option, identity, OptionAll))
@@ -90,156 +110,61 @@ class ParseOptionsTask(Task):
         _Helper(ParseOptionsTask.__option_help, "aflutter", LongOption).into(long_options)
         _Helper(ParseOptionsTask.__option_stack_trace, "aflutter", LongOption).into(long_options)
 
-        has_param: List[_Helper] = []
-        maybe_has_param: Optional[_Helper[Union[LongOption, ShortOption]]] = None
-        position_count = 0
-        has_option_all = len(option_all) > 0
+        state = _State([], None, 0, len(option_all) > 0)
         for argument in self._input:  # pylint: disable=too-many-nested-blocks
             # Last iteration require param
-            if len(has_param) > 0:
-                self.__append_argument_all(args, option_all, argument)  # OptionAll
-                for helper_has_param in has_param:
-                    self.__append_argument(args, helper_has_param, argument)
-                has_param = []
+            if len(state.has_param) > 0:
+                self.__consume_param(args, argument, state, option_all)
                 continue
 
             size = len(argument)
             # Last iteration maybe require param
-            if not maybe_has_param is None:
+            if not state.maybe_has_param is None:
                 if size > 1 and argument[0] == "-":
-                    if isinstance(maybe_has_param.option, ShortOption):
+                    if isinstance(state.maybe_has_param.option, ShortOption):
                         self.__append_argument(
                             args,
                             _Helper(
-                                ShortOption(maybe_has_param.option.short, ""),
-                                maybe_has_param.group,
+                                ShortOption(state.maybe_has_param.option.short, ""),
+                                state.maybe_has_param.group,
                                 ShortOption,
                             ),
                             None,
                         )
-                    elif isinstance(maybe_has_param.option, LongOption):
+                    elif isinstance(state.maybe_has_param.option, LongOption):
                         self.__append_argument(
                             args,
                             _Helper(
-                                LongOption(maybe_has_param.option.long, ""),
-                                maybe_has_param.group,
+                                LongOption(state.maybe_has_param.option.long, ""),
+                                state.maybe_has_param.group,
                                 LongOption,
                             ),
                             None,
                         )
-                    maybe_has_param = None
+                    state.maybe_has_param = None
                 else:
                     self.__append_argument_all(args, option_all, argument)  # OptionAll
-                    self.__append_argument(args, maybe_has_param, argument)
-                    maybe_has_param = None
+                    self.__append_argument(args, state.maybe_has_param, argument)
+                    state.maybe_has_param = None
                     continue
 
             # Handle short option argument
             if size == 2 and argument[0] == "-":
-                self.__append_argument_all(args, option_all, argument)  # OptionAll
-                sub = argument[1:].lower()
-                if sub in short_options:
-                    for group, helper_short in short_options[sub].items():
-                        if helper_short.has_value:
-                            has_param.append(helper_short)
-                        else:
-                            self.__append_argument(args, helper_short, None)
-                    continue
-                if has_option_all:
-                    continue
-                raise OptionNotFound("Unrecognized command line option {argument}")
+                self.__parse_short(args, argument, state, short_options, option_all)
+                continue
 
-            elif size >= 4 and argument[0] == "-" and argument[1] == "-":
+            # Handle long/grouped argument
+            if size >= 4 and argument[0] == "-" and argument[1] == "-":
+                self.__parse_long_or_grouped(args, argument, state, short_options, long_options, option_all)
+                continue
 
-                split = argument[2:].lower().split(":")
-                split_len = len(split)
-                if split_len == 1:
-                    sub = split[0]
-                    group = None
-                elif split_len == 2:
-                    sub = split[1]
-                    group = split[0]
-                elif has_option_all:
-                    self.__append_argument_all(args, option_all, argument)  # OptionAll
-                    continue
-                else:
-                    raise OptionInvalidFormat("Invalid argument group structure for command line option {argument}")
+            # Positional argument
+            self.__parse_positional(args, argument, state, positional_options, option_all)
 
-                ###########
-                # OptionAll
-                if not group is None:
-                    self.__append_argument_all(
-                        args,
-                        # pylint: disable=cell-var-from-loop
-                        filter(lambda x: x.group == group, option_all),
-                        "-" + sub if len(sub) == 1 else "--" + sub,
-                    )
-                else:
-                    self.__append_argument_all(
-                        args,
-                        option_all,
-                        "-" + sub if len(sub) == 1 else "--" + sub,
-                    )
-                # OptionAll
-                ###########
-
-                # Short argument with group
-                if len(sub) == 1:
-                    if sub in short_options:
-                        for group, helper_short in short_options[sub].items():
-                            if helper_short.has_value:
-                                has_param.append(helper_short)
-                            else:
-                                self.__append_argument(args, helper_short, None)
-                        continue
-                    if not group is None:
-                        maybe_has_param = _Helper(_ShortOptionMaybeWithValue(sub, ""), group, ShortOption)
-                        continue
-                    if has_option_all:
-                        continue
-                    raise OptionNotFound("Unrecognized command line option {argument}")
-
-                # Long argument
-                if sub in long_options:
-                    if group is None:
-                        for _, helper_long in long_options[sub].items():
-                            if helper_long.has_value:
-                                has_param.append(helper_long)
-                            else:
-                                self.__append_argument(args, helper_long, None)
-                        continue
-                    if group in long_options[sub]:
-                        helper_long = long_options[sub][group]
-                        if helper_long.has_value:
-                            has_param.append(helper_long)
-                        else:
-                            self.__append_argument(args, helper_long, None)
-                        continue
-                    # unregistered group
-                    maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
-                    continue
-                if not group is None:
-                    # unregistered option with group
-                    maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
-                    continue
-                if has_option_all:
-                    continue
-                raise OptionNotFound("Unrecognized command line option {argument}")
-
-            else:
-                # Positional argument
-                self.__append_argument_all(args, option_all, argument)  # OptionAll
-                pos = str(position_count)
-                position_count += 1
-                if pos not in positional_options:
-                    if has_option_all:
-                        continue
-                    raise OptionNotFound('Unrecognized positional command line "{argument}"')
-                for group, helper_positional in positional_options[pos].items():
-                    self.__append_argument(args, helper_positional, argument)
+        ## For loop finished
 
         if args.group_contains("aflutter", ParseOptionsTask.__option_help):
-            TaskManager._task_stack.clear()  # pylint: disable=protected-access
+            Task.manager()._task_stack.clear()  # pylint: disable=protected-access
             self._append_task(HelpTask.Stub(self._task_identity))
 
         if args.group_contains("aflutter", ParseOptionsTask.__option_stack_trace):
@@ -249,6 +174,135 @@ class ParseOptionsTask(Task):
             )
 
         return TaskResult(args)
+
+    def __consume_param(self, args: Args, argument: str, state: _State, option_all: OptionsAll):
+        self.__append_argument_all(args, option_all, argument)  # OptionAll
+        for helper_has_param in state.has_param:
+            self.__append_argument(args, helper_has_param, argument)
+        state.has_param = []
+
+    def __parse_short(
+        self,
+        args: Args,
+        argument: str,
+        state: _State,
+        short_options: OptionsShort,
+        option_all: OptionsAll,
+    ):
+        self.__append_argument_all(args, option_all, argument)  # OptionAll
+        sub = argument[1:].lower()
+        if sub in short_options:
+            for _, helper_short in short_options[sub].items():
+                if helper_short.has_value:
+                    state.has_param.append(helper_short)
+                else:
+                    self.__append_argument(args, helper_short, None)
+            return
+        if state.has_option_all:
+            return
+        raise OptionNotFound("Unrecognized command line option {argument}")
+
+    def __parse_long_or_grouped(
+        self,
+        args: Args,
+        argument: str,
+        state: _State,
+        short_options: OptionsShort,
+        long_options: OptionsLong,
+        option_all: OptionsAll,
+    ):
+        split = argument[2:].lower().split(":")
+        split_len = len(split)
+        if split_len == 1:
+            sub = split[0]
+            group = None
+        elif split_len == 2:
+            sub = split[1]
+            group = split[0]
+        elif state.has_option_all:
+            self.__append_argument_all(args, option_all, argument)  # OptionAll
+            return
+        else:
+            raise OptionInvalidFormat("Invalid argument group structure for command line option {argument}")
+
+        ###########
+        # OptionAll
+        if not group is None:
+            self.__append_argument_all(
+                args,
+                # pylint: disable=cell-var-from-loop
+                filter(lambda x: x.group == group, option_all),
+                "-" + sub if len(sub) == 1 else "--" + sub,
+            )
+        else:
+            self.__append_argument_all(
+                args,
+                option_all,
+                "-" + sub if len(sub) == 1 else "--" + sub,
+            )
+        # OptionAll
+        ###########
+
+        # Short argument with group
+        if len(sub) == 1:
+            if sub in short_options:
+                for group, helper_short in short_options[sub].items():
+                    if helper_short.has_value:
+                        state.has_param.append(helper_short)
+                    else:
+                        self.__append_argument(args, helper_short, None)
+                return
+            if not group is None:
+                state.maybe_has_param = _Helper(_ShortOptionMaybeWithValue(sub, ""), group, ShortOption)
+                return
+            if state.has_option_all:
+                return
+            raise OptionNotFound("Unrecognized command line option {argument}")
+
+        # Long argument
+        if sub in long_options:
+            if group is None:
+                for _, helper_long in long_options[sub].items():
+                    if helper_long.has_value:
+                        state.has_param.append(helper_long)
+                    else:
+                        self.__append_argument(args, helper_long, None)
+                return
+            if group in long_options[sub]:
+                helper_long = long_options[sub][group]
+                if helper_long.has_value:
+                    state.has_param.append(helper_long)
+                else:
+                    self.__append_argument(args, helper_long, None)
+                return
+            # unregistered group
+            state.maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
+            return
+        if not group is None:
+            # unregistered option with group
+            state.maybe_has_param = _Helper(_LongOptionMaybeWithValue(sub, ""), group, LongOption)
+            return
+        if state.has_option_all:
+            return
+        raise OptionNotFound("Unrecognized command line option {argument}")
+
+    def __parse_positional(
+        self,
+        args: Args,
+        argument: str,
+        state: _State,
+        positional_options: OptionsPositional,
+        option_all: OptionsAll,
+    ):
+        self.__append_argument_all(args, option_all, argument)  # OptionAll
+        pos = str(state.position_count)
+        state.position_count += 1
+        if pos not in positional_options:
+            if state.has_option_all:
+                return
+            raise OptionNotFound('Unrecognized positional command line "{argument}"')
+        for _, helper_positional in positional_options[pos].items():
+            self.__append_argument(args, helper_positional, argument)
 
     @staticmethod
     def __append_argument(args: Args, helper: _Helper, value: Optional[str]):
