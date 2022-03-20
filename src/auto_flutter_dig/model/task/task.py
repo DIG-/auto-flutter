@@ -27,8 +27,8 @@ class Task(BaseTask):
         TaskManager.print(message)
         self.log.debug(message)
 
+    @staticmethod
     def _uptade_description(
-        self,
         description: str,
         result: Optional[Result] = None,  # Show some part had failed
     ):
@@ -37,8 +37,10 @@ class Task(BaseTask):
     def _reset_description(self, args: Args, result: Optional[Result] = None):
         self._uptade_description(self.describe(args), result)
 
-    def _append_task(self, tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
+    @staticmethod
+    def _append_task(tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
         TaskManager.add(tasks)
 
-    def _append_task_id(self, ids: Union[TaskId, Iterable[TaskId]]) -> None:
+    @staticmethod
+    def _append_task_id(ids: Union[TaskId, Iterable[TaskId]]) -> None:
         TaskManager.add_id(ids)
