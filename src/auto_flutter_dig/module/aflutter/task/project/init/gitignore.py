@@ -1,4 +1,4 @@
-from ......model.error import E, SilentWarning
+from ......model.error import Err, SilentWarning
 from ......model.task.task import *  # pylint: disable=wildcard-import
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ......module.aflutter.identity import AflutterTaskIdentity
@@ -44,7 +44,7 @@ class ProjectInitGitIgnoreTask(Task):
         except BaseException as error:
             return TaskResult(
                 args,
-                error=E(SilentWarning(".gitignore can not be open")).caused_by(error),
+                error=Err(SilentWarning(".gitignore can not be open"), error),
                 success=True,
             )
 

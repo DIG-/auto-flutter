@@ -1,6 +1,6 @@
 from json import load as json_load
 
-from .....model.error import E, SilentWarning
+from .....model.error import Err, SilentWarning
 from .....model.project.project import Project
 from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity
@@ -31,7 +31,7 @@ class ProjectRead(Task):
                 except BaseException as error:
                     return self.__return_error(
                         args,
-                        E(RuntimeError('Failed to read file "afutter.json"')).caused_by(error),
+                        Err(RuntimeError('Failed to read file "afutter.json"'), error),
                     )
 
                 try:
@@ -39,18 +39,18 @@ class ProjectRead(Task):
                 except BaseException as error:
                     return self.__return_error(
                         args,
-                        E(ValueError('Failed to parse project from "aflutter.json"')).caused_by(error),
+                        Err(ValueError('Failed to parse project from "aflutter.json"'), error),
                     )
 
         except BaseException as error:
             if self._warn_if_fail:
                 return self.__return_error(
                     args,
-                    E(SilentWarning('Failed to open file "aflutter.json"')).caused_by(error),
+                    Err(SilentWarning('Failed to open file "aflutter.json"'), error),
                 )
             return self.__return_error(
                 args,
-                E(FileNotFoundError('Failed to open file "aflutter.json"')).caused_by(error),
+                Err(FileNotFoundError('Failed to open file "aflutter.json"'), error),
             )
 
         if not Project.current.tasks is None:

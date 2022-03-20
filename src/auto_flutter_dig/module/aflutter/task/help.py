@@ -6,7 +6,7 @@ from ....core.string import SB
 from ....core.task.resolver import TaskResolver
 from ....core.utils import _Iterable
 from ....model.argument.options import *  # pylint: disable=wildcard-import
-from ....model.error import E, TaskNotFound
+from ....model.error import Err, TaskNotFound
 from ....model.task.group import TaskGroup
 from ....model.task.identity import TaskIdentity
 from ....model.task.task import *  # pylint: disable=wildcard-import
@@ -93,7 +93,7 @@ class HelpTask(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    error=E(LookupError(f"Failed to search for task {self._task_id}.")).caused_by(error),
+                    error=Err(LookupError(f"Failed to search for task {self._task_id}."), error),
                 )
 
         if not self._task_identity is None:

@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from ......core.task.resolver import TaskNotFound, TaskResolver
-from ......model.error import E
+from ......model.error import Err
 from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ......model.task.task import *  # pylint: disable=wildcard-import
@@ -55,7 +55,7 @@ class ProjectInitRunnerTask(Task):
                 self.log.warning(" --- RESOLVED ---")
                 self.log.info(str(resolved))
                 return TaskResult(
-                    args, E(LookupError("Has task to include, but all require_before are not available")).error
+                    args, Err(LookupError("Has task to include, but all require_before are not available"))
                 )
             found = False
             for item in ordered:
@@ -70,9 +70,7 @@ class ProjectInitRunnerTask(Task):
                 self.log.info(str(resolved))
                 self.log.warning(" --- FILTERED ---")
                 self.log.info(str(ordered))
-                return TaskResult(
-                    args, E(LookupError("Has task to include, but all require_after does not apply")).error
-                )
+                return TaskResult(args, Err(LookupError("Has task to include, but all require_after does not apply")))
 
         tasks.append(ProjectSave.identity)
         tasks.reverse()

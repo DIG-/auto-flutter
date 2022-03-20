@@ -102,7 +102,8 @@ class _TaskManager:
 
             if not output.success:
                 if isinstance(output, TaskResultHelp):
-                    from ...module.aflutter.task.help import HelpTask  # pylint:disable=import-outside-toplevel,cyclic-import
+                    # pylint:disable=import-outside-toplevel,cyclic-import
+                    from ...module.aflutter.task.help import HelpTask
 
                     self._task_stack.clear()
                     self.add(HelpTask.Stub(identity))

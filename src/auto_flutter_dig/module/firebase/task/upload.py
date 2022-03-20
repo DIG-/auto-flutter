@@ -5,7 +5,7 @@ from ....core.os.path_converter import PathConverter
 from ....core.utils import _Dict, _If
 from ....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
 from ....model.argument.options import LongOptionWithValue
-from ....model.error import E
+from ....model.error import Err
 from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.firebase.identity import FirebaseTaskIdentity
 from ....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
@@ -37,19 +37,19 @@ class FirebaseBuildUpload(BaseProcessTask):
     def _create_process(self, args: Args) -> ProcessOrResult:
         filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
-            return TaskResult(args, E(AssertionError("Previous task does not have output")).error)
+            return TaskResult(args, Err(AssertionError("Previous task does not have output")))
 
         file: Path = Path(PathConverter.from_posix(PurePosixPath(filename)).to_machine())
         if not file.exists():
             return TaskResult(
                 args,
-                E(FileNotFoundError(f"Output not found: {file}")).error,
+                Err(FileNotFoundError(f"Output not found: {file}")),
             )
 
         file = file.absolute()
         google_id = args.get(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID)
         if google_id is None or len(google_id) <= 0:
-            return TaskResult(args, E(AssertionError("Google app id not found")).error)
+            return TaskResult(args, Err(AssertionError("Google app id not found")))
 
         arguments: List[str] = [
             FIREBASE_DISABLE_INTERACTIVE_MODE.value,

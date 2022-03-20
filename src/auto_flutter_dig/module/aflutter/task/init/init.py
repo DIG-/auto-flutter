@@ -2,7 +2,7 @@ from sys import argv as sys_argv
 from typing import Iterable, Optional, Tuple
 
 from .....core.string import SB
-from .....model.error import E, SilentWarning, TaskNotFound
+from .....model.error import Err, SilentWarning, TaskNotFound
 from .....model.task.group import TaskGroup
 from .....model.task.identity import TaskIdentity
 from .....model.task.task import *  # pylint: disable=wildcard-import
@@ -66,7 +66,7 @@ class AflutterInitTask(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    E(RuntimeError(f"Failed to initialize module {module.name}")).caused_by(error),
+                    Err(RuntimeError(f"Failed to initialize module {module.name}"), error),
                 )
 
         self._uptade_description("Finding task")
@@ -79,11 +79,11 @@ class AflutterInitTask(Task):
                 task, offset = self.__find_task(Root)
             except TaskNotFound as error:
                 self._append_task(HelpTask.Stub(error.task_id))
-                return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
+                return TaskResult(args, Err(SilentWarning(), error), success=True)
             except BaseException as error:
                 return TaskResult(
                     args,
-                    error=E(LookupError("Failed to find task")).caused_by(error),
+                    error=Err(LookupError("Failed to find task"), error),
                 )
 
         try:
@@ -91,7 +91,7 @@ class AflutterInitTask(Task):
         except BaseException as error:
             return TaskResult(
                 args,
-                error=E(RuntimeError("Failed to create task tree")).caused_by(error),
+                error=Err(RuntimeError("Failed to create task tree"), error),
             )
 
         parse_options = ParseOptionsTask(task, sys_argv[offset:])

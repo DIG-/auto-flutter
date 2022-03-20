@@ -1,6 +1,6 @@
 from typing import List
 
-from ....model.error import E
+from ....model.error import Err
 from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.platform.platform import Platform
 from ....model.project.project import Project
@@ -37,7 +37,7 @@ class FirebaseBuildValidate(Task):
         if app_id is None or len(app_id) <= 0:
             return TaskResult(
                 args,
-                error=E(ValueError("App id not found in aflutter.json")).error,
+                error=Err(ValueError("App id not found in aflutter.json")),
                 success=False,
             )
 

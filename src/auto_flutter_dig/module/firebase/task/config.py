@@ -3,7 +3,7 @@ from typing import Optional
 from ....model.argument.option.common.flavor import FlavorOption
 from ....model.argument.option.common.platform import PlatformOption
 from ....model.argument.options import LongOption, LongOptionWithValue
-from ....model.error import E
+from ....model.error import Err
 from ....model.platform.platform import Platform
 from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.aflutter.task.config.base import BaseConfigTask, Project
@@ -54,7 +54,7 @@ class FirebaseConfigTask(BaseConfigTask):
             if config is None:
                 raise KeyError(f"Project does not have config for platform {platform} and flavor {flavor}")
             if not config.remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
-                has_warning = E(Warning("Selected platform and flavor does not have app id")).error
+                has_warning = Err(Warning("Selected platform and flavor does not have app id"))
 
         ## Set app id section
         if not add_app_id is None:

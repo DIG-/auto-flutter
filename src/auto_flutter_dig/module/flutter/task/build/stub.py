@@ -4,7 +4,7 @@ from .....model.argument.option.common.build_type import BuildTypeFlutterOption
 from .....model.argument.option.common.flavor import FlavorOption
 from .....model.argument.option.hidden import HiddenOption
 from .....model.build.mode import BuildMode
-from .....model.error import E
+from .....model.error import Err
 from .....model.platform.merge_config import MergePlatformConfigFlavored
 from .....model.platform.platform import Platform
 from .....model.project.project import Project
@@ -52,19 +52,17 @@ class FlutterBuildStub(Task):
             build_type = self.opt_build_type.get_or_none(args)
         except BaseException as error:
             return TaskResult(
-                args, E(ValueError(f'Failed to parse build type "{args.get(self.opt_build_type)}"')).caused_by(error)
+                args, Err(ValueError(f'Failed to parse build type "{args.get(self.opt_build_type)}"'), error)
             )
         if build_type is None:
-            return TaskResult(
-                args, E(ValueError("Build type not found. Usage is similar to pure flutter build.")).error
-            )
+            return TaskResult(args, Err(ValueError("Build type not found. Usage is similar to pure flutter build.")))
         flavor = self.opt_flavor.get_or_none(args)
 
         try:
             build_mode = self.opt_build_mode.get_or_none(args)
         except BaseException as error:
             return TaskResult(
-                args, E(ValueError(f'Failed to parse build mode "{args.get(self.opt_build_mode)}"')).caused_by(error)
+                args, Err(ValueError(f'Failed to parse build mode "{args.get(self.opt_build_mode)}"'), error)
             )
         if build_mode is None:
             if args.contains(self.opt_release):

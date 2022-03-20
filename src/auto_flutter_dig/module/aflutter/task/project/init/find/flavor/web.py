@@ -1,4 +1,4 @@
-from ........model.error import E, SilentWarning
+from ........model.error import Err, SilentWarning
 from ........model.platform.platform import Platform
 from ........model.project.project import Project
 from ........model.task.task import *  # pylint: disable=wildcard-import
@@ -23,6 +23,6 @@ class ProjectInitFindFlavorWebTask(BaseProjectInitFindFlavorTask):
         project = Project.current
         if not Platform.WEB in project.platforms:
             self._uptade_description("")
-            return TaskResult(args, E(SilentWarning("Project does not support web platform")).error, success=True)
+            return TaskResult(args, Err(SilentWarning("Project does not support web platform")), success=True)
 
-        return TaskResult(args, E(NotImplementedError("Not implemented yet")).error, success=True)
+        return TaskResult(args, Err(NotImplementedError("Not implemented yet")), success=True)

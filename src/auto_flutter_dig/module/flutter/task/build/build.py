@@ -5,7 +5,7 @@ from .....core.os.path_converter import PathConverter
 from .....core.string import SB, SF
 from .....model.build.mode import BuildMode
 from .....model.build.type import BuildType
-from .....model.error import E, SilentWarning
+from .....model.error import Err, SilentWarning
 from .....model.platform.flavored_config import PlatformConfigFlavored
 from .....model.platform.platform import Platform
 from .....model.platform.run_type import RunType
@@ -128,7 +128,7 @@ class FlutterBuildTask(FlutterCommandTask):
         if output_file is None:
             return TaskResult(
                 args,
-                error=E(Warning("Build success, but file output not defined")).error,
+                error=Err(Warning("Build success, but file output not defined")),
                 success=True,
             )
         output_file = SF.format(
@@ -144,7 +144,7 @@ class FlutterBuildTask(FlutterCommandTask):
         else:
             return TaskResult(
                 args,
-                E(FileNotFoundError(f'Output "{output_file}" not found')).error,
+                Err(FileNotFoundError(f'Output "{output_file}" not found')),
                 success=False,
             )
 
@@ -157,7 +157,7 @@ class FlutterBuildTask(FlutterCommandTask):
             self._clear_output(args)
             return TaskResult(
                 args,
-                error=E(SilentWarning("Build failed. Maybe there is more flavors to build")).error,
+                error=Err(SilentWarning("Build failed. Maybe there is more flavors to build")),
                 success=True,
             )
 
@@ -206,7 +206,7 @@ class FlutterBuildTask(FlutterCommandTask):
 
         return TaskResult(
             args,
-            error=E(Warning("Flutter issue #58247 detected, building others flavors to fix...")).error,
+            error=Err(Warning("Flutter issue #58247 detected, building others flavors to fix...")),
             success=True,
         )
 

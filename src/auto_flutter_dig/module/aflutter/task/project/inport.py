@@ -1,5 +1,5 @@
 from .....core.string.builder import SB
-from .....model.error import E
+from .....model.error import Err
 from .....model.project.custom_task.type import CustomTaskType
 from .....model.project.project import Project
 from .....model.result import Result
@@ -24,11 +24,11 @@ class ProjectTaskImport(Task):
         for custom in project.tasks:
             if custom.custom_type == CustomTaskType.EXEC:
                 if custom.content is None:
-                    self._reset_description(args, Result(E(ValueError("User task type EXEC require content")).error))
+                    self._reset_description(args, Result(Err(ValueError("User task type EXEC require content"))))
                     continue
                 if custom.content.args is None or len(custom.content.args) <= 0:
                     self._reset_description(
-                        args, Result(E(ValueError("User task type EXEC require content arguments")).error)
+                        args, Result(Err(ValueError("User task type EXEC require content arguments")))
                     )
                     continue
                 tasks.append(UserExecTaskIdentity(custom.task_id, custom.name, custom.content.args))

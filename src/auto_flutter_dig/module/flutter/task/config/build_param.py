@@ -4,7 +4,7 @@ from .....core.string import SB
 from .....model.argument.option.common.flavor import Flavor, FlavorOption
 from .....model.argument.option.common.platform import Platform, PlatformOption
 from .....model.argument.options import LongOptionWithValue, LongShortOption
-from .....model.error import E
+from .....model.error import Err
 from .....model.platform.merge_config import MergePlatformConfigFlavored, PlatformConfigFlavored
 from .....model.result import Result
 from .....model.task.task import *  # pylint: disable=wildcard-import
@@ -58,7 +58,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             self._uptade_description(self.describe(args), result)
 
         if not had_change:
-            return TaskResult(args, error=E(Warning("No change was made")).error, success=True)
+            return TaskResult(args, error=Err(Warning("No change was made")), success=True)
         self._uptade_description("")  # To not write default description since had change
         self._add_save_project()
         return TaskResult(args)
@@ -74,7 +74,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
 
         add_param = add_param.strip()
         if len(add_param) <= 0:
-            self._reset_description(args, Result(E(ValueError("Can not add empty build param")).error))
+            self._reset_description(args, Result(Err(ValueError("Can not add empty build param"))))
             return False
 
         invalid = self._validate_platform(project, platform)
@@ -103,7 +103,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
 
         rem_param = rem_param.strip()
         if len(rem_param) <= 0:
-            self._reset_description(args, Result(E(ValueError("Can not remove empty build param")).error))
+            self._reset_description(args, Result(Err(ValueError("Can not remove empty build param"))))
             return False
 
         invalid = self._validate_platform(project, platform)
@@ -118,21 +118,19 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
 
         p_config = project.get_platform_config(platform)
         if p_config is None:
-            self._reset_description(
-                args, Result(E(Warning(f"{platform} does not have build config")).error, success=True)
-            )
+            self._reset_description(args, Result(Err(Warning(f"{platform} does not have build config")), success=True))
             return False
 
         f_config = p_config.get_config_by_flavor(flavor)
         if f_config is None:
             self._reset_description(
                 args,
-                Result(E(Warning(f"{platform} with flavor {flavor} does not have build config")).error, success=True),
+                Result(Err(Warning(f"{platform} with flavor {flavor} does not have build config")), success=True),
             )
             return False
 
         if not f_config.remove_build_param(rem_param):
-            self._reset_description(args, Result(E(ValueError("Build param not found to be removed")).error))
+            self._reset_description(args, Result(Err(ValueError("Build param not found to be removed"))))
             return False
         self._reset_description(args, Result(success=True))
         return True
@@ -140,19 +138,19 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
     @staticmethod
     def _validate_platform(project: Project, platform: Platform) -> Optional[Result]:
         if platform != Platform.DEFAULT and not platform in project.platforms:
-            return Result(E(ValueError(f"Project does not have support to {platform}")).error)
+            return Result(Err(ValueError(f"Project does not have support to {platform}")))
         return None
 
     @staticmethod
     def _validate_flavor(project: Project, flavor: Optional[Flavor]) -> Optional[Result]:
         if project.flavors is None or len(project.flavors) <= 0:
             if not flavor is None:
-                return Result(E(ValueError("Project does not have flavors")).error)
+                return Result(Err(ValueError("Project does not have flavors")))
             return None
         if flavor is None:
             return None
         if not flavor in project.flavors:
-            return Result(E(ValueError(f"Project does not have flavor {flavor}")).error)
+            return Result(Err(ValueError(f"Project does not have flavor {flavor}")))
         return None
 
     def _show_build_params(
@@ -212,7 +210,7 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
             return TaskResult(args, error=invalid.error, success=invalid.success)
 
         if not project.flavors is None and len(project.flavors) > 0 and flavor is None:
-            return TaskResult(args, error=E(ValueError("Flavor is required")).error)
+            return TaskResult(args, error=Err(ValueError("Flavor is required")))
 
         config: PlatformConfigFlavored
         if platform == Platform.DEFAULT:
