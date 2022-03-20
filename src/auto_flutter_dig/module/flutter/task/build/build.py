@@ -13,8 +13,8 @@ from .....model.project.flavor import Flavor
 from .....model.project.project import Project
 from .....model.task.task import *
 from .....module.aflutter.task.help import HelpTask
-from ...identity import FlutterTaskIdentity
-from ..command import FlutterCommandTask
+from .....module.flutter.identity import FlutterTaskIdentity
+from .....module.flutter.task.command import FlutterCommandTask
 
 
 class FlutterBuildTaskIdentity(FlutterTaskIdentity):

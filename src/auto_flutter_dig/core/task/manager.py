@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import Deque, Iterable, List, Optional, Union
 
+from ...core.task.printer.operation import *
+from ...core.task.printer.printer import TaskPrinter
+from ...core.task.resolver import TaskResolver
 from ...model.argument.arguments import Args
 from ...model.result import Result
 from ...model.task.base_task import BaseTask
@@ -9,9 +12,6 @@ from ...model.task.group import TaskGroup
 from ...model.task.id import TaskId
 from ...model.task.identity import TaskIdentity
 from ...model.task.result import TaskResult, TaskResultHelp
-from .printer.operation import *
-from .printer.printer import TaskPrinter
-from .resolver import TaskResolver
 
 __all__ = ["TaskManager"]
 

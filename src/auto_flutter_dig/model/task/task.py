@@ -5,10 +5,10 @@ from typing import Iterable, List, Optional, Union
 from ...core.task.manager import TaskManager
 from ...model.argument.arguments import Args
 from ...model.result import Result
-from .base_task import BaseTask
-from .id import TaskId
-from .identity import TaskIdentity
-from .result import TaskResult
+from ...model.task.base_task import BaseTask
+from ...model.task.id import TaskId
+from ...model.task.identity import TaskIdentity
+from ...model.task.result import TaskResult
 
 __all__ = ["Task", "Args", "TaskId", "TaskResult", "List"]
 

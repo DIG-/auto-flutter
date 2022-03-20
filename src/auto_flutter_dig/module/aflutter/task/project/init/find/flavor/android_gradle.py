@@ -7,7 +7,10 @@ from ........model.platform.platform import Platform
 from ........model.project.project import Project
 from ........model.result import Result
 from ........model.task.task import *
-from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTask
+from ........module.aflutter.task.project.init.find.flavor.base import (
+    BaseProjectInitFindFlavorIdentity,
+    BaseProjectInitFindFlavorTask,
+)
 
 
 class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):

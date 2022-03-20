@@ -6,11 +6,11 @@ from ....core.utils import _Dict, _If
 from ....core.utils.task.process.process import *
 from ....model.argument.option import LongOptionWithValue
 from ....model.error import E
+from ....module.firebase.identity import FirebaseTaskIdentity
+from ....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
+from ....module.firebase.task.setup.check import FirebaseCheck
+from ....module.firebase.task.validate import FirebaseBuildValidate
 from ....module.flutter.task.build.stub import FlutterBuildStub
-from ..identity import FirebaseTaskIdentity
-from ..model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
-from .setup.check import FirebaseCheck
-from .validate import FirebaseBuildValidate
 
 
 class FirebaseBuildUpload(BaseProcessTask):

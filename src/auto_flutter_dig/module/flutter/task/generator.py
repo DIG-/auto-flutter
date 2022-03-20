@@ -2,9 +2,9 @@ from ....core.string import SB
 from ....core.utils import _Dict
 from ....model.argument.option import LongOption
 from ....model.task.task import *
-from ..identity import FlutterTaskIdentity
-from .command import FlutterCommandTask
-from .pub_get import FlutterPubGetIdentity
+from ....module.flutter.identity import FlutterTaskIdentity
+from ....module.flutter.task.command import FlutterCommandTask
+from ....module.flutter.task.pub_get import FlutterPubGetIdentity
 
 
 class FlutterGeneratorTask(Task):

@@ -1,14 +1,14 @@
 from typing import Callable
 
 from .......core.utils import _Dict
-from .......model.task.task import *
 from .......model.task.group import TaskGroup, TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .....identity import AflutterTaskIdentity
-from ..find.flavor.flavor import ProjectInitFindFlavorTask
-from .android import ProjectInitConfigAndroidTask
-from .ios import ProjectInitConfigIosTask
-from .web import ProjectInitConfigWebTask
+from .......model.task.task import *
+from .......module.aflutter.identity import AflutterTaskIdentity
+from .......module.aflutter.task.project.init.config.android import ProjectInitConfigAndroidTask
+from .......module.aflutter.task.project.init.config.ios import ProjectInitConfigIosTask
+from .......module.aflutter.task.project.init.config.web import ProjectInitConfigWebTask
+from .......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorTask
 
 
 class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, TaskGroup):

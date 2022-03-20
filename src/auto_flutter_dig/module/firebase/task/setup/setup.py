@@ -5,9 +5,9 @@ from .....core.string import SB
 from .....model.argument.option import LongOption, LongPositionalOption
 from .....model.task.task import *
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
-from ...identity import FirebaseTaskIdentity
-from ...model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE
-from .check import FirebaseCheck
+from .....module.firebase.identity import FirebaseTaskIdentity
+from .....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE
+from .....module.firebase.task.setup.check import FirebaseCheck
 
 
 class FirebaseSetupTask(Task):

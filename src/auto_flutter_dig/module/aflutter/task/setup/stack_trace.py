@@ -1,11 +1,11 @@
 from .....core.config import Config
 from .....model.argument.option import LongOption
 from .....model.error import E
-from .....model.task.task import *
 from .....model.task.result import TaskResultHelp
+from .....model.task.task import *
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from .....module.aflutter.identity import AflutterTaskIdentity
-from .save import AflutterSetupSaveTask
+from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 
 
 class AflutterSetupStackTraceTask(Task):

@@ -4,9 +4,9 @@ from typing import List
 
 from ...core.logger import log_task
 from ...model.argument.arguments import Args
-from .id import TaskId
-from .identity import TaskIdentity
-from .result import TaskResult
+from ...model.task.id import TaskId
+from ...model.task.identity import TaskIdentity
+from ...model.task.result import TaskResult
 
 __all__ = ["BaseTask", "Args", "TaskId", "TaskResult", "List"]
 

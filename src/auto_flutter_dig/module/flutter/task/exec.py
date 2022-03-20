@@ -1,8 +1,8 @@
 from ....core.utils.task.process.process import ProcessOrResult
 from ....model.argument.option import OptionAll
 from ....model.task.task import *
-from ..identity import FlutterTaskIdentity
-from .command import FlutterCommandTask
+from ....module.flutter.identity import FlutterTaskIdentity
+from ....module.flutter.task.command import FlutterCommandTask
 
 
 class FlutterExecTask(FlutterCommandTask):

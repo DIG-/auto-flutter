@@ -9,7 +9,7 @@ from .....model.platform.merge_config import MergePlatformConfigFlavored, Platfo
 from .....model.result import Result
 from .....model.task.task import *
 from .....module.aflutter.task.config.base import *
-from ...identity import FlutterTaskIdentity
+from .....module.flutter.identity import FlutterTaskIdentity
 
 
 class FlutterBuildParamConfigTask(BaseConfigTask):

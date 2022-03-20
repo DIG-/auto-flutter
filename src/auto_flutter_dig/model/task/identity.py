@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Callable, List, Optional, Tuple
 
 from ...core.utils import _Ensure, _EnsureCallable
-from ..argument.option import Option
-from .id import TaskId
+from ...model.argument.option import Option
+from ...model.task.id import TaskId
 
 __all__ = ["TaskIdentity", "TaskId", "List", "Callable", "Option"]
 
@@ -19,8 +19,8 @@ class TaskIdentity:
         creator: Callable[[], "BaseTask"],  # type: ignore[name-defined]
         allow_more: bool = False,  # Allow more tasks with same id
     ) -> None:
-        from .group import TaskGroup  # pylint: disable=import-outside-toplevel
         from .base_task import BaseTask  # pylint: disable=import-outside-toplevel
+        from .group import TaskGroup  # pylint: disable=import-outside-toplevel
 
         self.group: str = _Ensure.instance(group, str, "group")
         self.task_id: TaskId = _Ensure.instance(task_id, TaskId, "id")

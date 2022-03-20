@@ -7,16 +7,16 @@ from .....model.task.group import TaskGroup
 from .....model.task.identity import TaskIdentity
 from .....model.task.task import *
 from .....module.aflutter.task.config.config import AflutterConfigIdentity
+from .....module.aflutter.task.help import HelpTask
+from .....module.aflutter.task.init.options import ParseOptionsTask
+from .....module.aflutter.task.init.read_config import ReadConfigTask
+from .....module.aflutter.task.project.read import ProjectRead
 from .....module.aflutter.task.root import Root
 from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
 from .....module.aflutter.task.setup.setup import AflutterSetupIdentity
 from .....module.firebase.firebase import FirebaseModulePlugin
 from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
-from ..help import HelpTask
-from ..project.read import ProjectRead
-from .options import ParseOptionsTask
-from .read_config import ReadConfigTask
 
 
 class AflutterInitTask(Task):

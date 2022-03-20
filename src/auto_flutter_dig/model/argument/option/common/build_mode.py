@@ -1,7 +1,7 @@
 from .....core.utils import _Enum
+from .....model.argument.option.common._decoder import _DecodedOption
+from .....model.argument.option.long import LongOptionWithValue
 from .....model.build.mode import BuildMode
-from ..long import LongOptionWithValue
-from ._decoder import _DecodedOption
 
 __all__ = ["BuildModeOption"]
 

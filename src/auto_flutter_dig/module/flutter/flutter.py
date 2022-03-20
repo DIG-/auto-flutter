@@ -1,11 +1,11 @@
-from ..plugin import *
-from .task.build.stub import FlutterBuildStub
-from .task.config.build_param import FlutterBuildParamConfigTask
-from .task.exec import FlutterExecTask
-from .task.generator import FlutterGeneratorTask
-from .task.pub_get import FlutterPubGetIdentity
-from .task.setup.check import FlutterSetupCheckTask
-from .task.setup.setup import FlutterSetupTask
+from ...module.flutter.task.build.stub import FlutterBuildStub
+from ...module.flutter.task.config.build_param import FlutterBuildParamConfigTask
+from ...module.flutter.task.exec import FlutterExecTask
+from ...module.flutter.task.generator import FlutterGeneratorTask
+from ...module.flutter.task.pub_get import FlutterPubGetIdentity
+from ...module.flutter.task.setup.check import FlutterSetupCheckTask
+from ...module.flutter.task.setup.setup import FlutterSetupTask
+from ...module.plugin import *
 
 
 class FlutterModulePlugin(AflutterModulePlugin):

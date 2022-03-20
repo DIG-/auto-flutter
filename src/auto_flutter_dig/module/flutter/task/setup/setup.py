@@ -6,9 +6,9 @@ from .....model.argument.option import LongPositionalOption
 from .....model.error import E
 from .....model.task.task import *
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
-from ...identity import FlutterTaskIdentity
-from ...model._const import FLUTTER_CONFIG_KEY_PATH
-from .check import FlutterSetupCheckTask
+from .....module.flutter.identity import FlutterTaskIdentity
+from .....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH
+from .....module.flutter.task.setup.check import FlutterSetupCheckTask
 
 
 class FlutterSetupTask(Task):

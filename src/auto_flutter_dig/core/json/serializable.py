@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from typing import Generic, Optional, TypeVar
 
-from .type import Json
+from ...core.json.type import Json
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 

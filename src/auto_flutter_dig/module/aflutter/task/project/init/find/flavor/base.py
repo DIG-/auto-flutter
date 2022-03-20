@@ -6,8 +6,8 @@ from ........model.project.project import Project
 from ........model.task.identity import TaskIdentity
 from ........model.task.init.project_identity import InitProjectTaskIdentity
 from ........model.task.task import *
-from ......identity import AflutterTaskIdentity
-from ..platform import ProjectInitFindPlatformTask
+from ........module.aflutter.identity import AflutterTaskIdentity
+from ........module.aflutter.task.project.init.find.platform import ProjectInitFindPlatformTask
 
 
 class BaseProjectInitFindFlavorIdentity(AflutterTaskIdentity, InitProjectTaskIdentity):

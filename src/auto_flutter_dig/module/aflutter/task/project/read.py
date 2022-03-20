@@ -3,8 +3,8 @@ from json import load as json_load
 from .....model.error import E, SilentWarning
 from .....model.project.project import Project
 from .....model.task.task import *
-from ...identity import AflutterTaskIdentity
-from .inport import ProjectTaskImport
+from .....module.aflutter.identity import AflutterTaskIdentity
+from .....module.aflutter.task.project.inport import ProjectTaskImport
 
 
 class ProjectRead(Task):

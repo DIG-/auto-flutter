@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import Iterable, Optional
 
+from ...core.os.os import OS
 from ...core.utils import _Iterable
-from .os import OS
 
 __all__ = ["ExecutableResolver"]
 

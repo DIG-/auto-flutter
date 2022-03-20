@@ -2,16 +2,16 @@ from typing import Iterable
 
 from ......core.task.resolver import TaskNotFound, TaskResolver
 from ......model.error import E
-from ......model.task.task import *
 from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
-from ....identity import AflutterTaskIdentity
-from ...project.save import ProjectSave
-from .config.config import ProjectInitConfigTask
-from .create import ProjectInitCreateTask
-from .find.flavor.flavor import ProjectInitFindFlavorTask
-from .find.platform import ProjectInitFindPlatformTask
-from .gitignore import ProjectInitGitIgnoreTask
+from ......model.task.task import *
+from ......module.aflutter.identity import AflutterTaskIdentity
+from ......module.aflutter.task.project.init.config.config import ProjectInitConfigTask
+from ......module.aflutter.task.project.init.create import ProjectInitCreateTask
+from ......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorTask
+from ......module.aflutter.task.project.init.find.platform import ProjectInitFindPlatformTask
+from ......module.aflutter.task.project.init.gitignore import ProjectInitGitIgnoreTask
+from ......module.aflutter.task.project.save import ProjectSave
 
 
 class _ExtendedInitProjectTaskIdentity:

@@ -3,8 +3,8 @@ from .....model.argument.option import LongOptionWithValue, LongShortOption
 from .....model.error import E
 from .....model.result import Result
 from .....model.task.task import *
-from .base import *
-from .project import ProjectConfigTaskIdentity
+from .....module.aflutter.task.config.base import *
+from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 
 
 class AflutterFlavorConfigTask(BaseConfigTask):

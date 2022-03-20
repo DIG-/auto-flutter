@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from pathlib import PurePath, PurePosixPath, PureWindowsPath
 from typing import Union
 
-from ..utils import _Ensure
-from .os import OS
+from ...core.os.os import OS
+from ...core.utils import _Ensure
 
 __all__ = ["PathConverter"]
 

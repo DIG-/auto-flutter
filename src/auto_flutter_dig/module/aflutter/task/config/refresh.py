@@ -1,6 +1,6 @@
 from .....model.task.task import *
-from .base import BaseConfigTask
-from .project import ProjectConfigTaskIdentity
+from .....module.aflutter.task.config.base import BaseConfigTask
+from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 
 
 class AflutterConfigRefreshTask(BaseConfigTask):

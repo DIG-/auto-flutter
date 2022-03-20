@@ -1,6 +1,6 @@
+from .....model.argument.option.common._decoder import _DecodedOption
+from .....model.argument.option.long_short import LongShortOptionWithValue
 from .....model.project.flavor import Flavor
-from ..long_short import LongShortOptionWithValue
-from ._decoder import _DecodedOption
 
 __all__ = ["FlavorOption"]
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, Iterable, Optional, Union
 
-from .option import LongOption, Option, OptionAll, PositionalOption, ShortOption
+from ...model.argument.option import LongOption, Option, OptionAll, PositionalOption, ShortOption
 
 Value = Optional[str]
 Argument = str

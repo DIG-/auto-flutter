@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 
 from ...core.utils import _Ensure, _Enum
-from ..platform.platform import Platform
+from ...model.platform.platform import Platform
 
 
 class _BuildTypeItem:

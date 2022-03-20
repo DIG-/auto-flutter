@@ -3,7 +3,7 @@ from json import dump as json_dump
 from .....core.json.codec import JsonEncode
 from .....model.project.project import Project
 from .....model.task.task import *
-from ...identity import AflutterTaskIdentity
+from .....module.aflutter.identity import AflutterTaskIdentity
 
 
 class ProjectSave(Task):

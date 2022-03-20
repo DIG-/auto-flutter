@@ -1,6 +1,6 @@
+from .....model.argument.option.common._decoder import _DecodedOption
+from .....model.argument.option.long import LongOptionWithValue
 from .....model.build.type import BuildType
-from ..long import LongOptionWithValue
-from ._decoder import _DecodedOption
 
 __all__ = ["BuildTypeFlutterOption", "BuildTypeOutputOption"]
 

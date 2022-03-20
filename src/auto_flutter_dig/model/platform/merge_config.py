@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 from ...core.json.type import Json
-from .flavored_config import Flavor, PlatformConfig, PlatformConfigFlavored
+from ...model.platform.flavored_config import Flavor, PlatformConfig, PlatformConfigFlavored
 
 __all__ = [
     "MergePlatformConfigFlavored",

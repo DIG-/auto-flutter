@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from ....core.utils import _Ensure
-from .valued import OptionWithValue
+from ....model.argument.option.valued import OptionWithValue
 
 __all__ = ["PositionalOption"]
 

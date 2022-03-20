@@ -4,13 +4,13 @@ from abc import ABC
 from collections import deque
 from typing import Deque, Iterable, List, Optional, Union
 
+from ...core.task._unique_identity import _TaskUniqueIdentity
 from ...core.utils import _If
 from ...model.error import TaskNotFound
 from ...model.task.base_task import BaseTask
 from ...model.task.group import TaskGroup
 from ...model.task.id import TaskId
 from ...model.task.identity import TaskIdentity
-from ._unique_identity import _TaskUniqueIdentity
 
 
 class TaskResolver(ABC):

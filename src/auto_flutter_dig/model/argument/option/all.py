@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from .option import Option
+from ....model.argument.option import Option
 
 __all__ = ["OptionAll"]
 

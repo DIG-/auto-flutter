@@ -1,7 +1,7 @@
 from typing import Tuple
 
-from .long import LongOption, LongOptionWithValue
-from .short import ShortOption, ShortOptionWithValue
+from ....model.argument.option.long import LongOption, LongOptionWithValue
+from ....model.argument.option.short import ShortOption, ShortOptionWithValue
 
 __all__ = ["LongShortOption", "LongShortOptionWithValue"]
 

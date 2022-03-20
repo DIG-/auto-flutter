@@ -7,8 +7,8 @@ from .....model.argument.option import *
 from .....model.argument.option.error import OptionInvalidFormat, OptionNotFound, OptionRequireValue
 from .....model.task.identity import TaskIdentity
 from .....model.task.task import *
-from ...config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
-from ..help import HelpTask
+from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
+from .....module.aflutter.task.help import HelpTask
 
 Argument = str
 Group = str

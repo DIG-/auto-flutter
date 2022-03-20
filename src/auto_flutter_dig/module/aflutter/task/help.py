@@ -10,7 +10,7 @@ from ....model.error import E, TaskNotFound
 from ....model.task.group import TaskGroup
 from ....model.task.identity import TaskIdentity
 from ....model.task.task import *
-from ..identity import AflutterTaskIdentity
+from ....module.aflutter.identity import AflutterTaskIdentity
 
 
 class HelpTask(Task):

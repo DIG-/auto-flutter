@@ -3,12 +3,12 @@ from pathlib import Path, PurePath
 from subprocess import PIPE, STDOUT, Popen, run
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+from ...core.config import Config
+from ...core.logger import log
+from ...core.os.os import OS
+from ...core.process.process import Process
+from ...core.string import SB
 from ...module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
-from ..config import Config
-from ..logger import log
-from ..os.os import OS
-from ..string import SB
-from .process import Process
 
 
 class _SubProcess(Process):

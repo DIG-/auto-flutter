@@ -1,8 +1,8 @@
 from typing import Tuple
 
 from ....core.utils import _Ensure
-from .option import Option
-from .valued import OptionWithValue
+from ....model.argument.option.option import Option
+from ....model.argument.option.valued import OptionWithValue
 
 __all__ = ["LongOption", "LongOptionWithValue"]
 

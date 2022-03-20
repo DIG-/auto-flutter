@@ -4,7 +4,7 @@ from .....core.config import Config
 from .....core.string import SB
 from .....core.utils.task.process.timeout import BaseProcessTimeoutTask, Process, ProcessOrResult
 from .....model.task.task import *
-from ...identity import FlutterTaskIdentity
+from .....module.flutter.identity import FlutterTaskIdentity
 from ...model._const import *
 
 

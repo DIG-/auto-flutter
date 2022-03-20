@@ -1,5 +1,5 @@
 from .....core.process.process import Process
-from .interval import BaseProcessIntervalTask, ProcessOrResult
+from .....core.utils.task.process.interval import BaseProcessIntervalTask, ProcessOrResult
 
 __all__ = [
     "Process",

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Optional
 
 from ...core.utils import _Ensure
+from ...model.argument.arguments import Args
 from ...model.result import Result
-from ..argument.arguments import Args
 
 
 class TaskResult(Result):

@@ -1,6 +1,6 @@
 from typing import List
 
-from ..identity import TaskId, TaskIdentity
+from ....model.task.identity import TaskId, TaskIdentity
 
 
 class InitProjectTaskIdentity(TaskIdentity):

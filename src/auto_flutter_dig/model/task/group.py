@@ -4,8 +4,7 @@ from abc import ABC
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from ...core.utils import _Ensure, _Iterable
-from .id import TaskId
-from .identity import TaskIdentity
+from ...model.task.identity import TaskId, TaskIdentity
 
 __all__ = ["TaskGroup", "TaskIdentity"]
 

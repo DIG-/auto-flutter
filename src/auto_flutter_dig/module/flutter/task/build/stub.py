@@ -9,8 +9,8 @@ from .....model.platform.merge_config import MergePlatformConfigFlavored
 from .....model.platform.platform import Platform
 from .....model.project.project import Project
 from .....model.task.task import *
-from ...identity import FlutterTaskIdentity
-from .build import FlutterBuildTaskIdentity
+from .....module.flutter.identity import FlutterTaskIdentity
+from .....module.flutter.task.build.build import FlutterBuildTaskIdentity
 
 
 class _BuildTypeFlutterPositionalOption(BuildTypeFlutterOption, LongPositionalOption):

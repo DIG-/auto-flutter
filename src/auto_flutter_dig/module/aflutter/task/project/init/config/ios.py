@@ -2,7 +2,7 @@ from .......model.error import E, SilentWarning
 from .......model.platform.platform import Platform
 from .......model.project.project import Project
 from .......model.task.task import *
-from .....identity import AflutterTaskIdentity
+from .......module.aflutter.identity import AflutterTaskIdentity
 
 
 class ProjectInitConfigIosTask(Task):

@@ -6,7 +6,7 @@ from ......model.argument.option import LongOptionWithValue, LongShortOption
 from ......model.error import E, SilentWarning
 from ......model.project.project import Project
 from ......model.task.task import *
-from ....identity import AflutterTaskIdentity
+from ......module.aflutter.identity import AflutterTaskIdentity
 
 
 class ProjectInitCreateTask(Task):

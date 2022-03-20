@@ -9,8 +9,8 @@ from ...core.utils import _Ensure, _Iterable
 from ...model.platform.flavored_config import PlatformConfigFlavored
 from ...model.platform.platform import Platform
 from ...model.project.custom_task.custom_task import CustomTask
+from ...model.project.flavor import Flavor
 from ...model.task.id import TaskId
-from .flavor import Flavor
 
 __all__ = ["Project"]
 

@@ -1,11 +1,11 @@
-from .all import OptionAll
-from .long import LongOption, LongOptionWithValue
-from .long_positional import LongPositionalOption
-from .long_short import LongShortOption, LongShortOptionWithValue
-from .option import Option
-from .positional import PositionalOption
-from .short import ShortOption, ShortOptionWithValue
-from .valued import OptionWithValue
+from ....model.argument.option.all import OptionAll
+from ....model.argument.option.long import LongOption, LongOptionWithValue
+from ....model.argument.option.long_positional import LongPositionalOption
+from ....model.argument.option.long_short import LongShortOption, LongShortOptionWithValue
+from ....model.argument.option.option import Option
+from ....model.argument.option.positional import PositionalOption
+from ....model.argument.option.short import ShortOption, ShortOptionWithValue
+from ....model.argument.option.valued import OptionWithValue
 
 __all__ = [
     "OptionAll",

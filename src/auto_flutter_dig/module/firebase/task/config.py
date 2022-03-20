@@ -6,8 +6,8 @@ from ....model.argument.option.common.platform import PlatformOption
 from ....model.error import E
 from ....model.platform.platform import Platform
 from ....module.aflutter.task.config.base import *
-from ..identity import FirebaseTaskIdentity
-from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
+from ....module.firebase.identity import FirebaseTaskIdentity
+from ....module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseConfigTask(BaseConfigTask):

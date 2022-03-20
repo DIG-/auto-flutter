@@ -3,8 +3,8 @@ from threading import Thread
 from time import time
 from typing import Union
 
+from .....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
 from .....model.task.task import *
-from .process import BaseProcessTask, Process, ProcessOrResult
 
 __all__ = [
     "Task",

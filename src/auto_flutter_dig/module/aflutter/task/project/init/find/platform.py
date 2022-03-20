@@ -7,11 +7,11 @@ from .......model.error import SilentWarning
 from .......model.platform.platform import Platform
 from .......model.project.project import Project
 from .......model.result import Result
-from .......model.task.task import *
 from .......model.task.identity import TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .....identity import AflutterTaskIdentity
-from ..create import ProjectInitCreateTask
+from .......model.task.task import *
+from .......module.aflutter.identity import AflutterTaskIdentity
+from .......module.aflutter.task.project.init.create import ProjectInitCreateTask
 
 
 class _Identity(AflutterTaskIdentity, InitProjectTaskIdentity):

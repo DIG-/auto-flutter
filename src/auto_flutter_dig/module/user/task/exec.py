@@ -1,7 +1,7 @@
 from typing import List
 
 from ....module.flutter.task.exec import FlutterExecTask
-from ..identity import TaskId, UserTaskIdentity
+from ....module.user.identity import TaskId, UserTaskIdentity
 
 
 class UserExecTaskIdentity(UserTaskIdentity):

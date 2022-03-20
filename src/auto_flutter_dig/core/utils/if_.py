@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Callable, Optional, TypeVar
 
-from .ensure import _EnsureCallable
+from ...core.utils.ensure import _EnsureCallable
 
 
 class _If(ABC):
