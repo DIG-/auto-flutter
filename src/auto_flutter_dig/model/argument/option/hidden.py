@@ -1,4 +1,4 @@
-from ....model.argument.option import Option
+from ....model.argument.option.option import Option
 
 __all__ = ["HiddenOption"]
 

@@ -1,5 +1,5 @@
 from .....core.string import SB
-from .....model.argument.option import LongOption
+from .....model.argument.options import LongOption
 from .....model.argument.option.common.platform import PlatformOption
 from .....model.error import E
 from .....model.platform.platform import Platform

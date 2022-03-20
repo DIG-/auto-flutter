@@ -1,6 +1,6 @@
 from typing import Optional
 
-from ....model.argument.option import LongOption, LongOptionWithValue
+from ....model.argument.options import LongOption, LongOptionWithValue
 from ....model.argument.option.common.flavor import FlavorOption
 from ....model.argument.option.common.platform import PlatformOption
 from ....model.error import E

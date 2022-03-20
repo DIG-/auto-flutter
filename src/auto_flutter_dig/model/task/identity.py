@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Callable, List, Optional, Tuple
 
 from ...core.utils import _Ensure, _EnsureCallable
-from ...model.argument.option import Option
+from ...model.argument.options import Option
 from ...model.task.id import TaskId
 
 __all__ = ["TaskIdentity", "TaskId", "List", "Callable", "Option"]

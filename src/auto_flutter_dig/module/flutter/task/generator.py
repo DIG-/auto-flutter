@@ -1,6 +1,6 @@
 from ....core.string import SB
 from ....core.utils import _Dict
-from ....model.argument.option import LongOption
+from ....model.argument.options import LongOption
 from ....model.task.task import *
 from ....module.flutter.identity import FlutterTaskIdentity
 from ....module.flutter.task.command import FlutterCommandTask

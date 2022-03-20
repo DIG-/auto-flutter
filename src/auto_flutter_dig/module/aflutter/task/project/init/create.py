@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 from ......core.string import SB
-from ......model.argument.option import LongOptionWithValue, LongShortOption
+from ......model.argument.options import LongOptionWithValue, LongShortOption
 from ......model.error import E, SilentWarning
 from ......model.project.project import Project
 from ......model.task.task import *

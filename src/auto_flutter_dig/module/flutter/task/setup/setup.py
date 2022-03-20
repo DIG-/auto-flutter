@@ -2,7 +2,7 @@ from .....core.config import Config
 from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
-from .....model.argument.option import LongPositionalOption
+from .....model.argument.options import LongPositionalOption
 from .....model.error import E
 from .....model.task.task import *
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask

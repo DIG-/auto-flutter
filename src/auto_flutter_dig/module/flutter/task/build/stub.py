@@ -1,4 +1,4 @@
-from .....model.argument.option import LongOption, LongPositionalOption
+from .....model.argument.options import LongOption, LongPositionalOption
 from .....model.argument.option.common.build_mode import BuildModeOption
 from .....model.argument.option.common.build_type import BuildTypeFlutterOption
 from .....model.argument.option.common.flavor import FlavorOption

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .....core.string import SB
-from .....model.argument.option import LongOptionWithValue, LongShortOption
+from .....model.argument.options import LongOptionWithValue, LongShortOption
 from .....model.argument.option.common.flavor import Flavor, FlavorOption
 from .....model.argument.option.common.platform import Platform, PlatformOption
 from .....model.error import E

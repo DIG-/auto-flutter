@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
 from .....core.config import Config
-from .....model.argument.option import *
+from .....model.argument.options import *
 from .....model.argument.option.error import OptionInvalidFormat, OptionNotFound, OptionRequireValue
 from .....model.task.identity import TaskIdentity
 from .....model.task.task import *

@@ -1,5 +1,5 @@
 from .....core.string import SB
-from .....model.argument.option import LongOptionWithValue, LongShortOption
+from .....model.argument.options import LongOptionWithValue, LongShortOption
 from .....model.error import E
 from .....model.result import Result
 from .....model.task.task import *
