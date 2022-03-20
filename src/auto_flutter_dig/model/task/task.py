@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable, List, Optional, Union
 
-from ...core.task.manager import TaskManager
+from ...core.task.manager import TaskManager, _TaskManager
 from ...model.argument.arguments import Args
 from ...model.result import Result
 from ...model.task.base_task import BaseTask
@@ -24,7 +24,7 @@ class Task(BaseTask):
         if message is None:
             return
 
-        TaskManager.print(message)
+        Task.manager().print(message)
         self.log.debug(message)
 
     @staticmethod
@@ -32,15 +32,19 @@ class Task(BaseTask):
         description: str,
         result: Optional[Result] = None,  # Show some part had failed
     ):
-        TaskManager.update_description(description, result)
+        Task.manager().update_description(description, result)
 
     def _reset_description(self, args: Args, result: Optional[Result] = None):
         self._uptade_description(self.describe(args), result)
 
     @staticmethod
     def _append_task(tasks: Union[Task, Iterable[Task], TaskIdentity, Iterable[TaskIdentity]]) -> None:
-        TaskManager.add(tasks)
+        Task.manager().add(tasks)
 
     @staticmethod
     def _append_task_id(ids: Union[TaskId, Iterable[TaskId]]) -> None:
-        TaskManager.add_id(ids)
+        Task.manager().add_id(ids)
+
+    @staticmethod
+    def manager() -> _TaskManager:
+        return TaskManager
