@@ -1,6 +1,4 @@
-from typing import Callable
-
-from ...model.task.identity import *
+from ...model.task.identity import *  # pylint: disable=wildcard-import
 from ...model.task.task import Task
 
 
