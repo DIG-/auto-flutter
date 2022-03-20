@@ -1,6 +1,6 @@
 from typing import Callable
 
-from .......core.utils import _Dict
+from .......core.utils.task.subtask_run_all import BaseSubtaskRunAll
 from .......model.task.group import TaskGroup, TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
 from .......model.task.task import *  # pylint: disable=wildcard-import
@@ -8,10 +8,10 @@ from .......module.aflutter.identity import AflutterTaskIdentity
 from .......module.aflutter.task.project.init.config.android import ProjectInitConfigAndroidTask
 from .......module.aflutter.task.project.init.config.ios import ProjectInitConfigIosTask
 from .......module.aflutter.task.project.init.config.web import ProjectInitConfigWebTask
-from .......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorTask
+from .......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorIdentity
 
 
-class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, TaskGroup):
+class _ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, TaskGroup):
     def __init__(self, creator: Callable[[], Task]) -> None:
         InitProjectTaskIdentity.__init__(self, "", "", "", [], creator)
         AflutterTaskIdentity.__init__(self, "-project-init-config", "", [], creator)
@@ -26,23 +26,9 @@ class ProjectInitConfigIdentity(AflutterTaskIdentity, InitProjectTaskIdentity, T
 
     @property
     def require_before(self) -> List[TaskIdentity]:
-        return [ProjectInitFindFlavorTask.identity]
+        return [ProjectInitFindFlavorIdentity]
 
 
-class ProjectInitConfigTask(Task):
-    identity: ProjectInitConfigIdentity = ProjectInitConfigIdentity(
-        lambda: ProjectInitConfigTask(ProjectInitConfigTask.identity)
-    )
-
-    def __init__(self, subtask: TaskGroup) -> None:
-        super().__init__()
-        self._subtask = subtask
-
-    def describe(self, args: Args) -> str:
-        return ""
-
-    def execute(self, args: Args) -> TaskResult:
-        tasks = _Dict.flatten(self._subtask.subtasks)
-        tasks.reverse()
-        self._append_task(tasks)
-        return TaskResult(args)
+ProjectInitConfigIdentity: _ProjectInitConfigIdentity = _ProjectInitConfigIdentity(
+    lambda: BaseSubtaskRunAll(ProjectInitConfigIdentity)
+)

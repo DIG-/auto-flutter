@@ -37,12 +37,7 @@ class FirebaseSetupTask(Task):
                     .append(str(firebase_path), SB.Color.YELLOW, True)
                     .str()
                 )
-                return TaskResult(
-                    args,
-                    error=error,
-                    message=message,
-                    success=False,
-                )
+                return TaskResult(args, error=error, message=message, success=False)
             Config.put_path(FIREBASE_CONFIG_KEY_PATH, firebase_exec)
             had_change = True
 

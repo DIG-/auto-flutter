@@ -2,13 +2,13 @@ from typing import Optional
 
 from .....core.config import Config
 from .....core.string import SB
-from .....core.utils.task.process.timeout import BaseProcessTimeoutTask, Process, ProcessOrResult
+from .....core.utils.task.process.check import BaseProcessCheckTask, Process, ProcessOrResult
 from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.flutter.identity import FlutterTaskIdentity
 from .....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
-class FlutterSetupCheckTask(BaseProcessTimeoutTask):
+class FlutterSetupCheckTask(BaseProcessCheckTask):
     identity = FlutterTaskIdentity(
         "-flutter-check",
         "Checking flutter",
@@ -24,21 +24,6 @@ class FlutterSetupCheckTask(BaseProcessTimeoutTask):
             Config.get_path(FLUTTER_CONFIG_KEY_PATH),
             arguments=[FLUTTER_DISABLE_VERSION_CHECK, "--version"],
         )
-
-    def _on_interval(self, process: Process, elapsed: float, count: int) -> None:
-        if count == 1:
-            self._print("  Skill wating...")
-        elif count == 3:
-            self._print(SB().append("  It is taking some time...", SB.Color.YELLOW).str())
-        return super()._on_interval(process, elapsed, count)
-
-    def _on_process_stop(self, process: Process, elapsed: float, count: int) -> None:
-        self._print(SB().append("  Stop process...", SB.Color.RED).str())
-        return super()._on_process_stop(process, elapsed, count)
-
-    def _on_process_kill(self, process: Process, elapsed: float, count: int) -> None:
-        self._print(SB().append("  Kill process...", SB.Color.RED, True).str())
-        return super()._on_process_kill(process, elapsed, count)
 
     def _handle_process_exception(
         self,

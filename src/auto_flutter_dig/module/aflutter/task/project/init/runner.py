@@ -6,9 +6,9 @@ from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ......model.task.task import *  # pylint: disable=wildcard-import
 from ......module.aflutter.identity import AflutterTaskIdentity
-from ......module.aflutter.task.project.init.config.config import ProjectInitConfigTask
+from ......module.aflutter.task.project.init.config.config import ProjectInitConfigIdentity
 from ......module.aflutter.task.project.init.create import ProjectInitCreateTask
-from ......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorTask
+from ......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorIdentity
 from ......module.aflutter.task.project.init.find.platform import ProjectInitFindPlatformTask
 from ......module.aflutter.task.project.init.gitignore import ProjectInitGitIgnoreTask
 from ......module.aflutter.task.project.save import ProjectSave
@@ -35,8 +35,8 @@ class ProjectInitRunnerTask(Task):
     )
     external_tasks: List[InitProjectTaskIdentity] = [
         ProjectInitFindPlatformTask.identity,
-        ProjectInitFindFlavorTask.identity,
-        ProjectInitConfigTask.identity,
+        ProjectInitFindFlavorIdentity,
+        ProjectInitConfigIdentity,
         ProjectInitGitIgnoreTask.identity,
     ]
 

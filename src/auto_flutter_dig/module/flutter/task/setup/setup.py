@@ -33,12 +33,7 @@ class FlutterSetupTask(Task):
                 message = (
                     SB().append("Resolved as: ", SB.Color.YELLOW).append(str(flutter_path), SB.Color.YELLOW, True).str()
                 )
-                return TaskResult(
-                    args,
-                    error=error,
-                    message=message,
-                    success=False,
-                )
+                return TaskResult(args, error=error, message=message, success=False)
             Config.put_path(FLUTTER_CONFIG_KEY_PATH, flutter_exec)
             had_change = True
 
