@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ...core import VERSION
 from ...core.json.codec import JsonDecode, JsonEncode
 from ...core.json.serializable import Json, Serializable
 from ...core.utils import _Ensure, _Iterable
+from ...core.version import VERSION
 from ...model.platform.flavored_config import PlatformConfigFlavored
 from ...model.platform.platform import Platform
 from ...model.project.custom_task.custom_task import CustomTask
