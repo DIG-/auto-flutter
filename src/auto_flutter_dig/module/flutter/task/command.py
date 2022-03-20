@@ -27,7 +27,7 @@ class FlutterCommandTask(BaseProcessTask):
         return self._describe
 
     def require(self) -> List[TaskId]:
-        from ....module.aflutter.task.project.read import ProjectRead  # pylint: disable=import-outside-toplevel
+        from ....module.aflutter.task.project.read import ProjectRead  # pylint: disable=import-outside-toplevel,cyclic-import
 
         parent = super().require()
         if self._require_project:

@@ -61,7 +61,7 @@ class ProjectInitCreateTask(Task):
     @staticmethod
     def _project_name_from_pubspec(pubspec: Path) -> Optional[str]:
         try:
-            # pylint: disable=import-outside-toplevel
+            # pylint: disable=import-outside-toplevel,cyclic-import
             from yaml import safe_load as yaml_load  # type: ignore
         except ImportError:
             return None

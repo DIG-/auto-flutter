@@ -10,7 +10,7 @@ from .module.aflutter.task.init.init import AflutterInitTask
 def _main():
     # Enable color support on windows
     if platform_system() == "Windows":
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,cyclic-import
         is_cp1252 = sys.stdout.encoding == "cp1252"
         # Bash from GIT does not use UTF-8 as default and colorama has conflit with them
         if is_cp1252:

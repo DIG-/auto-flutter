@@ -72,7 +72,7 @@ class HelpTask(Task):
             self._task_parent = None
 
         if self._task_parent is None:
-            from .root import Root  # pylint: disable=import-outside-toplevel
+            from .root import Root  # pylint: disable=import-outside-toplevel,cyclic-import
 
             self._task_parent = Root
 
@@ -141,7 +141,7 @@ class HelpTask(Task):
         identity: Optional[TaskIdentity],
         positional: Iterable[PositionalOption],
     ):
-        from .root import Root  # pylint: disable=import-outside-toplevel
+        from .root import Root  # pylint: disable=import-outside-toplevel,cyclic-import
 
         program = Path(sys_argv[0]).name
         if program == "__main__.py":

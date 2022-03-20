@@ -133,7 +133,7 @@ class _SubProcess(Process):
             return getincrementaldecoder("utf-8")()
         multiple = _IncrementalDecoderMultiple()
         multiple.add(getincrementaldecoder("utf-8")())
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,cyclic-import
         from winreg import HKEY_LOCAL_MACHINE, REG_SZ, CloseKey, OpenKey, QueryValueEx
 
         try:  # Get windows default charset for console

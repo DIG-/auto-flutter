@@ -40,7 +40,7 @@ class ProjectTaskImport(Task):
                     .str()
                 )
         if len(tasks) > 0:
-            from .....module.aflutter.task.root import Root  # pylint:disable=import-outside-toplevel
+            from .....module.aflutter.task.root import Root  # pylint:disable=import-outside-toplevel,cyclic-import
 
             for identity in tasks:
                 if identity.task_id in Root.subtasks:

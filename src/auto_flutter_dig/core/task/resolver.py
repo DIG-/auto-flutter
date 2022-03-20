@@ -100,7 +100,7 @@ class TaskResolver(ABC):
     @staticmethod
     def find_task(task_id: TaskId, origin: Optional[TaskGroup] = None) -> TaskIdentity:
         if origin is None:
-            from ...module.aflutter.task.root import Root  # pylint: disable=import-outside-toplevel
+            from ...module.aflutter.task.root import Root  # pylint: disable=import-outside-toplevel,cyclic-import
 
             origin = Root
         if task_id in origin.subtasks:

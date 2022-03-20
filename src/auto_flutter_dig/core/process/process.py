@@ -19,7 +19,7 @@ class Process(ABC):
         inherit_environment: bool = True,
     ) -> Process:
         # Avoid circular import
-        from .subprocess import _SubProcess  # pylint: disable=import-outside-toplevel
+        from .subprocess import _SubProcess  # pylint: disable=import-outside-toplevel,cyclic-import
 
         return _SubProcess(executable, arguments, environment, writer, inherit_environment)
 

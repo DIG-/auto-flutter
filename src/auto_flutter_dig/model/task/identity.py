@@ -19,8 +19,8 @@ class TaskIdentity:
         creator: Callable[[], "BaseTask"],  # type: ignore[name-defined]
         allow_more: bool = False,  # Allow more tasks with same id
     ) -> None:
-        from .base_task import BaseTask  # pylint: disable=import-outside-toplevel
-        from .group import TaskGroup  # pylint: disable=import-outside-toplevel
+        from .base_task import BaseTask  # pylint: disable=import-outside-toplevel,cyclic-import
+        from .group import TaskGroup  # pylint: disable=import-outside-toplevel,cyclic-import
 
         self.group: str = _Ensure.instance(group, str, "group")
         self.task_id: TaskId = _Ensure.instance(task_id, TaskId, "id")
