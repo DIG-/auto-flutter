@@ -5,7 +5,7 @@ from typing import Dict, Iterable, List, Optional, Union
 from ....core.string import SB
 from ....core.task.resolver import TaskResolver
 from ....core.utils import _Iterable
-from ....model.argument.options import *
+from ....model.argument.options import *  # pylint: disable=wildcard-import
 from ....model.error import E, TaskNotFound
 from ....model.task.group import TaskGroup
 from ....model.task.identity import TaskIdentity

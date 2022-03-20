@@ -5,7 +5,7 @@ from .....core.string import SB
 from .....core.utils.task.process.timeout import BaseProcessTimeoutTask, Process, ProcessOrResult
 from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.firebase.identity import FirebaseTaskIdentity
-from ...model._const import *
+from .....module.firebase.model._const import *  # pylint: disable=wildcard-import
 
 
 class FirebaseCheck(BaseProcessTimeoutTask):

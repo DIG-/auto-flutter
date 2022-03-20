@@ -1,11 +1,12 @@
 from typing import Optional
 
-from ....model.argument.options import LongOption, LongOptionWithValue
 from ....model.argument.option.common.flavor import FlavorOption
 from ....model.argument.option.common.platform import PlatformOption
+from ....model.argument.options import LongOption, LongOptionWithValue
 from ....model.error import E
 from ....model.platform.platform import Platform
-from ....module.aflutter.task.config.base import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
+from ....module.aflutter.task.config.base import BaseConfigTask, Project
 from ....module.firebase.identity import FirebaseTaskIdentity
 from ....module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 

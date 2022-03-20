@@ -3,9 +3,10 @@ from pathlib import Path, PurePosixPath
 from ....core.config import Config
 from ....core.os.path_converter import PathConverter
 from ....core.utils import _Dict, _If
-from ....core.utils.task.process.process import *
+from ....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
 from ....model.argument.options import LongOptionWithValue
 from ....model.error import E
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.firebase.identity import FirebaseTaskIdentity
 from ....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
 from ....module.firebase.task.setup.check import FirebaseCheck

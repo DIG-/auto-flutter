@@ -5,7 +5,7 @@ from .....core.string import SB
 from .....core.utils.task.process.timeout import BaseProcessTimeoutTask, Process, ProcessOrResult
 from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.flutter.identity import FlutterTaskIdentity
-from ...model._const import *
+from .....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterSetupCheckTask(BaseProcessTimeoutTask):

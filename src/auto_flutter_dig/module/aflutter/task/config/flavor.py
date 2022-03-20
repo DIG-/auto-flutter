@@ -3,7 +3,7 @@ from .....model.argument.options import LongOptionWithValue, LongShortOption
 from .....model.error import E
 from .....model.result import Result
 from .....model.task.task import *  # pylint: disable=wildcard-import
-from .....module.aflutter.task.config.base import *
+from .....module.aflutter.task.config.base import BaseConfigTask, Project
 from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 
 

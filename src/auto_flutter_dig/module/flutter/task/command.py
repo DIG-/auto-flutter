@@ -1,9 +1,10 @@
 from typing import Optional
 
 from ....core.config import Config
-from ....core.utils.task.process.process import *
+from ....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
 from ....model.error import E
-from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
+from ....model.task.task import *  # pylint: disable=wildcard-import
+from ....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterCommandTask(BaseProcessTask):

@@ -1,3 +1,7 @@
+from typing import Callable
+
+from ...model.task.group import TaskGroup
+from ...model.task.identity import TaskIdentity
 from ...module.flutter.task.build.stub import FlutterBuildStub
 from ...module.flutter.task.config.build_param import FlutterBuildParamConfigTask
 from ...module.flutter.task.exec import FlutterExecTask
@@ -5,7 +9,7 @@ from ...module.flutter.task.generator import FlutterGeneratorTask
 from ...module.flutter.task.pub_get import FlutterPubGetIdentity
 from ...module.flutter.task.setup.check import FlutterSetupCheckTask
 from ...module.flutter.task.setup.setup import FlutterSetupTask
-from ...module.plugin import *
+from ...module.plugin import AflutterModulePlugin
 
 
 class FlutterModulePlugin(AflutterModulePlugin):

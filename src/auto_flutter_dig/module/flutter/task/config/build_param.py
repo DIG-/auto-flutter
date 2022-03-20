@@ -1,14 +1,14 @@
 from typing import Optional
 
 from .....core.string import SB
-from .....model.argument.options import LongOptionWithValue, LongShortOption
 from .....model.argument.option.common.flavor import Flavor, FlavorOption
 from .....model.argument.option.common.platform import Platform, PlatformOption
+from .....model.argument.options import LongOptionWithValue, LongShortOption
 from .....model.error import E
 from .....model.platform.merge_config import MergePlatformConfigFlavored, PlatformConfigFlavored
 from .....model.result import Result
 from .....model.task.task import *  # pylint: disable=wildcard-import
-from .....module.aflutter.task.config.base import *
+from .....module.aflutter.task.config.base import BaseConfigTask, Project
 from .....module.flutter.identity import FlutterTaskIdentity
 
 
