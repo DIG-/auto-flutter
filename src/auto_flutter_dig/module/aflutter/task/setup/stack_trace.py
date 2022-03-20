@@ -1,11 +1,11 @@
 from .....core.config import Config
-from .....model.argument.option import LongOption
-from .....model.error import E
-from .....model.task import *
+from .....model.argument.options import LongOption
+from .....model.error import Err
 from .....model.task.result import TaskResultHelp
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from .....module.aflutter.identity import AflutterTaskIdentity
-from .save import AflutterSetupSaveTask
+from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 
 
 class AflutterSetupStackTraceTask(Task):
@@ -17,7 +17,7 @@ class AflutterSetupStackTraceTask(Task):
         "stack-trace",
         "Configure if errors are displayed with stack trace",
         [__opt_on, __opt_off, __opt_default],
-        lambda: AflutterSetupStackTraceTask(),
+        lambda: AflutterSetupStackTraceTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:
@@ -28,7 +28,7 @@ class AflutterSetupStackTraceTask(Task):
             if args.contains(self.__opt_off):
                 return TaskResult(
                     args,
-                    error=E(ValueError("Can not enable and disable stack trace simultaneously")).error,
+                    error=Err(ValueError("Can not enable and disable stack trace simultaneously")),
                 )
             Config.put_bool(AFLUTTER_CONFIG_ENABLE_STACK_STRACE, True)
         elif args.contains(self.__opt_off):
@@ -36,6 +36,6 @@ class AflutterSetupStackTraceTask(Task):
         elif args.contains(self.__opt_default):
             Config.remove(AFLUTTER_CONFIG_ENABLE_STACK_STRACE)
         else:
-            return TaskResultHelp(args, error=E(ValueError("This task require one option")).error)
+            return TaskResultHelp(args, error=Err(ValueError("This task require one option")))
         self._append_task(AflutterSetupSaveTask.identity)
         return TaskResult(args)

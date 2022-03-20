@@ -2,25 +2,24 @@ from json import dump as json_dump
 from json import dumps as json_dumps
 from json import load as json_load
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Dict, NoReturn, Optional, Union
+from typing import Dict, NoReturn, Optional, Type, Union
 
 from appdirs import user_config_dir  # type: ignore[import]
 
-from ..core.os import OS
+from ..core.os.path_converter import PathConverter
 
 __all__ = ["Config"]
 
 
-class __Config:
+class _Config:
     def __init__(self) -> None:
         self.__is_loaded: bool = False
         self.__content: Dict[str, Union[str, bool, int]] = {}
 
-    def __value_error(self, key: str, expect: type, received: type) -> NoReturn:
+    @staticmethod
+    def __value_error(key: str, expect: Type, received: Type) -> NoReturn:
         raise ValueError(
-            'Unexpected value for key "{}". Expected `{}` but received `{}`'.format(
-                key, expect.__name__, received.__name__
-            )
+            f'Unexpected value for key "{key}". Expected `{expect.__name__}` but received `{received.__name__}`'
         )
 
     @staticmethod
@@ -39,7 +38,7 @@ class __Config:
             return
         if not isinstance(value, (str, bool, int)):
             raise ValueError(
-                "Value must be instance of `str`, `bool` or `int`, but `{}` was used".format(type(value).__name__)
+                "Value must be instance of `str`, `bool` or `int`, " + f"but `{type(value).__name__}` was used"
             )
         self.__content[key] = value
 
@@ -50,11 +49,10 @@ class __Config:
         filepath = self.__config_file_path()
         if not filepath.exists():
             return False
-        file = open(filepath, mode="r", encoding="utf-8")
-        parsed = json_load(file)
-        file.close()
+        with open(filepath, mode="r", encoding="utf-8") as file:
+            parsed = json_load(file)
         if not isinstance(parsed, Dict):
-            raise SyntaxError("Config file is in incorrect format.\n{}".format(str(filepath)))
+            raise SyntaxError(f"Config file is in incorrect format.\n{filepath}")
         self.__content = parsed
         return True
 
@@ -67,9 +65,8 @@ class __Config:
         if not filepath.exists():
             filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        file = open(filepath, mode="wt", encoding="utf-8")
-        json_dump(self.__content, file, indent=2)
-        file.close()
+        with open(filepath, mode="wt", encoding="utf-8") as file:
+            json_dump(self.__content, file, indent=2)
 
     def contains(self, key: str) -> bool:
         return key in self.__content
@@ -89,7 +86,7 @@ class __Config:
         if isinstance(value, bool):
             return value
         if isinstance(value, str):
-            return not value.lower() in ("f", "n", "no", "false")
+            return not value.lower() in ("false", "f", "n", "no")
         if isinstance(value, int):
             return value != 0
         return self.__value_error(key, bool, type(value))
@@ -140,17 +137,17 @@ class __Config:
         value = self._get_value(key)
         if value is None:
             if default is None:
-                raise ValueError('Key "{}" not found and no default value informed'.format(key))
-            return OS.machine_to_posix_path(default)
+                raise ValueError(f'Key "{key}" not found and no default value informed')
+            return PathConverter.from_path(default).to_posix()
         if isinstance(value, str):
             return PurePosixPath(value)
         return self.__value_error(key, int, type(value))
 
     def put_path(self, key: str, value: PurePath) -> None:
-        self._put_value(key, str(OS.machine_to_posix_path(value)))
+        self._put_value(key, str(PathConverter.from_path(value).to_posix()))
 
     def __repr__(self) -> str:
         return "Config(" + self.__content.__repr__() + ")"
 
 
-Config = __Config()
+Config = _Config()

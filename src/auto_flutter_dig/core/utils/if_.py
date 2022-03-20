@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Callable, Optional, TypeVar
 
-from .ensure import _EnsureCallable
+from ...core.utils.ensure import _EnsureCallable
 
 
 class _If(ABC):
@@ -9,19 +9,19 @@ class _If(ABC):
     V = TypeVar("V")
 
     @staticmethod
-    def none(input: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]) -> V:
+    def none(value: Optional[T], positive: Callable[[], V], negative: Callable[[T], V]) -> V:
         _EnsureCallable.instance(positive, "positive")
         _EnsureCallable.instance(negative, "negative")
 
-        if input is None:
+        if value is None:
             return positive()
-        return negative(input)
+        return negative(value)
 
     @staticmethod
-    def not_none(input: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]) -> V:
+    def not_none(value: Optional[T], positive: Callable[[T], V], negative: Callable[[], V]) -> V:
         _EnsureCallable.instance(positive, "positive")
         _EnsureCallable.instance(negative, "negative")
 
-        if input is None:
+        if value is None:
             return negative()
-        return positive(input)
+        return positive(value)

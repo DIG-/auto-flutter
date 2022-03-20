@@ -1,6 +1,6 @@
+from .....model.argument.option.common._decoder import _DecodedOption
+from .....model.argument.option.long import LongOptionWithValue
 from .....model.build.type import BuildType
-from ..long import LongOptionWithValue
-from ._decoder import _DecodedOption
 
 __all__ = ["BuildTypeFlutterOption", "BuildTypeOutputOption"]
 
@@ -10,8 +10,8 @@ class BuildTypeFlutterOption(LongOptionWithValue, _DecodedOption[BuildType]):
         LongOptionWithValue.__init__(self, "build-type", description)
         _DecodedOption.__init__(self, description)
 
-    def _convert(self, input: str) -> BuildType:
-        return BuildType.from_flutter(input)
+    def _convert(self, value: str) -> BuildType:
+        return BuildType.from_flutter(value)
 
 
 class BuildTypeOutputOption(LongOptionWithValue, _DecodedOption[BuildType]):
@@ -19,5 +19,5 @@ class BuildTypeOutputOption(LongOptionWithValue, _DecodedOption[BuildType]):
         LongOptionWithValue.__init__(self, "build-type", description)
         _DecodedOption.__init__(self, description)
 
-    def _convert(self, input: str) -> BuildType:
-        return BuildType.from_output(input)
+    def _convert(self, value: str) -> BuildType:
+        return BuildType.from_output(value)

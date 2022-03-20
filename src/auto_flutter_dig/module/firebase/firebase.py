@@ -1,13 +1,13 @@
 from typing import Callable
 
-from ...model.task.identity import TaskIdentity
 from ...model.task.group import TaskGroup
-from ..plugin import AflutterModulePlugin
-from .task.config import FirebaseConfigTask
-from .task.setup.check import FirebaseCheck
-from .task.setup.setup import FirebaseSetupTask
-from .task.upload import FirebaseBuildUpload
-from .task.validate import FirebaseBuildValidate
+from ...model.task.identity import TaskIdentity
+from ...module.firebase.task.config import FirebaseConfigTask
+from ...module.firebase.task.setup.check import FirebaseCheck
+from ...module.firebase.task.setup.setup import FirebaseSetupTask
+from ...module.firebase.task.upload import FirebaseBuildUpload
+from ...module.firebase.task.validate import FirebaseBuildValidate
+from ...module.plugin import AflutterModulePlugin
 
 
 class FirebaseModulePlugin(AflutterModulePlugin):

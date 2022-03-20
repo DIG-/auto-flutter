@@ -1,13 +1,14 @@
 from typing import List
 
-from ....model.platform import Platform
+from ....model.error import Err
 from ....model.platform.merge_config import MergePlatformConfigFlavored
-from ....model.project import Project
-from ....model.task import *
+from ....model.platform.platform import Platform
+from ....model.project.project import Project
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.aflutter.task.project.read import ProjectRead
+from ....module.firebase.identity import FirebaseTaskIdentity
+from ....module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 from ....module.flutter.task.build.stub import FlutterBuildStub
-from ..identity import FirebaseTaskIdentity
-from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseBuildValidate(Task):
@@ -21,7 +22,7 @@ class FirebaseBuildValidate(Task):
     ARG_FIREBASE_GOOGLE_ID = "FIREBASE_CONFIG_GOOGLE_ID"
 
     def require(self) -> List[TaskId]:
-        return [ProjectRead.identity.id]
+        return [ProjectRead.identity.task_id]
 
     def execute(self, args: Args) -> TaskResult:
         flutter_args = args.with_group(FlutterBuildStub.identity.group)
@@ -32,11 +33,11 @@ class FirebaseBuildValidate(Task):
             project.get_platform_config(Platform.DEFAULT),
             project.get_platform_config(build_type.platform),
         )
-        app_id = config.get_extra(flavor, FIREBASE_PROJECT_APP_ID_KEY.value)
+        app_id = config.get_config_by_flavor(flavor).get_extra(FIREBASE_PROJECT_APP_ID_KEY.value)
         if app_id is None or len(app_id) <= 0:
             return TaskResult(
                 args,
-                error=E(ValueError("App id not found in aflutter.json")).error,
+                error=Err(ValueError("App id not found in aflutter.json")),
                 success=False,
             )
 

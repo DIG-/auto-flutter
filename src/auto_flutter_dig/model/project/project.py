@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ...core import VERSION
-from ...core.json import *
+from ...core.json.codec import JsonDecode, JsonEncode
+from ...core.json.serializable import Json, Serializable
 from ...core.utils import _Ensure, _Iterable
-from ...model.platform import Platform
+from ...core.version import VERSION
 from ...model.platform.flavored_config import PlatformConfigFlavored
-from .custom_task import CustomTask, TaskId
-from .flavor import Flavor
+from ...model.platform.platform import Platform
+from ...model.project.custom_task.custom_task import CustomTask
+from ...model.project.flavor import Flavor
+from ...model.task.id import TaskId
 
 __all__ = ["Project"]
 
@@ -51,10 +53,10 @@ class Project(Serializable["Project"]):
             self.tasks = []
         self.tasks.append(task)
 
-    def remove_task_id(self, id: TaskId) -> bool:
+    def remove_task_id(self, task_id: TaskId) -> bool:
         if self.tasks is None:
             return False
-        found = _Iterable.first_or_none(self.tasks, lambda x: x.id == id)
+        found = _Iterable.first_or_none(self.tasks, lambda x: x.task_id == task_id)
         if found is None:
             return False
         self.tasks.remove(found)
@@ -66,10 +68,10 @@ class Project(Serializable["Project"]):
         return {
             "_creator": "Auto-Flutter " + VERSION,
             "name": self.name,
-            "platforms": _JsonEncode.encode(self.platforms),
-            "flavors": _JsonEncode.encode_optional(self.flavors),
-            "platform-config": _JsonEncode.encode(self.platform_config),
-            "tasks": _JsonEncode.encode_optional(self.tasks),
+            "platforms": JsonEncode.encode(self.platforms),
+            "flavors": JsonEncode.encode_optional(self.flavors),
+            "platform-config": JsonEncode.encode(self.platform_config),
+            "tasks": JsonEncode.encode_optional(self.tasks),
         }
 
     @staticmethod
@@ -85,14 +87,14 @@ class Project(Serializable["Project"]):
             if not isinstance(key, str):
                 continue
             if key == "name":
-                name = _JsonDecode.decode(value, str)
+                name = JsonDecode.decode(value, str)
             elif key == "platforms":
-                platforms = _JsonDecode.decode_list(value, Platform)
+                platforms = JsonDecode.decode_list(value, Platform)
             elif key == "flavors":
-                flavors = _JsonDecode.decode_list(value, Flavor)
+                flavors = JsonDecode.decode_list(value, Flavor)
             elif key == "platform-config":
-                platform_config = _JsonDecode.decode_dict(value, Platform, PlatformConfigFlavored)
+                platform_config = JsonDecode.decode_dict(value, Platform, PlatformConfigFlavored)
             elif key == "tasks":
-                tasks = _JsonDecode.decode_list(value, CustomTask)
+                tasks = JsonDecode.decode_list(value, CustomTask)
 
         return Project(name, platforms, flavors, platform_config, tasks)  # type: ignore[arg-type]

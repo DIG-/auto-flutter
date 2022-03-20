@@ -1,11 +1,13 @@
 from typing import Optional
 
-from ........model.platform import Platform
-from ........model.project import Flavor, Project
-from ........model.task import *
+from ........model.platform.platform import Platform
+from ........model.project.flavor import Flavor
+from ........model.project.project import Project
+from ........model.task.identity import TaskIdentity
 from ........model.task.init.project_identity import InitProjectTaskIdentity
-from ......identity import AflutterTaskIdentity
-from ..platform import ProjectInitFindPlatformTask
+from ........model.task.task import *  # pylint: disable=wildcard-import
+from ........module.aflutter.identity import AflutterTaskIdentity
+from ........module.aflutter.task.project.init.find.platform import ProjectInitFindPlatformTask
 
 
 class BaseProjectInitFindFlavorIdentity(AflutterTaskIdentity, InitProjectTaskIdentity):
@@ -28,4 +30,4 @@ class BaseProjectInitFindFlavorTask(Task):
             project.flavors.append(flavor)
 
         if not build_param is None and len(build_param) > 0:
-            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).build_param = build_param
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).append_build_param(build_param)

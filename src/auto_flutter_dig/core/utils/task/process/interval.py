@@ -3,7 +3,8 @@ from threading import Thread
 from time import time
 from typing import Union
 
-from .process import *
+from .....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
+from .....model.task.task import *  # pylint: disable=wildcard-import
 
 __all__ = [
     "Task",
@@ -12,7 +13,6 @@ __all__ = [
     "TaskResult",
     "TaskId",
     "Args",
-    "Process",
     "BaseProcessIntervalTask",
     "ProcessOrResult",
 ]
@@ -52,7 +52,7 @@ class BaseProcessIntervalTask(BaseProcessTask):
         return self._handle_process_output(args, self._process, output)
 
     @abstractmethod
-    def _on_interval(self, process: Process, time: float, count: int) -> None:
+    def _on_interval(self, process: Process, elapsed: float, count: int) -> None:
         ## Be carefull, `process` content are in other thread, but it is safe to call `stop` or `kill`
         pass
 

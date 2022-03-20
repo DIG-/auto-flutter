@@ -3,12 +3,12 @@ from pathlib import Path, PurePath
 from subprocess import PIPE, STDOUT, Popen, run
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+from ...core.config import Config
+from ...core.logger import log
+from ...core.os.os import OS
+from ...core.process.process import Process
+from ...core.string import SB
 from ...module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
-from ..config import Config
-from ..logger import log
-from ..os import OS
-from ..string import SB
-from .process import Process
 
 
 class _SubProcess(Process):
@@ -30,28 +30,29 @@ class _SubProcess(Process):
     def run(self):
         if self._executable.is_absolute():
             if not Path(self._executable).exists():
-                raise FileNotFoundError(0, "Executable `{}` not found".format(self._executable))
+                raise FileNotFoundError(0, f"Executable `{self._executable}` not found")
         output = SB()
         command = " ".join(map(self.__escape_arg, [str(self._executable)] + self._arguments))
         if Config.get_bool(AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND):
             self._write_output(command)
             self._write_output("\n")
-        self.__process = Popen(
+
+        with Popen(
             command,
             shell=True,
             stdout=PIPE,
             stderr=STDOUT,
             env=self._environment,
-        )
-        with self.__process as p:
+        ) as process:
+            self.__process = process
             decoder: IncrementalDecoder = _SubProcess.__get_default_decoder()
             while True:
-                self.__read_output(decoder, output, p.stdout.read(1))
-                code = p.poll()
+                self.__read_output(decoder, output, process.stdout.read(1))
+                code = process.poll()
                 if not code is None:
                     self.exit_code = code
                     while True:
-                        remain = p.stdout.read(1)
+                        remain = process.stdout.read(1)
                         if remain == b"":
                             break
                         self.__read_output(decoder, output, remain)
@@ -60,11 +61,11 @@ class _SubProcess(Process):
             self._write_output("\n")
             self.output = output.str()
             if self.exit_code == 127:
-                raise FileNotFoundError(0, "Command `{}` not found".format(self._executable))
+                raise FileNotFoundError(0, f"Command `{self._executable}` not found")
             if self.__killed:
-                raise Process.ChildProcessKilled("Command `{}` was killed".format(self._executable))
+                raise Process.ChildProcessKilled(f"Command `{self._executable}` was killed")
             if self.__stopped:
-                raise Process.ChildProcessStopped("Command `{}` was stopped".format(self._executable))
+                raise Process.ChildProcessStopped(f"Command `{self._executable}` was stopped")
 
     def stop(self):
         process = self.__process
@@ -84,6 +85,7 @@ class _SubProcess(Process):
                         shell=True,
                         stdout=PIPE,
                         stderr=PIPE,
+                        check=False,
                     )
                     if result.returncode != 0:
                         result = run(
@@ -91,14 +93,12 @@ class _SubProcess(Process):
                             shell=True,
                             stdout=PIPE,
                             stderr=PIPE,
+                            check=False,
                         )
                 except BaseException as error:
-                    raise SystemError(
-                        'Failed to kill process "{}"'.format(self._executable.name),
-                        error,
-                    )
+                    raise SystemError(f'Failed to kill process "{self._executable.name}"') from error
                 if result.returncode != 0:
-                    raise SystemError('Failed to kill process "{}"'.format(self._executable.name))
+                    raise SystemError(f'Failed to kill process "{self._executable.name}"')
 
     def __read_output(self, decoder: IncrementalDecoder, output: SB, value: bytes):
         decoded = decoder.decode(value)
@@ -118,8 +118,8 @@ class _SubProcess(Process):
         if st_single and arg.endswith("'"):
             return arg  # Already escaped
         if st_double:
-            return "'{}'".format(arg)
-        return '"{}"'.format(arg)
+            return f"'{arg}'"
+        return f'"{arg}"'
 
     @staticmethod
     def __get_default_decoder() -> IncrementalDecoder:
@@ -133,6 +133,7 @@ class _SubProcess(Process):
             return getincrementaldecoder("utf-8")()
         multiple = _IncrementalDecoderMultiple()
         multiple.add(getincrementaldecoder("utf-8")())
+        # pylint: disable=import-outside-toplevel,cyclic-import
         from winreg import HKEY_LOCAL_MACHINE, REG_SZ, CloseKey, OpenKey, QueryValueEx
 
         try:  # Get windows default charset for console
@@ -141,10 +142,10 @@ class _SubProcess(Process):
             CloseKey(key)
             if read[1] == REG_SZ and isinstance(read[0], str):
                 multiple.add(getincrementaldecoder("cp" + read[0])())
-        except:
+        except BaseException:
             try:
                 multiple.add(getincrementaldecoder("cp850")())
-            except:
+            except BaseException:
                 pass
         return multiple
 
@@ -157,16 +158,20 @@ class _IncrementalDecoderMultiple(IncrementalDecoder):
     def add(self, decoder: IncrementalDecoder):
         self._decoders.append(_IncrementalDecoderStopOnFailure(decoder))
 
-    def decode(self, input: bytes, final: bool = False) -> str:
+    def decode(
+        self,
+        input: bytes,  # pylint: disable=redefined-builtin
+        final: bool = False,
+    ) -> str:
         has_error: bool = True  # Check if all decoders has error
         hold: bool = False  # Hold if firsts decoders are still decoding
         for decoder in self._decoders:
             out = decoder.decode(input, final)
-            has_error &= decoder._has_error
-            if hold or (len(out) == 0 and not decoder._has_error):
+            has_error &= decoder.has_error
+            if hold or (len(out) == 0 and not decoder.has_error):
                 hold = True
             elif len(out) > 0:
-                out = decoder._out_buffer
+                out = decoder.out_buffer
                 self.reset()
                 return out
 
@@ -195,27 +200,31 @@ class _IncrementalDecoderStopOnFailure(IncrementalDecoder):
     def __init__(self, other: IncrementalDecoder) -> None:
         super().__init__("stop")
         self._decoder: IncrementalDecoder = other
-        self._has_error = False
-        self._out_buffer: str = ""
+        self.has_error = False
+        self.out_buffer: str = ""
 
-    def decode(self, input: bytes, final: bool = False) -> str:
-        if self._has_error:
+    def decode(
+        self,
+        input: bytes,  # pylint:disable=redefined-builtin
+        final: bool = False,
+    ) -> str:
+        if self.has_error:
             return ""  # Does not decode until reset
         try:
             output = self._decoder.decode(input, final)
         except UnicodeDecodeError:
             output = ""
-            self._has_error = True
+            self.has_error = True
         except BaseException as error:
             log.error(error)
             output = ""
-            self._has_error = True
-        self._out_buffer += output
+            self.has_error = True
+        self.out_buffer += output
         return output
 
     def reset(self) -> None:
-        self._has_error = False
-        self._out_buffer = ""
+        self.has_error = False
+        self.out_buffer = ""
         self._decoder.reset()
 
     def getstate(self) -> Tuple[bytes, int]:

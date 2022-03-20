@@ -1,8 +1,10 @@
 from typing import Optional
 
 from ....core.config import Config
-from ....core.utils.task.process import *
-from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
+from ....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
+from ....model.error import Err
+from ....model.task.task import *  # pylint: disable=wildcard-import
+from ....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
 class FlutterCommandTask(BaseProcessTask):
@@ -25,17 +27,19 @@ class FlutterCommandTask(BaseProcessTask):
         return self._describe
 
     def require(self) -> List[TaskId]:
-        from ....module.aflutter.task.project.read import ProjectRead # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,cyclic-import
+        from ....module.aflutter.task.project.read import ProjectRead
+
         parent = super().require()
         if self._require_project:
-            parent.append(ProjectRead.identity.id)
+            parent.append(ProjectRead.identity.task_id)
         return parent
 
     def _create_process(self, args: Args) -> ProcessOrResult:
         if len(self._command) <= 0:
             return TaskResult(
                 args,
-                error=E(AssertionError("Flutter command require at least one command")).error,
+                error=Err(AssertionError("Flutter command require at least one command")),
             )
         flutter = Config.get_path(FLUTTER_CONFIG_KEY_PATH)
         self._command.insert(0, FLUTTER_DISABLE_VERSION_CHECK)

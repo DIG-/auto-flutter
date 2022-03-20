@@ -1,8 +1,8 @@
 from typing import Tuple
 
 from ....core.utils import _Ensure
-from .option import Option
-from .valued import OptionWithValue
+from ....model.argument.option.option import Option
+from ....model.argument.option.valued import OptionWithValue
 
 __all__ = ["LongOption", "LongOptionWithValue"]
 
@@ -12,7 +12,7 @@ class LongOption(Option):
         Option.__init__(self, description)
         self.long: str = _Ensure.instance(long, str, "long").lower().strip()
         if len(self.long) <= 1:
-            raise ValueError("Long option must have more than one character. Received: {}".format(long))
+            raise ValueError(f"Long option must have more than one character. Received: {long}")
 
     def describe(self) -> Tuple[str, str]:
         return ("--" + self.long, self.description)

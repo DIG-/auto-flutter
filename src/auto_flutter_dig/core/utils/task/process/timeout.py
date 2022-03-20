@@ -1,12 +1,7 @@
-from .interval import *
+from .....core.process.process import Process
+from .....core.utils.task.process.interval import BaseProcessIntervalTask, ProcessOrResult
 
 __all__ = [
-    "Task",
-    "List",
-    "TaskIdentity",
-    "TaskResult",
-    "TaskId",
-    "Args",
     "Process",
     "BaseProcessTimeoutTask",
     "ProcessOrResult",
@@ -28,21 +23,21 @@ class BaseProcessTimeoutTask(BaseProcessIntervalTask):
         self._stopped = False
         self._killed = False
 
-    def _on_interval(self, process: Process, time: float, count: int) -> None:
-        if time >= self._timeout:
+    def _on_interval(self, process: Process, elapsed: float, count: int) -> None:
+        if elapsed >= self._timeout:
             if self._stopped and not self._killed:
                 self._killed = True
                 process.kill()
-                self._on_process_kill(process, time, count)
+                self._on_process_kill(process, elapsed, count)
             else:
                 self._stopped = True
                 process.stop()
-                self._on_process_stop(process, time, count)
+                self._on_process_stop(process, elapsed, count)
 
-    def _on_process_stop(self, process: Process, time: float, count: int) -> None:
+    def _on_process_stop(self, process: Process, elapsed: float, count: int) -> None:
         # process.stop() already called
         pass
 
-    def _on_process_kill(self, process: Process, time: float, count: int) -> None:
+    def _on_process_kill(self, process: Process, elapsed: float, count: int) -> None:
         # process.kill() already called
         pass

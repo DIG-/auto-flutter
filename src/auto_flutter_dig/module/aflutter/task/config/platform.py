@@ -1,10 +1,11 @@
 from .....core.string import SB
-from .....model.argument.option import LongOption
+from .....model.argument.options import LongOption
 from .....model.argument.option.common.platform import PlatformOption
-from .....model.platform import Platform
-from .....model.task import *
-from .base import *
-from .project import ProjectConfigTaskIdentity
+from .....model.error import Err
+from .....model.platform.platform import Platform
+from .....model.task.task import *  # pylint: disable=wildcard-import
+from .....module.aflutter.task.config.base import BaseConfigTask, Project
+from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 
 
 class _PlatformOption(PlatformOption):
@@ -21,7 +22,7 @@ class AflutterPlatformConfigTask(BaseConfigTask):
         "platform",
         "Manage platform support for project",
         [__opt_add, __opt_rem, __opt_lst],
-        lambda: AflutterPlatformConfigTask(),
+        lambda: AflutterPlatformConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:
@@ -37,9 +38,7 @@ class AflutterPlatformConfigTask(BaseConfigTask):
             if add_platform in project.platforms:
                 self._uptade_description(
                     self.describe(args),
-                    TaskResult(
-                        args, E(Warning(f"Project already have platform {add_platform.value}")).error, success=True
-                    ),
+                    TaskResult(args, Err(Warning(f"Project already have platform {add_platform.value}")), success=True),
                 )
             else:
                 project.platforms.append(add_platform)
@@ -55,13 +54,13 @@ class AflutterPlatformConfigTask(BaseConfigTask):
             self._uptade_description("Removing platform")
             if rem_platform == Platform.DEFAULT:
                 self._uptade_description(
-                    self.describe(args), TaskResult(args, E(Warning("Can not remove platform DEFAULT")).error)
+                    self.describe(args), TaskResult(args, Err(Warning("Can not remove platform DEFAULT")))
                 )
             elif rem_platform not in project.platforms:
                 self._uptade_description(
                     self.describe(args),
                     TaskResult(
-                        args, E(Warning(f'Project does not have platform "{rem_platform.value}"')).error, success=True
+                        args, Err(Warning(f'Project does not have platform "{rem_platform.value}"')), success=True
                     ),
                 )
             else:
@@ -83,11 +82,10 @@ class AflutterPlatformConfigTask(BaseConfigTask):
             list_result = TaskResult(args, message=builder.str())
             if not had_change:
                 return list_result
-            else:
-                self._uptade_description(self.describe(args), list_result)
+            self._uptade_description(self.describe(args), list_result)
 
         if not had_change:
-            return TaskResult(args, E(Warning("No change was made")).error, success=True)
+            return TaskResult(args, Err(Warning("No change was made")), success=True)
 
         self._add_save_project()
         return TaskResult(args)

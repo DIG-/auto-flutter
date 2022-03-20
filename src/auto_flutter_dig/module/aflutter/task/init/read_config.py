@@ -1,7 +1,7 @@
 from .....core.config import Config
 from .....core.string import SB
-from .....model.error import E
-from .....model.task import *
+from .....model.error import Err
+from .....model.task.task import *  # pylint: disable=wildcard-import
 
 
 class ReadConfigTask(Task):
@@ -14,7 +14,7 @@ class ReadConfigTask(Task):
         try:
             loaded = Config.load()
         except BaseException as error:
-            base_error = E(base_error).caused_by(error)
+            base_error = Err(base_error, error)
         if loaded:
             return TaskResult(args)
         return TaskResult(

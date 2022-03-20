@@ -1,13 +1,16 @@
 from pathlib import Path, PurePosixPath
 from re import compile as re_compile
 
-from ........core.os import PathConverter
-from ........model.error.silent_warning import SilentWarning
-from ........model.platform import Platform
-from ........model.project import Project
+from ........core.os.path_converter import PathConverter
+from ........model.error import Err, SilentWarning
+from ........model.platform.platform import Platform
+from ........model.project.project import Project
 from ........model.result import Result
-from ........model.task import *
-from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTask
+from ........model.task.task import *  # pylint: disable=wildcard-import
+from ........module.aflutter.task.project.init.find.flavor.base import (
+    BaseProjectInitFindFlavorIdentity,
+    BaseProjectInitFindFlavorTask,
+)
 
 
 class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
@@ -25,17 +28,16 @@ class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
         project = Project.current
         if not Platform.ANDROID in project.platforms:
             self._uptade_description("")
-            return TaskResult(args, E(SilentWarning("Project does not support android platform")).error, success=True)
+            return TaskResult(args, Err(SilentWarning("Project does not support android platform")), success=True)
 
         gradle = Path(PathConverter.from_posix(PurePosixPath("android/app/build.gradle")).to_machine())
         if not gradle.exists():
-            self._uptade_description("", Result(E(FileNotFoundError("Can not found android app gradle file")).error))
+            self._uptade_description("", Result(Err(FileNotFoundError("Can not found android app gradle file"))))
             return TaskResult(args)
         found = False
         try:
-            file = open(gradle, "r", encoding="utf-8")
-            content = "".join(file.readlines())
-            file.close()
+            with open(gradle, "r", encoding="utf-8") as file:
+                content = "".join(file.readlines())
             try:
                 start = content.index("productFlavors")
                 start = content.index("{", start)
@@ -52,9 +54,9 @@ class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
                         end = i
                         break
             if end < start:
-                raise LookupError("Failed to find flavor section in build.gradle.") from E(
+                raise LookupError("Failed to find flavor section in build.gradle.") from Err(
                     IndexError("End of string is before start")
-                ).error
+                )
             flavors = content[start + 1 : end]
             count = 0
             buffer = ""
@@ -74,9 +76,9 @@ class ProjectInitFindFlavorAndroidGradleTask(BaseProjectInitFindFlavorTask):
                 elif count == 0:
                     buffer += char
         except BaseException as error:
-            self._uptade_description("", Result(E(LookupError("Failed to find flavor")).caused_by(error)))
+            self._uptade_description("", Result(Err(LookupError("Failed to find flavor"), error)))
             return TaskResult(args)
 
         if not found:
-            return TaskResult(args, error=E(LookupError("No flavor was found")).error, success=True)
+            return TaskResult(args, error=Err(LookupError("No flavor was found")), success=True)
         return TaskResult(args)

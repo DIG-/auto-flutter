@@ -88,12 +88,15 @@ disable=raw-checker-failed,
         missing-module-docstring,
         missing-class-docstring,
         missing-function-docstring,
-        wildcard-import,
         unused-wildcard-import,
         broad-except,
         too-few-public-methods,
         too-many-return-statements,
         too-many-arguments,
+        too-many-branches,
+        too-many-locals,
+        too-many-statements,
+        too-many-ancestors,
         use-symbolic-message-instead
 
 # Enable the message, report, category or checker with the given id(s). You can
@@ -326,10 +329,10 @@ ignore-comments=yes
 ignore-docstrings=yes
 
 # Imports are removed from the similarity computation
-ignore-imports=no
+ignore-imports=yes
 
 # Signatures are removed from the similarity computation
-ignore-signatures=no
+ignore-signatures=yes
 
 # Minimum lines number of a similarity.
 min-similarity-lines=4

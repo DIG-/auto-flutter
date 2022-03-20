@@ -1,7 +1,7 @@
 from typing import Tuple
 
-from .long import LongOptionWithValue
-from .positional import PositionalOption
+from ....model.argument.option.long import LongOptionWithValue
+from ....model.argument.option.positional import PositionalOption
 
 __all__ = ["LongPositionalOption"]
 

@@ -1,12 +1,14 @@
 from typing import Optional
 
-from ....model.argument.option import LongOption, LongOptionWithValue
 from ....model.argument.option.common.flavor import FlavorOption
 from ....model.argument.option.common.platform import PlatformOption
+from ....model.argument.options import LongOption, LongOptionWithValue
+from ....model.error import Err
 from ....model.platform.platform import Platform
-from ....module.aflutter.task.config.base import *
-from ..identity import FirebaseTaskIdentity
-from ..model._const import FIREBASE_PROJECT_APP_ID_KEY
+from ....model.task.task import *  # pylint: disable=wildcard-import
+from ....module.aflutter.task.config.base import BaseConfigTask, Project
+from ....module.firebase.identity import FirebaseTaskIdentity
+from ....module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY
 
 
 class FirebaseConfigTask(BaseConfigTask):
@@ -19,7 +21,7 @@ class FirebaseConfigTask(BaseConfigTask):
         "firebase",
         "Update project firebase config",
         [__opt_add, __opt_rem, __opt_platform, __opt_flavor],
-        lambda: FirebaseConfigTask(),
+        lambda: FirebaseConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def execute(self, args: Args) -> TaskResult:
@@ -27,12 +29,12 @@ class FirebaseConfigTask(BaseConfigTask):
 
         platform: Platform = self.__opt_platform.get_or_default(args, lambda: Platform.DEFAULT)
         if platform != Platform.DEFAULT and platform not in project.platforms:
-            raise ValueError("Project does not support platform {}".format(str(platform)))
+            raise ValueError(f"Project does not support platform {platform}")
 
         flavor = self.__opt_flavor.get_or_none(args)
         if not flavor is None:
             if project.flavors is None or not flavor in project.flavors:
-                raise ValueError("Project does not contains flavor {}".format(flavor))
+                raise ValueError(f"Project does not contains flavor {flavor}")
 
         add_app_id = args.get(self.__opt_add)
         remove_app_id = args.contains(self.__opt_rem)
@@ -47,18 +49,16 @@ class FirebaseConfigTask(BaseConfigTask):
         if remove_app_id:
             platform_config = project.get_platform_config(platform)
             if platform_config is None:
-                raise KeyError("Project does not have config for platform {}".format(str(platform)))
+                raise KeyError(f"Project does not have config for platform {platform}")
             config = platform_config.get_config_by_flavor(flavor)
             if config is None:
-                raise KeyError(
-                    "Project does not have config for platform {} and flavor {}".format(str(platform), flavor)
-                )
-            if not config._remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
-                has_warning = E(Warning("Selected platform and flavor does not have app id")).error
+                raise KeyError(f"Project does not have config for platform {platform} and flavor {flavor}")
+            if not config.remove_extra(FIREBASE_PROJECT_APP_ID_KEY.value):
+                has_warning = Err(Warning("Selected platform and flavor does not have app id"))
 
         ## Set app id section
         if not add_app_id is None:
-            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor)._add_extra(
+            project.obtain_platform_cofig(platform).obtain_config_by_flavor(flavor).add_extra(
                 FIREBASE_PROJECT_APP_ID_KEY.value, add_app_id
             )
 

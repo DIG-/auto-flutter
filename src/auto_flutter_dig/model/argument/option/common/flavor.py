@@ -1,6 +1,6 @@
+from .....model.argument.option.common._decoder import _DecodedOption
+from .....model.argument.option.long_short import LongShortOptionWithValue
 from .....model.project.flavor import Flavor
-from ..long_short import LongShortOptionWithValue
-from ._decoder import _DecodedOption
 
 __all__ = ["FlavorOption"]
 
@@ -10,5 +10,5 @@ class FlavorOption(LongShortOptionWithValue, _DecodedOption[Flavor]):
         LongShortOptionWithValue.__init__(self, "f", "flavor", description)
         _DecodedOption.__init__(self, description)
 
-    def _convert(self, input: str) -> Flavor:
-        return input
+    def _convert(self, value: str) -> Flavor:
+        return value

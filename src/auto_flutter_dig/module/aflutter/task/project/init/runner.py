@@ -1,15 +1,17 @@
 from typing import Iterable
 
 from ......core.task.resolver import TaskNotFound, TaskResolver
-from ......model.task import *
+from ......model.error import Err
+from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
-from ....identity import AflutterTaskIdentity
-from ...project.save import ProjectSave
-from .config.config import ProjectInitConfigTask
-from .create import ProjectInitCreateTask
-from .find.flavor.flavor import ProjectInitFindFlavorTask
-from .find.platform import ProjectInitFindPlatformTask
-from .gitignore import ProjectInitGitIgnoreTask
+from ......model.task.task import *  # pylint: disable=wildcard-import
+from ......module.aflutter.identity import AflutterTaskIdentity
+from ......module.aflutter.task.project.init.config.config import ProjectInitConfigIdentity
+from ......module.aflutter.task.project.init.create import ProjectInitCreateTask
+from ......module.aflutter.task.project.init.find.flavor.flavor import ProjectInitFindFlavorIdentity
+from ......module.aflutter.task.project.init.find.platform import ProjectInitFindPlatformTask
+from ......module.aflutter.task.project.init.gitignore import ProjectInitGitIgnoreTask
+from ......module.aflutter.task.project.save import ProjectSave
 
 
 class _ExtendedInitProjectTaskIdentity:
@@ -33,8 +35,8 @@ class ProjectInitRunnerTask(Task):
     )
     external_tasks: List[InitProjectTaskIdentity] = [
         ProjectInitFindPlatformTask.identity,
-        ProjectInitFindFlavorTask.identity,
-        ProjectInitConfigTask.identity,
+        ProjectInitFindFlavorIdentity,
+        ProjectInitConfigIdentity,
         ProjectInitGitIgnoreTask.identity,
     ]
 
@@ -53,7 +55,7 @@ class ProjectInitRunnerTask(Task):
                 self.log.warning(" --- RESOLVED ---")
                 self.log.info(str(resolved))
                 return TaskResult(
-                    args, E(LookupError("Has task to include, but all require_before are not available")).error
+                    args, Err(LookupError("Has task to include, but all require_before are not available"))
                 )
             found = False
             for item in ordered:
@@ -68,9 +70,7 @@ class ProjectInitRunnerTask(Task):
                 self.log.info(str(resolved))
                 self.log.warning(" --- FILTERED ---")
                 self.log.info(str(ordered))
-                return TaskResult(
-                    args, E(LookupError("Has task to include, but all require_after does not apply")).error
-                )
+                return TaskResult(args, Err(LookupError("Has task to include, but all require_after does not apply")))
 
         tasks.append(ProjectSave.identity)
         tasks.reverse()

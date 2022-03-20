@@ -1,10 +1,10 @@
 from .....core.string import SB
-from .....model.argument.option import LongOptionWithValue, LongShortOption
-from .....model.error import E
+from .....model.argument.options import LongOptionWithValue, LongShortOption
+from .....model.error import Err
 from .....model.result import Result
-from .....model.task import *
-from .base import *
-from .project import ProjectConfigTaskIdentity
+from .....model.task.task import *  # pylint: disable=wildcard-import
+from .....module.aflutter.task.config.base import BaseConfigTask, Project
+from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 
 
 class AflutterFlavorConfigTask(BaseConfigTask):
@@ -17,7 +17,7 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         "flavor",
         "Handle project flavors in general",
         [option_add, option_remove, option_rename, option_toname, option_list],
-        lambda: AflutterFlavorConfigTask(),
+        lambda: AflutterFlavorConfigTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:
@@ -49,7 +49,7 @@ class AflutterFlavorConfigTask(BaseConfigTask):
             self._uptade_description(self.describe(args), result)
 
         if not has_change:
-            return TaskResult(args, error=E(Warning("No change was made")).error, success=True)
+            return TaskResult(args, error=Err(Warning("No change was made")), success=True)
 
         self._uptade_description("")  # To not write check for "Updating project flavor"
         if len(project.flavors) <= 0:
@@ -67,7 +67,7 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         if not project.flavors is None and add_flavor in project.flavors:
             self._uptade_description(
                 self.describe(args),
-                Result(error=E(AssertionError(f"Flavor `{add_flavor}` already exist in project")).error),
+                Result(error=Err(AssertionError(f"Flavor `{add_flavor}` already exist in project"))),
             )
             return False
 
@@ -87,7 +87,7 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         if project.flavors is None or not rem_flavor in project.flavors:
             self._uptade_description(
                 self.describe(args),
-                Result(E(AssertionError(f"Flavor `{rem_flavor}` do not exist in project")).error),
+                Result(Err(AssertionError(f"Flavor `{rem_flavor}` do not exist in project"))),
             )
             return False
 
@@ -112,11 +112,11 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         if has_ren != has_to:
             if has_ren:
                 self._uptade_description(
-                    self.describe(args), Result(E(ValueError("Trying to rename without destination name")).error)
+                    self.describe(args), Result(Err(ValueError("Trying to rename without destination name")))
                 )
                 return False
             self._uptade_description(
-                self.describe(args), Result(E(ValueError("Trying to rename without origin name")).error)
+                self.describe(args), Result(Err(ValueError("Trying to rename without origin name")))
             )
             return False
 
@@ -125,17 +125,17 @@ class AflutterFlavorConfigTask(BaseConfigTask):
         self._uptade_description(f"Renaming flavor {ren_flavor} to {to_flavor}")
         if ren_flavor == to_flavor:
             self._uptade_description(
-                self.describe(args), Result(E(ValueError("Trying to rename flavor to same name")).error)
+                self.describe(args), Result(Err(ValueError("Trying to rename flavor to same name")))
             )
             return False
         if project.flavors is None or to_flavor in project.flavors:
             self._uptade_description(
-                self.describe(args), Result(E(AssertionError("Destination flavor name already exist")).error)
+                self.describe(args), Result(Err(AssertionError("Destination flavor name already exist")))
             )
             return False
         if not ren_flavor in project.flavors:
             self._uptade_description(
-                self.describe(args), Result(E(AssertionError("Origin flavor name does not exist")).error)
+                self.describe(args), Result(Err(AssertionError("Origin flavor name does not exist")))
             )
             return False
         project.flavors.remove(ren_flavor)

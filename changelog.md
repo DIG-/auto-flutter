@@ -1,3 +1,12 @@
+## Version 0.6.0
+- Multiple adjusts with pylint
+- Created BaseTask to be used with TaskManager, to reduce chance of cyclic-import
+- Refactor in PlatformConfig
+- Removed code from __init__.py to avoid cyclic-import
+- Refactor class E to function Err
+- Prohibited wildcard import. Except `model.task.task` and rare cases
+- All imports are from root, to make easier to see where something is being imported
+
 ## Version 0.5.0
 - Refactor Task structure with TaskGroup concept
 - Mostly of tasks were refactored to new structure of sub-tasks

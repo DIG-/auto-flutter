@@ -2,20 +2,21 @@ from sys import argv as sys_argv
 from typing import Iterable, Optional, Tuple
 
 from .....core.string import SB
-from .....model.error import E, SilentWarning, TaskNotFound
-from .....model.task import *
+from .....model.error import Err, SilentWarning, TaskNotFound
 from .....model.task.group import TaskGroup
+from .....model.task.identity import TaskIdentity
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.config.config import AflutterConfigIdentity
+from .....module.aflutter.task.help import HelpTask
+from .....module.aflutter.task.init.options import ParseOptionsTask
+from .....module.aflutter.task.init.read_config import ReadConfigTask
+from .....module.aflutter.task.project.read import ProjectRead
 from .....module.aflutter.task.root import Root
-from .....module.aflutter.task.setup import AflutterSetupIdentity
 from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
+from .....module.aflutter.task.setup.setup import AflutterSetupIdentity
 from .....module.firebase.firebase import FirebaseModulePlugin
 from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin
-from ..help import HelpTask
-from ..project.read import ProjectRead
-from .options import ParseOptionsTask
-from .read_config import ReadConfigTask
 
 
 class AflutterInitTask(Task):
@@ -65,7 +66,7 @@ class AflutterInitTask(Task):
             except BaseException as error:
                 return TaskResult(
                     args,
-                    E(RuntimeError(f"Failed to initialize module {module.name}")).caused_by(error),
+                    Err(RuntimeError(f"Failed to initialize module {module.name}"), error),
                 )
 
         self._uptade_description("Finding task")
@@ -78,11 +79,11 @@ class AflutterInitTask(Task):
                 task, offset = self.__find_task(Root)
             except TaskNotFound as error:
                 self._append_task(HelpTask.Stub(error.task_id))
-                return TaskResult(args, E(SilentWarning()).caused_by(error), success=True)
+                return TaskResult(args, Err(SilentWarning(), error), success=True)
             except BaseException as error:
                 return TaskResult(
                     args,
-                    error=E(LookupError("Failed to find task")).caused_by(error),
+                    error=Err(LookupError("Failed to find task"), error),
                 )
 
         try:
@@ -90,7 +91,7 @@ class AflutterInitTask(Task):
         except BaseException as error:
             return TaskResult(
                 args,
-                error=E(RuntimeError("Failed to create task tree")).caused_by(error),
+                error=Err(RuntimeError("Failed to create task tree"), error),
             )
 
         parse_options = ParseOptionsTask(task, sys_argv[offset:])

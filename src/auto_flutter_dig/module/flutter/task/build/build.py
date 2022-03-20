@@ -1,17 +1,20 @@
 from pathlib import Path, PurePosixPath
 from typing import Optional
 
-from .....core.os import OS
+from .....core.os.path_converter import PathConverter
 from .....core.string import SB, SF
-from .....model.build import *
-from .....model.error import SilentWarning
-from .....model.platform import Platform
+from .....model.build.mode import BuildMode
+from .....model.build.type import BuildType
+from .....model.error import Err, SilentWarning
 from .....model.platform.flavored_config import PlatformConfigFlavored
+from .....model.platform.platform import Platform
 from .....model.platform.run_type import RunType
-from .....model.project import *
-from .....model.task import *
-from ...identity import FlutterTaskIdentity
-from ..command import FlutterCommandTask
+from .....model.project.flavor import Flavor
+from .....model.project.project import Project
+from .....model.task.task import *  # pylint: disable=wildcard-import
+from .....module.aflutter.task.help import HelpTask
+from .....module.flutter.identity import FlutterTaskIdentity
+from .....module.flutter.task.command import FlutterCommandTask
 
 
 class FlutterBuildTaskIdentity(FlutterTaskIdentity):
@@ -41,8 +44,15 @@ class FlutterBuildTaskIdentity(FlutterTaskIdentity):
         )
 
 
+# pylint: disable=too-many-instance-attributes
 class FlutterBuildTask(FlutterCommandTask):
-    identity = FlutterTaskIdentity("--flutter-build-task--", "", [], lambda: None, True)
+    identity = FlutterTaskIdentity(
+        "--flutter-build-task--",
+        "",
+        [],
+        lambda: HelpTask(None, None),
+        True,
+    )
 
     def __init__(
         self,
@@ -73,15 +83,20 @@ class FlutterBuildTask(FlutterCommandTask):
             raise AssertionError("Trying rebuild android fix for other and desired at same time")
 
     def require(self) -> List[TaskId]:
-        return self._config.get_run_before(RunType.BUILD, self._flavor)
+        config = self._config.get_config_by_flavor(self._flavor)
+        if config is None:
+            return []
+        run_before = config.get_run_before(RunType.BUILD)
+        if run_before is None:
+            return []
+        return run_before
 
     def describe(self, args: Args) -> str:
         if self._android_rebuild_fix_desired:
             return f"Rebuild flutter {self._build_type.platform.value}, flavor {self._flavor}"
         if self._flavor is None:
             return f"Building flutter {self._build_type.platform.value}"
-        else:
-            return f"Building flutter {self._build_type.platform.value}, flavor {self._flavor}"
+        return f"Building flutter {self._build_type.platform.value}, flavor {self._flavor}"
 
     def execute(self, args: Args) -> TaskResult:
         self._command = ["build", self._build_type.flutter]
@@ -91,7 +106,7 @@ class FlutterBuildTask(FlutterCommandTask):
 
         self._command.append("--" + self._build_mode.value)
 
-        self._command.extend(self._config.get_build_param(self._flavor))
+        self._command.extend(self._config.obtain_config_by_flavor(self._flavor).get_build_param())
 
         result = super().execute(args)
 
@@ -106,11 +121,14 @@ class FlutterBuildTask(FlutterCommandTask):
         return result
 
     def _check_output_file(self, args: Args) -> TaskResult:
-        output_file = self._config.get_output(self._flavor, self._build_type)
+        config = self._config.get_config_by_flavor(self._flavor)
+        output_file: Optional[str] = None
+        if not config is None:
+            output_file = config.get_output(self._build_type)
         if output_file is None:
             return TaskResult(
                 args,
-                error=E(Warning("Build success, but file output not defined")).error,
+                error=Err(Warning("Build success, but file output not defined")),
                 success=True,
             )
         output_file = SF.format(
@@ -121,12 +139,12 @@ class FlutterBuildTask(FlutterCommandTask):
             },
         )
 
-        if Path(OS.posix_to_machine_path(PurePosixPath(output_file))).exists():
+        if Path(PathConverter.from_posix(PurePosixPath(output_file)).to_machine()).exists():
             self._print_content(SB().append("Build output found successfully", SB.Color.GREEN).str())
         else:
             return TaskResult(
                 args,
-                E(FileNotFoundError(f'Output "{output_file}" not found')).error,
+                Err(FileNotFoundError(f'Output "{output_file}" not found')),
                 success=False,
             )
 
@@ -139,7 +157,7 @@ class FlutterBuildTask(FlutterCommandTask):
             self._clear_output(args)
             return TaskResult(
                 args,
-                error=E(SilentWarning("Build failed. Maybe there is more flavors to build")).error,
+                error=Err(SilentWarning("Build failed. Maybe there is more flavors to build")),
                 success=True,
             )
 
@@ -188,9 +206,10 @@ class FlutterBuildTask(FlutterCommandTask):
 
         return TaskResult(
             args,
-            error=E(Warning("Flutter issue #58247 detected, building others flavors to fix...")).error,
+            error=Err(Warning("Flutter issue #58247 detected, building others flavors to fix...")),
             success=True,
         )
 
-    def _clear_output(self, args: Args) -> None:
+    @staticmethod
+    def _clear_output(args: Args) -> None:
         args.global_remove("output")

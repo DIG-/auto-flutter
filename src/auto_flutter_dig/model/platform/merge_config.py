@@ -1,15 +1,54 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, Optional
 
-from ...core.json import Json
-from .flavored_config import *
+from ...core.json.type import Json
+from ...model.platform.flavored_config import Flavor, PlatformConfig, PlatformConfigFlavored
 
 __all__ = [
+    "MergePlatformConfigFlavored",
     "PlatformConfigFlavored",
-    "RunType",
-    "BuildType",
-    "TaskId",
     "Flavor",
 ]
+
+
+class _MergedPlatformConfig(PlatformConfig):
+    def __init__(
+        self,
+        default: Optional[PlatformConfigFlavored],
+        platform: Optional[PlatformConfigFlavored],
+        flavor: Optional[Flavor],
+    ) -> None:
+        super().__init__(None, None, None, None, None)
+        if not default is None:
+            self._merge(default)
+            if not flavor is None:
+                config = default.get_config_by_flavor(flavor)
+                if not config is None:
+                    self._merge(config)
+        if not platform is None:
+            self._merge(platform)
+            if not flavor is None:
+                config = platform.get_config_by_flavor(flavor)
+                if not config is None:
+                    self._merge(config)
+
+    def append_build_param(self, param: str):
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    def remove_build_param(self, param: str) -> bool:
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    def add_extra(self, key: str, value: str):
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    def remove_extra(self, key: str) -> bool:
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    def to_json(self) -> Json:
+        raise AssertionError(f"{type(self).__name__} is read only")
+
+    @staticmethod
+    def from_json(json: Json) -> Optional[Any]:
+        raise AssertionError(f"{_MergedPlatformConfig.__name__} is read only")
 
 
 class MergePlatformConfigFlavored(PlatformConfigFlavored):
@@ -21,62 +60,43 @@ class MergePlatformConfigFlavored(PlatformConfigFlavored):
         super().__init__()
         self.default = default
         self.platform = platform
+        self.__cached: Dict[Flavor, _MergedPlatformConfig] = {}
 
-    def append_build_param(self, flavor: Optional[Flavor], param: str):
-        raise AssertionError("Can not append build param using {}".format(type(self).__name__))
+    def append_build_param(self, param: str):
+        raise AssertionError(f"{type(self).__name__} is read only")
 
-    def _append_build_param(self, param: str):
-        raise AssertionError("Can not append build param using {}".format(type(self).__name__))
+    def remove_build_param(self, param: str) -> bool:
+        raise AssertionError(f"{type(self).__name__} is read only")
 
-    def add_extra(self, flavor: Optional[Flavor], key: str, value: str):
-        raise AssertionError("Can not add extra using {}".format(type(self).__name__))
+    def add_extra(self, key: str, value: str):
+        raise AssertionError(f"{type(self).__name__} is read only")
 
-    def _add_extra(self, key: str, value: str):
-        raise AssertionError("Can not add extra using {}".format(type(self).__name__))
-
-    def remove_extra(self, flavor: Optional[Flavor], key: str) -> bool:
-        raise AssertionError("Can not remove extra using {}".format(type(self).__name__))
-
-    def _remove_extra(self, key: str) -> bool:
-        raise AssertionError("Can not remove extra using {}".format(type(self).__name__))
+    def remove_extra(self, key: str) -> bool:
+        raise AssertionError(f"{type(self).__name__} is read only")
 
     def to_json(self) -> Json:
-        raise AssertionError("Can not serialize {}".format(type(self).__name__))
+        raise AssertionError(f"{type(self).__name__} is read only")
 
     @staticmethod
     def from_json(json: Json) -> Optional[Any]:
-        raise AssertionError("Can not parse {}".format(MergePlatformConfigFlavored.__name__))
+        raise AssertionError(f"{MergePlatformConfigFlavored.__name__} is read only")
 
-    def get_build_param(self, flavor: Optional[Flavor]) -> List[TaskId]:
-        output: List[TaskId] = []
-        if not self.default is None:
-            output.extend(self.default.get_build_param(flavor))
-        if not self.platform is None:
-            output.extend(self.platform.get_build_param(flavor))
-        return output
+    def get_config_by_flavor(self, flavor: Optional[Flavor]) -> PlatformConfig:
+        key = self.__get_cache_key(flavor)
+        if key in self.__cached:
+            return self.__cached[key]
+        config = _MergedPlatformConfig(self.default, self.platform, flavor)
+        self.__cached[key] = config
+        return config
 
-    def get_output(self, flavor: Optional[Flavor], type: BuildType) -> Optional[str]:
-        if not self.platform is None:
-            output = self.platform.get_output(flavor, type)
-            if not output is None:
-                return output
-        if not self.default is None:
-            return self.default.get_output(flavor, type)
-        return None
+    def obtain_config_by_flavor(self, flavor: Optional[Flavor]) -> PlatformConfig:
+        return self.get_config_by_flavor(flavor)
 
-    def get_extra(self, flavor: Optional[Flavor], key: str) -> Optional[str]:
-        if not self.platform is None:
-            output = self.platform.get_extra(flavor, key)
-            if not output is None:
-                return output
-        if not self.default is None:
-            return self.default.get_extra(flavor, key)
-        return None
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(default={self.default}, platform={self.platform})"
 
-    def get_run_before(self, type: RunType, flavor: Optional[Flavor]) -> List[str]:
-        output: List[str] = []
-        if not self.default is None:
-            output.extend(self.default.get_run_before(type, flavor))
-        if not self.platform is None:
-            output.extend(self.platform.get_run_before(type, flavor))
-        return output
+    @staticmethod
+    def __get_cache_key(flavor: Optional[Flavor]) -> Flavor:
+        if flavor is None:
+            return "-#-#-"
+        return flavor

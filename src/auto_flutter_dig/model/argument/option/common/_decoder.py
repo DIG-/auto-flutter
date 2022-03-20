@@ -4,7 +4,7 @@ from typing import Callable, Generic, Optional, TypeVar
 from .....model.argument.arguments import Args
 from .....model.argument.option.option import Option
 
-T_co = TypeVar("T_co", covariant=True)
+T_co = TypeVar("T_co", covariant=True)  # pylint: disable=invalid-name
 
 __all__ = ["_DecodedOption"]
 
@@ -29,5 +29,5 @@ class _DecodedOption(Option, Generic[T_co]):
         return self._convert(value)
 
     @abstractmethod
-    def _convert(self, input: str) -> T_co:
+    def _convert(self, value: str) -> T_co:
         raise NotImplementedError()

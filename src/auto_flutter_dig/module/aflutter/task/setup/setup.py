@@ -1,15 +1,15 @@
 from .....core.utils.task.subtask_parent_task import BaseSubtaskParentTask
 from .....model.task.group import TaskGroup
 from .....module.aflutter.identity import AflutterTaskIdentity
-from .check import AflutterSetupCheckTask
-from .save import AflutterSetupSaveTask
-from .show import AflutterSetupShow
-from .stack_trace import AflutterSetupStackTraceTask
+from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
+from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
+from .....module.aflutter.task.setup.show import AflutterSetupShow
+from .....module.aflutter.task.setup.stack_trace import AflutterSetupStackTraceTask
 
 __all__ = ["AflutterSetupIdentity"]
 
 
-class __AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
+class _AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
     def __init__(self) -> None:
         AflutterTaskIdentity.__init__(
             self,
@@ -29,4 +29,4 @@ class __AflutterSetupIdentity(AflutterTaskIdentity, TaskGroup):
         )
 
 
-AflutterSetupIdentity = __AflutterSetupIdentity()
+AflutterSetupIdentity = _AflutterSetupIdentity()

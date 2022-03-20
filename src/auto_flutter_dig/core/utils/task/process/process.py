@@ -3,23 +3,16 @@ from pathlib import Path, PurePath, PurePosixPath
 from typing import Dict, Iterable, Optional, Union
 
 from .....core.config import Config
-from .....core.os import OS
-from .....core.process import Process
+from .....core.os.path_converter import PathConverter
+from .....core.process.process import Process
 from .....core.string import SF
-from .....model.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
 
 __all__ = [
-    "Task",
-    "List",
-    "TaskIdentity",
-    "TaskResult",
-    "TaskId",
-    "Args",
     "Process",
     "BaseProcessTask",
     "ProcessOrResult",
-    "E",
 ]
 
 ProcessOrResult = Union[Process, TaskResult]
@@ -49,8 +42,8 @@ class BaseProcessTask(Task):
         else:
             self.log.debug(message)
 
+    @staticmethod
     def _sanitize_arguments(
-        self,
         arguments: Iterable[str],
         args: Args,
         extras: Optional[Dict[str, str]] = None,
@@ -63,7 +56,7 @@ class BaseProcessTask(Task):
                 argument = SF.format(argument, args, extras)
             if argument.startswith("./"):
                 path: PurePath = PurePosixPath(argument)
-                path = OS.posix_to_machine_path(path)
+                path = PathConverter.from_path(path).to_machine()
                 if expand_path:
                     path = Path(path).absolute()
                 argument = str(path)
@@ -79,13 +72,18 @@ class BaseProcessTask(Task):
     def _handle_process_output(self, args: Args, process: Process, output: Union[bool, BaseException]) -> TaskResult:
         if isinstance(output, bool):
             return self._handle_process_finished(args, process, output)
-        elif isinstance(output, BaseException):
+        if isinstance(output, BaseException):
             return self._handle_process_exception(args, process, output)
         raise ValueError(f"Expected `bool` or `BaseException`, but process returned `{type(output).__name__}`")
 
     def _handle_process_finished(
-        self, args: Args, process: Process, output: bool, message: Optional[str] = None
+        self,
+        args: Args,
+        process: Process,
+        output: bool,
+        message: Optional[str] = None,
     ) -> TaskResult:
+        # pylint: disable=too-many-boolean-expressions
         if (
             message is None
             and ((output and self._show_output_at_end) or (not output and not self._can_print_content))

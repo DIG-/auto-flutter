@@ -1,7 +1,7 @@
 from .....core.utils import _Ensure, _Iterable
-from .....model.argument.option import LongOption, LongShortOption, Option
-from .....model.task import *
-from .....module.aflutter.identity import AflutterTaskIdentity
+from .....model.argument.options import LongOption, LongShortOption, Option
+from .....model.task.task import *  # pylint: disable=wildcard-import
+from .....module.aflutter.identity import AflutterTaskIdentity, TaskIdentity
 
 __all__ = ["AflutterSetupCheckTask", "AflutterLaunchTaskOption"]
 
@@ -18,7 +18,7 @@ class _SetupCheckTaskIdentity(AflutterTaskIdentity):
             "check",
             "Check if environment is correctly configured",
             options,
-            lambda: AflutterSetupCheckTask(),
+            lambda: AflutterSetupCheckTask(),  # pylint: disable=unnecessary-lambda
         )
 
     def add(self, name: str, identity: TaskIdentity):
@@ -36,7 +36,7 @@ class AflutterSetupCheckTask(Task):
     def execute(self, args: Args) -> TaskResult:
         to_run: List[AflutterLaunchTaskOption] = []
         if args.contains(self.__opt_all):
-            to_run = list(_Iterable.is_instance(self.identity.options, AflutterLaunchTaskOption))
+            to_run = list(_Iterable.FilterInstance(self.identity.options, AflutterLaunchTaskOption))
         else:
             for option in self.identity.options:
                 if option == self.__opt_all:

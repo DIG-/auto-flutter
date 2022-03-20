@@ -1,5 +1,5 @@
-from .chain import E
-from .silent_warning import SilentWarning
-from .task_not_found import TaskNotFound
+from ...model.error.chain import Err
+from ...model.error.silent_warning import SilentWarning
+from ...model.error.task_not_found import TaskNotFound
 
-__all__ = ["SilentWarning", "TaskNotFound", "E"]
+__all__ = ["SilentWarning", "TaskNotFound", "Err"]

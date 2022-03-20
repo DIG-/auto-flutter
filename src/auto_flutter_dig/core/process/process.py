@@ -5,8 +5,8 @@ from os import environ
 from pathlib import PurePath, PurePosixPath
 from typing import Callable, Dict, List, Optional, Union
 
-from ..os import OS
-from ..utils import _Ensure, _EnsureCallable
+from ...core.os.path_converter import PathConverter
+from ...core.utils import _Ensure, _EnsureCallable
 
 
 class Process(ABC):
@@ -18,7 +18,8 @@ class Process(ABC):
         writer: Optional[Callable[[str], None]] = None,
         inherit_environment: bool = True,
     ) -> Process:
-        from .subprocess import _SubProcess
+        # Avoid circular import
+        from .subprocess import _SubProcess  # pylint: disable=import-outside-toplevel,cyclic-import
 
         return _SubProcess(executable, arguments, environment, writer, inherit_environment)
 
@@ -38,9 +39,10 @@ class Process(ABC):
         _Ensure.type(inherit_environment, bool, "inherit_environment")
         self.output: Optional[str] = None
         self.exit_code: int = -1
-        self._executable: PurePath = OS.posix_to_machine_path(
+
+        self._executable: PurePath = PathConverter.from_path(
             executable if isinstance(executable, PurePath) else PurePosixPath(executable)
-        )
+        ).to_machine()
         environment = {} if environment is None else environment
         if inherit_environment:
             current_env = environ.copy()

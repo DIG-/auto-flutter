@@ -7,34 +7,34 @@ class _Dict(ABC):
     V = TypeVar("V")
 
     @staticmethod
-    def get_or_none(input: Mapping[K, V], key: K) -> Optional[V]:
-        return None if not key in input else input[key]
+    def get_or_none(mapping: Mapping[K, V], key: K) -> Optional[V]:
+        return None if not key in mapping else mapping[key]
 
     @staticmethod
-    def get_or_default(input: Mapping[K, V], key: K, fallback: Callable[[], V]) -> V:
-        return fallback() if not key in input else input[key]
+    def get_or_default(mapping: Mapping[K, V], key: K, fallback: Callable[[], V]) -> V:
+        return fallback() if not key in mapping else mapping[key]
 
     @staticmethod
-    def merge(a: Dict[K, V], b: Optional[Dict[K, V]]) -> Dict[K, V]:
-        if b is None:
-            return a
-        c = a.copy()
-        for k, v in b.items():
-            c[k] = v
-        return c
+    def merge(left: Dict[K, V], right: Optional[Dict[K, V]]) -> Dict[K, V]:
+        if right is None:
+            return left
+        merge = left.copy()
+        for key, value in right.items():
+            merge[key] = value
+        return merge
 
     @staticmethod
-    def merge_append(a: Dict[K, List[V]], b: Optional[Dict[K, List[V]]]) -> Dict[K, List[V]]:
-        if b is None:
-            return a
-        c = a.copy()
-        for k, v in b.items():
-            if k in c:
-                c[k].extend(v)
+    def merge_append(left: Dict[K, List[V]], right: Optional[Dict[K, List[V]]]) -> Dict[K, List[V]]:
+        if right is None:
+            return left
+        merge = left.copy()
+        for key, value in right.items():
+            if key in merge:
+                merge[key].extend(value)
             else:
-                c[k] = v
-        return c
+                merge[key] = value
+        return merge
 
     @staticmethod
-    def flatten(input: Mapping[K, V]) -> List[V]:
-        return list(map(lambda x: x[1], input.items()))
+    def flatten(mapping: Mapping[K, V]) -> List[V]:
+        return list(map(lambda x: x[1], mapping.items()))

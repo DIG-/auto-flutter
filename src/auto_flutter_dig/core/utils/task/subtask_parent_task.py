@@ -1,8 +1,9 @@
 from ....core.string import SB
 from ....core.utils import _Ensure
 from ....model.error import SilentWarning
-from ....model.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....model.task.group import TaskGroup
+from ....model.task.identity import TaskIdentity
 from ....module.aflutter.task.help import HelpTask
 
 __all__ = ["BaseSubtaskParentTask"]
@@ -24,7 +25,7 @@ class BaseSubtaskParentTask(Task):
                 self.identity,
                 SB()
                 .append("Task ", SB.Color.YELLOW)
-                .append(self.identity.id, SB.Color.CYAN)
+                .append(self.identity.task_id, SB.Color.CYAN)
                 .append(" require subtask!", SB.Color.YELLOW)
                 .str(),
             )

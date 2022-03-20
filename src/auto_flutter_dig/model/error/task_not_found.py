@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from ..task import TaskId
-from ..task.group import TaskGroup
+from ...model.task.group import TaskGroup
+from ...model.task.id import TaskId
 
 
 class TaskNotFound(LookupError):

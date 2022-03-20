@@ -1,7 +1,7 @@
 from typing import Tuple
 
-from .long import LongOption, LongOptionWithValue
-from .short import ShortOption, ShortOptionWithValue
+from ....model.argument.option.long import LongOption, LongOptionWithValue
+from ....model.argument.option.short import ShortOption, ShortOptionWithValue
 
 __all__ = ["LongShortOption", "LongShortOptionWithValue"]
 
@@ -12,7 +12,7 @@ class LongShortOption(LongOption, ShortOption):
         ShortOption.__init__(self, short, description)
 
     def describe(self) -> Tuple[str, str]:
-        return ("-{}, --{}".format(self.short, self.long), self.description)
+        return (f"-{self.short}, --{self.long}", self.description)
 
 
 class LongShortOptionWithValue(LongOptionWithValue, ShortOptionWithValue):

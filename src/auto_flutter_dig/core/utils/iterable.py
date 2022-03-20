@@ -1,56 +1,64 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import (
-    Callable,
-    Generic,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-)
+from typing import Callable, Iterable, Iterator, List, Optional, Tuple, Type, TypeVar
 
 
 class _Iterable(ABC):
     T = TypeVar("T")
     T_co = TypeVar("T_co", covariant=True)
 
+    @staticmethod
     def first_or_none(iterable: Iterable[T], condition: Callable[[T], bool]) -> Optional[T]:
-        for it in iterable:
-            if condition(it):
-                return it
+        for item in iterable:
+            if condition(item):
+                return item
         return None
 
+    @staticmethod
     def first_or_default(iterable: Iterable[T], condition: Callable[[T], bool], fallback: Callable[[], T]) -> T:
-        for it in iterable:
-            if condition(it):
-                return it
+        for item in iterable:
+            if condition(item):
+                return item
         return fallback()
 
+    @staticmethod
     def flatten(iterable: Iterable[Iterable[T]]) -> List[T]:
         return [item for sublist in iterable for item in sublist]
 
+    @staticmethod
     def count(iterable: Iterable[T]) -> int:
         out = 0
-        for it in iterable:
+        for _ in iterable:
             out += 1
         return out
 
+    @staticmethod
     def is_empty(iterable: Iterable[T]) -> bool:
-        for it in iterable:
+        for _ in iterable:
             return False
         return True
 
-    class not_none(Iterator[T], Generic[T]):
-        def __init__(self, iter: Iterable[Optional[_Iterable.T]]) -> None:
+    class Flatten(Iterator[T]):
+        def __init__(self, iterable: Iterable[Iterable[_Iterable.T]]) -> None:
             super().__init__()
-            self._iter = iter.__iter__()
+            self.__iterables = iterable.__iter__()
+            self.__current: Optional[Iterator[_Iterable.T]] = None
 
-        def __iter__(self) -> _Iterable.not_none[_Iterable.T]:
-            return self
+        def __next__(self) -> _Iterable.T:
+            while True:
+                if self.__current is None:
+                    self.__current = next(self.__iterables).__iter__()
+                try:
+                    return next(self.__current)
+                except StopIteration:
+                    self.__current = None
+                    continue
+
+    class FilterOptional(Iterator[T]):
+        def __init__(self, iterable: Iterable[Optional[_Iterable.T]]) -> None:
+            super().__init__()
+            self._iter = iterable.__iter__()
 
         def __next__(self) -> _Iterable.T:
             while True:
@@ -60,13 +68,10 @@ class _Iterable(ABC):
 
     K = TypeVar("K")
 
-    class tuple_not_none(Iterator[Tuple[K, T]]):
-        def __init__(self, iter: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]) -> None:
+    class FilterTupleOptional(Iterator[Tuple[K, T]]):
+        def __init__(self, iterable: Iterable[Tuple[_Iterable.K, Optional[_Iterable.T]]]) -> None:
             super().__init__()
-            self._iter = iter.__iter__()
-
-        def __iter__(self) -> _Iterable.tuple_not_none:
-            return self
+            self._iter = iterable.__iter__()
 
         def __next__(self) -> Tuple[_Iterable.K, _Iterable.T]:
             while True:
@@ -74,26 +79,15 @@ class _Iterable(ABC):
                 if not out[1] is None:
                     return (out[0], out[1])
 
-    class join(Iterator[T]):
+    class Merge(Iterable[T]):
         def __init__(self, *iterables: Iterable[_Iterable.T]) -> None:
             super().__init__()
-            self.__iterators: List[Iterator[_Iterable.T]] = list(map(lambda x: x.__iter__(), iterables))
-            self.__current = 0
+            self.__flatten = _Iterable.Flatten(iterables)
 
         def __iter__(self) -> Iterator[_Iterable.T]:
-            return self
+            return self.__flatten
 
-        def __next__(self) -> _Iterable.T:
-            while self.__current < len(self.__iterators):
-                try:
-                    item = next(self.__iterators[self.__current])
-                except StopIteration:
-                    self.__current += 1
-                    continue
-                return item
-            raise StopIteration()
-
-    class modify(Iterator[T_co]):
+    class Apply(Iterator[T_co]):
         def __init__(
             self,
             iterable: Iterable[_Iterable.T_co],
@@ -108,7 +102,7 @@ class _Iterable(ABC):
             self.__apply(item)
             return item
 
-    class is_instance(Iterator[T_co]):
+    class FilterInstance(Iterator[T_co]):
         def __init__(self, iterable: Iterable[_Iterable.T], cls: Type[_Iterable.T_co]) -> None:
             super().__init__()
             self.__iterator = iterable.__iter__()

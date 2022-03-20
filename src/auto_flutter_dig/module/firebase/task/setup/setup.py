@@ -2,12 +2,12 @@ from .....core.config import Config
 from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
-from .....model.argument.option import LongOption, LongPositionalOption
-from .....model.task import *
+from .....model.argument.options import LongOption, LongPositionalOption
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
-from ...identity import FirebaseTaskIdentity
-from ...model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE
-from .check import FirebaseCheck
+from .....module.firebase.identity import FirebaseTaskIdentity
+from .....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE
+from .....module.firebase.task.setup.check import FirebaseCheck
 
 
 class FirebaseSetupTask(Task):
@@ -18,7 +18,7 @@ class FirebaseSetupTask(Task):
         "firebase",
         "Configure firebase environment",
         [__opt_executable, __opt_standalone_on, __opt_standalone_off],
-        lambda: FirebaseSetupTask(),
+        lambda: FirebaseSetupTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def execute(self, args: Args) -> TaskResult:
@@ -30,19 +30,14 @@ class FirebaseSetupTask(Task):
             firebase_path = PathConverter.from_path(firebase_cmd).to_posix()
             firebase_exec = ExecutableResolver.resolve_executable(firebase_path)
             if firebase_exec is None:
-                error = FileNotFoundError('Can not find firebase command as "{}"'.format(firebase_cmd))
+                error = FileNotFoundError(f'Can not find firebase command as "{firebase_cmd}"')
                 message = (
                     SB()
                     .append("Resolved as: ", SB.Color.YELLOW)
                     .append(str(firebase_path), SB.Color.YELLOW, True)
                     .str()
                 )
-                return TaskResult(
-                    args,
-                    error=error,
-                    message=message,
-                    success=False,
-                )
+                return TaskResult(args, error=error, message=message, success=False)
             Config.put_path(FIREBASE_CONFIG_KEY_PATH, firebase_exec)
             had_change = True
 

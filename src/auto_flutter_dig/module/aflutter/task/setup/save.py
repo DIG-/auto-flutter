@@ -1,7 +1,6 @@
-from pprint import pprint
 from .....core.config import Config
-from .....model.error import E
-from .....model.task import *
+from .....model.error import Err
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity
 
 __all__ = ["AflutterSetupSaveTask"]
@@ -12,7 +11,7 @@ class AflutterSetupSaveTask(Task):
         "-aflutter-setup-save",
         "Save current environment config",
         [],
-        lambda: AflutterSetupSaveTask(),
+        lambda: AflutterSetupSaveTask(),  # pylint: disable=unnecessary-lambda
     )
 
     def describe(self, args: Args) -> str:
@@ -24,6 +23,6 @@ class AflutterSetupSaveTask(Task):
         except BaseException as error:
             return TaskResult(
                 args,
-                error=E(RuntimeError("Failed to save environment config")).caused_by(error),
+                error=Err(RuntimeError("Failed to save environment config"), error),
             )
         return TaskResult(args)

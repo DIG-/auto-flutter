@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ....core.json import *
+from ....core.json.codec import JsonDecode, JsonEncode
+from ....core.json.serializable import Json, Serializable
 from ....core.utils import _Ensure
 
 
@@ -38,9 +39,9 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
     def to_json(self) -> Json:
         return {
             "command": self.command,
-            "args": None if self.args is None else _JsonEncode.encode_list(self.args, lambda x: x),
-            "output": _JsonEncode.encode_optional(self.__output),
-            "skip_failure": _JsonEncode.encode_optional(self.__skip_failure),
+            "args": None if self.args is None else JsonEncode.encode_list(self.args, lambda x: x),
+            "output": JsonEncode.encode_optional(self.__output),
+            "skip_failure": JsonEncode.encode_optional(self.__skip_failure),
         }
 
     @staticmethod
@@ -55,11 +56,11 @@ class CustomTaskContent(Serializable["CustomTaskContent"]):
             if not isinstance(key, str):
                 continue
             if key == "command":
-                command = _JsonDecode.decode(value, str)
+                command = JsonDecode.decode(value, str)
             elif key == "args":
-                args = _JsonDecode.decode_list(value, str)
+                args = JsonDecode.decode_list(value, str)
             elif key == "output":
-                output = _JsonDecode.decode(value, bool)
+                output = JsonDecode.decode(value, bool)
             elif key == "skip_failure":
-                skip_failure = _JsonDecode.decode(value, bool)
+                skip_failure = JsonDecode.decode(value, bool)
         return CustomTaskContent(command, args, output, skip_failure)  # type: ignore[arg-type]

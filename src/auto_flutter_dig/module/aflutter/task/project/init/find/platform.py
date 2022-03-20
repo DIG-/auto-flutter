@@ -1,16 +1,17 @@
 from pathlib import Path, PurePosixPath
 
-from .......core.os import OS
+from .......core.os.path_converter import PathConverter
 from .......core.string import SB
 from .......core.utils import _Iterable
 from .......model.error import SilentWarning
-from .......model.platform import Platform
-from .......model.project import Project
+from .......model.platform.platform import Platform
+from .......model.project.project import Project
 from .......model.result import Result
-from .......model.task import *
+from .......model.task.identity import TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .....identity import AflutterTaskIdentity
-from ..create import ProjectInitCreateTask
+from .......model.task.task import *  # pylint: disable=wildcard-import
+from .......module.aflutter.identity import AflutterTaskIdentity
+from .......module.aflutter.task.project.init.create import ProjectInitCreateTask
 
 
 class _Identity(AflutterTaskIdentity, InitProjectTaskIdentity):
@@ -35,7 +36,7 @@ class ProjectInitFindPlatformTask(Task):
 
         self._uptade_description("Detecting platform android")
         path = PurePosixPath("android/build.gradle")
-        if Path(OS.posix_to_machine_path(path)).exists():
+        if Path(PathConverter.from_posix(path).to_machine()).exists():
             project.platforms.append(Platform.ANDROID)
             self._reset_description(args, Result(success=True))
         else:
@@ -43,7 +44,7 @@ class ProjectInitFindPlatformTask(Task):
 
         self._uptade_description("Detecting platform ios")
         path = PurePosixPath("ios/Runner.xcodeproj")
-        if Path(OS.posix_to_machine_path(path)).exists():
+        if Path(PathConverter.from_posix(path).to_machine()).exists():
             project.platforms.append(Platform.IOS)
             self._reset_description(args, Result(success=True))
         else:
@@ -51,7 +52,7 @@ class ProjectInitFindPlatformTask(Task):
 
         self._uptade_description("Detecting platform web")
         path = PurePosixPath("web")
-        real_path = Path(OS.posix_to_machine_path(path))
+        real_path = Path(PathConverter.from_posix(path).to_machine())
         if real_path.exists() and real_path.is_dir():
             if _Iterable.count(real_path.glob("*")) > 2:
                 project.platforms.append(Platform.WEB)

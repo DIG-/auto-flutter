@@ -1,15 +1,17 @@
 from pathlib import Path, PurePosixPath
 
 from ....core.config import Config
-from ....core.os import OS
+from ....core.os.path_converter import PathConverter
 from ....core.utils import _Dict, _If
-from ....model.argument.option import LongOptionWithValue
+from ....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
+from ....model.argument.options import LongOptionWithValue
+from ....model.error import Err
+from ....model.task.task import *  # pylint: disable=wildcard-import
+from ....module.firebase.identity import FirebaseTaskIdentity
+from ....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
+from ....module.firebase.task.setup.check import FirebaseCheck
+from ....module.firebase.task.validate import FirebaseBuildValidate
 from ....module.flutter.task.build.stub import FlutterBuildStub
-from ....core.utils.task.process import *
-from ..identity import FirebaseTaskIdentity
-from ..model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV
-from .setup.check import FirebaseCheck
-from .validate import FirebaseBuildValidate
 
 
 class FirebaseBuildUpload(BaseProcessTask):
@@ -22,32 +24,32 @@ class FirebaseBuildUpload(BaseProcessTask):
         "firebase",
         "Upload build to firebase",
         _Dict.flatten(__options),
-        lambda: FirebaseBuildUpload(),
+        lambda: FirebaseBuildUpload(),  # pylint: disable=unnecessary-lambda
     )
 
     def require(self) -> List[TaskId]:
         return [
-            FirebaseBuildValidate.identity.id,
-            FirebaseCheck.identity.id,
-            FlutterBuildStub.identity.id,
+            FirebaseBuildValidate.identity.task_id,
+            FirebaseCheck.identity.task_id,
+            FlutterBuildStub.identity.task_id,
         ]
 
     def _create_process(self, args: Args) -> ProcessOrResult:
         filename = args.global_get("output")
         if filename is None or len(filename) <= 0:
-            return TaskResult(args, E(AssertionError("Previous task does not have output")).error)
+            return TaskResult(args, Err(AssertionError("Previous task does not have output")))
 
-        file: Path = Path(OS.posix_to_machine_path(PurePosixPath(filename)))
+        file: Path = Path(PathConverter.from_posix(PurePosixPath(filename)).to_machine())
         if not file.exists():
             return TaskResult(
                 args,
-                E(FileNotFoundError("Output not found: {}".format(str(file)))).error,
+                Err(FileNotFoundError(f"Output not found: {file}")),
             )
 
         file = file.absolute()
         google_id = args.get(FirebaseBuildValidate.ARG_FIREBASE_GOOGLE_ID)
         if google_id is None or len(google_id) <= 0:
-            return TaskResult(args, E(AssertionError("Google app id not found")).error)
+            return TaskResult(args, Err(AssertionError("Google app id not found")))
 
         arguments: List[str] = [
             FIREBASE_DISABLE_INTERACTIVE_MODE.value,

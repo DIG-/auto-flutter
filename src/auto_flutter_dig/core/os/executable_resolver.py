@@ -3,15 +3,16 @@ from abc import ABC, abstractmethod
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import Iterable, Optional
 
+from ...core.os.os import OS
 from ...core.utils import _Iterable
-from .os import OS
 
 __all__ = ["ExecutableResolver"]
 
 
 class ExecutableResolver(ABC):
     @abstractmethod
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint: disable=unused-private-member
+        # Just prevent to someone try to instantiate this class directly
         pass
 
     @staticmethod
@@ -24,7 +25,7 @@ class ExecutableResolver(ABC):
     def get_executable(path: PurePath) -> Optional[Path]:
         try:
             _path = Path(path)
-        except:
+        except BaseException:
             return None
         ## Fast mode
         if ExecutableResolver.is_executable(_path):
@@ -69,7 +70,6 @@ class ExecutableResolver(ABC):
             if not _path is None:
                 # Executable is in path
                 return PurePath(_path.name)
-            pass
         # Not in path, try at current local
         _path = ExecutableResolver.get_executable(path)
         if not _path is None:
@@ -80,14 +80,14 @@ class ExecutableResolver(ABC):
     def get_sys_path() -> Iterable[Path]:
         splitted = ExecutableResolver.__get_sys_path().split(os.pathsep)
         mapped = map(ExecutableResolver.__try_create_path, splitted)
-        not_none = _Iterable.not_none(mapped)
+        not_none = _Iterable.FilterOptional(mapped)
         return filter(lambda x: x.exists(), not_none)
 
     @staticmethod
     def __try_create_path(path: str) -> Optional[Path]:
         try:
             return Path(path)
-        except:
+        except BaseException:
             return None
 
     @staticmethod
@@ -98,7 +98,7 @@ class ExecutableResolver(ABC):
             return os.environ["path"]
         if "Path" in os.environ:
             return os.environ["Path"]
-        for k, v in os.environ.items():
-            if k.lower() == "path":
-                return v
+        for key, value in os.environ.items():
+            if key.lower() == "path":
+                return value
         return ""

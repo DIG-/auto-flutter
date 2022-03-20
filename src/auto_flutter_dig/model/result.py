@@ -8,7 +8,6 @@ class Result:
         self.error: Optional[BaseException] = _Ensure.type(error, BaseException, "error")
         _Ensure.type(success, bool, "success")
         self.success: bool = success if not success is None else error is None
-        pass
 
     @property
     def is_error(self) -> bool:
@@ -23,8 +22,4 @@ class Result:
         return self.success and self.error is None
 
     def __repr__(self) -> str:
-        return "{cls}(error={error}, success={success})".format(
-            cls=type(self).__name__,
-            error=self.error,
-            success=self.success,
-        )
+        return f"{type(self).__name__}(error={self.error}, success={self.success})"

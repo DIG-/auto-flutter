@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from pathlib import PurePath, PurePosixPath, PureWindowsPath
 from typing import Union
 
-from ..utils import _Ensure
-from .os import OS
+from ...core.os.os import OS
+from ...core.utils import _Ensure
 
 __all__ = ["PathConverter"]
 
@@ -66,11 +66,11 @@ class PathConverter(ABC):
                 if segment == "/":
                     pass
                 if len(segment) > 2:
-                    raise AssertionError('Can not find driver letter from path "{}"'.format(self._path))
+                    raise AssertionError(f'Can not find driver letter from path "{self._path}"')
                 if len(segment) == 1:
                     output = PureWindowsPath(segment + ":")
                 elif segment[1] != ":":
-                    raise AssertionError('Unrecognized driver letter from path "{}"'.format(self._path))
+                    raise AssertionError(f'Unrecognized driver letter from path "{self._path}"')
                 else:
                     output = PureWindowsPath(segment)
                 continue
@@ -83,10 +83,11 @@ class PathConverter(ABC):
         return output
 
     @abstractmethod
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint:disable=unused-private-member
+        # Used to avoid user instantiate class wthout creators
         pass
 
 
 class _PathConverter(PathConverter):
-    def __none(self) -> None:
+    def __none(self) -> None:  # pylint:disable=unused-private-member
         pass

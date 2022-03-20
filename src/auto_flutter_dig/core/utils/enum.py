@@ -4,7 +4,7 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, Type, TypeVar
 
-from .iterable import _Iterable
+from ...core.utils.iterable import _Iterable
 
 
 class _Enum(ABC):
@@ -15,7 +15,7 @@ class _Enum(ABC):
     def parse_value(enum: Type[E], value: V, field: Callable[[E], V] = lambda x: x.value) -> E:
         output = _Iterable.first_or_none(enum.__iter__(), lambda x: field(x) == value)
         if output is None:
-            raise ValueError("Value `{}` not found in enum `{}`".format(value, enum.__name__))
+            raise ValueError(f"Value `{value}` not found in enum `{enum.__name__}`")
         return output
 
     @staticmethod

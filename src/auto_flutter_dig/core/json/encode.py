@@ -1,74 +1,73 @@
-from abc import ABCMeta
+from abc import ABC
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
-from .serializable import Serializable
-from .type import Json
+from ...core.json.serializable import Json, Serializable
 
 
-class _JsonEncode(metaclass=ABCMeta):
+class JsonEncode(ABC):
     Input = TypeVar("Input", bound=Union[Serializable, Enum, Json])
     kInput = TypeVar("kInput", bound=Union[Enum, str])
     Encoder = Callable[[Input], Json]
     kEncoder = Callable[[kInput], Json]
 
     @staticmethod
-    def encode_optional(input: Optional[Input], encoder: Optional[Encoder] = None) -> Optional[Json]:
-        if input is None:
+    def encode_optional(value: Optional[Input], encoder: Optional[Encoder] = None) -> Optional[Json]:
+        if value is None:
             return None
-        return _JsonEncode.encode(input, encoder)
+        return JsonEncode.encode(value, encoder)
 
     @staticmethod
-    def encode(input: Input, encoder: Optional[Encoder] = None) -> Json:
+    def encode(value: Input, encoder: Optional[Encoder] = None) -> Json:
         if encoder is None:
-            if isinstance(input, str):
-                return input
-            if isinstance(input, Serializable):
-                return input.to_json()
-            if isinstance(input, Enum):
-                return input.value
-            if isinstance(input, List):
-                return _JsonEncode.encode_list(input, lambda x: _JsonEncode.encode(x))
-            if isinstance(input, Dict):
-                return _JsonEncode.encode_dict(
-                    input,
-                    lambda x: _JsonEncode.encode(x),
-                    lambda x: _JsonEncode.encode(x),
+            if isinstance(value, str):
+                return value
+            if isinstance(value, Serializable):
+                return value.to_json()
+            if isinstance(value, Enum):
+                return value.value
+            if isinstance(value, List):
+                return JsonEncode.encode_list(value, JsonEncode.encode)
+            if isinstance(value, Dict):
+                return JsonEncode.encode_dict(
+                    value,
+                    JsonEncode.encode,
+                    JsonEncode.encode,
                 )
-            raise TypeError("Unknown encoder for {}".format(type(input)))
-        if isinstance(input, List):
-            return _JsonEncode.encode_list(input, encoder)
-        if isinstance(input, Dict):
+            raise TypeError(f"Unknown encoder for {type(value).__name__}")
+        if isinstance(value, List):
+            return JsonEncode.encode_list(value, encoder)
+        if isinstance(value, Dict):
             raise TypeError("Can not encode Dict with only one encoder. Use encode_dict")
 
-        return encoder(input)
+        return encoder(value)
 
     @staticmethod
-    def encode_list(input: List[Input], encoder: Optional[Encoder] = None) -> List[Json]:
-        return list(map(lambda x: _JsonEncode.encode(x, encoder), input))
+    def encode_list(value: List[Input], encoder: Optional[Encoder] = None) -> List[Json]:
+        return list(map(lambda x: JsonEncode.encode(x, encoder), value))
 
     @staticmethod
     def encode_dict(
-        input: Dict[kInput, Input],
+        value: Dict[kInput, Input],
         encoder_key: kEncoder,
         enoder_value: Encoder,
     ) -> Dict[str, Json]:
         return dict(
             map(
-                lambda x: _JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
-                input.items(),
+                lambda x: JsonEncode.__encode_dict_tuple(x, encoder_key, enoder_value),
+                value.items(),
             )
         )
 
     @staticmethod
     def __encode_dict_tuple(
-        input: Tuple[kInput, Input],
+        value: Tuple[kInput, Input],
         encoder_key: kEncoder,
         enoder_value: Encoder,
     ) -> Tuple[str, Json]:
         return (
-            _JsonEncode.__encode_dict_key(input[0], encoder_key),
-            _JsonEncode.encode(input[1], enoder_value),
+            JsonEncode.__encode_dict_key(value[0], encoder_key),
+            JsonEncode.encode(value[1], enoder_value),
         )
 
     @staticmethod
@@ -76,12 +75,12 @@ class _JsonEncode(metaclass=ABCMeta):
         output = encoder(key)
         if isinstance(output, str):
             return output
-        raise ValueError('Can not accept "{}" as dictionary key'.format(type(output)))
+        raise ValueError(f'Can not accept "{type(output).__name__}" as dictionary key')
 
     @staticmethod
-    def clear_nones(input: Json) -> Json:
-        if isinstance(input, List):
-            return [_JsonEncode.clear_nones(x) for x in input if x is not None]
-        elif isinstance(input, Dict):
-            return {key: _JsonEncode.clear_nones(val) for key, val in input.items() if val is not None}
-        return input
+    def clear_nones(json: Json) -> Json:
+        if isinstance(json, List):
+            return [JsonEncode.clear_nones(x) for x in json if x is not None]
+        if isinstance(json, Dict):
+            return {key: JsonEncode.clear_nones(val) for key, val in json.items() if val is not None}
+        return json

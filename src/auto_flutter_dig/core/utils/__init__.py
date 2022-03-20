@@ -1,7 +1,7 @@
-from .dict import _Dict
-from .ensure import _Ensure, _EnsureCallable
-from .enum import _Enum
-from .if_ import _If
-from .iterable import _Iterable
-from .lazy import _Dynamically, _Lazy, _Static
-from .raise_ import _Raise
+from ...core.utils.dict import _Dict
+from ...core.utils.ensure import _Ensure, _EnsureCallable
+from ...core.utils.enum import _Enum
+from ...core.utils.if_ import _If
+from ...core.utils.iterable import _Iterable
+from ...core.utils.lazy import _Dynamically, _Lazy, _Static
+from ...core.utils.raise_ import _Raise

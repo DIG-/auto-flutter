@@ -1,5 +1,5 @@
-from ..identity import FlutterTaskIdentity
-from .command import FlutterCommandTask
+from ....module.flutter.identity import FlutterTaskIdentity
+from ....module.flutter.task.command import FlutterCommandTask
 
 __all__ = ["FlutterPubGetIdentity"]
 

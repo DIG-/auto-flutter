@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, Iterable, Optional, Union
 
-from .option import LongOption, Option, OptionAll, PositionalOption, ShortOption
+from ...model.argument.options import LongOption, Option, OptionAll, PositionalOption, ShortOption
 
 Value = Optional[str]
 Argument = str
@@ -126,7 +126,8 @@ class Args:
     ###############
     ## Internal help method
 
-    def __get_key(self, option: Key) -> Argument:
+    @staticmethod
+    def __get_key(option: Key) -> Argument:
         key: Optional[Argument] = None
         if isinstance(option, Argument):
             key = option
