@@ -1,5 +1,6 @@
+from ....core.utils.task.process.process import ProcessOrResult
 from ....model.argument.option import OptionAll
-from ....core.utils.task.process import *
+from ....model.task.task import *
 from ..identity import FlutterTaskIdentity
 from .command import FlutterCommandTask
 

@@ -3,7 +3,7 @@ from re import Match as re_Match
 from re import compile as re_compile
 from typing import Dict, Optional, Tuple
 
-from ...model.argument import Args
+from ...model.argument.arguments import Args
 from ..utils import _Dict
 
 

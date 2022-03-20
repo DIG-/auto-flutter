@@ -4,10 +4,11 @@ from .......core.os.path_converter import PathConverter
 from .......core.string import SB
 from .......core.utils import _Iterable
 from .......model.error import SilentWarning
-from .......model.platform import Platform
-from .......model.project import Project
+from .......model.platform.platform import Platform
+from .......model.project.project import Project
 from .......model.result import Result
-from .......model.task import *
+from .......model.task.task import *
+from .......model.task.identity import TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
 from .....identity import AflutterTaskIdentity
 from ..create import ProjectInitCreateTask

@@ -3,7 +3,7 @@ from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
 from .....model.argument.option import LongOption, LongPositionalOption
-from .....model.task import *
+from .....model.task.task import *
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 from ...identity import FirebaseTaskIdentity
 from ...model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE

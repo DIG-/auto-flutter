@@ -1,8 +1,9 @@
 from .....core.string import SB
 from .....model.argument.option import LongOption
 from .....model.argument.option.common.platform import PlatformOption
-from .....model.platform import Platform
-from .....model.task import *
+from .....model.error import E
+from .....model.platform.platform import Platform
+from .....model.task.task import *
 from .base import *
 from .project import ProjectConfigTaskIdentity
 

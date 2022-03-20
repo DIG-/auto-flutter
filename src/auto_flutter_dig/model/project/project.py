@@ -3,11 +3,13 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 from ...core import VERSION
-from ...core.json import *
+from ...core.json.codec import JsonDecode, JsonEncode
+from ...core.json.serializable import Json, Serializable
 from ...core.utils import _Ensure, _Iterable
-from ...model.platform import Platform
 from ...model.platform.flavored_config import PlatformConfigFlavored
-from .custom_task import CustomTask, TaskId
+from ...model.platform.platform import Platform
+from ...model.project.custom_task.custom_task import CustomTask
+from ...model.task.id import TaskId
 from .flavor import Flavor
 
 __all__ = ["Project"]

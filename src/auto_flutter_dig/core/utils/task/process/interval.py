@@ -3,7 +3,8 @@ from threading import Thread
 from time import time
 from typing import Union
 
-from .process import *
+from .....model.task.task import *
+from .process import BaseProcessTask, Process, ProcessOrResult
 
 __all__ = [
     "Task",
@@ -12,7 +13,6 @@ __all__ = [
     "TaskResult",
     "TaskId",
     "Args",
-    "Process",
     "BaseProcessIntervalTask",
     "ProcessOrResult",
 ]

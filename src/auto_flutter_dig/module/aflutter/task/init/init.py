@@ -3,12 +3,13 @@ from typing import Iterable, Optional, Tuple
 
 from .....core.string import SB
 from .....model.error import E, SilentWarning, TaskNotFound
-from .....model.task import *
 from .....model.task.group import TaskGroup
+from .....model.task.identity import TaskIdentity
+from .....model.task.task import *
 from .....module.aflutter.task.config.config import AflutterConfigIdentity
 from .....module.aflutter.task.root import Root
-from .....module.aflutter.task.setup import AflutterSetupIdentity
 from .....module.aflutter.task.setup.check import AflutterSetupCheckTask
+from .....module.aflutter.task.setup.setup import AflutterSetupIdentity
 from .....module.firebase.firebase import FirebaseModulePlugin
 from .....module.flutter.flutter import FlutterModulePlugin
 from .....module.plugin import AflutterModulePlugin

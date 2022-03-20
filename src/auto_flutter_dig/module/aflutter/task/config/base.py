@@ -1,5 +1,5 @@
-from .....model.project import Project
-from .....model.task import *
+from .....model.project.project import Project
+from .....model.task.task import *
 from ..project.read import ProjectRead
 from ..project.save import ProjectSave
 
@@ -9,10 +9,8 @@ __all__ = [
     "BaseConfigTask",
     "List",
     "TaskId",
-    "TaskIdentity",
     "TaskResult",
     "Args",
-    "E",
 ]
 
 

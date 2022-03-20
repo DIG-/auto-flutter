@@ -1,9 +1,11 @@
 from typing import Optional
 
-from ........model.platform import Platform
-from ........model.project import Flavor, Project
-from ........model.task import *
+from ........model.platform.platform import Platform
+from ........model.project.flavor import Flavor
+from ........model.project.project import Project
+from ........model.task.identity import TaskIdentity
 from ........model.task.init.project_identity import InitProjectTaskIdentity
+from ........model.task.task import *
 from ......identity import AflutterTaskIdentity
 from ..platform import ProjectInitFindPlatformTask
 

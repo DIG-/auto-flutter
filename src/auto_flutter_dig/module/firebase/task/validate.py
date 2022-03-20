@@ -1,9 +1,10 @@
 from typing import List
 
-from ....model.platform import Platform
+from ....model.error import E
+from ....model.platform.platform import Platform
 from ....model.platform.merge_config import MergePlatformConfigFlavored
-from ....model.project import Project
-from ....model.task import *
+from ....model.project.project import Project
+from ....model.task.task import *
 from ....module.aflutter.task.project.read import ProjectRead
 from ....module.flutter.task.build.stub import FlutterBuildStub
 from ..identity import FirebaseTaskIdentity

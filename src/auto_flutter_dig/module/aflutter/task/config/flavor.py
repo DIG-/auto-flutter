@@ -2,7 +2,7 @@ from .....core.string import SB
 from .....model.argument.option import LongOptionWithValue, LongShortOption
 from .....model.error import E
 from .....model.result import Result
-from .....model.task import *
+from .....model.task.task import *
 from .base import *
 from .project import ProjectConfigTaskIdentity
 

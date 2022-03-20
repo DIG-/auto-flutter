@@ -2,9 +2,9 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union
 
-from ..utils import _Ensure, _Enum, _Iterable
-from .serializable import Serializable
-from .type import Json
+from ...utils import _Ensure, _Enum, _Iterable
+from ..serializable import Serializable
+from ..type import Json
 
 
 class JsonDecode(ABC):

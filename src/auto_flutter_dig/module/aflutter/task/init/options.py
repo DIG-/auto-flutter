@@ -5,7 +5,8 @@ from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 from .....core.config import Config
 from .....model.argument.option import *
 from .....model.argument.option.error import OptionInvalidFormat, OptionNotFound, OptionRequireValue
-from .....model.task import *
+from .....model.task.identity import TaskIdentity
+from .....model.task.task import *
 from ...config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from ..help import HelpTask
 
@@ -65,7 +66,7 @@ class ParseOptionsTask(Task):
         return "Parsing arguments"
 
     def execute(self, args: Args) -> TaskResult:
-        from .....core.task import TaskManager  # pylint: disable=import-outside-toplevel
+        from .....core.task.manager import TaskManager  # pylint: disable=import-outside-toplevel
 
         long_options: Dict[Argument, Dict[Group, _Helper[LongOption]]] = {}
         short_options: Dict[Argument, Dict[Group, _Helper[ShortOption]]] = {}

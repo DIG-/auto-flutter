@@ -3,13 +3,15 @@ from typing import Optional
 
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB, SF
-from .....model.build import *
-from .....model.error import SilentWarning
-from .....model.platform import Platform
+from .....model.build.mode import BuildMode
+from .....model.build.type import BuildType
+from .....model.error import E, SilentWarning
 from .....model.platform.flavored_config import PlatformConfigFlavored
+from .....model.platform.platform import Platform
 from .....model.platform.run_type import RunType
-from .....model.project import *
-from .....model.task import *
+from .....model.project.flavor import Flavor
+from .....model.project.project import Project
+from .....model.task.task import *
 from .....module.aflutter.task.help import HelpTask
 from ...identity import FlutterTaskIdentity
 from ..command import FlutterCommandTask

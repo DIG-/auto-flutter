@@ -2,10 +2,11 @@ from pathlib import Path
 from typing import Optional
 from xml.etree.ElementTree import parse as xml_parse
 
-from ........model.platform import Platform
-from ........model.project import Project
+from ........model.error import E
+from ........model.platform.platform import Platform
+from ........model.project.project import Project
 from ........model.result import Result
-from ........model.task import *
+from ........model.task.task import *
 from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTask
 
 

@@ -1,5 +1,5 @@
 from .....core.config import Config
-from .....model.task import *
+from .....model.task.task import *
 from .....module.aflutter.identity import AflutterTaskIdentity
 
 

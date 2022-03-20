@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from ...module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_COMMAND
 from ..config import Config
 from ..logger import log
-from ..os import OS
+from ..os.os import OS
 from ..string import SB
 from .process import Process
 

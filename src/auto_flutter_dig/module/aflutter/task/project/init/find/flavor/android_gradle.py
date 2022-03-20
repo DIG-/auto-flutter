@@ -1,12 +1,12 @@
 from pathlib import Path, PurePosixPath
 from re import compile as re_compile
 
-from ........core.os import PathConverter
-from ........model.error.silent_warning import SilentWarning
-from ........model.platform import Platform
-from ........model.project import Project
+from ........core.os.path_converter import PathConverter
+from ........model.error import E, SilentWarning
+from ........model.platform.platform import Platform
+from ........model.project.project import Project
 from ........model.result import Result
-from ........model.task import *
+from ........model.task.task import *
 from .base import BaseProjectInitFindFlavorIdentity, BaseProjectInitFindFlavorTask
 
 

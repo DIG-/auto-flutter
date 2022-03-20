@@ -1,8 +1,8 @@
 from json import dump as json_dump
 
-from .....core.json import JsonEncode
-from .....model.project import Project
-from .....model.task import *
+from .....core.json.codec import JsonEncode
+from .....model.project.project import Project
+from .....model.task.task import *
 from ...identity import AflutterTaskIdentity
 
 

@@ -7,7 +7,7 @@ from ...core.utils import _Ensure, _Iterable
 from .id import TaskId
 from .identity import TaskIdentity
 
-__all__ = ["TaskGroup"]
+__all__ = ["TaskGroup", "TaskIdentity"]
 
 
 class TaskGroup(ABC):

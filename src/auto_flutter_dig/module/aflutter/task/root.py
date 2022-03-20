@@ -4,7 +4,7 @@ from ....module.aflutter.task.config.config import AflutterConfigIdentity
 from ....module.aflutter.task.project.init.runner import ProjectInitRunnerTask
 from ....module.aflutter.task.project.read import ProjectRead
 from ....module.aflutter.task.project.save import ProjectSave
-from ....module.aflutter.task.setup import AflutterSetupIdentity
+from ....module.aflutter.task.setup.setup import AflutterSetupIdentity
 from ..identity import AflutterTaskIdentity
 from .help import HelpTask
 

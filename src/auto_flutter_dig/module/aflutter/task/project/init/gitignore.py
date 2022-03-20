@@ -1,5 +1,5 @@
 from ......model.error import E, SilentWarning
-from ......model.task import *
+from ......model.task.task import *
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ....identity import AflutterTaskIdentity
 

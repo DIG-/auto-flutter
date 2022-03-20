@@ -1,7 +1,8 @@
 from typing import Optional
 
 from ....core.config import Config
-from ....core.utils.task.process import *
+from ....core.utils.task.process.process import *
+from ....model.error import E
 from ..model._const import FLUTTER_CONFIG_KEY_PATH, FLUTTER_DISABLE_VERSION_CHECK
 
 
@@ -25,7 +26,8 @@ class FlutterCommandTask(BaseProcessTask):
         return self._describe
 
     def require(self) -> List[TaskId]:
-        from ....module.aflutter.task.project.read import ProjectRead # pylint: disable=import-outside-toplevel
+        from ....module.aflutter.task.project.read import ProjectRead  # pylint: disable=import-outside-toplevel
+
         parent = super().require()
         if self._require_project:
             parent.append(ProjectRead.identity.task_id)

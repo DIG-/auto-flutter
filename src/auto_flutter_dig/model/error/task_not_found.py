@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ..task import TaskId
 from ..task.group import TaskGroup
+from ..task.id import TaskId
 
 
 class TaskNotFound(LookupError):

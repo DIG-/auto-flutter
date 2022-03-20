@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ...core.json import *
+from ...core.json.codec import JsonDecode, JsonEncode
+from ...core.json.serializable import Json, Serializable
 from ...core.utils import _Ensure
-from ..build import BuildType
+from ...model.build.type import BuildType
 from ..task.id import TaskId
 from .run_type import RunType
 

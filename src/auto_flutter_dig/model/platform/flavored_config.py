@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ...core.json import *
-from ..project import Flavor
+from ...core.json.codec import JsonDecode, JsonEncode
+from ...core.json.serializable import Json, Serializable
+from ..project.flavor import Flavor
 from .config import *
 
 __all__ = [

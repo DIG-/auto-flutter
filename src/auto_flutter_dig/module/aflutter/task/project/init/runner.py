@@ -1,7 +1,9 @@
 from typing import Iterable
 
 from ......core.task.resolver import TaskNotFound, TaskResolver
-from ......model.task import *
+from ......model.error import E
+from ......model.task.task import *
+from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
 from ....identity import AflutterTaskIdentity
 from ...project.save import ProjectSave

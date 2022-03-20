@@ -1,9 +1,10 @@
 from typing import Callable
 
 from ........core.utils import _Dict
-from ........model.task import *
-from ........model.task.init.project_identity import InitProjectTaskIdentity
+from ........model.task.task import *
 from ........model.task.group import TaskGroup
+from ........model.task.identity import TaskIdentity
+from ........model.task.init.project_identity import InitProjectTaskIdentity
 from ......identity import AflutterTaskIdentity
 from ..platform import ProjectInitFindPlatformTask
 from .android_gradle import ProjectInitFindFlavorAndroidGradleTask

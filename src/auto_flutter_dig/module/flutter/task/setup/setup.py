@@ -3,7 +3,8 @@ from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
 from .....model.argument.option import LongPositionalOption
-from .....model.task import *
+from .....model.error import E
+from .....model.task.task import *
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 from ...identity import FlutterTaskIdentity
 from ...model._const import FLUTTER_CONFIG_KEY_PATH

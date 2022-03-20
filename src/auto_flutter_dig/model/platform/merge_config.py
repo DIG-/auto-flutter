@@ -1,14 +1,11 @@
 from typing import Any, Dict, Optional
 
-from ...core.json import Json
-from .flavored_config import *
+from ...core.json.type import Json
+from .flavored_config import Flavor, PlatformConfig, PlatformConfigFlavored
 
 __all__ = [
     "MergePlatformConfigFlavored",
     "PlatformConfigFlavored",
-    "RunType",
-    "BuildType",
-    "TaskId",
     "Flavor",
 ]
 

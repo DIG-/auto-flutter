@@ -4,22 +4,20 @@ from typing import Dict, Iterable, Optional, Union
 
 from .....core.config import Config
 from .....core.os.path_converter import PathConverter
-from .....core.process import Process
+from .....core.process.process import Process
 from .....core.string import SF
-from .....model.task import *
+from .....model.task.task import *
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
 
 __all__ = [
     "Task",
     "List",
-    "TaskIdentity",
     "TaskResult",
     "TaskId",
     "Args",
     "Process",
     "BaseProcessTask",
     "ProcessOrResult",
-    "E",
 ]
 
 ProcessOrResult = Union[Process, TaskResult]

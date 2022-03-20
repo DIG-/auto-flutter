@@ -4,7 +4,7 @@ from typing import Optional
 
 from ...core.utils import _Ensure
 from ...model.result import Result
-from ..argument import Args
+from ..argument.arguments import Args
 
 
 class TaskResult(Result):

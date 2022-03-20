@@ -8,7 +8,7 @@ from .id import TaskId
 from .identity import TaskIdentity
 from .result import TaskResult
 
-__all__ = ["BaseTask", "Args", "TaskId", "TaskIdentity", "TaskResult", "List"]
+__all__ = ["BaseTask", "Args", "TaskId", "TaskResult", "List"]
 
 
 class BaseTask(ABC):

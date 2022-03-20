@@ -3,11 +3,12 @@ from .....model.argument.option.common.build_mode import BuildModeOption
 from .....model.argument.option.common.build_type import BuildTypeFlutterOption
 from .....model.argument.option.common.flavor import FlavorOption
 from .....model.argument.option.hidden import HiddenOption
-from .....model.build import BuildMode
-from .....model.platform import Platform
+from .....model.build.mode import BuildMode
+from .....model.error import E
 from .....model.platform.merge_config import MergePlatformConfigFlavored
-from .....model.project import Project
-from .....model.task import *
+from .....model.platform.platform import Platform
+from .....model.project.project import Project
+from .....model.task.task import *
 from ...identity import FlutterTaskIdentity
 from .build import FlutterBuildTaskIdentity
 

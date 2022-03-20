@@ -2,9 +2,9 @@ import sys
 from platform import system as platform_system
 
 from .core.string import SB
-from .core.task import TaskManager
+from .core.task.manager import TaskManager
 from .model.error.formater import format_exception
-from .module.aflutter.task.init import AflutterInitTask
+from .module.aflutter.task.init.init import AflutterInitTask
 
 
 def _main():

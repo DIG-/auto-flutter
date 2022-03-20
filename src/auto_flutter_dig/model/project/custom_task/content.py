@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from ....core.json import *
+from ....core.json.codec import JsonDecode, JsonEncode
+from ....core.json.serializable import Json, Serializable
 from ....core.utils import _Ensure
 
 

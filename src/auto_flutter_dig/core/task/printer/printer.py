@@ -9,7 +9,7 @@ from ....core.string import SB
 from ....core.utils import _Ensure
 from ....model.error import SilentWarning
 from ....model.error.formater import format_exception
-from ....model.task import TaskResult
+from ....model.task.result import TaskResult
 from .operation import *
 
 

@@ -1,7 +1,7 @@
 from .....core.config import Config
 from .....core.string import SB
 from .....model.error import E
-from .....model.task import *
+from .....model.task.task import *
 
 
 class ReadConfigTask(Task):

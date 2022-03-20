@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from ....core.json import *
+from ....core.json.codec import JsonDecode, JsonEncode
+from ....core.json.serializable import Json, Serializable
 from ....core.utils import _Ensure
-from ...task import TaskId
+from ....model.task.id import TaskId
 from .content import CustomTaskContent
 from .type import CustomTaskType
 

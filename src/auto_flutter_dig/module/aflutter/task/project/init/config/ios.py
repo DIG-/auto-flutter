@@ -1,7 +1,7 @@
-from .......model.error import SilentWarning
-from .......model.platform import Platform
-from .......model.project import Project
-from .......model.task import *
+from .......model.error import E, SilentWarning
+from .......model.platform.platform import Platform
+from .......model.project.project import Project
+from .......model.task.task import *
 from .....identity import AflutterTaskIdentity
 
 

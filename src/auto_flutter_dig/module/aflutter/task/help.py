@@ -3,12 +3,13 @@ from sys import argv as sys_argv
 from typing import Dict, Iterable, List, Optional, Union
 
 from ....core.string import SB
-from ....core.task import TaskResolver
+from ....core.task.resolver import TaskResolver
 from ....core.utils import _Iterable
 from ....model.argument.option import *
 from ....model.error import E, TaskNotFound
-from ....model.task import *
 from ....model.task.group import TaskGroup
+from ....model.task.identity import TaskIdentity
+from ....model.task.task import *
 from ..identity import AflutterTaskIdentity
 
 

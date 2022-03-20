@@ -3,8 +3,9 @@ from pathlib import Path, PurePosixPath
 from ....core.config import Config
 from ....core.os.path_converter import PathConverter
 from ....core.utils import _Dict, _If
-from ....core.utils.task.process import *
+from ....core.utils.task.process.process import *
 from ....model.argument.option import LongOptionWithValue
+from ....model.error import E
 from ....module.flutter.task.build.stub import FlutterBuildStub
 from ..identity import FirebaseTaskIdentity
 from ..model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_DISABLE_INTERACTIVE_MODE, FIREBASE_ENV

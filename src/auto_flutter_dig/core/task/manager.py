@@ -9,7 +9,8 @@ from ...model.task.group import TaskGroup
 from ...model.task.id import TaskId
 from ...model.task.identity import TaskIdentity
 from ...model.task.result import TaskResult, TaskResultHelp
-from .printer import *
+from .printer.operation import *
+from .printer.printer import TaskPrinter
 from .resolver import TaskResolver
 
 __all__ = ["TaskManager"]

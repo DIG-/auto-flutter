@@ -1,4 +1,4 @@
-from .....model.task import *
+from .....model.task.task import *
 from .base import BaseConfigTask
 from .project import ProjectConfigTaskIdentity
 

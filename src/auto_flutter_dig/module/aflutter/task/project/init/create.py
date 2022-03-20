@@ -3,9 +3,9 @@ from typing import Optional
 
 from ......core.string import SB
 from ......model.argument.option import LongOptionWithValue, LongShortOption
-from ......model.error import SilentWarning
-from ......model.project import Project
-from ......model.task import *
+from ......model.error import E, SilentWarning
+from ......model.project.project import Project
+from ......model.task.task import *
 from ....identity import AflutterTaskIdentity
 
 

@@ -1,9 +1,9 @@
 from typing import Callable
 
 from .......core.utils import _Dict
-from .......model.task import *
+from .......model.task.task import *
+from .......model.task.group import TaskGroup, TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .......model.task.group import TaskGroup
 from .....identity import AflutterTaskIdentity
 from ..find.flavor.flavor import ProjectInitFindFlavorTask
 from .android import ProjectInitConfigAndroidTask
