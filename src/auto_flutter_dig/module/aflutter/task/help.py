@@ -72,7 +72,7 @@ class HelpTask(Task):
             self._task_parent = None
 
         if self._task_parent is None:
-            from .root import Root
+            from .root import Root  # pylint: disable=import-outside-toplevel
 
             self._task_parent = Root
 
@@ -119,28 +119,29 @@ class HelpTask(Task):
             task_parent = self._task_identity.parent
             if task_parent is None:
                 task_parent = self._task_parent
-            self._show_task_help(builder, self._task_identity, task_parent, options)
+            HelpTask._show_task_help(builder, self._task_identity, options)
         elif not self._task_id is None:
             builder.append(" !!! ", SB.Color.RED).append("Task ").append(self._task_id, SB.Color.CYAN, True).append(
                 " not found\n"
             )
-            self._show_help_default(builder, self._task_parent)
+            HelpTask._show_help_default(builder, self._task_parent)
         else:
-            self._show_help_default(builder, self._task_parent)
+            HelpTask._show_help_default(builder, self._task_parent)
 
         self._uptade_description("Showing help page")
         return TaskResult(args, message=builder.str())
 
-    def _show_help_default(self, builder: SB, root: TaskGroup):
-        self._show_help_grouped(builder, self._grouped_tasks(root))
+    @staticmethod
+    def _show_help_default(builder: SB, root: TaskGroup):
+        HelpTask._show_help_grouped(builder, HelpTask._grouped_tasks(root))
 
+    @staticmethod
     def _show_header(
-        self,
         builder: SB,
         identity: Optional[TaskIdentity],
         positional: Iterable[PositionalOption],
     ):
-        from .root import Root
+        from .root import Root  # pylint: disable=import-outside-toplevel
 
         program = Path(sys_argv[0]).name
         if program == "__main__.py":
@@ -170,32 +171,34 @@ class HelpTask(Task):
             )
         builder.append("[options]\n", SB.Color.MAGENTA)
 
-    def _show_task_description(self, builder: SB, identity: TaskIdentity):
+    @staticmethod
+    def _show_task_description(builder: SB, identity: TaskIdentity):
         builder.append("\nTask:\t").append(identity.task_id, SB.Color.CYAN, True, end="\n").append(
             identity.name, end="\n"
         )
 
+    @staticmethod
     def _show_task_help(
-        self,
         builder: SB,
         identity: TaskIdentity,
-        root: TaskGroup,
         options: Iterable[Option],
     ):
-        self._show_task_description(builder, identity)
+        HelpTask._show_task_description(builder, identity)
         if isinstance(identity, TaskGroup):
-            self._show_help_grouped(builder, self._grouped_tasks(identity))
+            HelpTask._show_help_grouped(builder, HelpTask._grouped_tasks(identity))
 
         builder.append("\nOptions:\n")
-        self._show_task_options(builder, options)
+        HelpTask._show_task_options(builder, options)
 
-    def _show_task_identity_description(self, builder: SB, identity: TaskIdentity):
+    @staticmethod
+    def _show_task_identity_description(builder: SB, identity: TaskIdentity):
         builder.append("  ").append(identity.task_id, SB.Color.CYAN, True)
         if len(identity.task_id) < 8:
             builder.append(" " * (8 - len(identity.task_id)))
         builder.append("\t").append(identity.name, end="\n")
 
-    def _show_task_options(self, builder: SB, options: Iterable[Option]):
+    @staticmethod
+    def _show_task_options(builder: SB, options: Iterable[Option]):
         count = 0
         for option in options:
             count += 1
@@ -222,20 +225,21 @@ class HelpTask(Task):
         if count == 0:
             builder.append("This task does not have options")
 
-    def _show_help_grouped(self, builder: SB, grouped: Dict[str, List[TaskIdentity]]):
+    @staticmethod
+    def _show_help_grouped(builder: SB, grouped: Dict[str, List[TaskIdentity]]):
         for group, identities in grouped.items():
             builder.append("\n")
-            self._show_help_by_group(builder, group, identities)
+            HelpTask._show_help_by_group(builder, group, identities)
 
+    @staticmethod
     def _show_help_by_group(
-        self,
         builder: SB,
         group: str,
         identities: List[TaskIdentity],
     ):
         builder.append("Tasks for ").append(group, SB.Color.CYAN).append(":\n")
         for identity in identities:
-            self._show_task_identity_description(builder, identity)
+            HelpTask._show_task_identity_description(builder, identity)
 
     @staticmethod
     def reduce_indexed_task_into_list(tasks: Dict[str, TaskIdentity]) -> List[TaskIdentity]:
@@ -243,7 +247,8 @@ class HelpTask(Task):
         reduced = map(lambda it: it[1], filtered)
         return list(reduced)
 
-    def _grouped_tasks(self, root: TaskGroup) -> Dict[str, List[TaskIdentity]]:
+    @staticmethod
+    def _grouped_tasks(root: TaskGroup) -> Dict[str, List[TaskIdentity]]:
         output: Dict[str, List[TaskIdentity]] = {}
         for group in sorted(map(lambda x: x[1].group, root.subtasks.items())):
             if not group in output:
