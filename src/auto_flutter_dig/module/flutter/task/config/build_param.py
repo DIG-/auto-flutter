@@ -19,7 +19,8 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
     __opt_list_recursive = LongShortOption(
         "r",
         "list-all",
-        "List all build params (recursively) for platform and flavor. (require both, except flavor if project does not have flavor)",
+        "List all build params (recursively) for platform and flavor. "
+        + "(require both, except flavor if project does not have flavor)",
     )
     __opt_platform = PlatformOption("Platform to update build param (optional)")
     __opt_flavor = FlavorOption("Flavor to update build param (optional)")
@@ -136,12 +137,14 @@ class FlutterBuildParamConfigTask(BaseConfigTask):
         self._reset_description(args, Result(success=True))
         return True
 
-    def _validate_platform(self, project: Project, platform: Platform) -> Optional[Result]:
+    @staticmethod
+    def _validate_platform(project: Project, platform: Platform) -> Optional[Result]:
         if platform != Platform.DEFAULT and not platform in project.platforms:
             return Result(E(ValueError(f"Project does not have support to {platform}")).error)
         return None
 
-    def _validate_flavor(self, project: Project, flavor: Optional[Flavor]) -> Optional[Result]:
+    @staticmethod
+    def _validate_flavor(project: Project, flavor: Optional[Flavor]) -> Optional[Result]:
         if project.flavors is None or len(project.flavors) <= 0:
             if not flavor is None:
                 return Result(E(ValueError("Project does not have flavors")).error)
