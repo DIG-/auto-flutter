@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from ...core.json.codec import JsonDecode, JsonEncode
 from ...core.json.serializable import Json, Serializable
-from ...model.platform.config import *
+from ...model.platform.config import BuildType, PlatformConfig, RunType, TaskIdList
 from ...model.project.flavor import Flavor
 
 __all__ = [
@@ -13,7 +13,6 @@ __all__ = [
     "RunType",
     "BuildType",
     "TaskIdList",
-    "TaskId",
     "Flavor",
 ]
 
