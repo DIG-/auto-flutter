@@ -9,7 +9,7 @@ from ....model.argument.options import *
 from ....model.error import E, TaskNotFound
 from ....model.task.group import TaskGroup
 from ....model.task.identity import TaskIdentity
-from ....model.task.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.aflutter.identity import AflutterTaskIdentity
 
 

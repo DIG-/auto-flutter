@@ -4,7 +4,7 @@ from .....core.os.path_converter import PathConverter
 from .....core.string import SB
 from .....model.argument.options import LongPositionalOption
 from .....model.error import E
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 from .....module.flutter.identity import FlutterTaskIdentity
 from .....module.flutter.model._const import FLUTTER_CONFIG_KEY_PATH

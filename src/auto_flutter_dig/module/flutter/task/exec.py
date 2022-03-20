@@ -1,6 +1,6 @@
 from ....core.utils.task.process.process import ProcessOrResult
 from ....model.argument.options import OptionAll
-from ....model.task.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.flutter.identity import FlutterTaskIdentity
 from ....module.flutter.task.command import FlutterCommandTask
 

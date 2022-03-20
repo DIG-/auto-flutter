@@ -4,7 +4,7 @@ from time import time
 from typing import Union
 
 from .....core.utils.task.process.process import BaseProcessTask, Process, ProcessOrResult
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 
 __all__ = [
     "Task",

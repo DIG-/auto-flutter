@@ -2,7 +2,7 @@ from .....core.config import Config
 from .....model.argument.options import LongOption
 from .....model.error import E
 from .....model.task.result import TaskResultHelp
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from .....module.aflutter.identity import AflutterTaskIdentity
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask

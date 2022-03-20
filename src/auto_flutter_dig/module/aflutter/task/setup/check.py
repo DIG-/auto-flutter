@@ -1,6 +1,6 @@
 from .....core.utils import _Ensure, _Iterable
 from .....model.argument.options import LongOption, LongShortOption, Option
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity, TaskIdentity
 
 __all__ = ["AflutterSetupCheckTask", "AflutterLaunchTaskOption"]

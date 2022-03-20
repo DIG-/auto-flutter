@@ -1,4 +1,4 @@
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.config.base import BaseConfigTask
 from .....module.aflutter.task.config.project import ProjectConfigTaskIdentity
 

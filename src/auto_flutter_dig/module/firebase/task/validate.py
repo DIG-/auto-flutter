@@ -4,7 +4,7 @@ from ....model.error import E
 from ....model.platform.merge_config import MergePlatformConfigFlavored
 from ....model.platform.platform import Platform
 from ....model.project.project import Project
-from ....model.task.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.aflutter.task.project.read import ProjectRead
 from ....module.firebase.identity import FirebaseTaskIdentity
 from ....module.firebase.model._const import FIREBASE_PROJECT_APP_ID_KEY

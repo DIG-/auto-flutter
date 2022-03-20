@@ -1,6 +1,6 @@
 from .....core.utils.task.subtask_parent_task import BaseSubtaskParentTask
 from .....model.task.group import TaskGroup
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity
 from .....module.aflutter.task.config.flavor import AflutterFlavorConfigTask
 from .....module.aflutter.task.config.platform import AflutterPlatformConfigTask

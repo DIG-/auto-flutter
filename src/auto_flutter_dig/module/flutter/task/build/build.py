@@ -11,7 +11,7 @@ from .....model.platform.platform import Platform
 from .....model.platform.run_type import RunType
 from .....model.project.flavor import Flavor
 from .....model.project.project import Project
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.help import HelpTask
 from .....module.flutter.identity import FlutterTaskIdentity
 from .....module.flutter.task.command import FlutterCommandTask

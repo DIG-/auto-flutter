@@ -2,7 +2,7 @@ from json import load as json_load
 
 from .....model.error import E, SilentWarning
 from .....model.project.project import Project
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity
 from .....module.aflutter.task.project.inport import ProjectTaskImport
 

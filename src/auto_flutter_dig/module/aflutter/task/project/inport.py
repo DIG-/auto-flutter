@@ -4,7 +4,7 @@ from .....model.project.custom_task.type import CustomTaskType
 from .....model.project.project import Project
 from .....model.result import Result
 from .....model.task.identity import TaskIdentity
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.user.task.exec import UserExecTaskIdentity
 
 

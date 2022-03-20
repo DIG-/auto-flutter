@@ -5,7 +5,7 @@ from .....core.string import SB
 from .....model.error import E, SilentWarning, TaskNotFound
 from .....model.task.group import TaskGroup
 from .....model.task.identity import TaskIdentity
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.config.config import AflutterConfigIdentity
 from .....module.aflutter.task.help import HelpTask
 from .....module.aflutter.task.init.options import ParseOptionsTask

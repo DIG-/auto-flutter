@@ -1,7 +1,7 @@
 from ....core.string import SB
 from ....core.utils import _Dict
 from ....model.argument.options import LongOption
-from ....model.task.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....module.flutter.identity import FlutterTaskIdentity
 from ....module.flutter.task.command import FlutterCommandTask
 from ....module.flutter.task.pub_get import FlutterPubGetIdentity

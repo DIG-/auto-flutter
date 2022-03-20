@@ -1,7 +1,7 @@
 from ....core.string import SB
 from ....core.utils import _Ensure
 from ....model.error import SilentWarning
-from ....model.task.task import *
+from ....model.task.task import *  # pylint: disable=wildcard-import
 from ....model.task.group import TaskGroup
 from ....model.task.identity import TaskIdentity
 from ....module.aflutter.task.help import HelpTask

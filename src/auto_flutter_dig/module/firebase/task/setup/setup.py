@@ -3,7 +3,7 @@ from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
 from .....model.argument.options import LongOption, LongPositionalOption
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 from .....module.firebase.identity import FirebaseTaskIdentity
 from .....module.firebase.model._const import FIREBASE_CONFIG_KEY_PATH, FIREBASE_CONFIG_KEY_STANDALONE

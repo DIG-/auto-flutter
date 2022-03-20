@@ -9,7 +9,7 @@ from .......model.project.project import Project
 from .......model.result import Result
 from .......model.task.identity import TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .......model.task.task import *
+from .......model.task.task import *  # pylint: disable=wildcard-import
 from .......module.aflutter.identity import AflutterTaskIdentity
 from .......module.aflutter.task.project.init.create import ProjectInitCreateTask
 

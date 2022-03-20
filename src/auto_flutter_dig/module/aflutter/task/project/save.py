@@ -2,7 +2,7 @@ from json import dump as json_dump
 
 from .....core.json.codec import JsonEncode
 from .....model.project.project import Project
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.identity import AflutterTaskIdentity
 
 

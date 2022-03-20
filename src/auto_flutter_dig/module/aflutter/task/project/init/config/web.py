@@ -1,7 +1,7 @@
 from .......model.error import E, SilentWarning
 from .......model.platform.platform import Platform
 from .......model.project.project import Project
-from .......model.task.task import *
+from .......model.task.task import *  # pylint: disable=wildcard-import
 from .......module.aflutter.identity import AflutterTaskIdentity
 
 

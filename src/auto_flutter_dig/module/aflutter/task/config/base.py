@@ -1,5 +1,5 @@
 from .....model.project.project import Project
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.project.read import ProjectRead
 from .....module.aflutter.task.project.save import ProjectSave
 

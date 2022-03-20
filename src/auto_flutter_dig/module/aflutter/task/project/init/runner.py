@@ -4,7 +4,7 @@ from ......core.task.resolver import TaskNotFound, TaskResolver
 from ......model.error import E
 from ......model.task.identity import TaskIdentity
 from ......model.task.init.project_identity import InitProjectTaskIdentity
-from ......model.task.task import *
+from ......model.task.task import *  # pylint: disable=wildcard-import
 from ......module.aflutter.identity import AflutterTaskIdentity
 from ......module.aflutter.task.project.init.config.config import ProjectInitConfigTask
 from ......module.aflutter.task.project.init.create import ProjectInitCreateTask

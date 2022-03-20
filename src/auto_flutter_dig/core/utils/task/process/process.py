@@ -6,7 +6,7 @@ from .....core.config import Config
 from .....core.os.path_converter import PathConverter
 from .....core.process.process import Process
 from .....core.string import SF
-from .....model.task.task import *
+from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.config.const import AFLUTTER_CONFIG_PRINT_PROCESS_CONTENT
 
 __all__ = [

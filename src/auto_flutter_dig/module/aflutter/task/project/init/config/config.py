@@ -3,7 +3,7 @@ from typing import Callable
 from .......core.utils import _Dict
 from .......model.task.group import TaskGroup, TaskIdentity
 from .......model.task.init.project_identity import InitProjectTaskIdentity
-from .......model.task.task import *
+from .......model.task.task import *  # pylint: disable=wildcard-import
 from .......module.aflutter.identity import AflutterTaskIdentity
 from .......module.aflutter.task.project.init.config.android import ProjectInitConfigAndroidTask
 from .......module.aflutter.task.project.init.config.ios import ProjectInitConfigIosTask
