@@ -6,7 +6,7 @@ from threading import Lock, Thread
 from time import sleep, time
 
 from ....core.string import SB
-from ....core.task.printer.operation import *
+from ....core.task.printer.operation import *  # pylint: disable=wildcard-import
 from ....core.utils import _Ensure
 from ....model.error import SilentWarning
 from ....model.error.formater import format_exception

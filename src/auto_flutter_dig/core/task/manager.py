@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Deque, Iterable, List, Optional, Union
 
-from ...core.task.printer.operation import *
+from ...core.task.printer.operation import *  # pylint: disable=wildcard-import
 from ...core.task.printer.printer import TaskPrinter
 from ...core.task.resolver import TaskResolver
 from ...model.argument.arguments import Args
