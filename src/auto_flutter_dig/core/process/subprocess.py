@@ -66,7 +66,7 @@ class _SubProcess(Process):
                 raise FileNotFoundError(0, f"Command `{self._executable}` not found")
             if self.__killed:
                 raise Process.ChildProcessKilled(f"Command `{self._executable}` was killed")
-            if self.__stopped:
+            if self.__stopped or (self.exit_code == 0xC000013A and OS.current() == OS.WINDOWS):
                 raise Process.ChildProcessStopped(f"Command `{self._executable}` was stopped")
 
     def stop(self):
