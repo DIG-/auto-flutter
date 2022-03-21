@@ -1,5 +1,5 @@
 ## Version 0.6.1
-- Capture and handle SIGTERM, SIGINT and SIGKILL
+- Capture and handle SIGTERM and SIGINT
 
 ## Version 0.6.0
 - Multiple adjusts with pylint
