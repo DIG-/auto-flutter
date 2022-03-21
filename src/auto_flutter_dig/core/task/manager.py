@@ -96,6 +96,8 @@ class _TaskManager:
                 )
 
             self._task_done.append(identity)
+            if self._terminate or self._kill:
+                output.message = None
             self._printer.append(OpResult(output))
 
             if not output.message is None:
