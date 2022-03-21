@@ -67,15 +67,14 @@ class TaskPrinter:
             if has_description:
                 TaskPrinter.__print_description(self._current_description, failure=True)
             if not result.error is None:
-                print(
-                    SB()
-                    .append("\n")
-                    .append(
-                        format_exception(result.error),
-                        SB.Color.RED,
-                    )
-                    .str()
+                builder = SB()
+                if has_description:
+                    builder.append("\n")
+                builder.append(
+                    format_exception(result.error),
+                    SB.Color.RED,
                 )
+                print(builder.str())
             elif has_description:
                 print("")
         else:
