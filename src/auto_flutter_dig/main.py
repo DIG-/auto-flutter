@@ -1,10 +1,22 @@
+import signal
 import sys
 from platform import system as platform_system
+from time import sleep
 
 from .core.string import SB
 from .core.task.manager import TaskManager
 from .model.error.formater import format_exception
 from .module.aflutter.task.init.init import AflutterInitTask
+
+
+def _sigterm(*args):  # pylint:disable=unused-argument
+    TaskManager.terminate()
+
+
+def _sigkill(*args):  # pylint:disable=unused-argument
+    TaskManager.kill()
+    sleep(1)
+    sys.exit(4)
 
 
 def _main():
@@ -29,6 +41,10 @@ def _main():
 
             init()
 
+    signal.signal(signal.SIGTERM, _sigterm)
+    signal.signal(signal.SIGINT, _sigterm)
+    if sys.platform != "win32":
+        signal.signal(signal.SIGKILL, _sigterm)
     TaskManager.start_printer()
     TaskManager.add(AflutterInitTask())
 
