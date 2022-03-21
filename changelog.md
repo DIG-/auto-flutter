@@ -1,3 +1,6 @@
+## Version 0.6.1
+- Capture and handle SIGTERM, SIGINT and SIGKILL
+
 ## Version 0.6.0
 - Multiple adjusts with pylint
 - Created BaseTask to be used with TaskManager, to reduce chance of cyclic-import
