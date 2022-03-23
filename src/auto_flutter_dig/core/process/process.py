@@ -10,6 +10,8 @@ from ...core.utils import _Ensure, _EnsureCallable
 
 
 class Process(ABC):
+    active: List[Process] = []
+
     @staticmethod
     def create(
         executable: Union[str, PurePath],
@@ -83,6 +85,17 @@ class Process(ABC):
     @abstractmethod
     def kill(self):
         raise NotImplementedError("This method must be implemented")
+
+    @property
+    @abstractmethod
+    def is_running(self) -> bool:
+        raise NotImplementedError("This method must be implemented")
+
+    def _process_started(self):
+        Process.active.append(self)
+
+    def _process_stopped(self):
+        Process.active.remove(self)
 
     class ChildProcessStopped(ChildProcessError):
         ...

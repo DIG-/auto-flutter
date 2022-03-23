@@ -1,3 +1,4 @@
+import signal
 import sys
 from platform import system as platform_system
 
@@ -5,6 +6,10 @@ from .core.string import SB
 from .core.task.manager import TaskManager
 from .model.error.formater import format_exception
 from .module.aflutter.task.init.init import AflutterInitTask
+
+
+def _sigterm(*args):  # pylint:disable=unused-argument
+    TaskManager.terminate()
 
 
 def _main():
@@ -29,6 +34,8 @@ def _main():
 
             init()
 
+    signal.signal(signal.SIGTERM, _sigterm)
+    signal.signal(signal.SIGINT, _sigterm)
     TaskManager.start_printer()
     TaskManager.add(AflutterInitTask())
 

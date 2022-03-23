@@ -5,7 +5,9 @@ from typing import Deque, Iterable, List, Optional, Union
 from ...core.task.printer.operation import *  # pylint: disable=wildcard-import
 from ...core.task.printer.printer import TaskPrinter
 from ...core.task.resolver import TaskResolver
+from ...core.task.watcher import ProcessTerminateWatcher
 from ...model.argument.arguments import Args
+from ...model.error.chain import Err
 from ...model.result import Result
 from ...model.task.base_task import BaseTask
 from ...model.task.group import TaskGroup
@@ -21,6 +23,9 @@ class _TaskManager:
         self._task_stack: Deque[TaskIdentity] = Deque()
         self._task_done: List[TaskIdentity] = []
         self._printer = TaskPrinter()
+        self._terminate_watcher: Optional[ProcessTerminateWatcher] = None
+        self._terminate = False
+        self._kill = False
 
     def add(
         self,
@@ -53,6 +58,8 @@ class _TaskManager:
 
     def stop_printer(self):
         self._printer.stop()
+        if not self._terminate_watcher is None:
+            self._terminate_watcher.join()
 
     def print(self, message: str):
         self._printer.append(OpMessage(message))
@@ -89,6 +96,8 @@ class _TaskManager:
                 )
 
             self._task_done.append(identity)
+            if self._terminate or self._kill:
+                output.message = None
             self._printer.append(OpResult(output))
 
             if not output.message is None:
@@ -99,6 +108,13 @@ class _TaskManager:
                 task.log.warning("Finished with warning", exc_info=output.error)
             elif output.is_error:
                 task.log.error("Failed", exc_info=output.error)
+
+            if self._kill:
+                self._printer.append(OpResult(Result(Err(InterruptedError("Process received SIGKILL")))))
+                return False
+            if self._terminate:
+                self._printer.append(OpResult(Result(Err(InterruptedError("Process received SIGTERM")))))
+                return False
 
             if not output.success:
                 if isinstance(output, TaskResultHelp):
@@ -113,6 +129,24 @@ class _TaskManager:
             args = output.args
 
         return not had_failure
+
+    def terminate(self):
+        self._terminate = True
+        # pylint:disable=import-outside-toplevel,cyclic-import
+        from ...core.process.process import Process
+
+        for process in Process.active:
+            process.stop()
+        if len(Process.active) > 0:
+            self._terminate_watcher = ProcessTerminateWatcher()
+
+    def kill(self):
+        self._kill = True
+        # pylint:disable=import-outside-toplevel,cyclic-import
+        from ...core.process.process import Process
+
+        for process in Process.active:
+            process.stop()
 
     def __repr__(self) -> str:
         return (
