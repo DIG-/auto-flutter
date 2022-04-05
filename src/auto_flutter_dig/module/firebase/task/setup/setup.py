@@ -3,6 +3,7 @@ from .....core.os.executable_resolver import ExecutableResolver
 from .....core.os.path_converter import PathConverter
 from .....core.string import SB
 from .....model.argument.options import LongOption, LongPositionalOption
+from .....model.error import Err
 from .....model.task.task import *  # pylint: disable=wildcard-import
 from .....module.aflutter.task.setup.save import AflutterSetupSaveTask
 from .....module.firebase.identity import FirebaseTaskIdentity
@@ -27,19 +28,23 @@ class FirebaseSetupTask(Task):
             firebase_cmd = args.get(self.__opt_executable)
             if firebase_cmd is None or len(firebase_cmd) <= 0:
                 return TaskResult(args, ValueError("Invalid firebase command"))
-            firebase_path = PathConverter.from_path(firebase_cmd).to_posix()
-            firebase_exec = ExecutableResolver.resolve_executable(firebase_path)
-            if firebase_exec is None:
-                error = FileNotFoundError(f'Can not find firebase command as "{firebase_cmd}"')
-                message = (
-                    SB()
-                    .append("Resolved as: ", SB.Color.YELLOW)
-                    .append(str(firebase_path), SB.Color.YELLOW, True)
-                    .str()
+            firebase_path = PathConverter.from_path(firebase_cmd)
+            try:
+                firebase_exec = ExecutableResolver.resolve_executable(firebase_path.to_machine())
+                Config.put_path(FIREBASE_CONFIG_KEY_PATH, firebase_exec)
+                had_change = True
+            except BaseException as error:
+                return TaskResult(
+                    args,
+                    error=Err(FileNotFoundError(f'Can not find firebase command as "{firebase_cmd}"'), error),
+                    message=(
+                        SB()
+                        .append("Resolved as: ", SB.Color.YELLOW)
+                        .append(str(firebase_path.to_posix()), SB.Color.YELLOW, True)
+                        .str()
+                    ),
+                    success=False,
                 )
-                return TaskResult(args, error=error, message=message, success=False)
-            Config.put_path(FIREBASE_CONFIG_KEY_PATH, firebase_exec)
-            had_change = True
 
         if args.contains(self.__opt_standalone_on):
             if args.contains(self.__opt_standalone_off):

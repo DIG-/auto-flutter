@@ -22,16 +22,14 @@ class ExecutableResolver(ABC):
         return os.access(path, os.X_OK)
 
     @staticmethod
-    def get_executable(path: PurePath) -> Optional[Path]:
-        try:
-            _path = Path(path)
-        except BaseException:
-            return None
+    def get_executable(path: PurePath) -> Path:
+        _path = Path(path)
         ## Fast mode
         if ExecutableResolver.is_executable(_path):
+            print(type(path))
             if _path.exists():
                 return _path
-            return None
+            raise FileNotFoundError(f"Executable not found: {_path}")
 
         ## Test others variants for windows
         if OS.current() == OS.WINDOWS:
@@ -39,42 +37,50 @@ class ExecutableResolver(ABC):
                 _path = _path.with_suffix(suffix)
                 if _path.exists():
                     return _path
-            return None
+            raise FileNotFoundError(f"Executable not found: {_path}")
 
         ## Test others variants
         for suffix in ("", ".sh"):
             _path = _path.with_suffix(suffix)
             if _path.exists() and ExecutableResolver.is_executable(_path):
                 return _path
-        return None
+        raise FileNotFoundError(f"Executable not found: {_path}")
 
     @staticmethod
-    def resolve_executable(path: PurePath) -> Optional[PurePath]:
+    def resolve_executable(path: PurePath) -> PurePath:
         if path.is_absolute():
             # Already absolute
-            return ExecutableResolver.get_executable(path)
+            try:
+                return ExecutableResolver.get_executable(path)
+            except BaseException as error:
+                raise LookupError(f'Failed to get absolute executable for "{path}"') from error
 
         if (isinstance(path, PurePosixPath) and path.parent != PurePosixPath(".")) or (
             isinstance(path, PureWindowsPath) and path.parent != PureWindowsPath(".")
         ):
             # Is relative
-            _path = ExecutableResolver.get_executable(path)
-            if not _path is None:
+            try:
+                _path = ExecutableResolver.get_executable(path)
                 return _path.resolve()
-            return None
+            except BaseException as error:
+                raise LookupError(f'Failed to get relative executable for "{path}"') from error
 
         # Then can be at current local or in sys path
         # First try sys path
         for root in ExecutableResolver.get_sys_path():
-            _path = ExecutableResolver.get_executable(root / path)
-            if not _path is None:
+            try:
+                _path = ExecutableResolver.get_executable(root / path)
                 # Executable is in path
                 return PurePath(_path.name)
+            except BaseException:
+                pass
+
         # Not in path, try at current local
-        _path = ExecutableResolver.get_executable(path)
-        if not _path is None:
+        try:
+            _path = ExecutableResolver.get_executable(path)
             return _path.absolute()
-        return None
+        except BaseException as error:
+            raise LookupError(f'Failed to get current local executable for "{path}"') from error
 
     @staticmethod
     def get_sys_path() -> Iterable[Path]:

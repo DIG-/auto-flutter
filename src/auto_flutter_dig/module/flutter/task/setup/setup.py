@@ -26,16 +26,23 @@ class FlutterSetupTask(Task):
             flutter_cmd = args.get(self.__opt_executable)
             if flutter_cmd is None or len(flutter_cmd) <= 0:
                 return TaskResult(args, Err(ValueError("Invalid flutter command")))
-            flutter_path = PathConverter.from_path(flutter_cmd).to_posix()
-            flutter_exec = ExecutableResolver.resolve_executable(flutter_path)
-            if flutter_exec is None:
-                error = Err(FileNotFoundError(f'Can not find flutter command as "{flutter_cmd}"'))
-                message = (
-                    SB().append("Resolved as: ", SB.Color.YELLOW).append(str(flutter_path), SB.Color.YELLOW, True).str()
+            flutter_path = PathConverter.from_path(flutter_cmd)
+            try:
+                flutter_exec = ExecutableResolver.resolve_executable(flutter_path.to_machine())
+                Config.put_path(FLUTTER_CONFIG_KEY_PATH, flutter_exec)
+                had_change = True
+            except BaseException as error:
+                return TaskResult(
+                    args,
+                    error=Err(FileNotFoundError(f'Can not find flutter command as "{flutter_cmd}"'), error),
+                    message=(
+                        SB()
+                        .append("Resolved as: ", SB.Color.YELLOW)
+                        .append(str(flutter_path.to_posix()), SB.Color.YELLOW, True)
+                        .str()
+                    ),
+                    success=False,
                 )
-                return TaskResult(args, error=error, message=message, success=False)
-            Config.put_path(FLUTTER_CONFIG_KEY_PATH, flutter_exec)
-            had_change = True
 
         if not had_change:
             return TaskResult(args, Warning("Nothing was changed"), success=True)
