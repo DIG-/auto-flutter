@@ -44,12 +44,12 @@ class StringFormatter:
             operation = operation.lower()[1:]
 
         if source == "arg":
-            if group is None:
-                parsed = args.get(argument)
-            else:
-                parsed = args.group_get(group, argument)
+            parsed = _Dict.get_or_none(args_extras, argument)
             if parsed is None:
-                parsed = _Dict.get_or_none(args_extras, argument)
+                if group is None:
+                    parsed = args.get(argument)
+                else:
+                    parsed = args.group_get(group, argument)
         elif source == "env":
             if not group is None:
                 raise ValueError("Substitution from environment does not accept group")
