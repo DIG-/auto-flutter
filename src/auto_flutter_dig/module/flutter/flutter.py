@@ -3,6 +3,7 @@ from typing import Callable
 from ...model.task.group import TaskGroup
 from ...model.task.identity import TaskIdentity
 from ...module.flutter.task.build.stub import FlutterBuildStub
+from ...module.flutter.task.clean import FlutterClean
 from ...module.flutter.task.config.build_param import FlutterBuildParamConfigTask
 from ...module.flutter.task.exec import FlutterExecTask
 from ...module.flutter.task.generator import FlutterGeneratorTask
@@ -29,12 +30,13 @@ class FlutterModulePlugin(AflutterModulePlugin):
         root.register_subtask(
             [
                 FlutterSetupCheckTask.identity,
+                FlutterBuildStub.identity,
+                FlutterClean.identity,
                 FlutterExecTask.identity,
                 FlutterExecTask.doctor,
                 FlutterGeneratorTask.identity,
                 FlutterGeneratorTask.identity_code,
                 FlutterPubGetIdentity,
-                FlutterBuildStub.identity,
             ]
         )
 
