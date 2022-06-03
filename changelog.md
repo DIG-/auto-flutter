@@ -1,3 +1,9 @@
+## Version 0.6.2
+- Fix error finding executable for firebase/flutter in windows from cmd
+- Fix build command require loaded project
+- Fix added current build flavor while formatting output filename
+- Created task `clean` to clean project and flutter
+
 ## Version 0.6.1
 - Capture and handle SIGTERM and SIGINT
 

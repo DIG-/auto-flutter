@@ -28,11 +28,11 @@ python -m pip install auto_flutter_dig
 ```
 ### From github release:
 ``` sh
-python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.6.1/auto_flutter_dig-0.6.1-py3-none-any.whl"
+python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.6.2/auto_flutter_dig-0.6.2-py3-none-any.whl"
 ```
 or
 ``` sh
-python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.6.1/auto_flutter_dig.tar.gz"
+python -m pip install "https://github.com/DIG-/auto-flutter/releases/download/0.6.2/auto_flutter_dig.tar.gz"
 ```
 
 ### From github main branch:
