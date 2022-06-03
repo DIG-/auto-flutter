@@ -1,8 +1,8 @@
-from .....model.argument.options import LongOption, LongPositionalOption
 from .....model.argument.option.common.build_mode import BuildModeOption
 from .....model.argument.option.common.build_type import BuildTypeFlutterOption
 from .....model.argument.option.common.flavor import FlavorOption
 from .....model.argument.option.hidden import HiddenOption
+from .....model.argument.options import LongOption, LongPositionalOption
 from .....model.build.mode import BuildMode
 from .....model.error import Err
 from .....model.platform.merge_config import MergePlatformConfigFlavored
@@ -46,6 +46,12 @@ class FlutterBuildStub(Task):
 
     def describe(self, args: Args) -> str:
         return "Prepare build"
+
+    def require(self) -> List[TaskId]:
+        # pylint: disable=import-outside-toplevel,cyclic-import
+        from .....module.aflutter.task.project.read import ProjectRead
+
+        return [ProjectRead.identity.task_id]
 
     def execute(self, args: Args) -> TaskResult:
         try:
