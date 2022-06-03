@@ -131,11 +131,15 @@ class FlutterBuildTask(FlutterCommandTask):
                 error=Err(Warning("Build success, but file output not defined")),
                 success=True,
             )
+        flavor = ""
+        if not self._flavor is None:
+            flavor = self._flavor
         output_file = SF.format(
             output_file,
             args,
             {
                 "platform": self._build_type.platform.value,
+                "flavor": flavor,
             },
         )
 
