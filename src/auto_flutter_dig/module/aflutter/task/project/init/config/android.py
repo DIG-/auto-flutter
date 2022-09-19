@@ -24,7 +24,7 @@ class ProjectInitConfigAndroidTask(Task):
             return TaskResult(args, Err(SilentWarning("Project does not support android platform")), success=True)
 
         config = project.obtain_platform_cofig(Platform.ANDROID)
-        config.append_build_param(None, "--no-android-gradle-daemon")
+        config.append_build_param("--no-android-gradle-daemon")
         if project.flavors is None or len(project.flavors) <= 0:
             config.put_output(BuildType.APK, "build/app/outputs/flutter-apk/app-${arg:build-mode}.apk")
             config.put_output(BuildType.BUNDLE, "build/app/outputs/bundle/${arg:build-mode}/app-${arg:build-mode}.aab")
