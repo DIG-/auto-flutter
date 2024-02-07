@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import Dict, Generic, Iterable, Optional, Type, TypeVar, Union
 
 from .....core.config import Config
-from .....model.argument.option.error import OptionInvalidFormat, OptionNotFound, OptionRequireValue
+from .....model.argument.option.error import (OptionInvalidFormat,
+                                              OptionNotFound,
+                                              OptionRequireValue)
 from .....model.argument.options import *  # pylint: disable=wildcard-import
 from .....model.task.identity import TaskIdentity
 from .....model.task.task import *  # pylint: disable=wildcard-import
-from .....module.aflutter.config.const import AFLUTTER_CONFIG_ENABLE_STACK_STRACE
+from .....module.aflutter.config.const import \
+    AFLUTTER_CONFIG_ENABLE_STACK_STRACE
 from .....module.aflutter.task.help import HelpTask
 
 Argument = str
@@ -200,7 +203,7 @@ class ParseOptionsTask(Task):
             return
         if state.has_option_all:
             return
-        raise OptionNotFound("Unrecognized command line option {argument}")
+        raise OptionNotFound(f"Unrecognized command line option {argument}")
 
     def __parse_long_or_grouped(
         self,
@@ -223,7 +226,7 @@ class ParseOptionsTask(Task):
             self.__append_argument_all(args, option_all, argument)  # OptionAll
             return
         else:
-            raise OptionInvalidFormat("Invalid argument group structure for command line option {argument}")
+            raise OptionInvalidFormat(f"Invalid argument group structure for command line option {argument}")
 
         ###########
         # OptionAll
@@ -257,7 +260,7 @@ class ParseOptionsTask(Task):
                 return
             if state.has_option_all:
                 return
-            raise OptionNotFound("Unrecognized command line option {argument}")
+            raise OptionNotFound(f"Unrecognized command line option {argument}")
 
         # Long argument
         if sub in long_options:
@@ -284,7 +287,7 @@ class ParseOptionsTask(Task):
             return
         if state.has_option_all:
             return
-        raise OptionNotFound("Unrecognized command line option {argument}")
+        raise OptionNotFound(f"Unrecognized command line option {argument}")
 
     def __parse_positional(
         self,
@@ -300,7 +303,7 @@ class ParseOptionsTask(Task):
         if pos not in positional_options:
             if state.has_option_all:
                 return
-            raise OptionNotFound('Unrecognized positional command line "{argument}"')
+            raise OptionNotFound(f'Unrecognized positional command line "{argument}"')
         for _, helper_positional in positional_options[pos].items():
             self.__append_argument(args, helper_positional, argument)
 
